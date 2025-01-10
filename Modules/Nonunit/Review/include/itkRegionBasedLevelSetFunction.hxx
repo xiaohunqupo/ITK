@@ -34,12 +34,12 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::RegionBasedLevelSetF
   m_Lambda1 = NumericTraits<ScalarValueType>::OneValue();
   m_Lambda2 = NumericTraits<ScalarValueType>::OneValue();
 
-  m_OverlapPenaltyWeight = NumericTraits<ScalarValueType>::ZeroValue();
-  m_AreaWeight = NumericTraits<ScalarValueType>::ZeroValue();
-  m_VolumeMatchingWeight = NumericTraits<ScalarValueType>::ZeroValue();
-  m_ReinitializationSmoothingWeight = NumericTraits<ScalarValueType>::ZeroValue();
-  m_CurvatureWeight = m_AdvectionWeight = NumericTraits<ScalarValueType>::ZeroValue();
-  m_Volume = NumericTraits<ScalarValueType>::ZeroValue();
+  m_OverlapPenaltyWeight = ScalarValueType{};
+  m_AreaWeight = ScalarValueType{};
+  m_VolumeMatchingWeight = ScalarValueType{};
+  m_ReinitializationSmoothingWeight = ScalarValueType{};
+  m_CurvatureWeight = m_AdvectionWeight = ScalarValueType{};
+  m_Volume = ScalarValueType{};
 
   m_FunctionId = 0;
 
@@ -62,7 +62,7 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::InitializeZeroVector
 
   for (unsigned int i = 0; i < ImageDimension; ++i)
   {
-    ans[i] = NumericTraits<ScalarValueType>::ZeroValue();
+    ans[i] = ScalarValueType{};
   }
 
   return ans;
@@ -156,27 +156,25 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeGlobalTimeSte
   }
 
   // Reset the values
-  d->m_MaxCurvatureChange = NumericTraits<ScalarValueType>::ZeroValue();
-  d->m_MaxGlobalChange = NumericTraits<ScalarValueType>::ZeroValue();
-  d->m_MaxAdvectionChange = NumericTraits<ScalarValueType>::ZeroValue();
+  d->m_MaxCurvatureChange = ScalarValueType{};
+  d->m_MaxGlobalChange = ScalarValueType{};
+  d->m_MaxAdvectionChange = ScalarValueType{};
 
   return dt;
 }
 
 template <typename TInput, typename TFeature, typename TSharedData>
-typename RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ScalarValueType
+auto
 RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeCurvature(const NeighborhoodType & itkNotUsed(it),
                                                                              const FloatOffsetType & itkNotUsed(offset),
-                                                                             GlobalDataStruct *      gd)
+                                                                             GlobalDataStruct * gd) -> ScalarValueType
 {
   // Calculate the mean curvature
   ScalarValueType curvature{};
 
-  unsigned int i, j;
-
-  for (i = 0; i < ImageDimension; ++i)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
-    for (j = 0; j < ImageDimension; ++j)
+    for (unsigned int j = 0; j < ImageDimension; ++j)
     {
       if (j != i)
       {
@@ -209,9 +207,8 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeHessian(const
 
   gd->m_GradMagSqr = 0.;
   gd->m_GradMag = 0.;
-  unsigned int i, j;
 
-  for (i = 0; i < ImageDimension; ++i)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     const auto positionA = static_cast<unsigned int>(this->m_Center + this->m_xStride[i]);
     const auto positionB = static_cast<unsigned int>(this->m_Center - this->m_xStride[i]);
@@ -224,7 +221,7 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeHessian(const
 
     gd->m_dxy[i][i] = (this->m_InvSpacing[i]) * (gd->m_dx_forward[i] - gd->m_dx_backward[i]);
 
-    for (j = i + 1; j < ImageDimension; ++j)
+    for (unsigned int j = i + 1; j < ImageDimension; ++j)
     {
       const auto positionAa = static_cast<unsigned int>(this->m_Center - this->m_xStride[i] - this->m_xStride[j]);
       const auto positionBa = static_cast<unsigned int>(this->m_Center - this->m_xStride[i] + this->m_xStride[j]);
@@ -240,10 +237,10 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeHessian(const
 }
 
 template <typename TInput, typename TFeature, typename TSharedData>
-typename RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::PixelType
+auto
 RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeUpdate(const NeighborhoodType & it,
                                                                           void *                   globalData,
-                                                                          const FloatOffsetType &  offset)
+                                                                          const FloatOffsetType &  offset) -> PixelType
 {
   // Access the neighborhood center pixel of phi
   const ScalarValueType inputValue = it.GetCenterPixel();
@@ -252,8 +249,7 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeUpdate(const 
   ScalarValueType curvature_term{};
   ScalarValueType curvature{};
   ScalarValueType globalTerm{};
-  VectorType      advection_field;
-  ScalarValueType x_energy, advection_term = NumericTraits<ScalarValueType>::ZeroValue();
+  ScalarValueType advection_term = ScalarValueType{};
 
   // Access the global data structure
   auto * gd = (GlobalDataStruct *)globalData;
@@ -264,7 +260,7 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeUpdate(const 
 
   // Computing the curvature term
   // Used to regularized using the length of contour
-  if ((dh != 0.) && (this->m_CurvatureWeight != NumericTraits<ScalarValueType>::ZeroValue()))
+  if ((dh != 0.) && (this->m_CurvatureWeight != ScalarValueType{}))
   {
     curvature = this->ComputeCurvature(it, offset, gd);
     curvature_term = this->m_CurvatureWeight * curvature * this->CurvatureSpeed(it, offset, gd) * dh;
@@ -274,23 +270,23 @@ RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeUpdate(const 
 
   // Computing the laplacian term
   // Used in maintaining squared distance function
-  if (this->m_ReinitializationSmoothingWeight != NumericTraits<ScalarValueType>::ZeroValue())
+  if (this->m_ReinitializationSmoothingWeight != ScalarValueType{})
   {
     laplacian_term = this->ComputeLaplacian(gd) - curvature;
 
     laplacian_term *= this->m_ReinitializationSmoothingWeight * this->LaplacianSmoothingSpeed(it, offset, gd);
   }
 
-  if ((dh != 0.) && (m_AdvectionWeight != NumericTraits<ScalarValueType>::ZeroValue()))
+  if ((dh != 0.) && (m_AdvectionWeight != ScalarValueType{}))
   {
-    advection_field = this->AdvectionField(it, offset, gd);
+    VectorType advection_field = this->AdvectionField(it, offset, gd);
 
     for (unsigned int i = 0; i < ImageDimension; ++i)
     {
-      x_energy = m_AdvectionWeight * advection_field[i];
+      ScalarValueType x_energy = m_AdvectionWeight * advection_field[i];
 
       // TODO: Is this condition right ?
-      if (x_energy > NumericTraits<ScalarValueType>::ZeroValue())
+      if (x_energy > ScalarValueType{})
       {
         advection_term += advection_field[i] * gd->m_dx_backward[i];
       }
@@ -354,10 +350,10 @@ of Heaviside and dirac delta for each part of the fidelity term.
 - the final dH is the dirac delta term corresponding to the current
 level set we are updating. */
 template <typename TInput, typename TFeature, typename TSharedData>
-typename RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ScalarValueType
+auto
 RegionBasedLevelSetFunction<TInput, TFeature, TSharedData>::ComputeGlobalTerm(
   const ScalarValueType & itkNotUsed(inputPixel),
-  const InputIndexType &  inputIndex)
+  const InputIndexType &  inputIndex) -> ScalarValueType
 {
   // computes if it belongs to background
   ScalarValueType product = 1;

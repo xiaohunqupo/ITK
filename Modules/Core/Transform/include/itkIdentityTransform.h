@@ -61,8 +61,8 @@ public:
   /** New method for creating an object using a factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(IdentityTransform, Transform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IdentityTransform);
 
   /** Dimension of the domain space. */
   static constexpr unsigned int InputSpaceDimension = VDimension;

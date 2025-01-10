@@ -111,14 +111,14 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FFTImageFilterFactory, itk::ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FFTImageFilterFactory);
 
   /** Register one factory of this type  */
   static void
   RegisterOneFactory()
   {
-    FFTImageFilterFactory::Pointer factory = FFTImageFilterFactory::New();
+    auto factory = FFTImageFilterFactory::New();
 
     ObjectFactoryBase::RegisterFactoryInternal(factory);
   }

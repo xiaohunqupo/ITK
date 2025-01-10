@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DOMNodeXMLWriter, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DOMNodeXMLWriter);
 
   using InputType = DOMNode;
   using ConstInputPointer = InputType::ConstPointer;
@@ -121,7 +121,7 @@ private:
 inline std::ostream &
 operator<<(std::ostream & os, const itk::DOMNode & object)
 {
-  itk::DOMNodeXMLWriter::Pointer writer = itk::DOMNodeXMLWriter::New();
+  auto writer = itk::DOMNodeXMLWriter::New();
   writer->SetInput(&object);
   writer->Update(os);
   return os;

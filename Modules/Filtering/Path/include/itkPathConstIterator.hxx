@@ -63,7 +63,7 @@ template <typename TImage, typename TPath>
 void
 PathConstIterator<TImage, TPath>::GoToBegin()
 {
-  // Go the the beginning
+  // Go the beginning
   m_CurrentPathPosition = m_Path->StartOfInput();
 
   // But don't visit the first index twice for closed paths (unless told to)
@@ -97,7 +97,7 @@ PathConstIterator<TImage, TPath>::operator++()
     // The new index is outside the acceptable region.  We can iterate no
     // farther, call this the end.  NOTE THAT INPUT IS STILL INCREMENTED.
     m_IsAtEnd = true;
-    itkWarningMacro(<< "Path left region; unable to finish tracing it");
+    itkWarningMacro("Path left region; unable to finish tracing it");
   }
   else
   {

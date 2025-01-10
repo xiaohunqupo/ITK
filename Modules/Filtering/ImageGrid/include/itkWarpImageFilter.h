@@ -96,8 +96,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(WarpImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WarpImageFilter);
 
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
@@ -128,13 +128,17 @@ public:
   using DisplacementType = typename DisplacementFieldType::PixelType;
 
   /** Interpolator type alias support */
-  using CoordRepType = double;
-  using InterpolatorType = InterpolateImageFunction<InputImageType, CoordRepType>;
+  using CoordinateType = double;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
+  using InterpolatorType = InterpolateImageFunction<InputImageType, CoordinateType>;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
-  using DefaultInterpolatorType = LinearInterpolateImageFunction<InputImageType, CoordRepType>;
+  using DefaultInterpolatorType = LinearInterpolateImageFunction<InputImageType, CoordinateType>;
 
   /** Point type */
-  using PointType = Point<CoordRepType, Self::ImageDimension>;
+  using PointType = Point<CoordinateType, Self::ImageDimension>;
 
   /** Type for representing the direction of the output image */
   using DirectionType = typename TOutputImage::DirectionType;
@@ -251,7 +255,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override;
+  VerifyInputInformation() const override;
 
   /** This function should be in an interpolator but none of the ITK
    * interpolators at this point handle edge conditions properly

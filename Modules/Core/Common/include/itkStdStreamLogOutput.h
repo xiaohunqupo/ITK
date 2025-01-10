@@ -51,7 +51,7 @@ public:
 
   using StreamPointerType = std::ostream *;
 
-  itkTypeMacro(StdStreamLogOutput, LogOutput);
+  itkOverrideGetNameOfClassMacro(StdStreamLogOutput);
 
   itkNewMacro(StdStreamLogOutput);
 
@@ -71,11 +71,11 @@ public:
 
   /** Write to a buffer */
   void
-  Write(std::string const & content) override;
+  Write(const std::string & content) override;
 
   /** Write to a buffer */
   void
-  Write(std::string const & content, double timestamp) override;
+  Write(const std::string & content, double timestamp) override;
 
 protected:
   /** Constructor */

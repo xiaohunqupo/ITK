@@ -29,10 +29,11 @@ GrayscaleFunctionDilateImageFilter<TInputImage, TOutputImage, TKernel>::Grayscal
 }
 
 template <typename TInputImage, typename TOutputImage, typename TKernel>
-typename GrayscaleFunctionDilateImageFilter<TInputImage, TOutputImage, TKernel>::PixelType
+auto
 GrayscaleFunctionDilateImageFilter<TInputImage, TOutputImage, TKernel>::Evaluate(const NeighborhoodIteratorType & nit,
                                                                                  const KernelIteratorType kernelBegin,
                                                                                  const KernelIteratorType kernelEnd)
+  -> PixelType
 {
   unsigned int i;
   PixelType    max = NumericTraits<PixelType>::NonpositiveMin();
@@ -44,7 +45,7 @@ GrayscaleFunctionDilateImageFilter<TInputImage, TOutputImage, TKernel>::Evaluate
   {
     // if structuring element is positive, use the pixel under that element
     // in the image plus the structuring element value
-    if (*kernel_it > NumericTraits<KernelPixelType>::ZeroValue())
+    if (*kernel_it > KernelPixelType{})
     {
       // add the structuring element value to the pixel value, note we use
       // GetPixel() on SmartNeighborhoodIterator to respect boundary

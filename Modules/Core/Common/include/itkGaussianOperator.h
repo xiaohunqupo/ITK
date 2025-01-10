@@ -73,8 +73,8 @@ public:
   using Self = GaussianOperator;
   using Superclass = NeighborhoodOperator<TPixel, VDimension, TAllocator>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaussianOperator, NeighborhoodOperator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianOperator);
 
   /** Sets the desired variance of the Gaussian kernel. */
   void

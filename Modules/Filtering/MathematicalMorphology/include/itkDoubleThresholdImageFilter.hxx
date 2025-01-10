@@ -33,7 +33,7 @@ DoubleThresholdImageFilter<TInputImage, TOutputImage>::DoubleThresholdImageFilte
   m_Threshold3 = NumericTraits<InputPixelType>::max();
   m_Threshold4 = NumericTraits<InputPixelType>::max();
 
-  m_OutsideValue = NumericTraits<OutputPixelType>::ZeroValue();
+  m_OutsideValue = OutputPixelType{};
   m_InsideValue = NumericTraits<OutputPixelType>::max();
 
   m_FullyConnected = false;
@@ -47,7 +47,7 @@ DoubleThresholdImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedReg
   Superclass::GenerateInputRequestedRegion();
 
   // We need all the input.
-  InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
+  const InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
   if (input)
   {
     input->SetRequestedRegion(input->GetLargestPossibleRegion());
@@ -133,8 +133,8 @@ DoubleThresholdImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & 
      << std::endl;
   os << indent << "OutsideValue: " << static_cast<typename NumericTraits<OutputPixelType>::PrintType>(m_OutsideValue)
      << std::endl;
-  os << indent << "Number of iterations used to produce current output: " << m_NumberOfIterationsUsed << std::endl;
-  os << indent << "FullyConnected: " << m_FullyConnected << std::endl;
+  os << indent << "NumberOfIterationsUsed: " << m_NumberOfIterationsUsed << std::endl;
+  itkPrintSelfBooleanMacro(FullyConnected);
 }
 } // end namespace itk
 #endif

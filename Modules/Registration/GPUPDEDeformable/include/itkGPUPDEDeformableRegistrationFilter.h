@@ -95,8 +95,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(GPUPDEDeformableRegistrationFilter, GPUDenseFiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUPDEDeformableRegistrationFilter);
 
   /** FixedImage image type. */
   using FixedImageType = TFixedImage;

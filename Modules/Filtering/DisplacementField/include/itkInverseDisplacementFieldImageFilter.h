@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(InverseDisplacementFieldImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InverseDisplacementFieldImageFilter);
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

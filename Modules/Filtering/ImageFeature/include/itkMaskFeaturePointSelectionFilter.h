@@ -74,8 +74,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaskFeaturePointSelectionFilter, ImageToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaskFeaturePointSelectionFilter);
 
   static constexpr unsigned int ImageDimension = 3u;
 

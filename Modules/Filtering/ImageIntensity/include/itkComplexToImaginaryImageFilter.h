@@ -36,8 +36,6 @@ template <typename TInput, typename TOutput>
 class ComplexToImaginary
 {
 public:
-  ComplexToImaginary() = default;
-  ~ComplexToImaginary() = default;
   bool
   operator==(const ComplexToImaginary &) const
   {
@@ -71,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ComplexToImaginaryImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToImaginaryImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;

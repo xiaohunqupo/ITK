@@ -31,14 +31,15 @@ itkGrayscaleMorphologicalOpeningImageFilterTest2(int argc, char * argv[])
   // Comment the following if you want to use the itk text output window
   itk::OutputWindow::SetInstance(itk::TextOutput::New());
 
-  if (argc < 7)
+  if (argc < 8)
   {
-    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " InputImage BASIC HISTO ANCHOR VHGW SafeBorder"
-              << std::endl;
-    return -1;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv)
+              << " InputImage radius BASIC HISTO ANCHOR VHGW SafeBorder" << std::endl;
+    return EXIT_FAILURE;
   }
 
-  unsigned int const dim = 2;
+  constexpr unsigned int dim = 2;
   using ImageType = itk::Image<unsigned char, dim>;
 
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -51,68 +52,63 @@ itkGrayscaleMorphologicalOpeningImageFilterTest2(int argc, char * argv[])
   auto filter = FilterType::New();
   filter->SetInput(reader->GetOutput());
 
-  itk::SimpleFilterWatcher watcher(filter, "filter");
+  const itk::SimpleFilterWatcher watcher(filter, "filter");
 
   using RadiusType = FilterType::RadiusType;
 
-  // test default values
-  RadiusType r1;
-  r1.Fill(1);
-  if (filter->GetRadius() != r1)
-  {
-    std::cerr << "Wrong default Radius: " << filter->GetRadius() << std::endl;
-    return EXIT_FAILURE;
-  }
+  // Test default values
+  auto r1 = itk::MakeFilled<RadiusType>(1);
 
-  if (filter->GetAlgorithm() != FilterType::AlgorithmEnum::HISTO)
-  {
-    std::cerr << "Wrong default algorithm." << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TEST_SET_GET_VALUE(r1, filter->GetRadius());
 
-  if (filter->GetSafeBorder() != true)
-  {
-    std::cerr << "Wrong default safe border." << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TEST_SET_GET_VALUE(FilterType::AlgorithmEnum::HISTO, filter->GetAlgorithm());
 
-  try
-  {
-    filter->SetRadius(20);
-    filter->SetSafeBorder(std::stoi(argv[6]));
+  ITK_TEST_SET_GET_VALUE(true, filter->GetSafeBorder());
 
-    using WriterType = itk::ImageFileWriter<ImageType>;
-    auto writer = WriterType::New();
-    writer->SetInput(filter->GetOutput());
+  const itk::SizeValueType radiusValue{ static_cast<itk::SizeValueType>(std::stoi(argv[2])) };
+  filter->SetRadius(radiusValue);
+  RadiusType radius{};
+  radius.Fill(radiusValue);
+  ITK_TEST_SET_GET_VALUE(radius, filter->GetRadius());
 
-    filter->SetAlgorithm(FilterType::AlgorithmEnum::BASIC);
-    writer->SetFileName(argv[2]);
-    writer->Update();
+  auto safeBorder = static_cast<bool>(std::stoi(argv[7]));
+  ITK_TEST_SET_GET_BOOLEAN(filter, SafeBorder, safeBorder);
 
-    filter->SetAlgorithm(FilterType::AlgorithmEnum::HISTO);
-    writer->SetFileName(argv[3]);
-    writer->Update();
-
-    filter->SetAlgorithm(FilterType::AlgorithmEnum::ANCHOR);
-    writer->SetFileName(argv[4]);
-    writer->Update();
-
-    filter->SetAlgorithm(FilterType::AlgorithmEnum::VHGW);
-    writer->SetFileName(argv[5]);
-    writer->Update();
-  }
-  catch (const itk::ExceptionObject & e)
-  {
-    std::cerr << "Exception detected: " << e.GetDescription();
-    return EXIT_FAILURE;
-  }
-
-  // Generate test image
   using WriterType = itk::ImageFileWriter<ImageType>;
   auto writer = WriterType::New();
   writer->SetInput(filter->GetOutput());
-  writer->SetFileName(argv[2]);
-  writer->Update();
 
+  filter->SetAlgorithm(FilterType::AlgorithmEnum::BASIC);
+  writer->SetFileName(argv[3]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  filter->SetAlgorithm(FilterType::AlgorithmEnum::HISTO);
+  writer->SetFileName(argv[4]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  filter->SetAlgorithm(FilterType::AlgorithmEnum::ANCHOR);
+  writer->SetFileName(argv[5]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  filter->SetAlgorithm(FilterType::AlgorithmEnum::VHGW);
+  writer->SetFileName(argv[6]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  // Generate test image
+  writer->SetInput(filter->GetOutput());
+  writer->SetFileName(argv[3]);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

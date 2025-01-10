@@ -100,8 +100,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Image, ImageBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Image);
 
   /** Pixel type alias support. Used to declare pixel type in filters
    * or other operations. */
@@ -171,7 +171,7 @@ public:
    * example usage:
    * using OutputImageType = typename ImageType::template Rebind< float >::Type;
    *
-   * \deprecated Use RebindImageType instead
+   * Deprecated: Use RebindImageType instead
    */
   template <typename UPixelType, unsigned int VUImageDimension = VImageDimension>
   struct Rebind
@@ -207,7 +207,7 @@ public:
   void
   SetPixel(const IndexType & index, const TPixel & value)
   {
-    OffsetValueType offset = this->FastComputeOffset(index);
+    const OffsetValueType offset = this->FastComputeOffset(index);
     (*m_Buffer)[offset] = value;
   }
 
@@ -218,7 +218,7 @@ public:
   const TPixel &
   GetPixel(const IndexType & index) const
   {
-    OffsetValueType offset = this->FastComputeOffset(index);
+    const OffsetValueType offset = this->FastComputeOffset(index);
     return ((*m_Buffer)[offset]);
   }
 
@@ -229,7 +229,7 @@ public:
   TPixel &
   GetPixel(const IndexType & index)
   {
-    OffsetValueType offset = this->FastComputeOffset(index);
+    const OffsetValueType offset = this->FastComputeOffset(index);
     return ((*m_Buffer)[offset]);
   }
 
@@ -237,13 +237,21 @@ public:
    *
    * For efficiency, this function does not check that the
    * image has actually been allocated yet. */
-  TPixel & operator[](const IndexType & index) { return this->GetPixel(index); }
+  TPixel &
+  operator[](const IndexType & index)
+  {
+    return this->GetPixel(index);
+  }
 
   /** \brief Access a pixel. This version can only be an rvalue.
    *
    * For efficiency, this function does not check that the
    * image has actually been allocated yet. */
-  const TPixel & operator[](const IndexType & index) const { return this->GetPixel(index); }
+  const TPixel &
+  operator[](const IndexType & index) const
+  {
+    return this->GetPixel(index);
+  }
 
   /** Return a pointer to the beginning of the buffer.  This is used by
    * the image iterator class. */

@@ -35,7 +35,6 @@ class HistogramToTextureFeaturesFilterEnums
 {
 public:
   /**
-   * \class TextureFeature
    * \ingroup ITKStatistics
    * Texture feature types
    */
@@ -54,7 +53,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKStatistics_EXPORT std::ostream &
-                            operator<<(std::ostream & out, const HistogramToTextureFeaturesFilterEnums::TextureFeature value);
+operator<<(std::ostream & out, const HistogramToTextureFeaturesFilterEnums::TextureFeature value);
 
 /**
  * \class HistogramToTextureFeaturesFilter
@@ -140,8 +139,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HistogramToTextureFeaturesFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HistogramToTextureFeaturesFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);

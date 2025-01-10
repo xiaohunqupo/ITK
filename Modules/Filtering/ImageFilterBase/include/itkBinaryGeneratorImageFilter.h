@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryGeneratorImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryGeneratorImageFilter);
 
   /** Some convenient type alias. */
   using Input1ImageType = TInputImage1;

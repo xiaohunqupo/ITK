@@ -56,8 +56,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapePriorMAPCostFunctionBase, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapePriorMAPCostFunctionBase);
 
   /**  MeasureType type alias.
    *  It defines a type used to return the cost function value. */
@@ -114,7 +114,7 @@ public:
   void
   GetDerivative(const ParametersType &, DerivativeType &) const override
   {
-    itkExceptionMacro(<< "This function is currently not supported.");
+    itkExceptionMacro("This function is currently not supported.");
   }
 
   /** Return the number of parameters. */

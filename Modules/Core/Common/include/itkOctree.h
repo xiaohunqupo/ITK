@@ -137,8 +137,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Octree, OctreeBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Octree);
 
   ImageTypePointer
   GetImage();
@@ -149,7 +149,8 @@ public:
                   const unsigned int ysize,
                   const unsigned int zsize) override;
 
-  void BuildFromImage(Image<TPixel, 3> * fromImage);
+  void
+  BuildFromImage(Image<TPixel, 3> * fromImage);
 
   Octree();
   ~Octree() override;

@@ -51,8 +51,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GE4ImageIOFactory, ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GE4ImageIOFactory);
 
   /** Register one factory of this type  */
   static void

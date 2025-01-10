@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VotingBinaryImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VotingBinaryImageFilter);
 
   /** Image type alias support */
   using InputPixelType = typename InputImageType::PixelType;

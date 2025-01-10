@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LBFGSBOptimizer, SingleValuedNonLinearVnlOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LBFGSBOptimizer);
 
   /**  BoundValue type.
    *  Use for defining the lower and upper bounds on the variables.
@@ -176,7 +176,7 @@ public:
   void
   SetScales(const ScalesType &)
   {
-    itkExceptionMacro(<< "This optimizer does not support scales.");
+    itkExceptionMacro("This optimizer does not support scales.");
   }
 
   /** Get the current iteration number. */
@@ -191,7 +191,7 @@ public:
   itkGetConstReferenceMacro(InfinityNormOfProjectedGradient, double);
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /** Returns false unconditionally because LBFGSBOptimizer does not support using scales. */

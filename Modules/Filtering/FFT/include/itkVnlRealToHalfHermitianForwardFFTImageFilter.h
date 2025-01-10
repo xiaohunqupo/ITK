@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VnlRealToHalfHermitianForwardFFTImageFilter, RealToHalfHermitianForwardFFTImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VnlRealToHalfHermitianForwardFFTImageFilter);
 
   /** Extract the dimensionality of the images. They are assumed to be
    * the same. */

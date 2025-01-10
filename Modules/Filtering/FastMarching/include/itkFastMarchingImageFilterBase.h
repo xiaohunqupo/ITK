@@ -86,8 +86,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingImageFilterBase, FastMarchingBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingImageFilterBase);
 
 
   using InputImageType = typename Superclass::InputDomainType;

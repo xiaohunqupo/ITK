@@ -34,8 +34,6 @@ template <typename TInput1, typename TInput2, typename TOutput>
 class Atan2
 {
 public:
-  Atan2() = default;
-  ~Atan2() = default;
   bool
   operator==(const Atan2 &) const
   {
@@ -93,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(Atan2ImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Atan2ImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

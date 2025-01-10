@@ -53,8 +53,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NaryFunctorImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NaryFunctorImageFilter);
 
   /** Some type alias. */
   using FunctorType = TFunction;

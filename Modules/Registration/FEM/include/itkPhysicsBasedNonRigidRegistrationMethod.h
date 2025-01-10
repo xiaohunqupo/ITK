@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(PhysicsBasedNonRigidRegistrationMethod, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PhysicsBasedNonRigidRegistrationMethod);
 
   using MovingImageType = TMovingImage;
   using FixedImageType = TFixedImage;

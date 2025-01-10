@@ -57,8 +57,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(StretchIntensityImageFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(StretchIntensityImageFilter);
 
   itkSetMacro(OutputMinimum, OutputPixelType);
   itkSetMacro(OutputMaximum, OutputPixelType);

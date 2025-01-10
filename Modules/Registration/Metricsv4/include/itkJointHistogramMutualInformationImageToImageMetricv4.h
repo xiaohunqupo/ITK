@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(JointHistogramMutualInformationImageToImageMetricv4, ImageToImageMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JointHistogramMutualInformationImageToImageMetricv4);
 
   /** Type used for representing parameter values  */
   using typename Superclass::CoordinateRepresentationType;

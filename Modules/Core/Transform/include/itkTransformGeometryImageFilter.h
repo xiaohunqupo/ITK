@@ -112,8 +112,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(TransformGeometryImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformGeometryImageFilter);
 
   /** input/output image type alias */
   using InputImageType = TInputImage;
@@ -155,7 +155,7 @@ protected:
   GenerateOutputInformation() override;
 
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   void
   GenerateData() override;

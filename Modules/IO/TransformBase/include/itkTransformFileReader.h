@@ -57,8 +57,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformFileReaderTemplate, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformFileReaderTemplate);
 
   /** Set the filename  */
   itkSetStringMacro(FileName);

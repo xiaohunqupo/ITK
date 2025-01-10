@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(Version, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Version);
 
   /** Return the version of itk this object is a part of. */
   static const char *

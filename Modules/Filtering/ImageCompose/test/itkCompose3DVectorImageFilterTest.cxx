@@ -46,8 +46,7 @@ itkCompose3DVectorImageFilterTest(int, char *[])
   size[1] = 2;
   size[2] = 2;
 
-  IndexType start;
-  start.Fill(0);
+  constexpr IndexType start{};
 
   RegionType region;
   region.SetIndex(start);
@@ -82,7 +81,7 @@ itkCompose3DVectorImageFilterTest(int, char *[])
 
   using OutputImageType = FilterType::OutputImageType;
 
-  OutputImageType::Pointer threeVectorImage = filter->GetOutput();
+  const OutputImageType::Pointer threeVectorImage = filter->GetOutput();
 
   using OutputIterator = itk::ImageRegionIterator<OutputImageType>;
   using InputIterator = itk::ImageRegionIterator<InputImageType>;

@@ -51,8 +51,8 @@ public:
 
   using RealType = TRealValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KernelFunctionBase, FunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KernelFunctionBase);
 
   /** Evaluate the function. Subclasses must implement this. */
   TRealValueType

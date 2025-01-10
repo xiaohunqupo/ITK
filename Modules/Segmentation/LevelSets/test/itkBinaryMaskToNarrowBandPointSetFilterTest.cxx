@@ -58,7 +58,7 @@ itkBinaryMaskToNarrowBandPointSetFilterTest(int argc, char * argv[])
   region.SetSize(size);
 
   binaryMask->SetRegions(region);
-  binaryMask->Allocate(true); // initialize buffer to zero
+  binaryMask->AllocateInitialized();
 
   size[0] = 60;
   size[1] = 60;
@@ -120,16 +120,16 @@ itkBinaryMaskToNarrowBandPointSetFilterTest(int argc, char * argv[])
   using PointDataContainerPointer = PointDataContainer::Pointer;
   using PointDataIterator = PointDataContainer::ConstIterator;
 
-  PointSetType::Pointer pointSet = narrowBandGenerator->GetOutput();
+  const PointSetType::Pointer pointSet = narrowBandGenerator->GetOutput();
 
-  PointsContainerPointer    points = pointSet->GetPoints();
-  PointDataContainerPointer pointData = pointSet->GetPointData();
+  const PointsContainerPointer    points = pointSet->GetPoints();
+  const PointDataContainerPointer pointData = pointSet->GetPointData();
 
-  PointsIterator point = points->Begin();
-  PointsIterator lastPoint = points->End();
+  PointsIterator       point = points->Begin();
+  const PointsIterator lastPoint = points->End();
 
-  PointDataIterator data = pointData->Begin();
-  PointDataIterator lastData = pointData->End();
+  PointDataIterator       data = pointData->Begin();
+  const PointDataIterator lastData = pointData->End();
 
   while (point != lastPoint && data != lastData)
   {

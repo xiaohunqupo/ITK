@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NeighborhoodOperatorImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NeighborhoodOperatorImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */

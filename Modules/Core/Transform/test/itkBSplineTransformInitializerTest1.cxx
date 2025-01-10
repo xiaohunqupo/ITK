@@ -62,7 +62,7 @@ itkBSplineTransformInitializerTest1(int argc, char * argv[])
 
   movingReader->SetFileName(argv[3]);
 
-  FixedImageType::ConstPointer fixedImage = fixedReader->GetOutput();
+  const FixedImageType::ConstPointer fixedImage = fixedReader->GetOutput();
 
   using FilterType = itk::ResampleImageFilter<MovingImageType, FixedImageType>;
 
@@ -74,22 +74,22 @@ itkBSplineTransformInitializerTest1(int argc, char * argv[])
 
   resampler->SetInterpolator(interpolator);
 
-  FixedImageType::SpacingType   fixedSpacing = fixedImage->GetSpacing();
-  FixedImageType::PointType     fixedOrigin = fixedImage->GetOrigin();
-  FixedImageType::DirectionType fixedDirection = fixedImage->GetDirection();
+  const FixedImageType::SpacingType   fixedSpacing = fixedImage->GetSpacing();
+  const FixedImageType::PointType     fixedOrigin = fixedImage->GetOrigin();
+  const FixedImageType::DirectionType fixedDirection = fixedImage->GetDirection();
 
   resampler->SetOutputSpacing(fixedSpacing);
   resampler->SetOutputOrigin(fixedOrigin);
   resampler->SetOutputDirection(fixedDirection);
 
-  FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
-  FixedImageType::SizeType   fixedSize = fixedRegion.GetSize();
+  const FixedImageType::RegionType fixedRegion = fixedImage->GetBufferedRegion();
+  const FixedImageType::SizeType   fixedSize = fixedRegion.GetSize();
   resampler->SetSize(fixedSize);
   resampler->SetOutputStartIndex(fixedRegion.GetIndex());
 
   resampler->SetInput(movingReader->GetOutput());
 
-  const unsigned int     SpaceDimension = ImageDimension;
+  constexpr unsigned int SpaceDimension = ImageDimension;
   constexpr unsigned int SplineOrder = 3;
   using CoordinateRepType = double;
 
@@ -102,14 +102,22 @@ itkBSplineTransformInitializerTest1(int argc, char * argv[])
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(transformInitializer, BSplineTransformInitializer, Object);
 
-  TransformType::MeshSizeType meshSize;
-  meshSize.Fill(4);
+
+  // Test exceptions
+
+  // Expect an exception as no transform is set
+  ITK_TRY_EXPECT_EXCEPTION(transformInitializer->InitializeTransform());
 
   transformInitializer->SetTransform(bsplineTransform);
   ITK_TEST_SET_GET_VALUE(bsplineTransform, transformInitializer->GetTransform());
 
+  // Expect an exception as no image is set
+  ITK_TRY_EXPECT_EXCEPTION(transformInitializer->InitializeTransform());
+
   transformInitializer->SetImage(fixedImage);
   ITK_TEST_SET_GET_VALUE(fixedImage, transformInitializer->GetImage());
+
+  auto meshSize = TransformType::MeshSizeType::Filled(4);
 
   transformInitializer->SetTransformDomainMeshSize(meshSize);
   ITK_TEST_SET_GET_VALUE(meshSize, transformInitializer->GetTransformDomainMeshSize());

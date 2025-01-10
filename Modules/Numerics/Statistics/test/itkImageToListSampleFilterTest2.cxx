@@ -42,7 +42,7 @@ itkImageToListSampleFilterTest2(int, char *[])
   start.Fill(0);
   size.Fill(10);
 
-  ImageType::RegionType region(start, size);
+  const ImageType::RegionType region(start, size);
   image->SetRegions(region);
   image->Allocate();
   using IteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
@@ -61,8 +61,7 @@ itkImageToListSampleFilterTest2(int, char *[])
 
   auto maskImage = MaskImageType::New();
   maskImage->SetRegions(region);
-  maskImage->Allocate(true); // initialize
-                             // buffer to zero
+  maskImage->AllocateInitialized();
   MaskImageType::IndexType startMask;
   MaskImageType::SizeType  sizeMask;
 
@@ -74,7 +73,7 @@ itkImageToListSampleFilterTest2(int, char *[])
   sizeMask[1] = 3;
   sizeMask[2] = 4;
 
-  MaskImageType::RegionType regionMask(startMask, sizeMask);
+  const MaskImageType::RegionType regionMask(startMask, sizeMask);
   using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
   MaskIteratorType mit(maskImage, regionMask);
   mit.GoToBegin();

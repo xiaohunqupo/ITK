@@ -97,8 +97,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LBFGSOptimizer, SingleValuedNonLinearVnlOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LBFGSOptimizer);
 
   /** InternalParameters type alias. */
   using InternalParametersType = vnl_vector<double>;
@@ -168,7 +168,7 @@ public:
   GetValue() const;
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
 protected:

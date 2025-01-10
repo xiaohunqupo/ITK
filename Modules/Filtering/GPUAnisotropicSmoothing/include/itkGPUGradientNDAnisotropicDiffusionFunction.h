@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(GPUGradientNDAnisotropicDiffusionFunction, GPUScalarAnisotropicDiffusionFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUGradientNDAnisotropicDiffusionFunction);
 
   /** Inherit some parameters from the superclass type. */
   using typename Superclass::ImageType;

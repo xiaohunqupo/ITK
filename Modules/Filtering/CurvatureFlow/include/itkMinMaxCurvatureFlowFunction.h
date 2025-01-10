@@ -54,8 +54,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MinMaxCurvatureFlowFunction, CurvatureFlowFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MinMaxCurvatureFlowFunction);
 
   /** Inherit some parameters from the superclass type. */
   using typename Superclass::ImageType;

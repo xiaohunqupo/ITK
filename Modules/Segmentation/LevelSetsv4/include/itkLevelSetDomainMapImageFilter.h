@@ -52,8 +52,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetDomainMapImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetDomainMapImageFilter);
 
   using InputImageType = TInputImage;
   using InputImageConstPointer = typename InputImageType::ConstPointer;

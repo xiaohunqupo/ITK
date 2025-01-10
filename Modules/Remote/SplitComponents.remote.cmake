@@ -42,12 +42,13 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Matt McCormick <matt.mccormick@kitware.com>
-itk_fetch_module(SplitComponents
-"This module contains filter called
+itk_fetch_module(
+  SplitComponents
+  "This module contains filter called
 itk::SplitComponentsImageFilter.  This filter generates component images from an
 itk::Image of, for example, itk::Vector, itk::CovariantVector, or
-itk::SymmetricSecondRankTensor. https://www.insight-journal.org/browse/publication/774"
+itk::SymmetricSecondRankTensor. https://doi.org/10.54294/4c92vb"
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKSplitComponents.git
-  GIT_TAG 58428c55401e3906f9dbec1f9599e13a7c034ea8
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKSplitComponents.git
+  GIT_TAG 539fcd8faca472c760a567c041cb53c610cd9108
   )

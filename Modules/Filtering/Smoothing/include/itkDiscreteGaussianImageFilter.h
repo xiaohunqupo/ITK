@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DiscreteGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiscreteGaussianImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;
@@ -104,7 +104,10 @@ public:
 
   /** Typedef to describe the boundary condition. */
   using BoundaryConditionType = ImageBoundaryCondition<TInputImage>;
-  using InputBoundaryConditionPointerType = BoundaryConditionType *;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using InputBoundaryConditionPointerType [[deprecated("Please just use `BoundaryConditionType *` instead!")]] =
+    BoundaryConditionType *;
+#endif
   using InputDefaultBoundaryConditionType = ZeroFluxNeumannBoundaryCondition<TInputImage>;
   using RealBoundaryConditionPointerType = ImageBoundaryCondition<RealOutputImageType> *;
   using RealDefaultBoundaryConditionType = ZeroFluxNeumannBoundaryCondition<RealOutputImageType>;
@@ -147,8 +150,8 @@ public:
   itkSetMacro(FilterDimensionality, unsigned int);
 
   /** Set/get the boundary condition. */
-  itkSetMacro(InputBoundaryCondition, InputBoundaryConditionPointerType);
-  itkGetConstMacro(InputBoundaryCondition, InputBoundaryConditionPointerType);
+  itkSetMacro(InputBoundaryCondition, BoundaryConditionType *);
+  itkGetConstMacro(InputBoundaryCondition, BoundaryConditionType *);
   itkSetMacro(RealBoundaryCondition, RealBoundaryConditionPointerType);
   itkGetConstMacro(RealBoundaryCondition, RealBoundaryConditionPointerType);
 
@@ -313,8 +316,8 @@ public:
    * This parameter was introduced to reduce the memory used by images
    * internally, at the cost of performance.
    */
-  itkLegacyMacro(unsigned int GetInternalNumberOfStreamDivisions() const);
-  itkLegacyMacro(void SetInternalNumberOfStreamDivisions(unsigned int));
+  itkLegacyMacro(unsigned int GetInternalNumberOfStreamDivisions() const;)
+  itkLegacyMacro(void SetInternalNumberOfStreamDivisions(unsigned int);)
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -387,7 +390,7 @@ private:
 
   /** Pointer to a persistent boundary condition object used
    ** for the image iterator. */
-  InputBoundaryConditionPointerType m_InputBoundaryCondition{};
+  BoundaryConditionType * m_InputBoundaryCondition{};
 
   /** Default boundary condition */
   InputDefaultBoundaryConditionType m_InputDefaultBoundaryCondition{};

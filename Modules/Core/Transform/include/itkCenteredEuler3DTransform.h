@@ -48,8 +48,8 @@ public:
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CenteredEuler3DTransform, Euler3DTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CenteredEuler3DTransform);
 
   /** Dimension of the space. */
   static constexpr unsigned int SpaceDimension = 3;

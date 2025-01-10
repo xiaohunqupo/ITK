@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Cos
 {
 public:
-  Cos() = default;
-  ~Cos() = default;
   bool
   operator==(const Cos &) const
   {
@@ -89,8 +87,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(CosImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CosImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

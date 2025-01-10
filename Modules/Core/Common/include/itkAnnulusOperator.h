@@ -82,8 +82,8 @@ public:
   using typename Superclass::OffsetType;
   using SpacingType = Vector<double, TDimension>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AnnulusOperator, NeighborhoodOperator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnnulusOperator);
 
   /** Create the operator. The radius of the operator is determined automatically. */
   void
@@ -245,9 +245,9 @@ private:
   double      m_Thickness{ 1.0 };
   bool        m_Normalize{ false };
   bool        m_BrightCenter{ false };
-  PixelType   m_InteriorValue{ NumericTraits<PixelType>::ZeroValue() };
+  PixelType   m_InteriorValue{};
   PixelType   m_AnnulusValue{ NumericTraits<PixelType>::OneValue() };
-  PixelType   m_ExteriorValue{ NumericTraits<PixelType>::ZeroValue() };
+  PixelType   m_ExteriorValue{};
   SpacingType m_Spacing{ MakeFilled<SpacingType>(1.0) };
 };
 } // namespace itk

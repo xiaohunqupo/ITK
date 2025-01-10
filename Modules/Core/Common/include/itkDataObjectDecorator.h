@@ -82,8 +82,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DataObjectDecorator, DataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DataObjectDecorator);
 
   /** Set the contained object */
   virtual void

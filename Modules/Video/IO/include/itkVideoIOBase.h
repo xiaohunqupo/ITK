@@ -85,8 +85,8 @@ public:
   /** Video-specific type alias */
   using CameraIDType = SizeValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VideoIOBase, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VideoIOBase);
 
   /** Close the reader and writer and reset members */
   virtual void

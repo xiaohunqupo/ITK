@@ -379,7 +379,7 @@ main(int argc, char * argv[])
   geodesicActiveContour->SetAdvectionScaling(1.0);
   //  Software Guide : EndCodeSnippet
 
-  //  Once activiated the level set evolution will stop if the convergence
+  //  Once activated the level set evolution will stop if the convergence
   //  criteria or if the maximum number of iterations is reached.  The
   //  convergence criteria is defined in terms of the root mean squared (RMS)
   //  change in the level set function. The evolution is said to have
@@ -847,9 +847,9 @@ main(int argc, char * argv[])
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  double initRadius = 1.05;
-  double grow = 1.1;
-  double shrink = pow(grow, -0.25);
+  constexpr double initRadius = 1.05;
+  constexpr double grow = 1.1;
+  const double     shrink = pow(grow, -0.25);
   optimizer->Initialize(initRadius, grow, shrink);
 
   optimizer->SetEpsilon(1.0e-6); // minimal search radius

@@ -154,10 +154,8 @@ public:
     {
       return this->Evaluate(x);
     }
-    else
-    {
-      return GetCachedValue(x);
-    }
+
+    return GetCachedValue(x);
   }
 
   /** Evaluate the function at point x.  */
@@ -175,7 +173,7 @@ protected:
   void
   AddNewClass(double mean, double sigma)
   {
-    TargetClass aClass(mean, sigma);
+    const TargetClass aClass(mean, sigma);
 
     m_Targets.push_back(aClass);
   }

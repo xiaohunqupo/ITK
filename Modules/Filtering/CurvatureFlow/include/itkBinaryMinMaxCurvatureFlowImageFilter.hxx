@@ -28,8 +28,7 @@ BinaryMinMaxCurvatureFlowImageFilter<TInputImage, TOutputImage>::BinaryMinMaxCur
 {
   m_Threshold = 0.0;
 
-  typename BinaryMinMaxCurvatureFlowFunctionType::Pointer cffp;
-  cffp = BinaryMinMaxCurvatureFlowFunctionType::New();
+  auto cffp = BinaryMinMaxCurvatureFlowFunctionType::New();
 
   this->SetDifferenceFunction(static_cast<FiniteDifferenceFunctionType *>(cffp.GetPointer()));
 }
@@ -53,7 +52,7 @@ BinaryMinMaxCurvatureFlowImageFilter<TInputImage, TOutputImage>::InitializeItera
 
   if (!f)
   {
-    itkExceptionMacro(<< "DifferenceFunction not of type BinaryMinMaxCurvatureFlowFunction");
+    itkExceptionMacro("DifferenceFunction not of type BinaryMinMaxCurvatureFlowFunction");
   }
 
   f->SetThreshold(m_Threshold);

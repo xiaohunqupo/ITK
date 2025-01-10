@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MinimumMaximumImageCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MinimumMaximumImageCalculator);
 
   /** Type definition for the input image. */
   using ImageType = TInputImage;

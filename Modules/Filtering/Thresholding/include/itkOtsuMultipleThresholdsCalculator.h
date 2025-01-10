@@ -71,7 +71,7 @@ public:
   using InstanceIdentifierVectorType = std::vector<InstanceIdentifierType>;
 
   /**Standard Macros */
-  itkTypeMacro(OtsuMultipleThresholdsCalculator, HistogramAlgorithmsBase);
+  itkOverrideGetNameOfClassMacro(OtsuMultipleThresholdsCalculator);
   itkNewMacro(Self);
 
   /** Typedef for the thresholds output */
@@ -118,11 +118,7 @@ private:
   SizeValueType m_NumberOfThresholds{ 1 };
   OutputType    m_Output{};
   bool          m_ValleyEmphasis{ false };
-#if defined(ITKV4_COMPATIBILITY)
-  bool m_ReturnBinMidpoint{ true };
-#else
-  bool m_ReturnBinMidpoint{ false };
-#endif
+  bool          m_ReturnBinMidpoint{ false };
 };
 } // end of namespace itk
 

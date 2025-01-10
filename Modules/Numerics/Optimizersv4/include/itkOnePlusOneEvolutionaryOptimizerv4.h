@@ -80,8 +80,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(OnePlusOneEvolutionaryOptimizerv4, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(OnePlusOneEvolutionaryOptimizerv4);
 
   /** Type of the Cost Function   */
   using CostFunctionType = SingleValuedCostFunctionv4;
@@ -165,7 +165,7 @@ public:
   itkGetConstReferenceMacro(MetricWorstPossibleValue, double);
   itkSetMacro(MetricWorstPossibleValue, double);
 
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
 protected:

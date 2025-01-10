@@ -42,7 +42,7 @@ itkImageToVideoFilterTest(int argc, char * argv[])
   }
 
   using PixelType = float;
-  const unsigned int Dimension = 3;
+  constexpr unsigned int Dimension = 3;
 
   using ImageType = itk::Image<PixelType, Dimension>;
 
@@ -68,14 +68,13 @@ itkImageToVideoFilterTest(int argc, char * argv[])
 
   videoFilter->SetInput(inputImage);
   // Arbitrarily set 0th axis as temporal dimension to split frames
-  itk::IndexValueType frameAxis = 0;
+  constexpr itk::IndexValueType frameAxis = 0;
   videoFilter->SetFrameAxis(frameAxis);
   ITK_TEST_SET_GET_VALUE(frameAxis, videoFilter->GetFrameAxis());
 
   ITK_TRY_EXPECT_NO_EXCEPTION(videoFilter->Update());
 
   auto videoOutput = videoFilter->GetOutput();
-  auto imageRegion = inputImage->GetLargestPossibleRegion();
 
   // Verify start frame and frame duration in output match size of designated temporal axis in input
   ITK_TEST_EXPECT_EQUAL(

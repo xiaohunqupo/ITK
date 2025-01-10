@@ -35,8 +35,7 @@ namespace itk
  * 1) Set the direction by calling  \code SetDirection \endcode
  * 2) call
    \code
-   itk::Size<2> radius;
-   radius.Fill(1);
+   constexpr auto radius = itk::Size<2>::Filled(1);
    sobelOperator.CreateToRadius(radius);
    \endcode
  * 3) You may optionally scale the coefficients of this operator using the
@@ -102,7 +101,7 @@ public:
   using Self = SobelOperator;
   using Superclass = NeighborhoodOperator<TPixel, VDimension, TAllocator>;
 
-  itkTypeMacro(SobelOperator, NeighborhoodOperator);
+  itkOverrideGetNameOfClassMacro(SobelOperator);
 
   /** Creates the operator with length only in the specified direction.
    * The radius of the operator will be 0 except along the axis on which

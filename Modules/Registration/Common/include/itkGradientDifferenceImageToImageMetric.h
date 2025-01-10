@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDifferenceImageToImageMetric, ImageToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientDifferenceImageToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

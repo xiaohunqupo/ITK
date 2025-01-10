@@ -97,8 +97,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ReconstructionByErosionImageFilter, ReconstructionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ReconstructionByErosionImageFilter);
 
 protected:
   ReconstructionByErosionImageFilter() { this->m_MarkerValue = NumericTraits<typename TOutputImage::PixelType>::max(); }

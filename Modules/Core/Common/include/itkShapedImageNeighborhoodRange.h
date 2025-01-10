@@ -347,7 +347,8 @@ private:
     {}
 
 
-    TImageNeighborhoodPixelAccessPolicy CreatePixelAccessPolicy(EmptyPixelAccessParameter) const
+    TImageNeighborhoodPixelAccessPolicy
+    CreatePixelAccessPolicy(EmptyPixelAccessParameter) const
     {
       return TImageNeighborhoodPixelAccessPolicy{
         m_ImageSize, m_OffsetTable, m_NeighborhoodAccessor, m_RelativeLocation + *m_CurrentOffset
@@ -380,17 +381,15 @@ private:
      * the guarantee added to the C++14 Standard: "value-initialized iterators
      * may be compared and shall compare equal to other value-initialized
      * iterators of the same type."
-     * \note `QualifiedIterator<VIsConst>` follows the C++ "Rule of Zero" when
-     * VIsConst is true: The other five "special member functions" of the class
-     * are then implicitly defaulted. When VIsConst is false, its
-     * copy-constructor is provided explicitly, but it still behaves the same as
-     * a default implementation.
+     *
+     * \note The other five "special member functions" are defaulted implicitly,
+     * following the C++ "Rule of Zero".
      */
     QualifiedIterator() = default;
 
-    /** Constructor that allows implicit conversion from non-const to const
-     * iterator. Also serves as copy-constructor of a non-const iterator.  */
-    QualifiedIterator(const QualifiedIterator<false> & arg) noexcept
+    /** Constructor for implicit conversion from non-const to const iterator.  */
+    template <bool VIsArgumentConst, typename = std::enable_if_t<VIsConst && !VIsArgumentConst>>
+    QualifiedIterator(const QualifiedIterator<VIsArgumentConst> & arg) noexcept
       : m_ImageBufferPointer{ arg.m_ImageBufferPointer }
       ,
       // Note: Use parentheses instead of curly braces to initialize data members,
@@ -405,7 +404,8 @@ private:
 
 
     /**  Returns a reference to the current pixel. */
-    reference operator*() const noexcept
+    reference
+    operator*() const noexcept
     {
       return reference{ m_ImageBufferPointer, CreatePixelAccessPolicy(m_OptionalPixelAccessParameter) };
     }
@@ -568,12 +568,11 @@ private:
 
 
     /** Returns it[n] for iterator 'it' and integer value 'n'. */
-    reference operator[](const difference_type n) const noexcept { return *(*this + n); }
-
-
-    /** Explicitly-defaulted assignment operator. */
-    QualifiedIterator &
-    operator=(const QualifiedIterator &) noexcept = default;
+    reference
+    operator[](const difference_type n) const noexcept
+    {
+      return *(*this + n);
+    }
   };
 
   static constexpr bool IsImageTypeConst = std::is_const_v<TImage>;
@@ -693,8 +692,8 @@ public:
                                const OptionalPixelAccessParameterType optionalPixelAccessParameter = {})
     : ShapedImageNeighborhoodRange{ image,
                                     location,
-                                    shapeOffsets.data(),
-                                    shapeOffsets.size(),
+                                    std::data(shapeOffsets),
+                                    std::size(shapeOffsets),
                                     optionalPixelAccessParameter }
   {}
 
@@ -784,7 +783,8 @@ public:
    * iterator::reference. The return value is a proxy object that behaves like a
    * reference to the pixel.
    */
-  typename QualifiedIterator<false>::reference operator[](const size_t n) const noexcept
+  typename QualifiedIterator<false>::reference
+  operator[](const size_t n) const noexcept
   {
     assert(n < this->size());
     assert(n <= static_cast<size_t>(std::numeric_limits<ptrdiff_t>::max()));

@@ -69,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(AndImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AndImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

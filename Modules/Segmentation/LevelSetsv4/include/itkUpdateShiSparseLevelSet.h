@@ -52,8 +52,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(UpdateShiSparseLevelSet, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(UpdateShiSparseLevelSet);
 
   static constexpr unsigned int ImageDimension = VDimension;
 

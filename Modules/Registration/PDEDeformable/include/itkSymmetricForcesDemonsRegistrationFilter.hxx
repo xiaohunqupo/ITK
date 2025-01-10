@@ -25,8 +25,7 @@ template <typename TFixedImage, typename TMovingImage, typename TDisplacementFie
 SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::
   SymmetricForcesDemonsRegistrationFilter()
 {
-  typename DemonsRegistrationFunctionType::Pointer drfp;
-  drfp = DemonsRegistrationFunctionType::New();
+  auto drfp = DemonsRegistrationFunctionType::New();
 
   this->SetDifferenceFunction(static_cast<FiniteDifferenceFunctionType *>(drfp.GetPointer()));
 }
@@ -40,7 +39,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!f)
   {
-    itkExceptionMacro(<< "FiniteDifferenceFunction not of type DemonsRegistrationFunctionType");
+    itkExceptionMacro("FiniteDifferenceFunction not of type DemonsRegistrationFunctionType");
   }
 
   f->SetDisplacementField(this->GetDisplacementField());
@@ -63,7 +62,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to SymmetricForcesDemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to SymmetricForcesDemonsRegistrationFunction");
   }
 
   return drfp->GetMetric();
@@ -78,7 +77,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to DemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to DemonsRegistrationFunction");
   }
 
   return drfp->GetIntensityDifferenceThreshold();
@@ -93,7 +92,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to SymmetricDemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to SymmetricDemonsRegistrationFunction");
   }
 
   drfp->SetIntensityDifferenceThreshold(threshold);
@@ -107,7 +106,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to SymmetricForcesDemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to SymmetricForcesDemonsRegistrationFunction");
   }
 
   return drfp->GetRMSChange();
@@ -131,7 +130,7 @@ SymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacement
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to DemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to DemonsRegistrationFunction");
   }
 
   this->SetRMSChange(drfp->GetRMSChange());

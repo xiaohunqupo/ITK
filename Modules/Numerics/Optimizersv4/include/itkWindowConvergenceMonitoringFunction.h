@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(WindowConvergenceMonitoringFunction, ConvergenceMonitoringFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WindowConvergenceMonitoringFunction);
 
   using ScalarType = TScalar;
   using RealType = typename NumericTraits<ScalarType>::RealType;

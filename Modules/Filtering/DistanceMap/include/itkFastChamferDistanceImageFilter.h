@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastChamferDistanceImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastChamferDistanceImageFilter);
 
   /** Type for input image. */
   using InputImageType = TInputImage;

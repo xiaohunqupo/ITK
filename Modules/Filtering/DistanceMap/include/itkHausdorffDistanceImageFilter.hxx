@@ -30,9 +30,8 @@ HausdorffDistanceImageFilter<TInputImage1, TInputImage2>::HausdorffDistanceImage
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(2);
 
-  m_HausdorffDistance = NumericTraits<RealType>::ZeroValue();
-  m_AverageHausdorffDistance = NumericTraits<RealType>::ZeroValue();
-  m_UseImageSpacing = true;
+  m_HausdorffDistance = RealType{};
+  m_AverageHausdorffDistance = RealType{};
 }
 
 template <typename TInputImage1, typename TInputImage2>
@@ -74,12 +73,12 @@ HausdorffDistanceImageFilter<TInputImage1, TInputImage2>::GenerateInputRequested
   // - the corresponding region of the second image
   if (this->GetInput1())
   {
-    InputImage1Pointer image1 = const_cast<InputImage1Type *>(this->GetInput1());
+    const InputImage1Pointer image1 = const_cast<InputImage1Type *>(this->GetInput1());
     image1->SetRequestedRegionToLargestPossibleRegion();
 
     if (this->GetInput2())
     {
-      InputImage2Pointer image2 = const_cast<InputImage2Type *>(this->GetInput2());
+      const InputImage2Pointer image2 = const_cast<InputImage2Type *>(this->GetInput2());
       image2->SetRequestedRegion(this->GetInput1()->GetRequestedRegion());
     }
   }
@@ -97,10 +96,10 @@ template <typename TInputImage1, typename TInputImage2>
 void
 HausdorffDistanceImageFilter<TInputImage1, TInputImage2>::GenerateData()
 {
-  ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
+  const ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
 
   // Pass the first input through as the output
-  InputImage1Pointer image = const_cast<TInputImage1 *>(this->GetInput1());
+  const InputImage1Pointer image = const_cast<TInputImage1 *>(this->GetInput1());
   this->GraftOutput(image);
 
 

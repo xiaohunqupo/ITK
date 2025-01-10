@@ -86,12 +86,10 @@ PoolMultiThreader::PoolMultiThreader()
   }
 
   ThreadIdType defaultThreads = std::max(1u, GetGlobalDefaultNumberOfThreads());
-#if !defined(ITKV4_COMPATIBILITY)
   if (defaultThreads > 1) // one work unit for only one thread
   {
     defaultThreads *= 4;
   }
-#endif
   m_NumberOfWorkUnits = std::min<ThreadIdType>(ITK_MAX_THREADS, defaultThreads);
   m_MaximumNumberOfThreads = m_ThreadPool->GetMaximumNumberOfThreads();
 }
@@ -101,7 +99,7 @@ PoolMultiThreader::~PoolMultiThreader() = default;
 void
 PoolMultiThreader::SetSingleMethod(ThreadFunctionType f, void * data)
 {
-  m_SingleMethod = f;
+  m_SingleMethod = std::move(f);
   m_SingleData = data;
 }
 
@@ -109,7 +107,7 @@ void
 PoolMultiThreader::SetMaximumNumberOfThreads(ThreadIdType numberOfThreads)
 {
   Superclass::SetMaximumNumberOfThreads(numberOfThreads);
-  ThreadIdType threadCount = m_ThreadPool->GetMaximumNumberOfThreads();
+  const ThreadIdType threadCount = m_ThreadPool->GetMaximumNumberOfThreads();
   if (threadCount < m_MaximumNumberOfThreads)
   {
     m_ThreadPool->AddThreads(m_MaximumNumberOfThreads - threadCount);
@@ -124,7 +122,7 @@ PoolMultiThreader::SingleMethodExecute()
 
   if (!m_SingleMethod)
   {
-    itkExceptionMacro(<< "No single method set!");
+    itkExceptionMacro("No single method set!");
   }
 
   // obey the global maximum number of threads limit
@@ -256,7 +254,7 @@ PoolMultiThreader::ParallelizeImageRegion(unsigned int         dimension,
     else
     {
       const ImageRegionSplitterBase * splitter = ImageSourceCommon::GetGlobalDefaultSplitter();
-      ThreadIdType                    splitCount = splitter->GetNumberOfSplits(region, m_NumberOfWorkUnits);
+      const ThreadIdType              splitCount = splitter->GetNumberOfSplits(region, m_NumberOfWorkUnits);
       ProgressReporter                reporter(filter, 0, splitCount);
       itkAssertOrThrowMacro(splitCount <= m_NumberOfWorkUnits, "Split count is greater than number of work units!");
       ImageIORegion iRegion;

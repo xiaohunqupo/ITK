@@ -46,8 +46,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MetaSurfaceConverter, MetaConverterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MetaSurfaceConverter);
 
   using typename Superclass::SpatialObjectType;
   using SpatialObjectPointer = typename SpatialObjectType::Pointer;

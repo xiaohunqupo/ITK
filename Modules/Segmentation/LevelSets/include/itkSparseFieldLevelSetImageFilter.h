@@ -260,8 +260,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SparseFieldLevelSetImageFilter, FiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SparseFieldLevelSetImageFilter);
 
   /** Information derived from the image types. */
   using InputImageType = TInputImage;

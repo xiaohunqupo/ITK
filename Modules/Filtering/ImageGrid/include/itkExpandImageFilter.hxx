@@ -66,26 +66,16 @@ template <typename TInputImage, typename TOutputImage>
 void
 ExpandImageFilter<TInputImage, TOutputImage>::SetExpandFactors(const unsigned int factor)
 {
-  unsigned int j;
-
-  for (j = 0; j < ImageDimension; ++j)
+  if (ContainerFillWithCheck(m_ExpandFactors, factor, Self::ImageDimension))
   {
-    if (factor != m_ExpandFactors[j])
+    for (unsigned int j = 0; j < ImageDimension; ++j)
     {
-      break;
-    }
-  }
-  if (j < ImageDimension)
-  {
-    this->Modified();
-    for (j = 0; j < ImageDimension; ++j)
-    {
-      m_ExpandFactors[j] = factor;
       if (m_ExpandFactors[j] < 1)
       {
         m_ExpandFactors[j] = 1;
       }
     }
+    this->Modified();
   }
 }
 
@@ -96,7 +86,7 @@ ExpandImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateData()
 {
   if (!m_Interpolator || !this->GetInput())
   {
-    itkExceptionMacro(<< "Interpolator and/or Input not set");
+    itkExceptionMacro("Interpolator and/or Input not set");
   }
 
   // Connect input image to interpolator
@@ -110,12 +100,7 @@ ExpandImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   const OutputImageRegionType & outputRegionForThread)
 {
   // Get the input and output pointers
-  OutputImagePointer outputPtr = this->GetOutput();
-
-  // Iterator for walking the output
-  using OutputIterator = ImageScanlineIterator<TOutputImage>;
-
-  OutputIterator outIt(outputPtr, outputRegionForThread);
+  const OutputImagePointer outputPtr = this->GetOutput();
 
   // Report progress on a per scanline basis
   const SizeValueType ln = outputRegionForThread.GetSize(0);
@@ -125,7 +110,7 @@ ExpandImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   }
 
   // Walk the output region, and interpolate the input image
-  while (!outIt.IsAtEnd())
+  for (ImageScanlineIterator outIt(outputPtr, outputRegionForThread); !outIt.IsAtEnd(); outIt.NextLine())
   {
     const typename OutputImageType::IndexType outputIndex = outIt.GetIndex();
 
@@ -156,8 +141,6 @@ ExpandImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
       // scanline.
       inputIndex[0] += lineDelta;
     }
-
-    outIt.NextLine();
   }
 }
 

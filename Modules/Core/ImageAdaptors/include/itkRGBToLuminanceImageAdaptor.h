@@ -92,8 +92,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RGBToLuminanceImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RGBToLuminanceImageAdaptor);
 
 protected:
   RGBToLuminanceImageAdaptor() = default;

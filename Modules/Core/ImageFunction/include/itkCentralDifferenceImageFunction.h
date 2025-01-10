@@ -71,9 +71,9 @@ namespace itk
  * \ingroup ITKImageFunction
  */
 template <typename TInputImage,
-          typename TCoordRep = float,
+          typename TCoordinate = float,
           typename TOutputType = CovariantVector<double, TInputImage::ImageDimension>>
-class ITK_TEMPLATE_EXPORT CentralDifferenceImageFunction : public ImageFunction<TInputImage, TOutputType, TCoordRep>
+class ITK_TEMPLATE_EXPORT CentralDifferenceImageFunction : public ImageFunction<TInputImage, TOutputType, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(CentralDifferenceImageFunction);
@@ -83,12 +83,12 @@ public:
 
   /** Standard class type aliases. */
   using Self = CentralDifferenceImageFunction;
-  using Superclass = ImageFunction<TInputImage, TOutputType, TCoordRep>;
+  using Superclass = ImageFunction<TInputImage, TOutputType, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CentralDifferenceImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CentralDifferenceImageFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -102,7 +102,7 @@ public:
   /** InputPixelConvert type alias support */
   using InputPixelConvertType = DefaultConvertPixelTraits<InputPixelType>;
 
-  /** OutputType typdef support. */
+  /** OutputType typedef support. */
   using typename Superclass::OutputType;
 
   /** Output convert type alias support */
@@ -127,7 +127,7 @@ public:
   using SpacingType = typename TInputImage::SpacingType;
 
   /** Interpolator type alias support */
-  using InterpolatorType = InterpolateImageFunction<TInputImage, TCoordRep>;
+  using InterpolatorType = InterpolateImageFunction<TInputImage, TCoordinate>;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
 
   /** Set the input image.  This must be set by the user. */
@@ -260,7 +260,7 @@ private:
 
   // flag to take or not the image direction into account
   // when computing the derivatives.
-  bool m_UseImageDirection{};
+  bool m_UseImageDirection{ true };
 
   // interpolator
   InterpolatorPointer m_Interpolator{};

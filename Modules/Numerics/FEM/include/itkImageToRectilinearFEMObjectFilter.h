@@ -54,8 +54,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToRectilinearFEMObjectFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToRectilinearFEMObjectFilter);
 
   static constexpr unsigned int NDimensions = TInputImage::ImageDimension;
 

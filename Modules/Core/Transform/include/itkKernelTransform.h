@@ -69,8 +69,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KernelTransform, Transform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KernelTransform);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -125,7 +125,7 @@ public:
   using PointIdentifier = typename PointSetType::PointIdentifier;
 
   /** VectorSet type alias. */
-  using VectorSetType = itk::VectorContainer<SizeValueType, InputVectorType>;
+  using VectorSetType = itk::VectorContainer<InputVectorType>;
   using VectorSetPointer = typename VectorSetType::Pointer;
 
   /** Get/Set the source landmarks list, which we will denote \f$ p \f$. */
@@ -155,13 +155,13 @@ public:
   OutputVectorType
   TransformVector(const InputVectorType &) const override
   {
-    itkExceptionMacro(<< "TransformVector(const InputVectorType &) is not implemented for KernelTransform");
+    itkExceptionMacro("TransformVector(const InputVectorType &) is not implemented for KernelTransform");
   }
 
   OutputVnlVectorType
   TransformVector(const InputVnlVectorType &) const override
   {
-    itkExceptionMacro(<< "TransformVector(const InputVnlVectorType &) is not implemented for KernelTransform");
+    itkExceptionMacro("TransformVector(const InputVnlVectorType &) is not implemented for KernelTransform");
   }
 
   /**  Method to transform a CovariantVector. */

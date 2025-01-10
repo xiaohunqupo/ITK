@@ -59,7 +59,7 @@ public:
   static constexpr unsigned int ObjectDimensions = TDimension;
 
   itkNewMacro(Self);
-  itkTypeMacro(GaussianSpatialObject, SpatialObject);
+  itkOverrideGetNameOfClassMacro(GaussianSpatialObject);
 
   /** Reset the spatial object to its initial condition, yet preserves
    *   Id, Parent, and Child information */
@@ -123,9 +123,15 @@ public:
   GetEllipsoid() const;
 
 #if !defined(ITK_LEGACY_REMOVE)
-  itkLegacyMacro(void SetSigma(double sigma)) { return this->SetSigmaInObjectSpace(sigma); }
+  itkLegacyMacro(void SetSigma(double sigma))
+  {
+    return this->SetSigmaInObjectSpace(sigma);
+  }
 
-  itkLegacyMacro(double GetSigma() const) { return this->GetSigmaInObjectSpace(); }
+  itkLegacyMacro(double GetSigma() const)
+  {
+    return this->GetSigmaInObjectSpace();
+  }
 #endif
 protected:
   /** This function needs to be called every time one of the object's

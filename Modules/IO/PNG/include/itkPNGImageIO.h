@@ -52,8 +52,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PNGImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PNGImageIO);
 
   /** Get a const ref to the palette of the image. In the case of non palette
    * image or ExpandRGBPalette set to true, a vector of size

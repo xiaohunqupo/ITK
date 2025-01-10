@@ -39,24 +39,24 @@ namespace itk
  *
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = double>
+template <typename TInputImage, typename TCoordinate = double>
 class ITK_TEMPLATE_EXPORT VectorNearestNeighborInterpolateImageFunction
-  : public VectorInterpolateImageFunction<TInputImage, TCoordRep>
+  : public VectorInterpolateImageFunction<TInputImage, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(VectorNearestNeighborInterpolateImageFunction);
 
   /** Standard class type aliases. */
   using Self = VectorNearestNeighborInterpolateImageFunction;
-  using Superclass = VectorInterpolateImageFunction<TInputImage, TCoordRep>;
+  using Superclass = VectorInterpolateImageFunction<TInputImage, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorNearestNeighborInterpolateImageFunction, VectorInterpolateImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorNearestNeighborInterpolateImageFunction);
 
   /** InputImageType type alias support */
   using typename Superclass::InputImageType;
@@ -99,11 +99,6 @@ public:
 protected:
   VectorNearestNeighborInterpolateImageFunction() = default;
   ~VectorNearestNeighborInterpolateImageFunction() override = default;
-  void
-  PrintSelf(std::ostream & os, Indent indent) const override
-  {
-    Superclass::PrintSelf(os, indent);
-  }
 };
 } // end namespace itk
 

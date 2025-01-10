@@ -81,8 +81,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegistrationMethod, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageRegistrationMethod);
 
   /**  Type of the Fixed image. */
   using FixedImageType = TFixedImage;

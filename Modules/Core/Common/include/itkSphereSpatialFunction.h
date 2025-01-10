@@ -46,8 +46,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SphereSpatialFunction, InteriorExteriorSpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SphereSpatialFunction);
 
   /** Input type for the function. */
   using typename Superclass::InputType;

@@ -85,8 +85,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(DirectedHausdorffDistanceImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DirectedHausdorffDistanceImageFilter);
 
   /** Image related type alias. */
   using InputImage1Type = TInputImage1;
@@ -162,7 +162,7 @@ protected:
 
   /** Multi-thread version GenerateData. */
   void
-  DynamicThreadedGenerateData(const RegionType & outputRegionForThread) override;
+  DynamicThreadedGenerateData(const RegionType & regionForThread) override;
 
 
   // Override since the filter needs all the data for the algorithm
@@ -181,13 +181,13 @@ private:
 
   DistanceMapPointer m_DistanceMap{ nullptr };
 
-  RealType       m_MaxDistance{ NumericTraits<RealType>::ZeroValue() };
+  RealType       m_MaxDistance{};
   IdentifierType m_PixelCount{};
 
   CompensatedSummationType m_Sum{};
 
-  RealType m_DirectedHausdorffDistance{ NumericTraits<RealType>::ZeroValue() };
-  RealType m_AverageHausdorffDistance{ NumericTraits<RealType>::ZeroValue() };
+  RealType m_DirectedHausdorffDistance{};
+  RealType m_AverageHausdorffDistance{};
   bool     m_UseImageSpacing{ true };
 
   std::mutex m_Mutex{};

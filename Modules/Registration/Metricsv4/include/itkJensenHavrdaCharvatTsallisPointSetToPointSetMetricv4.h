@@ -49,7 +49,7 @@ namespace itk
  * k-d tree from the transformed points.
  *
  * Contributed by Nicholas J. Tustison, James C. Gee in the Insight Journal
- * paper: https://www.insight-journal.org/browse/publication/317
+ * paper: https://doi.org/10.54294/791z7t
  *
  * \note The original work reported in Tustison et al. 2011 optionally employed
  * a regularization term to prevent the moving point set(s) from coalescing
@@ -84,8 +84,8 @@ public:
   /** Method for creation through the object factory. */
   itkSimpleNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4, PointSetToPointSetMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JensenHavrdaCharvatTsallisPointSetToPointSetMetricv4);
 
   using PointSetType = TPointSet;
   using PointsContainer = typename PointSetType::PointsContainer;
@@ -100,7 +100,7 @@ public:
   using typename Superclass::LocalDerivativeType;
   using typename Superclass::PointType;
   using typename Superclass::PixelType;
-  using typename Superclass::CoordRepType;
+  using typename Superclass::CoordinateType;
   using typename Superclass::PointIdentifier;
   using typename Superclass::NeighborsIdentifierType;
   using typename Superclass::NumberOfParametersType;

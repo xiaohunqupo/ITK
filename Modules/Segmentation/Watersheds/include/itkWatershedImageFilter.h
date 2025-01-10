@@ -178,8 +178,8 @@ public:
   /** Smart pointer type alias support  */
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(WatershedImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WatershedImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -211,7 +211,7 @@ public:
   {
     if (i != 0)
     {
-      itkExceptionMacro(<< "Filter has only one input.");
+      itkExceptionMacro("Filter has only one input.");
     }
     else
     {

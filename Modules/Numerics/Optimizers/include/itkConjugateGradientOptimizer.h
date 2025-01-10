@@ -47,8 +47,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ConjugateGradientOptimizer, SingleValuedNonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConjugateGradientOptimizer);
 
   /** InternalParameters type alias. */
   using InternalParametersType = vnl_vector<double>;

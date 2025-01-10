@@ -91,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(SignedMaurerDistanceMapImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SignedMaurerDistanceMapImageFilter);
 
   using InputRegionType = typename InputImageType::RegionType;
   using OutputRegionType = typename OutputImageType::RegionType;

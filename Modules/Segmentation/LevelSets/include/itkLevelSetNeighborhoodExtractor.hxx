@@ -26,9 +26,7 @@
 
 namespace itk
 {
-/**
- *
- */
+
 template <typename TLevelSet>
 LevelSetNeighborhoodExtractor<TLevelSet>::LevelSetNeighborhoodExtractor()
   : m_InsidePoints(nullptr)
@@ -41,26 +39,28 @@ LevelSetNeighborhoodExtractor<TLevelSet>::LevelSetNeighborhoodExtractor()
   m_NodesUsed.resize(SetDimension);
 }
 
-/*
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
-  os << indent << "Input level set: " << m_InputLevelSet.GetPointer();
-  os << std::endl;
-  os << indent << "Level set value: " << m_LevelSetValue << std::endl;
-  os << indent << "Narrow bandwidth: " << m_NarrowBandwidth << std::endl;
-  os << indent << "Narrowbanding: " << m_NarrowBanding << std::endl;
-  os << indent << "Input narrow band: ";
-  os << m_InputNarrowBand.GetPointer() << std::endl;
+
+  os << indent << "LevelSetValue: " << m_LevelSetValue << std::endl;
+
+  os << indent << "InsidePoints: " << m_InsidePoints << std::endl;
+  os << indent << "OutsidePoints: " << m_OutsidePoints << std::endl;
+  os << indent << "InputLevelSet: " << m_InputLevelSet << std::endl;
+  itkPrintSelfBooleanMacro(NarrowBanding);
+  os << indent << "NarrowBandwidth: " << m_NarrowBandwidth << std::endl;
+  os << indent << "InputNarrowBand: " << m_InputNarrowBand << std::endl;
+  os << indent << "ImageRegion: " << m_ImageRegion << std::endl;
+  os << indent << "LargeValue: " << static_cast<typename NumericTraits<PixelType>::PrintType>(m_LargeValue)
+     << std::endl;
+  // ToDo
+  // os << indent << "NodesUsed: " << m_NodesUsed << std::endl;
+  itkPrintSelfBooleanMacro(LastPointIsInside);
 }
 
-/*
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::SetInputNarrowBand(NodeContainer * ptr)
@@ -72,9 +72,6 @@ LevelSetNeighborhoodExtractor<TLevelSet>::SetInputNarrowBand(NodeContainer * ptr
   }
 }
 
-/**
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::Locate()
@@ -82,9 +79,6 @@ LevelSetNeighborhoodExtractor<TLevelSet>::Locate()
   this->GenerateData();
 }
 
-/**
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::Initialize()
@@ -96,16 +90,13 @@ LevelSetNeighborhoodExtractor<TLevelSet>::Initialize()
   m_ImageRegion = this->m_InputLevelSet->GetBufferedRegion();
 }
 
-/*
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::GenerateData()
 {
   if (!m_InputLevelSet)
   {
-    itkExceptionMacro(<< "Input level set is nullptr");
+    itkExceptionMacro("Input level set is nullptr");
   }
 
   this->Initialize();
@@ -119,13 +110,10 @@ LevelSetNeighborhoodExtractor<TLevelSet>::GenerateData()
     this->GenerateDataFull();
   }
 
-  itkDebugMacro(<< "No. inside points: " << m_InsidePoints->Size());
-  itkDebugMacro(<< "No. outside points: " << m_OutsidePoints->Size());
+  itkDebugMacro("No. inside points: " << m_InsidePoints->Size());
+  itkDebugMacro("No. outside points: " << m_OutsidePoints->Size());
 }
 
-/*
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataFull()
@@ -136,15 +124,14 @@ LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataFull()
 
   IndexType inputIndex;
 
-  SizeValueType totalPixels = m_InputLevelSet->GetBufferedRegion().GetNumberOfPixels();
-  SizeValueType updateVisits = totalPixels / 10;
+  const SizeValueType totalPixels = m_InputLevelSet->GetBufferedRegion().GetNumberOfPixels();
+  SizeValueType       updateVisits = totalPixels / 10;
   if (updateVisits < 1)
   {
     updateVisits = 1;
   }
 
-  SizeValueType i;
-  for (i = 0; !inIt.IsAtEnd(); ++inIt, ++i)
+  for (SizeValueType i = 0; !inIt.IsAtEnd(); ++inIt, ++i)
   {
     // update progress
     if (!(i % updateVisits))
@@ -157,16 +144,13 @@ LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataFull()
   }
 }
 
-/**
- *
- */
 template <typename TLevelSet>
 void
 LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataNarrowBand()
 {
   if (!m_InputNarrowBand)
   {
-    itkExceptionMacro(<< "InputNarrowBand has not been set");
+    itkExceptionMacro("InputNarrowBand has not been set");
   }
 
   typename NodeContainer::ConstIterator pointsIter;
@@ -174,18 +158,17 @@ LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataNarrowBand()
 
   pointsIter = m_InputNarrowBand->Begin();
   pointsEnd = m_InputNarrowBand->End();
-  NodeType node;
-  double   maxValue = m_NarrowBandwidth / 2.0;
+  NodeType     node;
+  const double maxValue = m_NarrowBandwidth / 2.0;
 
-  SizeValueType totalPixels = m_InputNarrowBand->Size();
-  SizeValueType updateVisits = totalPixels / 10;
+  const SizeValueType totalPixels = m_InputNarrowBand->Size();
+  SizeValueType       updateVisits = totalPixels / 10;
   if (updateVisits < 1)
   {
     updateVisits = 1;
   }
 
-  unsigned int i;
-  for (i = 0; pointsIter != pointsEnd; ++pointsIter, ++i)
+  for (unsigned int i = 0; pointsIter != pointsEnd; ++pointsIter, ++i)
   {
     // update progress
     if (!(i % updateVisits))
@@ -201,9 +184,6 @@ LevelSetNeighborhoodExtractor<TLevelSet>::GenerateDataNarrowBand()
   }
 }
 
-/**
- *
- */
 template <typename TLevelSet>
 double
 LevelSetNeighborhoodExtractor<TLevelSet>::CalculateDistance(IndexType & index)
@@ -211,9 +191,7 @@ LevelSetNeighborhoodExtractor<TLevelSet>::CalculateDistance(IndexType & index)
   m_LastPointIsInside = false;
 
   typename LevelSetImageType::PixelType centerValue;
-  PixelType                             inputPixel;
-
-  inputPixel = m_InputLevelSet->GetPixel(index);
+  PixelType                             inputPixel = m_InputLevelSet->GetPixel(index);
   centerValue = static_cast<double>(inputPixel);
   centerValue -= m_LevelSetValue;
 
@@ -228,7 +206,7 @@ LevelSetNeighborhoodExtractor<TLevelSet>::CalculateDistance(IndexType & index)
     return 0.0;
   }
 
-  bool inside = (centerValue <= 0.0);
+  const bool inside = (centerValue <= 0.0);
 
   IndexType                             neighIndex = index;
   typename LevelSetImageType::PixelType neighValue;

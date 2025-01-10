@@ -39,8 +39,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RandomVariateGeneratorBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RandomVariateGeneratorBase);
 
   /** get a variate using FastNorm function */
   virtual double

@@ -147,8 +147,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(AnisotropicDiffusionFunction, FiniteDifferenceFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnisotropicDiffusionFunction);
 
   /** Inherit some parameters from the superclass type */
   using typename Superclass::ImageType;

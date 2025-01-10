@@ -62,8 +62,8 @@ public:
   /** Standard method for creation through object factory. */
   itkNewMacro(Self);
 
-  /** Run-time class information. */
-  itkTypeMacro(GPUGradientAnisotropicDiffusionImageFilter, GPUAnisotropicDiffusionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUGradientAnisotropicDiffusionImageFilter);
 
   /** Extract information from the superclass. */
   using UpdateBufferType = typename GPUSuperclass::UpdateBufferType;
@@ -81,8 +81,7 @@ protected:
   GPUGradientAnisotropicDiffusionImageFilter()
   {
     // Set DiffusionFunction
-    typename GPUGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::Pointer p =
-      GPUGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
+    auto p = GPUGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
     this->SetDifferenceFunction(p);
   }
 

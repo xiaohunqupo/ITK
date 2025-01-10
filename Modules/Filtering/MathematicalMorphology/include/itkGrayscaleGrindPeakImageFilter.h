@@ -97,8 +97,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GrayscaleGrindPeakImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GrayscaleGrindPeakImageFilter);
 
   /**
    * Set/Get whether the connected components are defined strictly by

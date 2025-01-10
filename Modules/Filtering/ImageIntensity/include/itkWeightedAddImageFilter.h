@@ -136,8 +136,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(WeightedAddImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WeightedAddImageFilter);
 
   /** Set the weight for the first operand of the weighted addition */
   void

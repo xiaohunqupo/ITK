@@ -106,8 +106,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ExpNegativeImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExpNegativeImageFilter);
 
   void
   SetFactor(double factor)

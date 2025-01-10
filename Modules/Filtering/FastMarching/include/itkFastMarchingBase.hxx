@@ -40,7 +40,7 @@ FastMarchingBase<TInput, TOutput>::FastMarchingBase()
   m_SpeedConstant = 1.;
   m_InverseSpeed = -1.;
   m_NormalizationFactor = 1.;
-  m_TargetReachedValue = NumericTraits<OutputPixelType>::ZeroValue();
+  m_TargetReachedValue = OutputPixelType{};
   m_TopologyCheck = TopologyCheckEnum::Nothing;
   m_LargeValue = NumericTraits<OutputPixelType>::max();
   m_TopologyValue = m_LargeValue;
@@ -68,19 +68,19 @@ FastMarchingBase<TInput, TOutput>::Initialize(OutputDomainType * oDomain)
 {
   if (m_TrialPoints.IsNull())
   {
-    itkExceptionMacro(<< "No Trial Nodes");
+    itkExceptionMacro("No Trial Nodes");
   }
   if (m_StoppingCriterion.IsNull())
   {
-    itkExceptionMacro(<< "No Stopping Criterion Set");
+    itkExceptionMacro("No Stopping Criterion Set");
   }
   if (m_NormalizationFactor < itk::Math::eps)
   {
-    itkExceptionMacro(<< "Normalization Factor is null or negative");
+    itkExceptionMacro("Normalization Factor is null or negative");
   }
   if (m_SpeedConstant < itk::Math::eps)
   {
-    itkExceptionMacro(<< "SpeedConstant is null or negative");
+    itkExceptionMacro("SpeedConstant is null or negative");
   }
   if (m_CollectPoints)
   {
@@ -140,7 +140,7 @@ FastMarchingBase<TInput, TOutput>::GenerateData()
       NodePairType current_node_pair = m_Heap.top();
       m_Heap.pop();
 
-      NodeType current_node = current_node_pair.GetNode();
+      const NodeType current_node = current_node_pair.GetNode();
       current_value = this->GetOutputValue(output, current_node);
 
       if (Math::ExactlyEquals(current_value, current_node_pair.GetValue()))

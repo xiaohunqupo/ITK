@@ -120,8 +120,8 @@ public:
   using CurvesFunctionType = CurvesLevelSetFunction<OutputImageType, FeatureImageType>;
   using CurvesFunctionPointer = typename CurvesFunctionType::Pointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CurvesLevelSetImageFilter, SegmentationLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvesLevelSetImageFilter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);

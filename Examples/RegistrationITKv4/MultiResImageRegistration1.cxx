@@ -209,8 +209,8 @@ public:
       static_cast<OptimizerPointer>(registration->GetModifiableOptimizer());
     // Software Guide : EndCodeSnippet
 
-    unsigned int currentLevel = registration->GetCurrentLevel();
-    typename RegistrationType::ShrinkFactorsPerDimensionContainerType
+    const unsigned int currentLevel = registration->GetCurrentLevel();
+    const typename RegistrationType::ShrinkFactorsPerDimensionContainerType
       shrinkFactors =
         registration->GetShrinkFactorsPerDimension(currentLevel);
     typename RegistrationType::SmoothingSigmasArrayType smoothingSigmas =
@@ -413,7 +413,7 @@ main(int argc, const char * argv[])
   //  Software Guide : BeginLatex
   //
   //  To set the optimizer parameters, note that \emph{LearningRate}
-  //  and \emph{MinimumStepLength} are set in the obsever at the beginning
+  //  and \emph{MinimumStepLength} are set in the observer at the beginning
   //  of each resolution level. The other optimizer parameters are set
   //  as follows.
   //
@@ -503,12 +503,12 @@ main(int argc, const char * argv[])
 
   ParametersType finalParameters = transform->GetParameters();
 
-  double TranslationAlongX = finalParameters[0];
-  double TranslationAlongY = finalParameters[1];
+  const double TranslationAlongX = finalParameters[0];
+  const double TranslationAlongY = finalParameters[1];
 
-  unsigned int numberOfIterations = optimizer->GetCurrentIteration();
+  const unsigned int numberOfIterations = optimizer->GetCurrentIteration();
 
-  double bestValue = optimizer->GetValue();
+  const double bestValue = optimizer->GetValue();
 
 
   // Print out results
@@ -570,7 +570,7 @@ main(int argc, const char * argv[])
   resample->SetTransform(transform);
   resample->SetInput(movingImageReader->GetOutput());
 
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+  const FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
 
 
   resample->SetSize(fixedImage->GetLargestPossibleRegion().GetSize());

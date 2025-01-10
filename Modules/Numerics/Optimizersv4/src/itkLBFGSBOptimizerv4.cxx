@@ -95,7 +95,7 @@ LBFGSBOptimizerv4::PrintSelf(std::ostream & os, Indent indent) const
 void
 LBFGSBOptimizerv4::SetScales(const ScalesType &)
 {
-  itkWarningMacro(<< "LBFGSB optimizer does not support scaling. All scales are set to one.");
+  itkWarningMacro("LBFGSB optimizer does not support scaling. All scales are set to one.");
   m_Scales.SetSize(this->m_Metric->GetNumberOfLocalParameters());
   m_Scales.Fill(NumericTraits<ScalesType::ValueType>::OneValue());
   this->m_ScalesAreIdentity = true;
@@ -201,7 +201,7 @@ LBFGSBOptimizerv4::StartOptimization(bool /*doOnlyInitialization*/)
 
   // Check if all the bounds parameters are the same size as the initial
   // parameters.
-  unsigned int numberOfParameters = m_Metric->GetNumberOfParameters();
+  const unsigned int numberOfParameters = m_Metric->GetNumberOfParameters();
 
   if (this->GetInitialPosition().Size() < numberOfParameters)
   {
@@ -210,17 +210,17 @@ LBFGSBOptimizerv4::StartOptimization(bool /*doOnlyInitialization*/)
 
   if (m_LowerBound.size() < numberOfParameters && !m_BoundSelection.is_zero())
   {
-    itkExceptionMacro(<< "LowerBound array does not have sufficient number of elements");
+    itkExceptionMacro("LowerBound array does not have sufficient number of elements");
   }
 
   if (m_UpperBound.size() < numberOfParameters && !m_BoundSelection.is_zero())
   {
-    itkExceptionMacro(<< "UppperBound array does not have sufficient number of elements");
+    itkExceptionMacro("UppperBound array does not have sufficient number of elements");
   }
 
   if (m_BoundSelection.size() < numberOfParameters)
   {
-    itkExceptionMacro(<< "BoundSelection array does not have sufficient number of elements");
+    itkExceptionMacro("BoundSelection array does not have sufficient number of elements");
   }
 
   if (this->m_CostFunctionConvergenceFactor == 0.0 && this->m_GradientConvergenceTolerance == 0.0)
@@ -241,7 +241,7 @@ LBFGSBOptimizerv4::StartOptimization(bool /*doOnlyInitialization*/)
   {
     // set current position to initial position and throw an exception
     this->m_Metric->SetParameters(this->GetInitialPosition());
-    itkExceptionMacro(<< "Error occurred in optimization");
+    itkExceptionMacro("Error occurred in optimization");
   }
 
   this->m_Metric->SetParameters(parameters);

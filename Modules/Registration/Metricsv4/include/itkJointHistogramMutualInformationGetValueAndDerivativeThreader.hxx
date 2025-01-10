@@ -117,13 +117,12 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
   {
     return false;
   }
-  else if (movingImageValue > this->m_JointAssociate->m_MovingImageTrueMax)
+  if (movingImageValue > this->m_JointAssociate->m_MovingImageTrueMax)
   {
     return false;
   }
   /** the scalingfactor is the MI specific scaling of the image gradient and jacobian terms */
-  InternalComputationValueType scalingfactor =
-    NumericTraits<InternalComputationValueType>::ZeroValue(); // for scaling the jacobian terms
+  InternalComputationValueType scalingfactor{}; // for scaling the jacobian terms
 
   JointPDFPointType jointPDFpoint;
   this->m_JointAssociate->ComputeJointPDFPoint(fixedImageValue, movingImageValue, jointPDFpoint);
@@ -132,17 +131,17 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
   {
     return false;
   }
-  InternalComputationValueType jointPDFValue =
+  const InternalComputationValueType jointPDFValue =
     this->m_JointHistogramMIPerThreadVariables[threadId].JointPDFInterpolator->Evaluate(jointPDFpoint);
-  SizeValueType                       ind = 1;
-  InternalComputationValueType        dJPDF = this->ComputeJointPDFDerivative(jointPDFpoint, threadId, ind);
+  const SizeValueType                 ind = 1;
+  const InternalComputationValueType  dJPDF = this->ComputeJointPDFDerivative(jointPDFpoint, threadId, ind);
   typename MarginalPDFType::PointType mind;
   mind[0] = jointPDFpoint[ind];
-  InternalComputationValueType movingImagePDFValue =
+  const InternalComputationValueType movingImagePDFValue =
     this->m_JointHistogramMIPerThreadVariables[threadId].MovingImageMarginalPDFInterpolator->Evaluate(mind);
-  InternalComputationValueType dMmPDF = this->ComputeMovingImageMarginalPDFDerivative(mind, threadId);
+  const InternalComputationValueType dMmPDF = this->ComputeMovingImageMarginalPDFDerivative(mind, threadId);
 
-  const InternalComputationValueType eps = 1.e-16;
+  constexpr InternalComputationValueType eps = 1.e-16;
   if (jointPDFValue > eps && movingImagePDFValue > eps)
   {
     const InternalComputationValueType   pRatio = std::log(jointPDFValue) - std::log(movingImagePDFValue);
@@ -153,7 +152,7 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
   } // end if-block to check non-zero bin contribution
   else
   {
-    scalingfactor = NumericTraits<InternalComputationValueType>::ZeroValue();
+    scalingfactor = InternalComputationValueType{};
   }
 
   /* Use a pre-allocated jacobian object for efficiency */
@@ -212,17 +211,15 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
     rightpoint[0] = 1.0;
   }
   InternalComputationValueType delta = rightpoint[0] - leftpoint[0];
-  if (delta > NumericTraits<InternalComputationValueType>::ZeroValue())
+  if (delta > InternalComputationValueType{})
   {
     InternalComputationValueType deriv =
       this->m_ThreaderFixedImageMarginalPDFInterpolator[threadId]->Evaluate(rightpoint) -
       this->m_ThreaderFixedImageMarginalPDFInterpolator[threadId]->Evaluate(leftpoint);
     return deriv / delta;
   }
-  else
-  {
-    return NumericTraits<InternalComputationValueType>::ZeroValue();
-  }
+
+  return InternalComputationValueType{};
 }
 
 template <typename TDomainPartitioner, typename TImageToImageMetric, typename TJointHistogramMetric>
@@ -236,9 +233,9 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
   TJointHistogramMetric>::ComputeMovingImageMarginalPDFDerivative(const MarginalPDFPointType & margPDFpoint,
                                                                   const ThreadIdType           threadId) const
 {
-  InternalComputationValueType offset = 0.5 * this->m_JointAssociate->m_JointPDFSpacing[0];
-  InternalComputationValueType eps = this->m_JointAssociate->m_JointPDFSpacing[0];
-  MarginalPDFPointType         leftpoint = margPDFpoint;
+  const InternalComputationValueType offset = 0.5 * this->m_JointAssociate->m_JointPDFSpacing[0];
+  const InternalComputationValueType eps = this->m_JointAssociate->m_JointPDFSpacing[0];
+  MarginalPDFPointType               leftpoint = margPDFpoint;
   leftpoint[0] -= offset;
   MarginalPDFPointType rightpoint = margPDFpoint;
   rightpoint[0] += offset;
@@ -258,18 +255,16 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
   {
     rightpoint[0] = 1.0;
   }
-  InternalComputationValueType delta = rightpoint[0] - leftpoint[0];
-  if (delta > NumericTraits<InternalComputationValueType>::ZeroValue())
+  const InternalComputationValueType delta = rightpoint[0] - leftpoint[0];
+  if (delta > InternalComputationValueType{})
   {
-    InternalComputationValueType deriv =
+    const InternalComputationValueType deriv =
       this->m_JointHistogramMIPerThreadVariables[threadId].MovingImageMarginalPDFInterpolator->Evaluate(rightpoint) -
       this->m_JointHistogramMIPerThreadVariables[threadId].MovingImageMarginalPDFInterpolator->Evaluate(leftpoint);
     return deriv / delta;
   }
-  else
-  {
-    return NumericTraits<InternalComputationValueType>::ZeroValue();
-  }
+
+  return InternalComputationValueType{};
 }
 
 template <typename TDomainPartitioner, typename TImageToImageMetric, typename TJointHistogramMetric>
@@ -284,9 +279,9 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
                                                     const ThreadIdType        threadId,
                                                     const SizeValueType       ind) const
 {
-  InternalComputationValueType offset = 0.5 * this->m_JointAssociate->m_JointPDFSpacing[ind];
-  InternalComputationValueType eps = this->m_JointAssociate->m_JointPDFSpacing[ind];
-  JointPDFPointType            leftpoint = jointPDFpoint;
+  const InternalComputationValueType offset = 0.5 * this->m_JointAssociate->m_JointPDFSpacing[ind];
+  const InternalComputationValueType eps = this->m_JointAssociate->m_JointPDFSpacing[ind];
+  JointPDFPointType                  leftpoint = jointPDFpoint;
   leftpoint[ind] -= offset;
   JointPDFPointType rightpoint = jointPDFpoint;
   rightpoint[ind] += offset;
@@ -311,9 +306,9 @@ JointHistogramMutualInformationGetValueAndDerivativeThreader<
     rightpoint[ind] = 1.0;
   }
 
-  InternalComputationValueType delta = rightpoint[ind] - leftpoint[ind];
-  InternalComputationValueType deriv{};
-  if (delta > NumericTraits<InternalComputationValueType>::ZeroValue())
+  const InternalComputationValueType delta = rightpoint[ind] - leftpoint[ind];
+  InternalComputationValueType       deriv{};
+  if (delta > InternalComputationValueType{})
   {
     deriv = this->m_JointHistogramMIPerThreadVariables[threadId].JointPDFInterpolator->Evaluate(rightpoint) -
             this->m_JointHistogramMIPerThreadVariables[threadId].JointPDFInterpolator->Evaluate(leftpoint);

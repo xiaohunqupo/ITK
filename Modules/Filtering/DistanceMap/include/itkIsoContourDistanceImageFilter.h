@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(IsoContourDistanceImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IsoContourDistanceImageFilter);
 
   /**Typedefs from the superclass */
   using typename Superclass::InputImageType;

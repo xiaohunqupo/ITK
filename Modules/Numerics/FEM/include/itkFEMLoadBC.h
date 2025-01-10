@@ -44,8 +44,8 @@ public:
   /** Method for creation through the object factory. */
   itkSimpleNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LoadBC, Load);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LoadBC);
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */

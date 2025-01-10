@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(EuclideanDistancePointMetric, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(EuclideanDistancePointMetric);
 
   /** Types transferred from the base class. */
   using typename Superclass::TransformType;

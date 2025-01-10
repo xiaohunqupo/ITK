@@ -76,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SPSAOptimizer, SingleValuedNonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SPSAOptimizer);
 
   using StopConditionSPSAOptimizerEnum = SPSAOptimizerEnums::StopConditionSPSAOptimizer;
 #if !defined(ITK_LEGACY_REMOVE)
@@ -251,7 +251,7 @@ public:
   itkGetConstMacro(Tolerance, double);
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
 protected:

@@ -38,21 +38,21 @@ namespace itk
  * \ingroup ImageFunctions
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = float>
+template <typename TInputImage, typename TCoordinate = float>
 class ITK_TEMPLATE_EXPORT NeighborhoodBinaryThresholdImageFunction
-  : public BinaryThresholdImageFunction<TInputImage, TCoordRep>
+  : public BinaryThresholdImageFunction<TInputImage, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(NeighborhoodBinaryThresholdImageFunction);
 
   /** Standard class type aliases. */
   using Self = NeighborhoodBinaryThresholdImageFunction;
-  using Superclass = BinaryThresholdImageFunction<TInputImage, TCoordRep>;
+  using Superclass = BinaryThresholdImageFunction<TInputImage, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NeighborhoodBinaryThresholdImageFunction, BinaryThresholdImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NeighborhoodBinaryThresholdImageFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -60,7 +60,7 @@ public:
   /** InputImageType type alias support */
   using InputImageType = TInputImage;
 
-  /** OutputType typdef support. */
+  /** OutputType typedef support. */
   using typename Superclass::OutputType;
 
   /** Index type alias support */

@@ -55,8 +55,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageSeriesReader, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageSeriesReader);
 
   /** The size of the output image. */
   using SizeType = typename TOutputImage::SizeType;
@@ -99,7 +99,7 @@ public:
   /** Set the first file name to be processed. This deletes previous
    * filenames. */
   void
-  SetFileName(std::string const & name)
+  SetFileName(const std::string & name)
   {
     m_FileNames.clear();
     m_FileNames.push_back(name);
@@ -108,7 +108,7 @@ public:
 
   /** Add a single filename to the list of files. */
   void
-  AddFileName(std::string const & name)
+  AddFileName(const std::string & name)
   {
     m_FileNames.push_back(name);
     this->Modified();

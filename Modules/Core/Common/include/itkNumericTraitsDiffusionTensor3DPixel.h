@@ -117,7 +117,7 @@ public:
   static const Self
   ZeroValue()
   {
-    return MakeFilled<Self>(NumericTraits<T>::ZeroValue());
+    return Self{};
   }
 
   static const Self
@@ -157,10 +157,10 @@ public:
   {
     if (s != 6)
     {
-      itkGenericExceptionMacro(<< "Cannot set the size of a DiffusionTensor3D "
-                                  "to anything other than 6.");
+      itkGenericExceptionMacro("Cannot set the size of a DiffusionTensor3D "
+                               "to anything other than 6.");
     }
-    m.Fill(NumericTraits<T>::ZeroValue());
+    m.Fill(T{});
   }
 
   /** Return the size of the tensor. Always returns 6. */

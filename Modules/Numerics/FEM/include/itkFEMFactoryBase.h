@@ -58,8 +58,8 @@ public:
   const char *
   GetDescription() const override;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FEMFactoryBase, ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FEMFactoryBase);
 
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
@@ -75,7 +75,7 @@ public:
   {
     if (m_Factory == nullptr)
     {
-      m_CreationLock.lock();
+      const std::lock_guard<std::mutex> lockGuard(m_CreationMutex);
       // Need to make sure that during gaining access
       // to the lock that some other thread did not
       // initialize the singleton.
@@ -85,17 +85,11 @@ public:
         auto p = FEMFactoryBase::New();
         if (p.IsNull())
         {
-          std::ostringstream message;
-          message << "itk::ERROR: "
-                  << "FEMFactoryBase"
-                  << " instance not created";
-          itk::ExceptionObject e_(__FILE__, __LINE__, message.str().c_str(), ITK_LOCATION);
-          throw e_; /* Explicit naming to work around for Intel compiler bug. */
+          itkGenericExceptionMacro("FEMFactoryBase instance not created");
         }
         ObjectFactoryBase::RegisterFactory(p);
         m_Factory = p.GetPointer();
       }
-      m_CreationLock.unlock();
       m_Factory->RegisterDefaultTypes(); // Not initialize all default types.
     }
     return m_Factory;
@@ -116,7 +110,7 @@ protected:
   ~FEMFactoryBase() override;
 
 private:
-  static std::mutex       m_CreationLock;
+  static std::mutex       m_CreationMutex;
   static FEMFactoryBase * m_Factory;
 };
 } // end namespace itk

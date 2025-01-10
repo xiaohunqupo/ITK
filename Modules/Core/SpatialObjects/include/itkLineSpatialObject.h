@@ -60,14 +60,14 @@ public:
   using typename Superclass::PointType;
   using typename Superclass::TransformType;
   using typename Superclass::BoundingBoxType;
-  using PointContainerType = VectorContainer<IdentifierType, PointType>;
+  using PointContainerType = VectorContainer<PointType>;
   using PointContainerPointer = SmartPointer<PointContainerType>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Method for creation through the object factory. */
-  itkTypeMacro(LineSpatialObject, PointBasedSpatialObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LineSpatialObject);
 
   /** Returns true if the line is evaluable at the requested point,
    *  false otherwise. */

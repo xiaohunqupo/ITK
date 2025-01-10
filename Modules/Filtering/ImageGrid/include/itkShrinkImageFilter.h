@@ -79,8 +79,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShrinkImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShrinkImageFilter);
 
   /** Typedef to images */
   using OutputImageType = TOutputImage;

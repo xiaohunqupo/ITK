@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingExtensionImageFilterBase, FastMarchingImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingExtensionImageFilterBase);
 
   /** The dimension of the level set. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
@@ -82,7 +82,7 @@ public:
   /** AuxVarType type alias support */
   using AuxValueType = TAuxValue;
   using AuxValueVectorType = Vector<AuxValueType, AuxDimension>;
-  using AuxValueContainerType = VectorContainer<IdentifierType, AuxValueVectorType>;
+  using AuxValueContainerType = VectorContainer<AuxValueVectorType>;
 
   using AuxValueContainerPointer = typename AuxValueContainerType::Pointer;
   using AuxValueContainerConstIterator = typename AuxValueContainerType::ConstIterator;

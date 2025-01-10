@@ -39,7 +39,7 @@ public:
   using Pointer = itk::SmartPointer<Self>;
   using ConstPointer = itk::SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(GradientDescentOptimizerv4Test2Metric, ObjectToObjectMetricBase);
+  itkOverrideGetNameOfClassMacro(GradientDescentOptimizerv4Test2Metric);
 
   enum
   {
@@ -171,14 +171,14 @@ itkGradientDescentOptimizerv4Test2(int, char *[])
   }
   itkOptimizer->SetScales(scales);
 
-  ParametersType         truth(metric->GetNumberOfParameters());
-  NumberOfParametersType numLocal = metric->GetNumberOfLocalParameters();
-  NumberOfParametersType numLoops = metric->GetNumberOfParameters() / numLocal;
+  ParametersType               truth(metric->GetNumberOfParameters());
+  const NumberOfParametersType numLocal = metric->GetNumberOfLocalParameters();
+  const NumberOfParametersType numLoops = metric->GetNumberOfParameters() / numLocal;
   for (NumberOfParametersType i = 0; i < numLoops; ++i)
   {
     for (NumberOfParametersType j = 0; j < numLocal; ++j)
     {
-      NumberOfParametersType ind = i * numLocal + j;
+      const NumberOfParametersType ind = i * numLocal + j;
       truth[ind] = initialPosition[ind] + (ind) / scales[j];
     }
   }

@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(CurvesLevelSetFunction, SegmentationLevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvesLevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   using PixelType = typename SuperSuperclass::PixelType;

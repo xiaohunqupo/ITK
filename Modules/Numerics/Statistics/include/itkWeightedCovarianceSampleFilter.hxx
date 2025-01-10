@@ -64,13 +64,13 @@ WeightedCovarianceSampleFilter<TSample>::ComputeCovarianceMatrixWithWeightingFun
   // set up input / output
   const SampleType * input = this->GetInput();
 
-  MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
+  const MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
 
   auto * decoratedOutput = itkDynamicCastInDebugMode<MatrixDecoratedType *>(this->ProcessObject::GetOutput(0));
 
   MatrixType output = decoratedOutput->Get();
   output.SetSize(measurementVectorSize, measurementVectorSize);
-  output.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  output.Fill(typename MatrixType::ValueType{});
 
   auto * decoratedMeanOutput =
     itkDynamicCastInDebugMode<MeasurementVectorDecoratedType *>(this->ProcessObject::GetOutput(1));
@@ -161,13 +161,13 @@ WeightedCovarianceSampleFilter<TSample>::ComputeCovarianceMatrixWithWeights()
   // set up input / output
   const SampleType * input = this->GetInput();
 
-  MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
+  const MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
 
   auto * decoratedOutput = itkDynamicCastInDebugMode<MatrixDecoratedType *>(this->ProcessObject::GetOutput(0));
 
   MatrixType output = decoratedOutput->Get();
   output.SetSize(measurementVectorSize, measurementVectorSize);
-  output.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  output.Fill(typename MatrixType::ValueType{});
 
   auto * decoratedMeanOutput =
     itkDynamicCastInDebugMode<MeasurementVectorDecoratedType *>(this->ProcessObject::GetOutput(1));

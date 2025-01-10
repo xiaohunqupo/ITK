@@ -59,8 +59,8 @@ public:
   /** Type used for representing point components  */
   using CoordinateRepresentationType = Superclass::ParametersValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PointSetToImageMetric, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PointSetToImageMetric);
 
   /**  Type of the moving Image. */
   using MovingImageType = TMovingImage;

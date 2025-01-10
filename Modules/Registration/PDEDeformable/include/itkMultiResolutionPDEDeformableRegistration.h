@@ -100,8 +100,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiResolutionPDEDeformableRegistration, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultiResolutionPDEDeformableRegistration);
 
   /** Fixed image type. */
   using FixedImageType = TFixedImage;
@@ -283,7 +283,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override
+  VerifyInputInformation() const override
   {}
 
 private:

@@ -44,7 +44,7 @@ namespace itk
  * \author Ivan Macia, Vicomtech, Spain, https://www.vicomtech.org/en
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/179
+ * https://doi.org/10.54294/mrg5is
  *
  * \sa GaussianDerivativeOperator
  * \sa Image
@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DiscreteGaussianDerivativeImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiscreteGaussianDerivativeImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;
@@ -139,27 +139,21 @@ public:
   void
   SetOrder(const typename OrderArrayType::ValueType v)
   {
-    OrderArrayType a;
-
-    a.Fill(v);
+    auto a = MakeFilled<OrderArrayType>(v);
     this->SetOrder(a);
   }
 
   void
   SetVariance(const typename ArrayType::ValueType v)
   {
-    ArrayType a;
-
-    a.Fill(v);
+    auto a = MakeFilled<ArrayType>(v);
     this->SetVariance(a);
   }
 
   void
   SetMaximumError(const typename ArrayType::ValueType v)
   {
-    ArrayType a;
-
-    a.Fill(v);
+    auto a = MakeFilled<ArrayType>(v);
     this->SetMaximumError(a);
   }
 

@@ -172,22 +172,22 @@ public:
       if (index[1] != m_PrevY)
       {
         // normalized y [-1, 1]
-        double norm_y = m_NormFactor[1] * static_cast<double>(index[1] - 1);
+        const double norm_y = m_NormFactor[1] * static_cast<double>(index[1] - 1);
         this->CalculateXCoef(norm_y, m_CoefficientArray);
         m_PrevY = index[1];
       }
 
       // normalized x [-1, 1]
-      double norm_x = m_NormFactor[0] * static_cast<double>(index[0] - 1);
+      const double norm_x = m_NormFactor[0] * static_cast<double>(index[0] - 1);
 
       return LegendreSum(norm_x, m_Degree, m_CachedXCoef);
     }
-    else if (m_Dimension == 3)
+    if (m_Dimension == 3)
     {
       if (index[2] != m_PrevZ)
       {
         // normalized z [-1, 1]
-        double norm_z = m_NormFactor[2] * static_cast<double>(index[2] - 1);
+        const double norm_z = m_NormFactor[2] * static_cast<double>(index[2] - 1);
         this->CalculateYCoef(norm_z, m_CoefficientArray);
         m_PrevZ = index[2];
       }
@@ -195,13 +195,13 @@ public:
       if (index[1] != m_PrevY)
       {
         // normalized y [-1, 1]
-        double norm_y = m_NormFactor[1] * static_cast<double>(index[1] - 1);
+        const double norm_y = m_NormFactor[1] * static_cast<double>(index[1] - 1);
         this->CalculateXCoef(norm_y, m_CachedYCoef);
         m_PrevY = index[1];
       }
 
       // normalized x [-1, 1]
-      double norm_x = m_NormFactor[0] * static_cast<double>(index[0] - 1);
+      const double norm_x = m_NormFactor[0] * static_cast<double>(index[0] - 1);
       return this->LegendreSum(norm_x, m_Degree, m_CachedXCoef);
     }
     return 0;
@@ -225,7 +225,7 @@ public:
       : m_MultivariateLegendrePolynomial(polynomial)
       , m_Dimension(m_MultivariateLegendrePolynomial->GetDimension())
       , m_DomainSize(m_MultivariateLegendrePolynomial->GetDomainSize())
-      , m_IsAtEnd(false)
+
     {
       m_Index.resize(m_Dimension);
       std::fill(m_Index.begin(), m_Index.end(), 0);
@@ -257,17 +257,15 @@ public:
           m_Index[dim] += 1;
           return *this;
         }
+
+        if (dim == m_Dimension - 1)
+        {
+          m_IsAtEnd = true;
+          break;
+        }
         else
         {
-          if (dim == m_Dimension - 1)
-          {
-            m_IsAtEnd = true;
-            break;
-          }
-          else
-          {
-            m_Index[dim] = 0;
-          }
+          m_Index[dim] = 0;
         }
       }
       return *this;
@@ -284,7 +282,7 @@ public:
     unsigned int                     m_Dimension;
     DomainSizeType                   m_DomainSize;
     IndexType                        m_Index;
-    bool                             m_IsAtEnd;
+    bool                             m_IsAtEnd{ false };
   }; // end of class Iterator
 
   void

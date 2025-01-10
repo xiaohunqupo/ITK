@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(WrapPadImageFilter, PadImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WrapPadImageFilter);
 
   using typename Superclass::InputImageType;
   using typename Superclass::OutputImageType;

@@ -48,12 +48,16 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MetaConverterBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MetaConverterBase);
 
   using SpatialObjectType = SpatialObject<VDimension>;
   using SpatialObjectPointer = typename SpatialObjectType::Pointer;
+  using SpatialObjectConstPointer = typename SpatialObjectType::ConstPointer;
   using MetaObjectType = MetaObject;
+
+  itkSetMacro(MetaIOVersion, unsigned int);
+  itkGetConstMacro(MetaIOVersion, unsigned int);
 
   /** Read a MetaIO file, return a SpatialObject */
   virtual SpatialObjectPointer
@@ -62,6 +66,12 @@ public:
   /** Write a MetaIO file based on this SpatialObject */
   virtual bool
   WriteMeta(const SpatialObjectType * spatialObject, const char * name);
+
+  void
+  MetaObjectToSpatialObjectBase(const MetaObjectType * mo, SpatialObjectPointer rval);
+
+  void
+  SpatialObjectToMetaObjectBase(SpatialObjectConstPointer spatialObject, MetaObjectType * mo);
 
   /** Convert the MetaObject to Spatial Object */
   virtual SpatialObjectPointer
@@ -88,7 +98,8 @@ protected:
 
 
 private:
-  bool m_WriteImagesInSeparateFile{ false };
+  bool         m_WriteImagesInSeparateFile{ false };
+  unsigned int m_MetaIOVersion{ 0 };
 };
 
 } // namespace itk

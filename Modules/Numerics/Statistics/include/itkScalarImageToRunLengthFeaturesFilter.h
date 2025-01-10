@@ -82,9 +82,8 @@ namespace Statistics
  * gray-level run-length distributions. Pattern Recognition Letters, 12:490-502,
  * 1991.
  *
- * IJ article: https://www.insight-journal.org/browse/publication/231
+ * IJ article: https://doi.org/10.54294/ex0itu
  *
- * \sa ScalarImageToRunLengthFeaturesFilter
  * \sa ScalarImageToRunLengthMatrixFilter
  * \sa HistogramToRunLengthFeaturesFilter
  *
@@ -102,8 +101,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageToRunLengthFeaturesFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarImageToRunLengthFeaturesFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);

@@ -117,8 +117,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageToTextureFeaturesFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarImageToTextureFeaturesFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);

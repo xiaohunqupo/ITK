@@ -22,17 +22,20 @@
 #include "itkSpatialObject.h"
 #include "itkFEMSpatialObjectReader.h"
 #include "itkFEMSpatialObjectWriter.h"
+#include "itkTestingMacros.h"
 
 int
 itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char * argv[])
 {
-  if (argc < 1)
+  if (argc != 3)
   {
-    std::cerr << "Missing Spatial Object Filename" << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " inputFileName outputFileName" << std::endl;
     return EXIT_FAILURE;
   }
+
   // Need to register default FEM object types,
-  // and setup SpatialReader to recognize FEM types
+  // and setup spatialReader to recognize FEM types
   // which is all currently done as a HACK in
   // the initialization of the itk::FEMFactoryBase::GetFactory()
   itk::FEMFactoryBase::GetFactory()->RegisterDefaultTypes();
@@ -42,11 +45,11 @@ itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char * argv[])
 
   using FEMSpatialObjectReaderType = itk::FEMSpatialObjectReader<3>;
   using FEMSpatialObjectReaderPointer = FEMSpatialObjectReaderType::Pointer;
-  FEMSpatialObjectReaderPointer SpatialReader = FEMSpatialObjectReaderType::New();
-  SpatialReader->SetFileName(argv[1]);
-  SpatialReader->Update();
+  FEMSpatialObjectReaderPointer spatialReader = FEMSpatialObjectReaderType::New();
+  spatialReader->SetFileName(argv[1]);
+  spatialReader->Update();
 
-  FEMSpatialObjectReaderType::GroupPointer myGroup = SpatialReader->GetGroup();
+  FEMSpatialObjectReaderType::GroupPointer myGroup = spatialReader->GetGroup();
   if (!myGroup)
   {
     std::cout << "No Group : [FAILED]" << std::endl;
@@ -57,7 +60,7 @@ itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char * argv[])
   // Testing the fe mesh validity
   using FEMObjectSpatialObjectType = itk::FEMObjectSpatialObject<3>;
 
-  FEMObjectSpatialObjectType::ChildrenListType * children = SpatialReader->GetGroup()->GetChildren();
+  FEMObjectSpatialObjectType::ChildrenListType * children = spatialReader->GetGroup()->GetChildren();
   if (children->front()->GetTypeName() != "FEMObjectSpatialObject")
   {
     std::cout << " [FAILED]" << std::endl;
@@ -108,10 +111,10 @@ itkFEMElement3DC0LinearTetrahedronStrainTest(int argc, char * argv[])
   femSODef->SetFEMObject(solver->GetOutput());
   using FEMSpatialObjectWriterType = itk::FEMSpatialObjectWriter<3>;
   using FEMSpatialObjectWriterPointer = FEMSpatialObjectWriterType::Pointer;
-  FEMSpatialObjectWriterPointer SpatialWriter = FEMSpatialObjectWriterType::New();
-  SpatialWriter->SetInput(femSODef);
-  SpatialWriter->SetFileName(argv[2]);
-  SpatialWriter->Update();
+  FEMSpatialObjectWriterPointer spatialWriter = FEMSpatialObjectWriterType::New();
+  spatialWriter->SetInput(femSODef);
+  spatialWriter->SetFileName(argv[2]);
+  spatialWriter->Update();
 
   std::cout << "Test PASSED!" << std::endl;
   return EXIT_SUCCESS;

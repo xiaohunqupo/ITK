@@ -95,7 +95,7 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateInputRe
   Superclass::GenerateInputRequestedRegion();
   if (this->GetInput())
   {
-    InputImagePointer input = const_cast<TInputImage *>(this->GetInput());
+    const InputImagePointer input = const_cast<TInputImage *>(this->GetInput());
     input->SetRequestedRegionToLargestPossibleRegion();
   }
 }
@@ -121,14 +121,13 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
 
   unsigned int loop;
 
-  typename Superclass::InputImageConstPointer inputImage = this->GetInput();
-  typename Superclass::OutputImagePointer     outputImage = this->GetOutput();
+  const typename Superclass::InputImageConstPointer inputImage = this->GetInput();
+  const typename Superclass::OutputImagePointer     outputImage = this->GetOutput();
 
   // Zero the output
-  OutputImageRegionType region = outputImage->GetRequestedRegion();
+  const OutputImageRegionType region = outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion(region);
-  outputImage->Allocate();
-  outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+  outputImage->AllocateInitialized();
 
   // Compute the statistics of the seed point
   using VectorMeanImageFunctionType = VectorMeanImageFunction<InputImageType>;
@@ -155,15 +154,15 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
   covariance = CovarianceMatrixType(dimension, dimension);
   mean = MeanVectorType(dimension);
 
-  covariance.fill(NumericTraits<ComponentRealType>::ZeroValue());
-  mean.fill(NumericTraits<ComponentRealType>::ZeroValue());
+  covariance.fill(ComponentRealType{});
+  mean.fill(ComponentRealType{});
 
   using MeanFunctionVectorType = typename VectorMeanImageFunctionType::OutputType;
   using CovarianceFunctionMatrixType = typename CovarianceImageFunctionType::OutputType;
 
-  typename SeedsContainerType::const_iterator si = m_Seeds.begin();
-  typename SeedsContainerType::const_iterator li = m_Seeds.end();
-  SizeValueType                               seed_cnt = 0;
+  auto          si = m_Seeds.begin();
+  auto          li = m_Seeds.end();
+  SizeValueType seed_cnt = 0;
   while (si != li)
   {
     if (region.IsInside(*si))
@@ -204,7 +203,7 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
 
   m_ThresholdFunction->SetThreshold(m_Multiplier);
 
-  itkDebugMacro(<< "\nMultiplier originally = " << m_Multiplier);
+  itkDebugMacro("\nMultiplier originally = " << m_Multiplier);
 
   // Make sure that the multiplier is large enough to include the seed points
   // themselves.
@@ -232,7 +231,7 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
   // threshold itself.
   m_ThresholdFunction->SetThreshold(m_Multiplier);
 
-  itkDebugMacro(<< "\nMultiplier after verifying seeds inclusion = " << m_Multiplier);
+  itkDebugMacro("\nMultiplier after verifying seeds inclusion = " << m_Multiplier);
 
   // Segment the image, the iterator walks the output image (so Set()
   // writes into the output image), starting at the seed point.  As
@@ -266,8 +265,8 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
     covariance = CovarianceMatrixType(dimension, dimension);
     mean = MeanVectorType(dimension);
 
-    covariance.fill(NumericTraits<ComponentRealType>::ZeroValue());
-    mean.fill(NumericTraits<ComponentRealType>::ZeroValue());
+    covariance.fill(ComponentRealType{});
+    mean.fill(ComponentRealType{});
 
     SizeValueType num{};
 
@@ -319,7 +318,7 @@ VectorConfidenceConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
     // upper] bounds prescribed, the pixel is added to the output
     // segmentation and its neighbors become candidates for the
     // iterator to walk.
-    outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+    outputImage->FillBuffer(OutputImagePixelType{});
     IteratorType thirdIt(outputImage, m_ThresholdFunction, m_Seeds);
     thirdIt.GoToBegin();
     try

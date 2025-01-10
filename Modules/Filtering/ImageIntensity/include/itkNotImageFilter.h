@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(NotImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NotImageFilter);
 
   /** Set/Get the value used to mark the false pixels of the result of
    * the operator. Defaults to 0 */

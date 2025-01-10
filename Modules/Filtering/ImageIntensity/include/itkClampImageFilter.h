@@ -89,8 +89,8 @@ private:
 
 
 template <typename TInput, typename TOutput>
-inline typename Clamp<TInput, TOutput>::OutputType
-Clamp<TInput, TOutput>::operator()(const InputType & A) const
+inline auto
+Clamp<TInput, TOutput>::operator()(const InputType & A) const -> OutputType
 {
   const auto dA = static_cast<double>(A);
 
@@ -160,8 +160,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ClampImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ClampImageFilter);
 
   OutputPixelType
   GetLowerBound() const;

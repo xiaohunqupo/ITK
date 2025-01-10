@@ -65,8 +65,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(SmoothingQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SmoothingQuadEdgeMeshFilter);
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
 
@@ -81,7 +81,7 @@ public:
   using OutputPointIdentifier = typename OutputMeshType::PointIdentifier;
   using OutputPointType = typename OutputMeshType::PointType;
   using OutputVectorType = typename OutputPointType::VectorType;
-  using OutputCoordType = typename OutputPointType::CoordRepType;
+  using OutputCoordType = typename OutputPointType::CoordinateType;
   using OutputPointsContainer = typename OutputMeshType::PointsContainer;
   using OutputPointsContainerPointer = typename OutputMeshType::PointsContainerPointer;
   using OutputPointsContainerIterator = typename OutputMeshType::PointsContainerIterator;

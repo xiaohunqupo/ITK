@@ -37,7 +37,7 @@ namespace itk
  * (1) Size of the region.
  * (2) Seed points coordinates. These coordinates can also be randomly set.
  *
- * \tparam TCoordType The type associated with the coordination of the seeds
+ * \tparam TCoordinate The type associated with the coordination of the seeds
  * and the resulting vertices.
  *
  * \ingroup ITKVoronoi
@@ -46,25 +46,25 @@ namespace itk
  * \sphinxexample{Segmentation/Voronoi/VoronoiDiagram,Voronoi Diagram}
  * \endsphinx
  */
-template <typename TCoordType>
-class ITK_TEMPLATE_EXPORT VoronoiDiagram2DGenerator : public MeshSource<VoronoiDiagram2D<TCoordType>>
+template <typename TCoordinate>
+class ITK_TEMPLATE_EXPORT VoronoiDiagram2DGenerator : public MeshSource<VoronoiDiagram2D<TCoordinate>>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(VoronoiDiagram2DGenerator);
 
   using Self = VoronoiDiagram2DGenerator;
-  using Superclass = MeshSource<VoronoiDiagram2D<TCoordType>>;
+  using Superclass = MeshSource<VoronoiDiagram2D<TCoordinate>>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(VoronoiDiagram2DGenerator, MeshSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VoronoiDiagram2DGenerator);
 
   /** Convenient type alias. */
-  using VoronoidDiagramType = VoronoiDiagram2D<TCoordType>;
+  using VoronoidDiagramType = VoronoiDiagram2D<TCoordinate>;
   using VDMesh = VoronoidDiagramType;
   using SeedsIterator = typename VDMesh::SeedsIterator;
   using OutputType = typename VDMesh::Pointer;
@@ -72,7 +72,11 @@ public:
   using SeedsType = typename VDMesh::SeedsType;
   using EdgeInfo = typename VDMesh::EdgeInfo;
   using EdgeInfoDQ = typename VDMesh::EdgeInfoDQ;
-  using CoordRepType = typename VDMesh::CoordRepType;
+  using CoordinateType = typename VDMesh::CoordinateType;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
   using VoronoiEdge = typename VDMesh::VoronoiEdge;
 
   /** Get the number of seed points. */
@@ -165,7 +169,7 @@ private:
     FortuneSite()
       : m_Sitenbr(NumericTraits<int>::max())
     {
-      m_Coord.Fill(NumericTraits<CoordRepType>::max());
+      m_Coord.Fill(NumericTraits<CoordinateType>::max());
     }
 
     ~FortuneSite() = default;
@@ -247,7 +251,7 @@ private:
   differentPoint(PointType p1, PointType p2);
 
   bool
-  almostsame(CoordRepType p1, CoordRepType p2);
+  almostsame(CoordinateType p1, CoordinateType p2);
 
   unsigned char
   Pointonbnd(int VertID);

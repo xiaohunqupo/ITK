@@ -24,7 +24,7 @@
 #include "itkProgressReporter.h"
 #include <queue>
 
-//#define BASIC
+// #define BASIC
 #define COPY
 
 #ifdef COPY
@@ -95,8 +95,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ReconstructionImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ReconstructionImageFilter);
 
   /** Set/Get the marker image. Traditionally, the marker image must
    * be pixelwise less than or equal to the mask image (for dilation),

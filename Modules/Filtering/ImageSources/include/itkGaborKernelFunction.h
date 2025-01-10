@@ -40,7 +40,7 @@ namespace itk
  * for a basic discussion including additional references.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * https://www.insight-journal.org/browse/publication/150
+ * https://doi.org/10.54294/dhogdz
  *
  * \sa KernelFunctionBase
  *
@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaborKernelFunction, KernelFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaborKernelFunction);
 
   /** Evaluate the function. */
   TRealValueType
@@ -76,10 +76,8 @@ public:
     {
       return envelope * std::sin(phase);
     }
-    else
-    {
-      return envelope * std::cos(phase);
-    }
+
+    return envelope * std::cos(phase);
   }
 
   /** Set/Get the standard deviation of the Gaussian envelope. */

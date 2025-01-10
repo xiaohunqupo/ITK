@@ -41,8 +41,9 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(FPFH
-"An ITK-based implementation of FPFH (Fast Point Feature Histogram) used for point cloud feature calculation.
+itk_fetch_module(
+  FPFH
+  "An ITK-based implementation of FPFH (Fast Point Feature Histogram) used for point cloud feature calculation.
 The feature points could be used obtain salient points while performing registration using RANSAC remote module.
 
 The class PointFeature is the main driver that takes a PointSet as argument.
@@ -50,6 +51,6 @@ Please refer to the documentation upstream for a detailed description and sample
 https://github.com/InsightSoftwareConsortium/ITKFPFH
 "
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKFPFH.git
-  GIT_TAG 537ed33069ca52a14568d84d5ca668f649fa7da8
-)
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKFPFH.git
+  GIT_TAG fc59b2e17b0417b7d4385d2b38280232eae4d449
+  )

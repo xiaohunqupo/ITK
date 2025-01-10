@@ -93,8 +93,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryMinMaxCurvatureFlowImageFilter, MinMaxCurvatureFlowImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryMinMaxCurvatureFlowImageFilter);
 
   /** Inherit type alias from Superclass. */
   using typename Superclass::FiniteDifferenceFunctionType;

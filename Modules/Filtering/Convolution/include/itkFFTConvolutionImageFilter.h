@@ -45,7 +45,7 @@ namespace itk
  *
  * "FFT Based Convolution"
  * by Gaetan Lehmann
- * https://www.insight-journal.org/browse/publication/717
+ * https://doi.org/10.54294/0iky0u
  *
  * \ingroup ITKConvolution
  * \sa ConvolutionImageFilter
@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(FFTConvolutionImageFilter, ConvolutionImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FFTConvolutionImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -107,7 +107,6 @@ public:
 
   /** Typedef to describe the boundary condition. */
   using typename Superclass::BoundaryConditionType;
-  using typename Superclass::BoundaryConditionPointerType;
 
   itkSetMacro(SizeGreatestPrimeFactor, SizeValueType);
   itkGetMacro(SizeGreatestPrimeFactor, SizeValueType);

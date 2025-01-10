@@ -77,16 +77,26 @@ public:
 
   /** Default-constructor.
    * \note The other five "special member functions" are defaulted implicitly, following the C++ "Rule of Zero". */
-  RGBPixel() { this->Fill(0); }
+#ifdef ITK_FUTURE_LEGACY_REMOVE
+  RGBPixel() = default;
+#else
+  constexpr RGBPixel()
+    : Superclass(Superclass())
+  {
+    // `: Superclass(Superclass())` is a workaround for an old compiler bug. A simple `: Superclass()` triggered
+    // warnings from GCC 9.4.0 saying: "warning: '<anonymous>' may be used uninitialized in this function
+    // [-Wmaybe-uninitialized]".
+  }
+#endif
 
 #if defined(ITK_LEGACY_REMOVE)
-  /** Explicit constructor to fill Red=Blug=Green= r. */
+  /** Explicit constructor to fill Red=Blue=Green= r. */
   explicit RGBPixel(const ComponentType & r) { this->Fill(r); }
 
   /** Prevents copy-initialization from `nullptr`, as well as from `0` (NULL). */
   RGBPixel(std::nullptr_t) = delete;
 #else
-  /** Constructor to fill Red=Blug=Green= r.
+  /** Constructor to fill Red=Blue=Green= r.
    * \note ITK_LEGACY_REMOVE=ON will disallow implicit conversion from a component value. */
   RGBPixel(const ComponentType & r) { this->Fill(r); }
 #endif
@@ -116,8 +126,9 @@ public:
   Self
   operator+(const Self & r) const;
   Self
-       operator-(const Self & r) const;
-  Self operator*(const ComponentType & r) const;
+  operator-(const Self & r) const;
+  Self
+  operator*(const ComponentType & r) const;
   Self
   operator/(const ComponentType & r) const;
 
@@ -235,7 +246,7 @@ operator>>(std::istream & is, RGBPixel<TComponent> & c);
 
 template <typename T>
 inline void
-swap(RGBPixel<T> & a, RGBPixel<T> & b)
+swap(RGBPixel<T> & a, RGBPixel<T> & b) noexcept
 {
   a.swap(b);
 }

@@ -106,8 +106,8 @@ public:
   using ThresholdFunctionType = ThresholdSegmentationLevelSetFunction<OutputImageType, FeatureImageType>;
   using ThresholdFunctionPointer = typename ThresholdFunctionType::Pointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NarrowBandThresholdSegmentationLevelSetImageFilter, NarrowBandLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NarrowBandThresholdSegmentationLevelSetImageFilter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);

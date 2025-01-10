@@ -58,28 +58,28 @@ TransformMeshFilter<TInputMesh, TOutputMesh, TTransform>::GenerateData()
   using InputPointsContainerConstPointer = typename TInputMesh::PointsContainerConstPointer;
   using OutputPointsContainerPointer = typename TOutputMesh::PointsContainerPointer;
 
-  const InputMeshType * inputMesh = this->GetInput();
-  OutputMeshPointer     outputMesh = this->GetOutput();
+  const InputMeshType *   inputMesh = this->GetInput();
+  const OutputMeshPointer outputMesh = this->GetOutput();
 
   if (!inputMesh)
   {
-    itkExceptionMacro(<< "Missing Input Mesh");
+    itkExceptionMacro("Missing Input Mesh");
   }
 
   if (!outputMesh)
   {
-    itkExceptionMacro(<< "Missing Output Mesh");
+    itkExceptionMacro("Missing Output Mesh");
   }
 
   if (!m_Transform)
   {
-    itkExceptionMacro(<< "Missing Input Transform");
+    itkExceptionMacro("Missing Input Transform");
   }
 
   outputMesh->SetBufferedRegion(outputMesh->GetRequestedRegion());
 
-  InputPointsContainerConstPointer inPoints = inputMesh->GetPoints();
-  OutputPointsContainerPointer     outPoints = outputMesh->GetPoints();
+  const InputPointsContainerConstPointer inPoints = inputMesh->GetPoints();
+  const OutputPointsContainerPointer     outPoints = outputMesh->GetPoints();
 
   outPoints->Reserve(inputMesh->GetNumberOfPoints());
   outPoints->Squeeze(); // in case the previous mesh had
@@ -106,7 +106,7 @@ TransformMeshFilter<TInputMesh, TOutputMesh, TTransform>::GenerateData()
   // FIXME: DELETEME outputMesh->SetCells(  inputMesh->GetCells() );
   // FIXME: DELETEME outputMesh->SetCellData(  inputMesh->GetCellData() );
 
-  unsigned int maxDimension = TInputMesh::MaxTopologicalDimension;
+  const unsigned int maxDimension = TInputMesh::MaxTopologicalDimension;
 
   for (unsigned int dim = 0; dim < maxDimension; ++dim)
   {

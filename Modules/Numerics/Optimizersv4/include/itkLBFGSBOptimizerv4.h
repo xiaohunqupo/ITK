@@ -82,8 +82,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LBFGSBOptimizerv4, LBFGSOptimizerBasev4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LBFGSBOptimizerv4);
 
   enum BoundSelectionValues
   {

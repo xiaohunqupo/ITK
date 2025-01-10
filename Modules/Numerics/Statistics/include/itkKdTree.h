@@ -129,7 +129,7 @@ struct ITK_TEMPLATE_EXPORT KdTreeNode
 
   /** Destructor */
   virtual ~KdTreeNode() = default; // needed to subclasses will actually be deleted
-};                                 // end of class
+}; // end of class
 
 /**
  * \class KdTreeNonterminalNode
@@ -225,7 +225,11 @@ struct ITK_TEMPLATE_EXPORT KdTreeNonterminalNode : public KdTreeNode<TSample>
    * this node in the tree. This MeasurementVector will be used later during
    * the distance computation when querying the tree.
    */
-  InstanceIdentifier GetInstanceIdentifier(InstanceIdentifier) const override { return this->m_InstanceIdentifier; }
+  InstanceIdentifier
+  GetInstanceIdentifier(InstanceIdentifier) const override
+  {
+    return this->m_InstanceIdentifier;
+  }
 
   /**
    * Set the identifier of the node.
@@ -354,7 +358,11 @@ struct ITK_TEMPLATE_EXPORT KdTreeWeightedCentroidNonterminalNode : public KdTree
    * this node in the tree. This MeasurementVector will be used later during
    * the distance computation when querying the tree.
    */
-  InstanceIdentifier GetInstanceIdentifier(InstanceIdentifier) const override { return this->m_InstanceIdentifier; }
+  InstanceIdentifier
+  GetInstanceIdentifier(InstanceIdentifier) const override
+  {
+    return this->m_InstanceIdentifier;
+  }
 
   /**
    * Set the identifier of the node.
@@ -535,8 +543,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(KdTree, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KdTree);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -747,7 +755,7 @@ public:
   Search(const MeasurementVectorType &, double, InstanceIdentifierVectorType &) const;
 
   /** Returns true if the intermediate k-nearest neighbors exist within
-   * the the bounding box defined by the lowerBound and the
+   * the bounding box defined by the lowerBound and the
    * upperBound. Otherwise returns false. Returns false if the ball
    * defined by the distance between the query point and the farthest
    * neighbor touch the surface of the bounding box. */

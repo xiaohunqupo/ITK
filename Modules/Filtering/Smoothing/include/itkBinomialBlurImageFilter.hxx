@@ -23,13 +23,14 @@
 #include "itkImageRegion.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionReverseIterator.h"
+#include <algorithm> // For min and max.
 
 namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 BinomialBlurImageFilter<TInputImage, TOutputImage>::BinomialBlurImageFilter()
 {
-  itkDebugMacro(<< "BinomialBlurImageFilter::BinomialBlurImageFilter() called");
+  itkDebugMacro("BinomialBlurImageFilter::BinomialBlurImageFilter() called");
 
   // The default is to just do one repetition
   m_Repetitions = 1;
@@ -39,12 +40,12 @@ template <typename TInputImage, typename TOutputImage>
 void
 BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion()
 {
-  itkDebugMacro(<< "BinomialBlurImageFilter::GenerateInputRequestedRegion() called");
+  itkDebugMacro("BinomialBlurImageFilter::GenerateInputRequestedRegion() called");
 
   Superclass::GenerateInputRequestedRegion();
 
-  InputImagePointer  inputPtr = const_cast<TInputImage *>(this->GetInput(0));
-  OutputImagePointer outputPtr = this->GetOutput(0);
+  const InputImagePointer  inputPtr = const_cast<TInputImage *>(this->GetInput(0));
+  const OutputImagePointer outputPtr = this->GetOutput(0);
 
   if (!inputPtr || !outputPtr)
   {
@@ -73,16 +74,10 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion
   for (unsigned int i = 0; i < inputPtr->GetImageDimension(); ++i)
   {
     inputIndex[i] -= m_Repetitions;
-    if (inputIndex[i] < inputLargestPossibleRegionIndex[i])
-    {
-      inputIndex[i] = inputLargestPossibleRegionIndex[i];
-    }
+    inputIndex[i] = std::max(inputIndex[i], inputLargestPossibleRegionIndex[i]);
 
     inputSize[i] += m_Repetitions;
-    if (inputSize[i] > inputLargestPossibleRegionSize[i])
-    {
-      inputSize[i] = inputLargestPossibleRegionSize[i];
-    }
+    inputSize[i] = std::min(inputSize[i], inputLargestPossibleRegionSize[i]);
   }
 
   inputRegion.SetIndex(inputIndex);
@@ -95,11 +90,11 @@ template <typename TInputImage, typename TOutputImage>
 void
 BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  itkDebugMacro(<< "BinomialBlurImageFilter::GenerateData() called");
+  itkDebugMacro("BinomialBlurImageFilter::GenerateData() called");
 
   // Get the input and output pointers
-  InputImageConstPointer inputPtr = this->GetInput(0);
-  OutputImagePointer     outputPtr = this->GetOutput(0);
+  const InputImageConstPointer inputPtr = this->GetInput(0);
+  const OutputImagePointer     outputPtr = this->GetOutput(0);
 
   // Allocate the output
   outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
@@ -111,8 +106,7 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
   using TTempImage = Image<double, NDimensions>;
   auto tempPtr = TTempImage::New();
 
-  typename TTempImage::RegionType tempRegion;
-  tempRegion = inputPtr->GetRequestedRegion();
+  const typename TTempImage::RegionType tempRegion = inputPtr->GetRequestedRegion();
 
   tempPtr->SetRegions(tempRegion);
   tempPtr->Allocate();
@@ -145,18 +139,10 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
   typename TTempImage::IndexType index;
   typename TTempImage::IndexType indexShift;
 
-  // How many times has the algorithm executed? (for debug)
-  int num_reps = 0;
-
-  // Temporary pixel storage
-  double pixelA, pixelB;
-
   // walk the output image forwards and compute blur
   for (unsigned int rep = 0; rep < m_Repetitions; ++rep)
   {
-    ++num_reps;
-
-    itkDebugMacro(<< "Repetition #" << rep);
+    itkDebugMacro("Repetition #" << rep);
 
     // blur each dimension
     for (unsigned int dim = 0; dim < NDimensions; ++dim)
@@ -184,8 +170,8 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
           }
 
           // Average the pixel of interest and shifted pixel
-          pixelA = tempPtr->GetPixel(index);
-          pixelB = tempPtr->GetPixel(indexShift);
+          double       pixelA = tempPtr->GetPixel(index);
+          const double pixelB = tempPtr->GetPixel(indexShift);
 
           pixelA += pixelB;
           pixelA = pixelA / 2.0;
@@ -197,7 +183,7 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
         ++tempItDir;
       } // end walk the image forwards
 
-      itkDebugMacro(<< "End processing forward dimension " << dim);
+      itkDebugMacro("End processing forward dimension " << dim);
 
       //----------------------Reverse pass----------------------
       TempReverseIterator tempReverseIt(tempPtr, tempPtr->GetRequestedRegion());
@@ -225,8 +211,8 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
           }
 
           // Average the pixel of interest and shifted pixel
-          pixelA = tempPtr->GetPixel(index);
-          pixelB = tempPtr->GetPixel(indexShift);
+          double       pixelA = tempPtr->GetPixel(index);
+          const double pixelB = tempPtr->GetPixel(indexShift);
 
           pixelA += pixelB;
           pixelA = pixelA / 2;
@@ -237,10 +223,8 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
 
         ++tempReverseIt;
       } // end walk the image backwards
-
-      itkDebugMacro(<< "End processing reverse dimension " << dim);
     } // end dimension loop
-  }   // end number of repetitions loop
+  } // end number of repetitions loop
 
   // Now, copy the temporary image to the output image. Note that the temp
   // buffer iterator walks a region defined by the output
@@ -253,8 +237,6 @@ BinomialBlurImageFilter<TInputImage, TOutputImage>::GenerateData()
   {
     outIt.Set(static_cast<PixelType>(tempIt2.Get()));
   }
-
-  itkDebugMacro(<< "Binomial blur filter executed " << num_reps << " times");
 }
 
 template <typename TInputImage, typename TOutputImage>

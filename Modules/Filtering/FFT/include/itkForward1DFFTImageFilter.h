@@ -59,7 +59,7 @@ public:
   /** Dimension of the underlying image. */
   static constexpr unsigned int ImageDimension = InputImageType::ImageDimension;
 
-  itkTypeMacro(Forward1DFFTImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(Forward1DFFTImageFilter);
 
   /** Customized object creation methods that support configuration-based
    * selection of FFT implementation.
@@ -91,7 +91,7 @@ protected:
   void
   GenerateInputRequestedRegion() override;
   void
-  EnlargeOutputRequestedRegion(DataObject * output) override;
+  EnlargeOutputRequestedRegion(DataObject * out) override;
 
 private:
   /** Direction in which the filter is to be applied

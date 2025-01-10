@@ -46,8 +46,8 @@ public:
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VolumeSplineKernelTransform, KernelTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VolumeSplineKernelTransform);
 
   /** Scalar type. */
   using typename Superclass::ScalarType;

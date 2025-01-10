@@ -54,8 +54,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetEquationBinaryMaskTerm, LevelSetEquationTermBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEquationBinaryMaskTerm);
 
   using typename Superclass::InputImageType;
   using typename Superclass::InputImagePointer;

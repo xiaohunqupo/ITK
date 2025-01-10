@@ -71,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageMomentsCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageMomentsCalculator);
 
   /** Extract the dimension of the image. */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;

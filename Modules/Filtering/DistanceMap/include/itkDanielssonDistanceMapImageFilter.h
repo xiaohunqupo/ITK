@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DanielssonDistanceMapImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DanielssonDistanceMapImageFilter);
 
   /** Type for input image. */
   using InputImageType = TInputImage;
@@ -211,7 +211,7 @@ protected:
 private:
   bool m_SquaredDistance{};
   bool m_InputIsBinary{};
-  bool m_UseImageSpacing{};
+  bool m_UseImageSpacing{ true };
 
   SpacingType m_InputSpacingCache{};
 };

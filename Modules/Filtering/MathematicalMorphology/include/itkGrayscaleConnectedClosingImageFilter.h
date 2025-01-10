@@ -73,8 +73,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GrayscaleConnectedClosingImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GrayscaleConnectedClosingImageFilter);
 
   /** Set/Get the seed pixel for the segmentation */
   itkSetMacro(Seed, InputImageIndexType);

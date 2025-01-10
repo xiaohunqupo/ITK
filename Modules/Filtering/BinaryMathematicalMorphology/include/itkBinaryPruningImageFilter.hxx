@@ -32,7 +32,7 @@ BinaryPruningImageFilter<TInputImage, TOutputImage>::BinaryPruningImageFilter()
 {
   this->SetNumberOfRequiredOutputs(1);
 
-  OutputImagePointer pruneImage = OutputImageType::New();
+  const OutputImagePointer pruneImage = OutputImageType::New();
   this->SetNthOutput(0, pruneImage.GetPointer());
 
   m_Iteration = 3;
@@ -55,20 +55,20 @@ template <typename TInputImage, typename TOutputImage>
 void
 BinaryPruningImageFilter<TInputImage, TOutputImage>::PrepareData()
 {
-  itkDebugMacro(<< "PrepareData Start");
-  OutputImagePointer pruneImage = GetPruning();
+  itkDebugMacro("PrepareData Start");
+  const OutputImagePointer pruneImage = GetPruning();
 
-  InputImagePointer inputImage = dynamic_cast<const TInputImage *>(ProcessObject::GetInput(0));
+  const InputImagePointer inputImage = dynamic_cast<const TInputImage *>(ProcessObject::GetInput(0));
 
   pruneImage->SetBufferedRegion(pruneImage->GetRequestedRegion());
   pruneImage->Allocate();
 
-  typename OutputImageType::RegionType region = pruneImage->GetRequestedRegion();
+  const typename OutputImageType::RegionType region = pruneImage->GetRequestedRegion();
 
   ImageRegionConstIterator<TInputImage> it(inputImage, region);
   ImageRegionIterator<TOutputImage>     ot(pruneImage, region);
 
-  itkDebugMacro(<< "PrepareData: Copy input to output");
+  itkDebugMacro("PrepareData: Copy input to output");
 
   while (!ot.IsAtEnd())
   {
@@ -76,7 +76,7 @@ BinaryPruningImageFilter<TInputImage, TOutputImage>::PrepareData()
     ++it;
     ++ot;
   }
-  itkDebugMacro(<< "PrepareData End");
+  itkDebugMacro("PrepareData End");
 }
 
 /**
@@ -86,23 +86,22 @@ template <typename TInputImage, typename TOutputImage>
 void
 BinaryPruningImageFilter<TInputImage, TOutputImage>::ComputePruneImage()
 {
-  itkDebugMacro(<< "ComputeThinImage Start");
-  OutputImagePointer pruneImage = GetPruning();
+  itkDebugMacro("ComputeThinImage Start");
+  const OutputImagePointer pruneImage = GetPruning();
 
-  typename OutputImageType::RegionType region = pruneImage->GetRequestedRegion();
+  const typename OutputImageType::RegionType region = pruneImage->GetRequestedRegion();
 
-  typename NeighborhoodIteratorType::RadiusType radius;
-  radius.Fill(1);
+  auto                     radius = MakeFilled<typename NeighborhoodIteratorType::RadiusType>(1);
   NeighborhoodIteratorType ot(radius, pruneImage, region);
 
-  typename NeighborhoodIteratorType::OffsetType offset1 = { { -1, -1 } };
-  typename NeighborhoodIteratorType::OffsetType offset2 = { { -1, 0 } };
-  typename NeighborhoodIteratorType::OffsetType offset3 = { { -1, 1 } };
-  typename NeighborhoodIteratorType::OffsetType offset4 = { { 0, 1 } };
-  typename NeighborhoodIteratorType::OffsetType offset5 = { { 1, 1 } };
-  typename NeighborhoodIteratorType::OffsetType offset6 = { { 1, 0 } };
-  typename NeighborhoodIteratorType::OffsetType offset7 = { { 1, -1 } };
-  typename NeighborhoodIteratorType::OffsetType offset8 = { { 0, -1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset1 = { { -1, -1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset2 = { { -1, 0 } };
+  const typename NeighborhoodIteratorType::OffsetType offset3 = { { -1, 1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset4 = { { 0, 1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset5 = { { 1, 1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset6 = { { 1, 0 } };
+  const typename NeighborhoodIteratorType::OffsetType offset7 = { { 1, -1 } };
+  const typename NeighborhoodIteratorType::OffsetType offset8 = { { 0, -1 } };
 
   unsigned int count = 0;
   while (count < m_Iteration)
@@ -112,8 +111,7 @@ BinaryPruningImageFilter<TInputImage, TOutputImage>::ComputePruneImage()
     {
       if (ot.GetCenterPixel())
       {
-        PixelType genus;
-        genus = ot.GetPixel(offset1) + ot.GetPixel(offset2);
+        PixelType genus = ot.GetPixel(offset1) + ot.GetPixel(offset2);
         genus += ot.GetPixel(offset3) + ot.GetPixel(offset4);
         genus += ot.GetPixel(offset5) + ot.GetPixel(offset6);
         genus += ot.GetPixel(offset7) + ot.GetPixel(offset8);
@@ -128,7 +126,7 @@ BinaryPruningImageFilter<TInputImage, TOutputImage>::ComputePruneImage()
     }
     ++count;
   }
-  itkDebugMacro(<< "ComputeThinImage End");
+  itkDebugMacro("ComputeThinImage End");
 }
 
 /**
@@ -140,7 +138,7 @@ BinaryPruningImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   this->PrepareData();
 
-  itkDebugMacro(<< "GenerateData: Computing Thinning Image");
+  itkDebugMacro("GenerateData: Computing Thinning Image");
   this->ComputePruneImage();
 } // end GenerateData()
 

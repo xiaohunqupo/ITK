@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VoronoiSegmentationImageFilter, VoronoiSegmentationImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VoronoiSegmentationImageFilter);
 
   /** Convenient type alias. */
   using typename Superclass::BinaryObjectImage;

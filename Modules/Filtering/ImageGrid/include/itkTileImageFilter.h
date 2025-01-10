@@ -63,8 +63,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(TileImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TileImageFilter);
 
   /** Image pixel value type alias. */
   using InputPixelType = typename TInputImage::PixelType;
@@ -148,7 +148,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override;
+  VerifyInputInformation() const override;
 
 private:
   typename TileImageType::Pointer m_TileImage{};

@@ -40,7 +40,7 @@ ImageToSpatialObjectRegistrationMethod<TFixedImage, TMovingSpatialObject>::Image
   m_InitialTransformParameters.Fill(0.0f);
   m_LastTransformParameters.Fill(0.0f);
 
-  TransformOutputPointer transformDecorator =
+  const TransformOutputPointer transformDecorator =
     itkDynamicCastInDebugMode<TransformOutputType *>(this->MakeOutput(0).GetPointer());
 
   this->ProcessObject::SetNthOutput(0, transformDecorator.GetPointer());
@@ -52,32 +52,32 @@ ImageToSpatialObjectRegistrationMethod<TFixedImage, TMovingSpatialObject>::Initi
 {
   if (!m_FixedImage)
   {
-    itkExceptionMacro(<< "FixedImage is not present");
+    itkExceptionMacro("FixedImage is not present");
   }
 
   if (!m_MovingSpatialObject)
   {
-    itkExceptionMacro(<< "MovingSpatialObject is not present");
+    itkExceptionMacro("MovingSpatialObject is not present");
   }
 
   if (!m_Metric)
   {
-    itkExceptionMacro(<< "Metric is not present");
+    itkExceptionMacro("Metric is not present");
   }
 
   if (!m_Optimizer)
   {
-    itkExceptionMacro(<< "Optimizer is not present");
+    itkExceptionMacro("Optimizer is not present");
   }
 
   if (!m_Transform)
   {
-    itkExceptionMacro(<< "Transform is not present");
+    itkExceptionMacro("Transform is not present");
   }
 
   if (!m_Interpolator)
   {
-    itkExceptionMacro(<< "Interpolator is not present");
+    itkExceptionMacro("Interpolator is not present");
   }
 
   m_Interpolator->SetInputImage(m_FixedImage);
@@ -95,8 +95,8 @@ ImageToSpatialObjectRegistrationMethod<TFixedImage, TMovingSpatialObject>::Initi
   // Validate initial transform parameters
   if (m_InitialTransformParameters.Size() != m_Metric->GetNumberOfParameters())
   {
-    itkWarningMacro(<< " WARNING : Size mismatch between initial parameter and transform");
-    itkWarningMacro(<< "Resizing m_InitialTransformParameters to  " << m_Transform->GetNumberOfParameters());
+    itkWarningMacro(" WARNING : Size mismatch between initial parameter and transform");
+    itkWarningMacro("Resizing m_InitialTransformParameters to  " << m_Transform->GetNumberOfParameters());
     m_InitialTransformParameters.set_size(m_Transform->GetNumberOfParameters());
     m_InitialTransformParameters.Fill(0.0f);
   }

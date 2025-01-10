@@ -60,8 +60,8 @@ public:
   using typename Superclass::NeighborhoodType;
   using typename Superclass::TimeStepType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarAnisotropicDiffusionFunction, AnisotropicDiffusionFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarAnisotropicDiffusionFunction);
 
   void
   CalculateAverageGradientMagnitudeSquared(TImage *) override;

@@ -50,8 +50,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Method for creation through the object factory. */
-  itkTypeMacro(GroupSpatialObject, SpatialObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GroupSpatialObject);
 
 protected:
   GroupSpatialObject();

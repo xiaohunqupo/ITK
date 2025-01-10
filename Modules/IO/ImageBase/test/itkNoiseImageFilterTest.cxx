@@ -33,22 +33,22 @@ itkNoiseImageFilterTest(int argc, char * argv[])
 
   if (argc < 3)
   {
-    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " InputImage BaselineImage\n";
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " InputImage BaselineImage" << std::endl;
     return EXIT_FAILURE;
   }
 
-  itk::Size<2> radius;
   using myImageIn = itk::Image<unsigned short, 2>;
   using myImageOut = itk::Image<float, 2>;
   using myImageChar = itk::Image<unsigned char, 2>;
-  itk::ImageFileReader<myImageIn>::Pointer input = itk::ImageFileReader<myImageIn>::New();
+  const itk::ImageFileReader<myImageIn>::Pointer input = itk::ImageFileReader<myImageIn>::New();
   input->SetFileName(argv[1]);
 
   // Create a filter
   using FilterType = itk::NoiseImageFilter<myImageIn, myImageOut>;
 
-  auto                     filter = FilterType::New();
-  itk::SimpleFilterWatcher filterWatch(filter);
+  auto                           filter = FilterType::New();
+  const itk::SimpleFilterWatcher filterWatch(filter);
 
   using RescaleFilterType = itk::RescaleIntensityImageFilter<myImageOut, myImageChar>;
 
@@ -57,25 +57,21 @@ itkNoiseImageFilterTest(int argc, char * argv[])
   rescale->SetOutputMaximum(255);
   rescale->SetInput(filter->GetOutput());
 
-  try
-  {
-    radius.Fill(5);
-    filter->SetInput(input->GetOutput());
-    filter->SetRadius(radius);
-    filter->Update();
-  }
-  catch (const itk::ExceptionObject & e)
-  {
-    std::cerr << "Exception detected: " << e.GetDescription();
-    return -1;
-  }
+  auto radius = itk::MakeFilled<itk::Size<2>>(5);
+  filter->SetInput(input->GetOutput());
+  filter->SetRadius(radius);
+
+  ITK_TRY_EXPECT_NO_EXCEPTION(filter->Update());
+
 
   // Generate test image
-  itk::ImageFileWriter<myImageChar>::Pointer writer;
-  writer = itk::ImageFileWriter<myImageChar>::New();
+  const itk::ImageFileWriter<myImageChar>::Pointer writer = itk::ImageFileWriter<myImageChar>::New();
   writer->SetInput(rescale->GetOutput());
   writer->SetFileName(argv[2]);
-  writer->Update();
 
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

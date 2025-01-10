@@ -56,8 +56,8 @@ public:
 
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MetaSceneConverter, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MetaSceneConverter);
 
   /** SpatialObject Scene types */
   using SpatialObjectType = itk::SpatialObject<VDimension>;
@@ -68,6 +68,15 @@ public:
   using MetaConverterBaseType = MetaConverterBase<VDimension>;
   using MetaConverterPointer = typename MetaConverterBaseType::Pointer;
   using ConverterMapType = std::map<std::string, MetaConverterPointer>;
+
+  /** Choose the API and FileFormat version for MetaIO.
+   *    Version 0 (default) is not able to fully / accurately represent
+   *       a SpatialObject scene (image transform and parent-object
+   *       transforms are intermingled.
+   *    Version 1 fixes the bugs in Version 0, but introduces new
+   *       tag-value pairs that won't be processed by older readers/apps. */
+  itkSetMacro(MetaIOVersion, unsigned int);
+  itkGetConstMacro(MetaIOVersion, unsigned int);
 
   /** Read a MetaFile and create a Scene SpatialObject. */
   SpatialObjectPointer
@@ -135,6 +144,7 @@ private:
   {
     auto converter = TConverter::New();
     // needed just for Image & ImageMask
+    converter->SetMetaIOVersion(m_MetaIOVersion);
     converter->SetWriteImagesInSeparateFile(this->m_WriteImagesInSeparateFile);
     return converter->SpatialObjectToMetaObject(so);
   }
@@ -143,6 +153,7 @@ private:
   MetaObjectToSpatialObject(const MetaObject * mo)
   {
     auto converter = TConverter::New();
+    converter->SetMetaIOVersion(m_MetaIOVersion);
     return converter->MetaObjectToSpatialObject(mo);
   }
   void
@@ -151,15 +162,12 @@ private:
   void
   SetTransform(SpatialObjectType * so, const MetaObject * meta);
 
-  double m_Orientation[100]{};
-  double m_Position[10]{};
-  double m_CenterOfRotation[10]{};
-
   MetaEvent *      m_Event{};
   bool             m_BinaryPoints{};
   bool             m_WriteImagesInSeparateFile{};
   unsigned int     m_TransformPrecision{};
   ConverterMapType m_ConverterMap{};
+  unsigned int     m_MetaIOVersion{ 0 };
 };
 } // end namespace itk
 

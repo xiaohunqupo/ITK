@@ -64,8 +64,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleSwarmOptimizerBase, SingleValuedNonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ParticleSwarmOptimizerBase);
 
   using ParameterBoundsType = std::vector<std::pair<ParametersType::ValueType, ParametersType::ValueType>>;
 
@@ -193,7 +193,7 @@ public:
   GetValue() const;
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /** Print the swarm information to the given output stream. Each line

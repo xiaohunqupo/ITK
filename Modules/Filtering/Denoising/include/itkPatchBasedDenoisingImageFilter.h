@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PatchBasedDenoisingImageFilter, PatchBasedDenoisingBaseImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PatchBasedDenoisingImageFilter);
 
   /** Type definition for the input image. */
   using typename Superclass::InputImageType;
@@ -368,10 +368,8 @@ protected:
     {
       return this->AddExponentialMapUpdate(a, b);
     }
-    else
-    {
-      return this->AddEuclideanUpdate(a, b);
-    }
+
+    return this->AddEuclideanUpdate(a, b);
   }
 
   template <typename RealT>

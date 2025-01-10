@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Tan
 {
 public:
-  Tan() = default;
-  ~Tan() = default;
   bool
   operator==(const Tan &) const
   {
@@ -78,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(TanImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TanImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

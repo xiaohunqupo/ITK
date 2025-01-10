@@ -29,7 +29,7 @@
 // distribution of intensities and we are forced to estimate it from the
 // evaluation of the histogram from one or several images of similar nature.
 // We can use the counts in histogram bins in order to compute frequencies and
-// then consider those frequencies to be estimations of the probablility of a
+// then consider those frequencies to be estimations of the probability of a
 // new value to belong to the intensity range of that bin.
 //
 // \index{Entropy!Images}
@@ -194,10 +194,10 @@ main(int argc, char * argv[])
 
 
   // Software Guide : BeginCodeSnippet
-  HistogramType::ConstIterator itr = histogram->Begin();
-  HistogramType::ConstIterator end = histogram->End();
+  HistogramType::ConstIterator       itr = histogram->Begin();
+  const HistogramType::ConstIterator end = histogram->End();
 
-  double Sum = histogram->GetTotalFrequency();
+  const double Sum = histogram->GetTotalFrequency();
 
   double Entropy = 0.0;
   // Software Guide : EndCodeSnippet

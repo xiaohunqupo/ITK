@@ -73,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MinimumMaximumImageFilter, ImageSink);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MinimumMaximumImageFilter);
 
   /** Image type alias support */
   using InputImageType = TInputImage;

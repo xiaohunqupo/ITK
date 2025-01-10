@@ -48,8 +48,7 @@ namespace itk
  *  \ingroup ITKLevelSetsv4
  */
 template <typename TInputImage, typename TLevelSet>
-class ITK_TEMPLATE_EXPORT BinaryImageToLevelSetImageAdaptor
-{};
+class ITK_TEMPLATE_EXPORT BinaryImageToLevelSetImageAdaptor{};
 
 
 /** \brief Partial template specialization for LevelSetDenseImage
@@ -71,8 +70,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToLevelSetImageAdaptorBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToLevelSetImageAdaptor);
 
   using InputImageType = TInputImage;
   using InputImagePixelType = typename InputImageType::PixelType;
@@ -131,8 +130,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = BinaryImageToLevelSetImageAdaptorBase<TInput, TOutput>;
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToSparseLevelSetImageAdaptorBase, BinaryImageToLevelSetImageAdaptorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToSparseLevelSetImageAdaptorBase);
 
   using typename Superclass::InputImageType;
   using typename Superclass::InputImagePixelType;
@@ -206,8 +205,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToLevelSetImageAdaptor, BinaryImageToSparseLevelSetImageAdaptorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToLevelSetImageAdaptor);
 
   using typename Superclass::InputImageType;
   using typename Superclass::InputImagePixelType;
@@ -290,8 +289,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToLevelSetImageAdaptor, BinaryImageToSparseLevelSetImageAdaptorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToLevelSetImageAdaptor);
 
   using typename Superclass::InputImageType;
 
@@ -371,8 +370,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToLevelSetImageAdaptor, BinaryImageToSparseLevelSetImageAdaptorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToLevelSetImageAdaptor);
 
   using typename Superclass::InputImageType;
 

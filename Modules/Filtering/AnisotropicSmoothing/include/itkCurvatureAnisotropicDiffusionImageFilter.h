@@ -70,8 +70,8 @@ public:
   /** Standard method for creation through object factory. */
   itkNewMacro(Self);
 
-  /** Run-time information. */
-  itkTypeMacro(CurvatureAnisotropicDiffusionImageFilter, AnisotropicDiffusionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvatureAnisotropicDiffusionImageFilter);
 
   /** Extract superclass information. */
   using typename Superclass::UpdateBufferType;
@@ -88,8 +88,7 @@ public:
 protected:
   CurvatureAnisotropicDiffusionImageFilter()
   {
-    typename CurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::Pointer q =
-      CurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
+    auto q = CurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
     this->SetDifferenceFunction(q);
   }
 

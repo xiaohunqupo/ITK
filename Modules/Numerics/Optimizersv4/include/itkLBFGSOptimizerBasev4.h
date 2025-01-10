@@ -84,8 +84,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LBFGSOptimizerBasev4, SingleValuedNonLinearVnlOptimizerv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LBFGSOptimizerBasev4);
 
   using MetricType = Superclass::MetricType;
   using ParametersType = Superclass::ParametersType;
@@ -138,7 +138,7 @@ public:
   itkGetConstMacro(GradientConvergenceTolerance, double);
 
   /** Get the reason for termination */
-  const StopConditionReturnStringType
+  StopConditionReturnStringType
   GetStopConditionDescription() const override;
 
 protected:
@@ -194,4 +194,39 @@ protected:
 #  include "itkLBFGSOptimizerBasev4.hxx"
 #endif
 
+#endif
+
+/** Explicit instantiations */
+#ifndef ITK_TEMPLATE_EXPLICIT_LBFGSOptimizerBasev4
+// Explicit instantiation is required to ensure correct dynamic_cast
+// behavior across shared libraries.
+//
+// IMPORTANT: Since within the same compilation unit,
+//            ITK_TEMPLATE_EXPLICIT_<classname> defined and undefined states
+//            need to be considered. This code *MUST* be *OUTSIDE* the header
+//            guards.
+//
+#if defined(ITKOptimizersv4_EXPORTS)
+//   We are building this library
+#  define ITKOptimizersv4_EXPORT_EXPLICIT ITK_FORWARD_EXPORT
+#else
+//   We are using this library
+#  define ITKOptimizersv4_EXPORT_EXPLICIT ITKOptimizersv4_EXPORT
+#endif
+namespace itk
+{
+
+ITK_GCC_PRAGMA_DIAG_PUSH()
+ITK_GCC_PRAGMA_DIAG(ignored "-Wattributes")
+
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4661) // no suitable definition provided for explicit template instantiation request
+#endif
+extern template class ITKOptimizersv4_EXPORT_EXPLICIT LBFGSOptimizerBasev4<vnl_lbfgs>;
+extern template class ITKOptimizersv4_EXPORT_EXPLICIT LBFGSOptimizerBasev4<vnl_lbfgsb>;
+
+ITK_GCC_PRAGMA_DIAG_POP()
+
+} // end namespace itk
+#undef ITKOptimizersv4_EXPORT_EXPLICIT
 #endif

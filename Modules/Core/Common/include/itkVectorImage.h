@@ -93,8 +93,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorImage, ImageBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorImage);
 
   /** Pixel type alias support Used to declare pixel type in filters
    * or other operations. This is not the actual pixel type contained in
@@ -181,7 +181,7 @@ public:
      \endcode
    *
    * \sa Image::Rebind
-   * \deprecated Use template alias RebindImageType instead
+   * Deprecated: Use template alias RebindImageType instead
    */
   template <typename UPixelType, unsigned int VUImageDimension = VImageDimension>
   struct Rebind
@@ -203,7 +203,7 @@ public:
   /** Allocate the image memory. The size of the image must
    * already be set, e.g. by calling SetRegions(). */
   void
-  Allocate(bool UseDefaultConstructor = false) override;
+  Allocate(bool UseValueInitialization = false) override;
 
   /** Restore the data object to its initial state. This means releasing
    * memory. */
@@ -223,7 +223,7 @@ public:
   void
   SetPixel(const IndexType & index, const PixelType & value)
   {
-    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
+    const OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     for (VectorLengthType i = 0; i < m_VectorLength; ++i)
     {
@@ -239,7 +239,7 @@ public:
   const PixelType
   GetPixel(const IndexType & index) const
   {
-    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
+    const OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     // Do not create a local for this method, to use return value
     // optimization.
@@ -258,7 +258,7 @@ public:
   PixelType
   GetPixel(const IndexType & index)
   {
-    OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
+    const OffsetValueType offset = m_VectorLength * this->FastComputeOffset(index);
 
     // Correctness of this method relies of return value optimization, do
     // not create a local for the value.
@@ -274,13 +274,21 @@ public:
    *
    * For efficiency, this function does not check that the
    * image has actually been allocated yet. */
-  PixelType operator[](const IndexType & index) { return this->GetPixel(index); }
+  PixelType
+  operator[](const IndexType & index)
+  {
+    return this->GetPixel(index);
+  }
 
   /** \brief Access a pixel.
    *
    * For efficiency, this function does not check that the
    * image has actually been allocated yet. */
-  const PixelType operator[](const IndexType & index) const { return this->GetPixel(index); }
+  const PixelType
+  operator[](const IndexType & index) const
+  {
+    return this->GetPixel(index);
+  }
 
   /** Return a pointer to the beginning of the buffer.  This is used by
    * the image iterator class. */

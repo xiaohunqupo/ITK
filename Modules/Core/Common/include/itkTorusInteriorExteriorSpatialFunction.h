@@ -49,8 +49,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run time information. */
-  itkTypeMacro(TorusInteriorExteriorSpatialFunction, InteriorExteriorSpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TorusInteriorExteriorSpatialFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

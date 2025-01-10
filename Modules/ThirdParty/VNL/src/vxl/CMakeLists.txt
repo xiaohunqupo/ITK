@@ -16,8 +16,6 @@
 cmake_minimum_required(VERSION 3.16.3)
 if(CMAKE_VERSION VERSION_LESS 3.12.0)
   cmake_policy(VERSION ${CMAKE_VERSION})
-else()
-  cmake_policy(VERSION 3.10.2...3.20.3)
 endif()
 
 if(NOT CMAKE_CXX_STANDARD)
@@ -67,7 +65,7 @@ foreach(p
 endforeach()
 
 project(VXL #Project name must be all caps to have properly generated VXL_VERSION_* variables
-    VERSION  4.0.0.0 # defines #MAJOR,MINOR,PATCH,TWEAK}
+    VERSION 5.5.1.0 # defines #MAJOR,MINOR,PATCH,TWEAK}
     DESCRIPTION "A multi-platform collection of C++ software libraries for Computer Vision and Image Understanding."
     LANGUAGES CXX C)
 
@@ -253,7 +251,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/config/cmake/config/VXLIntrospectionConfig.cma
 #-------------------------------------------------------------------
 # This block should come after VXLIntrospectionConfig.cmake has been executed.
 if(VCL_HAS_LFS OR WIN32)
-  option( VXL_USE_LFS "Should VXL use Large File Support?" NO)
+  option( VXL_USE_LFS "Should VXL use Large File Support?" OFF)
   mark_as_advanced( VXL_USE_LFS )
 endif()
 
@@ -261,13 +259,13 @@ if(VXL_USE_LFS)
   if(WIN32)
     # TODO: MS Version Support
     #  message( SEND_ERROR "Sorry - Large File Support is not quite working on Win32 yet. Turning VXL_USE_LFS off")
-    #  set(VXL_USE_LFS "NO" CACHE BOOL "Should VXL use Large File Support?" FORCE)
+    #  set(VXL_USE_LFS OFF CACHE BOOL "Should VXL use Large File Support?" FORCE)
   else()
     if(VCL_HAS_LFS)
       add_definitions( -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE)
     else()
       message( SEND_ERROR "This platform does not have Large File Support - turning VXL_USE_LFS off")
-      set(VXL_USE_LFS "NO" CACHE BOOL "Should VXL use Large File Support?" FORCE)
+      set(VXL_USE_LFS OFF CACHE BOOL "Should VXL use Large File Support?" FORCE)
     endif()
   endif()
 endif()
@@ -294,7 +292,7 @@ mark_as_advanced(VXL_BUILD_NONDEPRECATED_ONLY)
 CMAKE_DEPENDENT_OPTION(VXL_BUILD_CORE_PROBABILITY "Build VXL's probability libraries (Experimental)" ON
                        "VXL_BUILD_CORE_NUMERICS;NOT VXL_BUILD_CORE_NUMERICS_ONLY" OFF)
 
-option(VXL_USE_GEOTIFF "Use the GEOTIFF Library if available" True)
+option(VXL_USE_GEOTIFF "Use the GEOTIFF Library if available" ON)
 mark_as_advanced(VXL_USE_GEOTIFF)
 
 # Build the core vxl + support libraries

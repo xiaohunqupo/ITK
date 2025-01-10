@@ -60,13 +60,13 @@ public:
   using OutputPixelType = typename OutputDomainType::PixelType;
 
   using NodePairType = NodePair<NodeType, OutputPixelType>;
-  using NodePairContainerType = VectorContainer<IdentifierType, NodePairType>;
+  using NodePairContainerType = VectorContainer<NodePairType>;
   using NodePairContainerPointer = typename NodePairContainerType::Pointer;
   using NodePairContainerIterator = typename NodePairContainerType::Iterator;
   using NodePairContainerConstIterator = typename NodePairContainerType::ConstIterator;
 
   /*
-  using NodeContainerType = VectorContainer< IdentifierType, NodeType >;
+  using NodeContainerType = VectorContainer<NodeType>;
   using NodeContainerPointer = typename NodeContainerType::Pointer;
   using NodeContainerIterator = typename NodeContainerType::Iterator;
   using NodeContainerConstIterator = typename NodeContainerType::ConstIterator;
@@ -74,7 +74,7 @@ public:
 
   using SuperclassType = TSuperclass;
 
-  /** \enum LabelEnum Fast Marching algorithm nodes types. */
+  /** \enum LabelType Fast Marching algorithm nodes types. */
   enum LabelType
   {
     /** \c Far represent far away nodes*/

@@ -64,8 +64,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(GaussianMembershipFunction, MembershipFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianMembershipFunction);
   itkNewMacro(Self);
 
   /** SmartPointer class for superclass */

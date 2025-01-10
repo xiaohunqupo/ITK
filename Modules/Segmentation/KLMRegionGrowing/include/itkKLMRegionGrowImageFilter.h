@@ -177,8 +177,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KLMRegionGrowImageFilter, RegionGrowImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KLMRegionGrowImageFilter);
 
   /** Type definition for the input image. */
   using InputImageType = TInputImage;

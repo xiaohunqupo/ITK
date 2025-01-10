@@ -43,7 +43,7 @@ CreateImage()
   size[0] = 10;
   size[1] = 10;
 
-  ImageType::RegionType region(start, size);
+  const ImageType::RegionType region(start, size);
   image->SetRegions(region);
   image->Allocate();
   using IteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
@@ -70,10 +70,9 @@ CreateMaskImage()
   start.Fill(0);
   size.Fill(10);
 
-  MaskImageType::RegionType region(start, size);
+  const MaskImageType::RegionType region(start, size);
   image->SetRegions(region);
-  image->Allocate(true); // initialize buffer
-                         // to zero
+  image->AllocateInitialized();
 
   MaskImageType::IndexType startMask;
   MaskImageType::SizeType  sizeMask;
@@ -84,7 +83,7 @@ CreateMaskImage()
   sizeMask[0] = 7;
   sizeMask[1] = 3;
 
-  MaskImageType::RegionType regionMask(startMask, sizeMask);
+  const MaskImageType::RegionType regionMask(startMask, sizeMask);
   using IteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
   IteratorType it(image, regionMask);
   it.GoToBegin();
@@ -112,10 +111,9 @@ CreateLargerMaskImage()
   size[0] = 13;
   size[1] = 17;
 
-  MaskImageType::RegionType region(start, size);
+  const MaskImageType::RegionType region(start, size);
   image->SetRegions(region);
-  image->Allocate(true); // initialize buffer
-                         // to zero
+  image->AllocateInitialized();
   return image;
 }
 
@@ -123,8 +121,8 @@ CreateLargerMaskImage()
 int
 itkImageToListSampleFilterTest(int, char *[])
 {
-  ImageType::Pointer     image = CreateImage();
-  MaskImageType::Pointer maskImage = CreateMaskImage();
+  const ImageType::Pointer     image = CreateImage();
+  const MaskImageType::Pointer maskImage = CreateMaskImage();
 
   // Generate a list sample from "image" confined to the mask, "maskImage".
   using ImageToListSampleFilterType = itk::Statistics::ImageToListSampleFilter<ImageType, MaskImageType>;
@@ -175,7 +173,7 @@ itkImageToListSampleFilterTest(int, char *[])
   filter->Print(std::cout);
 
 
-  ImageToListSampleFilterType::MaskPixelType pixelType = filter->GetMaskValue();
+  const ImageToListSampleFilterType::MaskPixelType pixelType = filter->GetMaskValue();
 
   if (pixelType != 255)
   {

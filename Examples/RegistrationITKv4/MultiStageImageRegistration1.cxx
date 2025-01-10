@@ -113,8 +113,8 @@ public:
 
     const auto * registration = static_cast<const RegistrationType *>(object);
 
-    unsigned int currentLevel = registration->GetCurrentLevel();
-    typename RegistrationType::ShrinkFactorsPerDimensionContainerType
+    const unsigned int currentLevel = registration->GetCurrentLevel();
+    const typename RegistrationType::ShrinkFactorsPerDimensionContainerType
       shrinkFactors =
         registration->GetShrinkFactorsPerDimension(currentLevel);
     typename RegistrationType::SmoothingSigmasArrayType smoothingSigmas =
@@ -511,7 +511,7 @@ main(int argc, char * argv[])
   //  \doxygen{ImageMomentsCalculator} filter to compute the center of mass.
   //
   //  Based on the above discussion, the user must set the fixed parameters of
-  //  the registration transform outside of the registraton method, so first
+  //  the registration transform outside of the registration method, so first
   //  we instantiate an object of the output transform type.
   //
   // Software Guide : EndLatex
@@ -533,7 +533,7 @@ main(int argc, char * argv[])
   using RegionType = FixedImageType::RegionType;
   using SizeType = FixedImageType::SizeType;
 
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+  const FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
 
   const SpacingType fixedSpacing = fixedImage->GetSpacing();
   const OriginType  fixedOrigin = fixedImage->GetOrigin();

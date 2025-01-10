@@ -41,8 +41,7 @@ namespace itk
  * \ingroup ITKMetricsv4
  */
 template <typename TDomainPartitioner, typename TJointHistogramMetric>
-class ITK_TEMPLATE_EXPORT JointHistogramMutualInformationComputeJointPDFThreader
-{};
+class ITK_TEMPLATE_EXPORT JointHistogramMutualInformationComputeJointPDFThreader{};
 
 /** \class JointHistogramMutualInformationComputeJointPDFThreader
  * \brief Specialization for ThreadedImageRegionPartitioner.
@@ -67,8 +66,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(JointHistogramMutualInformationComputeJointPDFThreader,
-               JointHistogramMutualInformationComputeJointPDFThreaderBase);
+  itkOverrideGetNameOfClassMacro(JointHistogramMutualInformationComputeJointPDFThreader);
 
   itkNewMacro(Self);
 
@@ -108,8 +106,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(JointHistogramMutualInformationComputeJointPDFThreader,
-               JointHistogramMutualInformationComputeJointPDFThreaderBase);
+  itkOverrideGetNameOfClassMacro(JointHistogramMutualInformationComputeJointPDFThreader);
 
   itkNewMacro(Self);
 

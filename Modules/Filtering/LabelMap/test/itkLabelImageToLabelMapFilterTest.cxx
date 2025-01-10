@@ -31,7 +31,7 @@ zeroSizeCase()
   auto p_image = ImageType::New();
 
   // The image region is empty by default: do not set any region to it and allocate memory
-  p_image->Allocate(true);
+  p_image->AllocateInitialized();
 
   p_filter->SetInput(p_image);
   p_filter->Update();
@@ -112,8 +112,7 @@ itkLabelImageToLabelMapFilterTest(int, char *[])
       IndexType index;
       index[0] = ctrI;
       index[1] = ctrJ;
-      unsigned long val;
-      val = map->GetPixel(index);
+      const unsigned long val = map->GetPixel(index);
       std::cout << "Pixel[" << ctrI << ',' << ctrJ << "]: " << val << std::endl;
       if (((ctrI == 5) || (ctrJ == 5)) && (ctrI != 7) && (ctrJ != 7))
       {
@@ -126,7 +125,7 @@ itkLabelImageToLabelMapFilterTest(int, char *[])
           itkAssertOrThrowMacro((val == 3), "Error in Label Image (foreground).");
           continue;
         }
-        else if (ctrJ == 7)
+        if (ctrJ == 7)
         {
           itkAssertOrThrowMacro((val == 5), "Error in Label Image (foreground).");
         }

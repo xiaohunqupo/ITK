@@ -39,8 +39,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DOMTestObjectDOMReader, DOMReader);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DOMTestObjectDOMReader);
 
 protected:
   DOMTestObjectDOMReader() = default;

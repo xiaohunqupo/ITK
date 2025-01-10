@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TBBMultiThreader, MultiThreaderBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TBBMultiThreader);
 
   /** Get/Set the number of work units to create. TBBMultiThreader
    * does not limit the number of work units. This number is

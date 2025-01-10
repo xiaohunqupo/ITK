@@ -88,7 +88,7 @@ NeighborhoodConnectedImageFilter<TInputImage, TOutputImage>::GenerateInputReques
   Superclass::GenerateInputRequestedRegion();
   if (this->GetInput())
   {
-    InputImagePointer image = const_cast<InputImageType *>(this->GetInput());
+    const InputImagePointer image = const_cast<InputImageType *>(this->GetInput());
     image->SetRequestedRegionToLargestPossibleRegion();
   }
 }
@@ -105,13 +105,13 @@ template <typename TInputImage, typename TOutputImage>
 void
 NeighborhoodConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  typename Superclass::InputImageConstPointer inputImage = this->GetInput();
-  typename Superclass::OutputImagePointer     outputImage = this->GetOutput();
+  const typename Superclass::InputImageConstPointer inputImage = this->GetInput();
+  const typename Superclass::OutputImagePointer     outputImage = this->GetOutput();
 
   // Zero the output
   outputImage->SetBufferedRegion(outputImage->GetRequestedRegion());
   outputImage->Allocate();
-  outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+  outputImage->FillBuffer(OutputImagePixelType{});
 
   using FunctionType = NeighborhoodBinaryThresholdImageFunction<InputImageType>;
   using IteratorType = FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType>;

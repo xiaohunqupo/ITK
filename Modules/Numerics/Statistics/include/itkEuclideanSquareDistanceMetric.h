@@ -46,8 +46,8 @@ public:
   using typename Superclass::MeasurementVectorSizeType;
   using typename Superclass::MeasurementVectorType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(EuclideanSquareDistanceMetric, DistanceMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(EuclideanSquareDistanceMetric);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

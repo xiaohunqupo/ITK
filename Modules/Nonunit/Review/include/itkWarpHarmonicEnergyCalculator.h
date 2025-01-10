@@ -36,7 +36,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * https://hdl.handle.net/1926/510
+ * https://doi.org/10.54294/ux2obj
  *
  * \ingroup Operators
  * \ingroup ITKReview
@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(WarpHarmonicEnergyCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WarpHarmonicEnergyCalculator);
 
   /** Type definition for the input image. */
   using ImageType = TInputImage;

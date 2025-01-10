@@ -34,7 +34,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/176
+ * https://doi.org/10.54294/q6auw4
  *
  * \sa LabelMapToBinaryImageFilter, LabelMapMaskImageFilter
  * \ingroup ImageEnhancement  MathematicalMorphologyImageFilters
@@ -78,8 +78,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(LabelMapToAttributeImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LabelMapToAttributeImageFilter);
 
   /**
    * Set/Get the value used as "background" in the output image, if the input

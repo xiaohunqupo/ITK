@@ -51,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(WhitakerSparseLevelSetImage, LevelSetSparseImage);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WhitakerSparseLevelSetImage);
 
   static constexpr unsigned int Dimension = VDimension;
 
@@ -141,7 +141,7 @@ public:
 
     for (LayerIdType status = this->MinusThreeLayer(); status < this->PlusOneLayer(); ++status)
     {
-      LabelObjectPointer labelObject = this->m_LabelMap->GetLabelObject(status);
+      const LabelObjectPointer labelObject = this->m_LabelMap->GetLabelObject(status);
 
       for (SizeValueType i = 0; i < labelObject->GetNumberOfLines(); ++i)
       {

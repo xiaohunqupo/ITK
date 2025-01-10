@@ -69,7 +69,7 @@ MRCHeaderObject::SetHeader(const Header * buffer)
   // the cmap field must should either be the magic field or 0
   if (strncmp(_header->cmap, magicMAP, 4) != 0 && memcmp(_header->cmap, "\0\0\0\0", 4) != 0)
   {
-    itkWarningMacro(<< "The header's cmap field does not have expected values");
+    itkWarningMacro("The header's cmap field does not have expected values");
     return false;
   }
 
@@ -100,7 +100,7 @@ MRCHeaderObject::SetHeader(const Header * buffer)
   else
   {
     // the stamp is not expected
-    itkWarningMacro(<< "The header's stamp field does not have expected values");
+    itkWarningMacro("The header's stamp field does not have expected values");
     return false;
   }
 
@@ -109,55 +109,6 @@ MRCHeaderObject::SetHeader(const Header * buffer)
 
   this->m_ExtendedHeader = nullptr;
   this->m_ExtendedFeiHeader = nullptr;
-
-  SizeValueType extendedHeaderBytes = 0;
-  if (this->m_Header.nreal & 1)
-  {
-    extendedHeaderBytes += 2;
-  }
-  if (this->m_Header.nreal & 2)
-  {
-    extendedHeaderBytes += 6;
-  }
-  if (this->m_Header.nreal & 4)
-  {
-    extendedHeaderBytes += 3;
-  }
-  if (this->m_Header.nreal & 8)
-  {
-    extendedHeaderBytes += 2;
-  }
-  if (this->m_Header.nreal & 16)
-  {
-    extendedHeaderBytes += 2;
-  }
-  if (this->m_Header.nreal & 32)
-  {
-    extendedHeaderBytes += 4;
-  }
-  if (this->m_Header.nreal & 64)
-  {
-    extendedHeaderBytes += 2;
-  }
-  if (this->m_Header.nreal & 128)
-  {
-    extendedHeaderBytes += 4;
-  }
-  if (this->m_Header.nreal & 256)
-  {
-    extendedHeaderBytes += 2;
-  }
-  if (this->m_Header.nreal & 512)
-  {
-    extendedHeaderBytes += 4;
-  }
-  if (this->m_Header.nreal & 1024)
-  {
-    extendedHeaderBytes += 2;
-  }
-  // TODO: all the above to set extendedHeaderBytes, yet extendedHeaderBytes is unused!
-  itkWarningMacro(<< "extendedHeaderBytes is: " << extendedHeaderBytes
-                  << "If you see this log please contact https://github.com/InsightSoftwareConsortium/ITK/pull/2778");
 
   this->m_ExtendedHeaderSize = this->m_Header.next;
 
@@ -170,13 +121,13 @@ MRCHeaderObject::SetHeader(const Header * buffer)
       this->m_Header.nxstart >= this->m_Header.nx || this->m_Header.nystart >= this->m_Header.ny ||
       this->m_Header.nzstart >= this->m_Header.nz)
   {
-    itkWarningMacro(<< "Some header data does not have sensable values");
+    itkWarningMacro("Some header data does not have sensable values");
     return false;
   }
 
   if (this->m_Header.nxstart != 0 || this->m_Header.nystart != 0 || this->m_Header.nzstart != 0)
   {
-    itkWarningMacro(<< "The header's nxstart, nystart and nzstart fields are not supported correctly");
+    itkWarningMacro("The header's nxstart, nystart and nzstart fields are not supported correctly");
   }
 
   return true;
@@ -225,18 +176,9 @@ MRCHeaderObject::IsOriginalHeaderBigEndian() const
   return this->m_BigEndianHeader;
 }
 
-MRCHeaderObject::MRCHeaderObject()
+MRCHeaderObject::MRCHeaderObject() { this->m_BigEndianHeader = ByteSwapper<void *>::SystemIsBE(); }
 
-
-{
-  memset(&this->m_Header, 0, sizeof(Header));
-  this->m_BigEndianHeader = ByteSwapper<void *>::SystemIsBE();
-}
-
-MRCHeaderObject::~MRCHeaderObject()
-{
-  delete[] static_cast<char *>(this->m_ExtendedHeader);
-}
+MRCHeaderObject::~MRCHeaderObject() { delete[] static_cast<char *>(this->m_ExtendedHeader); }
 
 void
 MRCHeaderObject::swapHeader(bool bigEndian)
@@ -245,7 +187,7 @@ MRCHeaderObject::swapHeader(bool bigEndian)
   using Int32Swapper = itk::ByteSwapper<int32_t>;
   using Int16Swapper = itk::ByteSwapper<int16_t>;
 
-  if (FloatSwapper::SystemIsBigEndian())
+  if constexpr (FloatSwapper::SystemIsBigEndian())
   {
     this->m_Header.stamp[0] = 17;
   }

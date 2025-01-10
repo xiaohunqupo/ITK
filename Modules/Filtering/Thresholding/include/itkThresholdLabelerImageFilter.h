@@ -131,8 +131,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThresholdLabelerImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThresholdLabelerImageFilter);
 
   /** Pixel types. */
   using InputPixelType = typename TInputImage::PixelType;
@@ -158,7 +158,7 @@ public:
   {
     m_Thresholds = thresholds;
     m_RealThresholds.clear();
-    typename ThresholdVector::const_iterator itr = m_Thresholds.begin();
+    auto itr = m_Thresholds.begin();
     while (itr != m_Thresholds.end())
     {
       m_RealThresholds.push_back(static_cast<RealThresholdType>(*itr));
@@ -180,7 +180,7 @@ public:
   {
     m_RealThresholds = thresholds;
     m_Thresholds.clear();
-    typename RealThresholdVector::const_iterator itr = m_RealThresholds.begin();
+    auto itr = m_RealThresholds.begin();
     while (itr != m_RealThresholds.end())
     {
       m_Thresholds.push_back(static_cast<InputPixelType>(*itr));
@@ -197,10 +197,7 @@ public:
   }
 
   /** Set the offset which labels have to start from. */
-  itkSetClampMacro(LabelOffset,
-                   OutputPixelType,
-                   NumericTraits<OutputPixelType>::ZeroValue(),
-                   NumericTraits<OutputPixelType>::max());
+  itkSetClampMacro(LabelOffset, OutputPixelType, OutputPixelType{}, NumericTraits<OutputPixelType>::max());
   itkGetConstMacro(LabelOffset, OutputPixelType);
 
 protected:

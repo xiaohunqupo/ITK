@@ -48,8 +48,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VnlFFTImageFilterInitFactory, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VnlFFTImageFilterInitFactory);
 
   /** Mimic factory interface for Python initialization  */
   static void

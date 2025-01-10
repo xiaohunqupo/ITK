@@ -35,7 +35,7 @@ namespace Functor
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * https://www.insight-journal.org/browse/publication/92
+ * https://doi.org/10.54294/lf8u75
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -54,7 +54,7 @@ public:
     // LabelOverlayFunctorImageFilter) Inside LabelOverlayFunctorImageFilter,
     // the values are always initialized
     m_Opacity = 1.0;
-    m_BackgroundValue = NumericTraits<TLabel>::ZeroValue();
+    m_BackgroundValue = TLabel{};
   }
 
   inline TRGBPixel

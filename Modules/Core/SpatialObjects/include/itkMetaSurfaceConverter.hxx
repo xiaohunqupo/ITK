@@ -36,7 +36,7 @@ MetaSurfaceConverter<VDimension>::MetaObjectToSpatialObject(const MetaObjectType
   const auto * surfaceMO = dynamic_cast<const SurfaceMetaObjectType *>(mo);
   if (surfaceMO == nullptr)
   {
-    itkExceptionMacro(<< "Can't convert MetaObject to MetaSurface");
+    itkExceptionMacro("Can't convert MetaObject to MetaSurface");
   }
   auto surfaceSO = SurfaceSpatialObjectType::New();
 
@@ -91,17 +91,16 @@ template <unsigned int VDimension>
 auto
 MetaSurfaceConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectType * so) -> MetaObjectType *
 {
-  SurfaceSpatialObjectConstPointer surfaceSO = dynamic_cast<const SurfaceSpatialObjectType *>(so);
+  const SurfaceSpatialObjectConstPointer surfaceSO = dynamic_cast<const SurfaceSpatialObjectType *>(so);
 
   if (surfaceSO.IsNull())
   {
-    itkExceptionMacro(<< "Can't downcast SpatialObject to SurfaceSpatialObject");
+    itkExceptionMacro("Can't downcast SpatialObject to SurfaceSpatialObject");
   }
   auto * surfaceMO = new MetaSurface(VDimension);
 
   // fill in the Surface information
-  typename SurfaceSpatialObjectType::SurfacePointListType::const_iterator it;
-  for (it = surfaceSO->GetPoints().begin(); it != surfaceSO->GetPoints().end(); ++it)
+  for (auto it = surfaceSO->GetPoints().begin(); it != surfaceSO->GetPoints().end(); ++it)
   {
     auto * pnt = new SurfacePnt(VDimension);
 
@@ -123,11 +122,11 @@ MetaSurfaceConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
     surfaceMO->GetPoints().push_back(pnt);
   }
 
-  if (VDimension == 2)
+  if constexpr (VDimension == 2)
   {
     surfaceMO->PointDim("x y v1 v2 red green blue alpha");
   }
-  else if (VDimension == 3)
+  else if constexpr (VDimension == 3)
   {
     surfaceMO->PointDim("x y z v1 v2 v3 red green blue alpha");
   }

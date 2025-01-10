@@ -75,12 +75,12 @@ public:
 };
 // Define how to print enumeration
 extern ITKDenoising_EXPORT std::ostream &
-                           operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::NoiseModel value);
+operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::NoiseModel value);
 extern ITKDenoising_EXPORT std::ostream &
-                           operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::ComponentSpace value);
+operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::ComponentSpace value);
 // Define how to print enumeration
 extern ITKDenoising_EXPORT std::ostream &
-                           operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::FilterState value);
+operator<<(std::ostream & out, const PatchBasedDenoisingBaseImageFilterEnums::FilterState value);
 /**
  * \class PatchBasedDenoisingBaseImageFilter
  * \brief Base class for patch-based denoising algorithms.
@@ -152,8 +152,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PatchBasedDenoisingBaseImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PatchBasedDenoisingBaseImageFilter);
 
   /** Input and output image types. */
   using InputImageType = TInputImage;

@@ -35,7 +35,6 @@ class HistogramToRunLengthFeaturesFilterEnums
 {
 public:
   /**
-   * \class RunLengthFeature
    * \ingroup ITKStatistics
    * Run-length feature types.
    */
@@ -57,7 +56,7 @@ public:
 using RunLengthFeatureEnum = HistogramToRunLengthFeaturesFilterEnums::RunLengthFeature;
 // Define how to print enumeration
 extern ITKStatistics_EXPORT std::ostream &
-                            operator<<(std::ostream & out, const HistogramToRunLengthFeaturesFilterEnums::RunLengthFeature value);
+operator<<(std::ostream & out, const HistogramToRunLengthFeaturesFilterEnums::RunLengthFeature value);
 /**
  * \class HistogramToRunLengthFeaturesFilter
  *  \brief This class computes texture feature coefficients from a grey level
@@ -86,11 +85,10 @@ extern ITKStatistics_EXPORT std::ostream &
  * gray-level run-length distributions. Pattern Recognition Letters, 12:490-502,
  * 1991.
  *
- * IJ article: https://www.insight-journal.org/browse/publication/231
+ * IJ article: https://doi.org/10.54294/ex0itu
  *
  * \sa ScalarImageToRunLengthFeaturesFilter
  * \sa ScalarImageToRunLengthMatrixFilter
- * \sa HistogramToRunLengthFeaturesFilter
  *
  * \author: Nick Tustison
  * \ingroup ITKStatistics
@@ -108,8 +106,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HistogramToRunLengthFeaturesFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HistogramToRunLengthFeaturesFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);

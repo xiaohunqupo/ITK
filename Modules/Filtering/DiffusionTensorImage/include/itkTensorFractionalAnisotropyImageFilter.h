@@ -32,8 +32,6 @@ class TensorFractionalAnisotropyFunction
 {
 public:
   using RealValueType = typename TInput::RealValueType;
-  TensorFractionalAnisotropyFunction() = default;
-  ~TensorFractionalAnisotropyFunction() = default;
   bool
   operator==(const TensorFractionalAnisotropyFunction &) const
   {
@@ -91,8 +89,8 @@ public:
   using InputPixelType = typename TInputImage::PixelType;
   using InputValueType = typename InputPixelType::ValueType;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(TensorFractionalAnisotropyImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TensorFractionalAnisotropyImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

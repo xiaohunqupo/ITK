@@ -87,8 +87,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PointSetToPointSetMetricWithIndexv4, ObjectToObjectMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PointSetToPointSetMetricWithIndexv4);
 
   /**  Type of the measure. */
   using typename Superclass::MeasureType;
@@ -151,7 +151,11 @@ public:
 
   using PointType = FixedPointType;
   using PixelType = FixedPixelType;
-  using CoordRepType = typename PointType::CoordRepType;
+  using CoordinateType = typename PointType::CoordinateType;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
   using PointsContainer = FixedPointsContainer;
   using PointsConstIterator = typename PointsContainer::ConstIterator;
   using PointIdentifier = typename PointsContainer::ElementIdentifier;
@@ -418,13 +422,13 @@ protected:
   RequiresMovingPointsLocator() const
   {
     return true;
-  };
+  }
 
   virtual bool
   RequiresFixedPointsLocator() const
   {
     return true;
-  };
+  }
 
   /**
    * Function to be defined in the appropriate derived classes.  Calculates

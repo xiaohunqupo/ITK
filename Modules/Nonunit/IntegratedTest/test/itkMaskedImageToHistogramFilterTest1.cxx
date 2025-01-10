@@ -25,6 +25,7 @@
 #include "itkComposeImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkSimpleFilterWatcher.h"
+#include "itkTestingMacros.h"
 
 int
 itkMaskedImageToHistogramFilterTest1(int argc, char * argv[])
@@ -32,9 +33,9 @@ itkMaskedImageToHistogramFilterTest1(int argc, char * argv[])
 
   if (argc < 6)
   {
-    std::cerr << "Missing command line arguments" << std::endl;
-    std::cerr << "Usage :  " << argv[0]
-              << " inputImageFileName inputImageFileName maskImage maskValue outputHistogramFile" << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << " inputImageFileName inputImageFileName maskImage maskValue outputHistogramFile" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -88,15 +89,8 @@ itkMaskedImageToHistogramFilterTest1(int argc, char * argv[])
   //   histogramFilter->SetHistogramSize( size );
 
   // TODO: this Update() shouldn't be needed - remove it.
-  try
-  {
-    histogramFilter->Update();
-  }
-  catch (const itk::ExceptionObject & excp)
-  {
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(histogramFilter->Update());
+
 
   // use a 3D image to check the behavior of HistogramToImageFilter when the image
   // is of greater dimension than the histogram
@@ -114,18 +108,13 @@ itkMaskedImageToHistogramFilterTest1(int argc, char * argv[])
   writer->SetInput(rescale->GetOutput());
   writer->SetFileName(argv[5]);
 
-  try
-  {
-    writer->Update();
-  }
-  catch (const itk::ExceptionObject & excp)
-  {
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+
 
   // print the image produced by HistogramToLogProbabilityImageFilter for visual inspection
   imageFilter->GetOutput()->Print(std::cout);
 
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

@@ -28,7 +28,7 @@ namespace itk
  * \brief A filter to enhance M-dimensional objects in N-dimensional images
  *
  * The objectness measure is a generalization of Frangi's vesselness measure,
- * which is based on the analysis of the the Hessian eigen system. The filter
+ * which is based on the analysis of the Hessian eigen system. The filter
  * can enhance blob-like structures (M=0), vessel-like structures (M=1), 2D
  * plate-like structures (M=2), hyper-plate-like structures (M=3) in N-dimensional
  * images, with M<N.
@@ -44,7 +44,7 @@ namespace itk
  * Science, pages 130-137, Springer Verlag, 1998.
  *
  * Additional information can be from in the Insight Journal:
- * https://www.insight-journal.org/browse/publication/175
+ * https://doi.org/10.54294/urgadx
  *
  * \author Luca Antiga Ph.D.  Medical Imaging Unit,
  *                            Bioengineering Department, Mario Negri Institute, Italy.
@@ -84,8 +84,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(HessianToObjectnessMeasureImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HessianToObjectnessMeasureImageFilter);
 
   /** Set/Get Alpha, the weight corresponding to R_A
    * (the ratio of the smallest eigenvalue that has to be large to the larger ones).
@@ -135,7 +135,7 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   void
   DynamicThreadedGenerateData(const OutputImageRegionType & outputRegionForThread) override;

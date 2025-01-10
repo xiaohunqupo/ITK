@@ -156,7 +156,7 @@ main(int argc, char * argv[])
   // using the \code{SetHistogramBinMinimum()} and
   // \code{SetHistogramBinMaximum()} methods.
   //
-  // Software Guide : EndLatexex
+  // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
   using HistogramMeasurementVectorType =
@@ -257,8 +257,8 @@ main(int argc, char * argv[])
   std::ofstream histogramFile;
   histogramFile.open(argv[2]);
 
-  HistogramType::ConstIterator itr = histogram->Begin();
-  HistogramType::ConstIterator end = histogram->End();
+  HistogramType::ConstIterator       itr = histogram->Begin();
+  const HistogramType::ConstIterator end = histogram->End();
 
   using AbsoluteFrequencyType = HistogramType::AbsoluteFrequencyType;
 

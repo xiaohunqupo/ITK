@@ -73,8 +73,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Similarity2DTransform, Rigid2DTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Similarity2DTransform);
 
   /** Dimension of parameters. */
   static constexpr unsigned int SpaceDimension = 2;

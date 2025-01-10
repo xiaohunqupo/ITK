@@ -92,8 +92,8 @@ public:
   /** Method of creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DeformableSimplexMesh3DFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DeformableSimplexMesh3DFilter);
 
   /** Some type alias. */
   using InputMeshType = TInputMesh;

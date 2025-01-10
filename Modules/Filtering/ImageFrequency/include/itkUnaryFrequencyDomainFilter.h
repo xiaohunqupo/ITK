@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(UnaryFrequencyDomainFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(UnaryFrequencyDomainFilter);
 
   /** Typedef to images */
   using ImageType = TImageType;

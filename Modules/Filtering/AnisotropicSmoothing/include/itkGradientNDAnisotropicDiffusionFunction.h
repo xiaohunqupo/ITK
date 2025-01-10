@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(GradientNDAnisotropicDiffusionFunction, ScalarAnisotropicDiffusionFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientNDAnisotropicDiffusionFunction);
 
   /** Inherit some parameters from the superclass type. */
   using typename Superclass::ImageType;

@@ -59,8 +59,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(IndexedContainerInterface, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IndexedContainerInterface);
 
   /** Save the template parameters. */
   using ElementIdentifier = TElementIdentifier;

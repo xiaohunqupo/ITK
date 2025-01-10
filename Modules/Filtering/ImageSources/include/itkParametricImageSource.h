@@ -67,8 +67,8 @@ public:
   /** ImageDimension constant */
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParametricImageSource, GenerateImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ParametricImageSource);
 
   /** Set the parameters for this source. Setting the parameters does
    * not mark the image source as modified; subclasses should override

@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapePriorMAPCostFunction, ShapePriorMAPCostFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapePriorMAPCostFunction);
 
   /**  ParametersType type alias.
    *  It defines a position in the optimization search space. */

@@ -24,10 +24,10 @@
 
 //  Example taken from 'Fundamentals of the Finite ELement Method' - Grandin
 int
-itkFEMElement2DC0LinearQuadrilateralStressTestFEMObject(int argc, char * argv[])
+itkFEMElement2DC0LinearQuadrilateralStressTestFEMObject(int, char *[])
 {
   // Need to register default FEM object types,
-  // and setup SpatialReader to recognize FEM types
+  // and setup spatialReader to recognize FEM types
   // which is all currently done as a HACK in
   // the initialization of the itk::FEMFactoryBase::GetFactory()
   itk::FEMFactoryBase::GetFactory()->RegisterDefaultTypes();
@@ -72,7 +72,7 @@ itkFEMElement2DC0LinearQuadrilateralStressTestFEMObject(int argc, char * argv[])
   m->SetYoungsModulus(30000000.0); /* Young modulus */
   m->SetPoissonsRatio(0.3);
   m->SetCrossSectionalArea(.0); /* Crossection area */
-  m->SetMomentOfInterita(1.0);  /* Momemt of inertia */
+  m->SetMomentOfInterita(1.0);  /* Moment of inertia */
   femObject->AddNextMaterial(m);
 
   itk::fem::Element2DC0LinearQuadrilateralStress::Pointer e1;

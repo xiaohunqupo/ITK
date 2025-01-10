@@ -84,8 +84,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(HMaximaImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HMaximaImageFilter);
 
   /** Set/Get the height that a local maximum must be above the local
    * background (local contrast) in order to survive the

@@ -29,12 +29,14 @@ namespace Statistics
 /** Private nested class to easily synchronize global variables across static libraries.*/
 struct MersenneTwisterGlobals
 {
-  MersenneTwisterGlobals()
-    : m_StaticInstance(nullptr)
-    , m_StaticDiffer(0){};
-  MersenneTwisterRandomVariateGenerator::Pointer                  m_StaticInstance;
-  std::recursive_mutex                                            m_StaticInstanceLock;
-  std::atomic<MersenneTwisterRandomVariateGenerator::IntegerType> m_StaticDiffer;
+  ITK_DISALLOW_COPY_AND_MOVE(MersenneTwisterGlobals);
+
+  MersenneTwisterGlobals() = default;
+  ~MersenneTwisterGlobals() = default;
+
+  MersenneTwisterRandomVariateGenerator::Pointer                  m_StaticInstance{};
+  std::mutex                                                      m_StaticInstanceMutex{};
+  std::atomic<MersenneTwisterRandomVariateGenerator::IntegerType> m_StaticDiffer{};
 };
 
 itkGetGlobalSimpleMacro(MersenneTwisterRandomVariateGenerator, MersenneTwisterGlobals, PimplGlobals);
@@ -70,7 +72,7 @@ MersenneTwisterRandomVariateGenerator::Pointer
 MersenneTwisterRandomVariateGenerator::GetInstance()
 {
   itkInitGlobalsMacro(PimplGlobals);
-  const std::lock_guard mutexHolder(m_PimplGlobals->m_StaticInstanceLock);
+  const std::lock_guard<std::mutex> lockGuard(m_PimplGlobals->m_StaticInstanceMutex);
 
   if (!m_PimplGlobals->m_StaticInstance)
   {
@@ -81,10 +83,16 @@ MersenneTwisterRandomVariateGenerator::GetInstance()
   return m_PimplGlobals->m_StaticInstance;
 }
 
-MersenneTwisterRandomVariateGenerator::MersenneTwisterRandomVariateGenerator()
+
+void
+MersenneTwisterRandomVariateGenerator::ResetNextSeed()
 {
-  SetSeed(121212);
+  itkInitGlobalsMacro(PimplGlobals);
+  m_PimplGlobals->m_StaticDiffer = 0;
 }
+
+
+MersenneTwisterRandomVariateGenerator::MersenneTwisterRandomVariateGenerator() { SetSeed(121212); }
 
 MersenneTwisterRandomVariateGenerator::~MersenneTwisterRandomVariateGenerator() = default;
 

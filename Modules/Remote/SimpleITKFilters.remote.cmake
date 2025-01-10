@@ -41,13 +41,14 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(SimpleITKFilters
+itk_fetch_module(
+  SimpleITKFilters
   "A Collection of filters designed for SimpleITK.
   The filters in this module may be wrappers of composites ITK
   filters, adapters of existing ITK filters or alternative
   implementations designed for SimpleITK's requirements. Currently it
   contains a discrete hessian, and a composite filter to compute objectness."
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKSimpleITKFilters.git
-  GIT_TAG 877b9be442e36b9dee9d9e251bb1107acc6eed56
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKSimpleITKFilters.git
+  GIT_TAG 2216e1b31e9fcd52a3f4a4a24994d22a149db965
   )

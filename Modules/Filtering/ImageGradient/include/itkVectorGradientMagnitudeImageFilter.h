@@ -148,8 +148,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(VectorGradientMagnitudeImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorGradientMagnitudeImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -317,13 +317,14 @@ protected:
   TRealType
   NonPCEvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
-    unsigned int i, j;
-    TRealType    dx, sum, accum;
-
-    accum = NumericTraits<TRealType>::ZeroValue();
+    unsigned int i;
+    unsigned int j;
+    TRealType    dx;
+    TRealType    sum;
+    auto         accum = TRealType{};
     for (i = 0; i < ImageDimension; ++i)
     {
-      sum = NumericTraits<TRealType>::ZeroValue();
+      sum = TRealType{};
       for (j = 0; j < VectorDimension; ++j)
       {
         dx = m_DerivativeWeights[i] * m_SqrtComponentWeights[j] * 0.5 * (it.GetNext(i)[j] - it.GetPrevious(i)[j]);
@@ -338,7 +339,8 @@ protected:
   EvaluateAtNeighborhood3D(const ConstNeighborhoodIteratorType & it) const
   {
     // WARNING:  ONLY CALL THIS METHOD WHEN PROCESSING A 3D IMAGE
-    unsigned int i, j;
+    unsigned int i;
+    unsigned int j;
     double       Lambda[3];
     double       CharEqn[3];
     double       ans;
@@ -378,7 +380,7 @@ protected:
                  g[2][0] * (g[1][1] * g[0][2] - g[0][1] * g[1][2]);
 
     // Find the eigenvalues of g
-    int numberOfDistinctRoots = this->CubicSolver(CharEqn, Lambda);
+    const int numberOfDistinctRoots = this->CubicSolver(CharEqn, Lambda);
 
     // Define gradient magnitude as the difference between two largest
     // eigenvalues.  Other definitions may be appropriate here as well.
@@ -438,8 +440,8 @@ protected:
     }
     else
     {
-      itkExceptionMacro(<< "Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
-                        << " distinct roots.");
+      itkExceptionMacro("Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
+                                                                           << " distinct roots.");
     }
 
     return ans;
@@ -451,7 +453,8 @@ protected:
   TRealType
   EvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
-    unsigned int i, j;
+    unsigned int i;
+    unsigned int j;
 
     vnl_matrix<TRealType>                        g(ImageDimension, ImageDimension);
     vnl_vector_fixed<TRealType, VectorDimension> d_phi_du[TInputImage::ImageDimension];
@@ -477,7 +480,7 @@ protected:
     }
 
     // Find the eigenvalues of g
-    vnl_symmetric_eigensystem<TRealType> E(g);
+    const vnl_symmetric_eigensystem<TRealType> E(g);
 
     // Return the difference in length between the first two principle axes.
     // Note that other edge strength metrics may be appropriate here instead..
@@ -494,7 +497,7 @@ protected:
   ComponentWeightsType m_SqrtComponentWeights = ComponentWeightsType::Filled(1);
 
 private:
-  bool m_UseImageSpacing{};
+  bool m_UseImageSpacing{ true };
   bool m_UsePrincipleComponents{};
 
   ThreadIdType m_RequestedNumberOfWorkUnits{};

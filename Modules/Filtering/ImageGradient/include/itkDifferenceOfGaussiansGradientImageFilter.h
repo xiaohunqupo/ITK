@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DifferenceOfGaussiansGradientImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DifferenceOfGaussiansGradientImageFilter);
 
   /** Image size type alias. */
   using SizeType = Size<Self::NDimensions>;

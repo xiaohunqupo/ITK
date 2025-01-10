@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- * https://www.insight-journal.org/browse/publication/71
+ * https://doi.org/10.54294/0pjyho
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -92,8 +92,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Runtime information support. */
-  itkTypeMacro(MinimumProjectionImageFilter, ProjectionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MinimumProjectionImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

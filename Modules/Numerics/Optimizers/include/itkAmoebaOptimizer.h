@@ -79,8 +79,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AmoebaOptimizer, SingleValuedNonLinearVnlOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AmoebaOptimizer);
 
   /**  Parameters type.
    *  It defines a position in the optimization search space. */
@@ -146,7 +146,7 @@ public:
   itkGetConstMacro(FunctionConvergenceTolerance, double);
 
   /** Report the reason for stopping. */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /** Return Current Value */

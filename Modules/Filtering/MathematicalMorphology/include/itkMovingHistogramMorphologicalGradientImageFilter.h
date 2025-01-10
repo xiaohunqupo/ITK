@@ -177,10 +177,8 @@ public:
     {
       return m_Max - m_Min;
     }
-    else
-    {
-      return NumericTraits<TInputPixel>::ZeroValue();
-    }
+
+    return TInputPixel{};
   }
 
   static bool
@@ -255,8 +253,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(MovingHistogramMorphologicalGradientImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MovingHistogramMorphologicalGradientImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

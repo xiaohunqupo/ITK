@@ -32,14 +32,14 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(VariateGeneratorTestHelper, RandomVariateGeneratorBase);
+  itkOverrideGetNameOfClassMacro(VariateGeneratorTestHelper);
 
   itkNewMacro(Self);
 
   double
   GetVariate() override
   {
-    double theAnswerToTheQuestionOfLifeTheUniverseAndEverything = 42.0;
+    constexpr double theAnswerToTheQuestionOfLifeTheUniverseAndEverything = 42.0;
     return theAnswerToTheQuestionOfLifeTheUniverseAndEverything;
   }
 

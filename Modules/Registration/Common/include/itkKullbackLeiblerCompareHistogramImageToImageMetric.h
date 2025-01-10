@@ -84,8 +84,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KullbackLeiblerCompareHistogramImageToImageMetric, HistogramImageToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KullbackLeiblerCompareHistogramImageToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

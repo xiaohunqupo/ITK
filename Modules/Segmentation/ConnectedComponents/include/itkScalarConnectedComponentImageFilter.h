@@ -54,7 +54,7 @@ template <typename TInput>
 class SimilarPixelsFunctor
 {
 public:
-  SimilarPixelsFunctor() { m_Threshold = NumericTraits<TInput>::ZeroValue(); }
+  SimilarPixelsFunctor() { m_Threshold = TInput{}; }
 
   ~SimilarPixelsFunctor() = default;
 
@@ -88,10 +88,8 @@ public:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
 protected:
@@ -123,8 +121,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarConnectedComponentImageFilter, ConnectedComponentFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarConnectedComponentImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
 

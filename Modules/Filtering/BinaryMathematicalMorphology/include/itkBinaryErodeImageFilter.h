@@ -97,8 +97,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryErodeImageFilter, BinaryMorphologyImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryErodeImageFilter);
 
   /** Kernel (structuring element) iterator. */
   using KernelIteratorType = typename KernelType::ConstIterator;

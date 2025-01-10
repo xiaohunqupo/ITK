@@ -60,7 +60,7 @@ namespace itk
  * 1) Urish KL, August J, Huard J. "Unsupervised segmentation for myofiber
  * counting in immunofluorescent microscopy images". Insight Journal.
  * ISC/NA-MIC/MICCAI Workshop on Open-Source Software (2005)
- * https://insight-journal.org/browse/publication/40
+ * https://doi.org/10.54294/h1vbsl
  * 2) Pikaz A, Averbuch, A. "Digital image thresholding based on topological
  * stable-state". Pattern Recognition, 29(5): 829-843, 1996.
  *
@@ -86,8 +86,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThresholdMaximumConnectedComponentsImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThresholdMaximumConnectedComponentsImageFilter);
 
   /** Typedef to describe the type of pixel. */
   using PixelType = typename TInputImage::PixelType;

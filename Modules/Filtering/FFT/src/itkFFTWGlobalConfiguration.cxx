@@ -45,10 +45,10 @@ namespace itk
 struct FFTWGlobalConfigurationGlobals
 {
   FFTWGlobalConfigurationGlobals()
-    : m_Instance(nullptr){};
+    : m_Instance(nullptr) {};
 
   FFTWGlobalConfiguration::Pointer m_Instance;
-  std::mutex                       m_CreationLock;
+  std::mutex                       m_CreationMutex;
 };
 
 WisdomFilenameGeneratorBase::WisdomFilenameGeneratorBase() = default;
@@ -106,7 +106,7 @@ FFTWGlobalConfiguration::GetPlanRigorValue(const std::string & name)
   {
     return FFTW_EXHAUSTIVE;
   }
-  itkGenericExceptionMacro(<< "Unknown plan rigor: " << name);
+  itkGenericExceptionMacro("Unknown plan rigor: " << name);
 }
 
 std::string
@@ -123,7 +123,7 @@ FFTWGlobalConfiguration::GetPlanRigorName(const int value)
     case FFTW_EXHAUSTIVE:
       return "FFTW_EXHAUSTIVE";
     default:
-      itkGenericExceptionMacro(<< "Unknown plan rigor: " << value);
+      itkGenericExceptionMacro("Unknown plan rigor: " << value);
   }
 }
 
@@ -148,7 +148,7 @@ FFTWGlobalConfiguration::GetInstance()
   itkInitGlobalsMacro(PimplGlobals);
   if (!m_PimplGlobals->m_Instance)
   {
-    m_PimplGlobals->m_CreationLock.lock();
+    const std::lock_guard<std::mutex> lockGuard(m_PimplGlobals->m_CreationMutex);
     // Need to make sure that during gaining access
     // to the lock that some other thread did not
     // initialize the singleton.
@@ -157,15 +157,9 @@ FFTWGlobalConfiguration::GetInstance()
       m_PimplGlobals->m_Instance = Self::New();
       if (!m_PimplGlobals->m_Instance)
       {
-        std::ostringstream message;
-        message << "itk::ERROR: "
-                << "FFTWGlobalConfiguration"
-                << " Valid FFTWGlobalConfiguration instance not created";
-        itk::ExceptionObject e_(__FILE__, __LINE__, message.str().c_str(), ITK_LOCATION);
-        throw e_; /* Explicit naming to work around Intel compiler bug.  */
+        itkGenericExceptionMacro("Valid FFTWGlobalConfiguration instance not created");
       }
     }
-    m_PimplGlobals->m_CreationLock.unlock();
   }
   return m_PimplGlobals->m_Instance;
 }
@@ -477,7 +471,7 @@ FFTWGlobalConfiguration::FFTWGlobalConfiguration()
 
   if (this->m_ReadWisdomCache)
   {
-    std::string cachePath = m_WisdomFilenameGenerator->GenerateWisdomFilename(m_WisdomCacheBase);
+    const std::string cachePath = m_WisdomFilenameGenerator->GenerateWisdomFilename(m_WisdomCacheBase);
 #  if defined(ITK_USE_FFTWF)
     fftwf_import_system_wisdom();
     ImportWisdomFileFloat(cachePath + "f");
@@ -493,7 +487,7 @@ FFTWGlobalConfiguration::~FFTWGlobalConfiguration()
 {
   if (this->m_WriteWisdomCache && this->m_NewWisdomAvailable)
   {
-    std::string cachePath = m_WisdomFilenameGenerator->GenerateWisdomFilename(m_WisdomCacheBase);
+    const std::string cachePath = m_WisdomFilenameGenerator->GenerateWisdomFilename(m_WisdomCacheBase);
 #  if defined(ITK_USE_FFTWF)
     {
       // import the wisdom files again to be sure to not erase the wisdom saved in another process
@@ -740,7 +734,7 @@ FFTWGlobalConfiguration::ExportWisdomFileDouble(const std::string &
 std::mutex &
 FFTWGlobalConfiguration::GetLockMutex()
 {
-  return GetInstance()->m_Lock;
+  return GetInstance()->m_Mutex;
 }
 
 void
@@ -785,7 +779,7 @@ FFTWGlobalConfiguration::SetReadWisdomCache(const bool v)
 {
   itkInitGlobalsMacro(PimplGlobals);
   GetInstance()->m_ReadWisdomCache = v;
-  if (v == true)
+  if (v)
   {
     ImportDefaultWisdomFile();
   }

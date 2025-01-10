@@ -86,8 +86,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(BlackTopHatImageFilter, KernelImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BlackTopHatImageFilter);
 
   /** A safe border is added to input image to avoid borders effects
    * and remove it once the closing is done */

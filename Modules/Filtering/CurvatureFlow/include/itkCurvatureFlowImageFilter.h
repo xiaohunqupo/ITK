@@ -107,8 +107,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CurvatureFlowImageFilter, DenseFiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvatureFlowImageFilter);
 
   /** InputImage type. */
   using typename Superclass::InputImageType;
@@ -167,10 +167,8 @@ protected:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
   /** Initialize the state of filter and equation before each iteration.

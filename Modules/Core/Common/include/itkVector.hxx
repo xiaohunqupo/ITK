@@ -103,7 +103,7 @@ template <typename T, unsigned int TVectorDimension>
 auto
 Vector<T, TVectorDimension>::GetSquaredNorm() const -> RealValueType
 {
-  typename NumericTraits<RealValueType>::AccumulateType sum = NumericTraits<T>::ZeroValue();
+  auto sum = T{};
   for (unsigned int i = 0; i < TVectorDimension; ++i)
   {
     const RealValueType value = (*this)[i];
@@ -148,18 +148,15 @@ template <typename T, unsigned int TVectorDimension>
 vnl_vector<T>
 Vector<T, TVectorDimension>::GetVnlVector() const
 {
-  // Return a vector_ref<>.  This will be automatically converted to a
-  // vnl_vector<>.  We have to use a const_cast<> which would normally
-  // be prohibited in a const method, but it is safe to do here
-  // because the cast to vnl_vector<> will ultimately copy the data.
-  return vnl_vector_ref<T>(TVectorDimension, const_cast<T *>(this->GetDataPointer()));
+  return vnl_vector<T>(this->GetDataPointer(), TVectorDimension);
 }
 
 template <typename T, unsigned int TVectorDimension>
 void
 Vector<T, TVectorDimension>::SetVnlVector(const vnl_vector<T> & v)
 {
-  for (unsigned int i = 0; i < v.size(); ++i)
+  const unsigned int elements_to_copy = std::min<unsigned int>(TVectorDimension, v.size());
+  for (unsigned int i = 0; i < elements_to_copy; ++i)
   {
     (*this)[i] = v(i);
   }
@@ -170,7 +167,7 @@ std::ostream &
 operator<<(std::ostream & os, const Vector<T, TVectorDimension> & vct)
 {
   os << '[';
-  if (TVectorDimension == 1)
+  if constexpr (TVectorDimension == 1)
   {
     os << vct[0];
   }
@@ -198,9 +195,10 @@ operator>>(std::istream & is, Vector<T, TVectorDimension> & vct)
 }
 
 template <typename T, unsigned int TVectorDimension>
-typename Vector<T, TVectorDimension>::ValueType Vector<T, TVectorDimension>::operator*(const Self & other) const
+typename Vector<T, TVectorDimension>::ValueType
+Vector<T, TVectorDimension>::operator*(const Self & other) const
 {
-  typename NumericTraits<T>::AccumulateType value = NumericTraits<T>::ZeroValue();
+  auto value = T{};
   for (unsigned int i = 0; i < TVectorDimension; ++i)
   {
     value += (*this)[i] * other[i];

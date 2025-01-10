@@ -236,7 +236,7 @@ LBFGSOptimizer::StartOptimization()
   {
     // set current position to initial position and throw an exception
     this->SetCurrentPosition(currentPositionInternalValue);
-    itkExceptionMacro(<< "Error occurred in optimization");
+    itkExceptionMacro("Error occurred in optimization");
   }
 
   // we scale the vnlCompatibleParameters down if scales are defined
@@ -260,7 +260,7 @@ LBFGSOptimizer::GetOptimizer()
   return m_VnlOptimizer.get();
 }
 
-const std::string
+std::string
 LBFGSOptimizer::GetStopConditionDescription() const
 {
   m_StopConditionDescription.str("");
@@ -314,9 +314,7 @@ LBFGSOptimizer::GetStopConditionDescription() const
     }
     return m_StopConditionDescription.str();
   }
-  else
-  {
-    return std::string("");
-  }
+
+  return {};
 }
 } // end namespace itk

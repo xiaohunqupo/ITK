@@ -66,8 +66,8 @@ public:
   using Superclass = DecisionRule;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MaximumRatioDecisionRule, DecisionRule);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaximumRatioDecisionRule);
 
   /** Standard New() method support */
   itkNewMacro(Self);

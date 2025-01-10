@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VoronoiSegmentationImageFilterBase, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VoronoiSegmentationImageFilterBase);
 
   /** Get the image dimension from the template parameter. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

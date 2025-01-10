@@ -114,8 +114,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Type macro that defines a name for this class */
-  itkTypeMacro(RecursiveGaussianImageFilter, RecursiveSeparableImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RecursiveGaussianImageFilter);
 
   /** Set/Get the Sigma, measured in world coordinates, of the Gaussian
    * kernel.  The default is 1.0. An exception will be generated if
@@ -217,7 +217,7 @@ protected:
   /* See superclass for doxygen. This method adds the additional check
    * that sigma is greater than zero. */
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
 private:
   /** Compute the N coefficients in the recursive filter. */

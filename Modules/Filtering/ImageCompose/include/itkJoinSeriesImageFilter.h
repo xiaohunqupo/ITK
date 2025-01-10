@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(JoinSeriesImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JoinSeriesImageFilter);
 
   /** Compiler can't inherit type alias? */
   using typename Superclass::InputImageType;
@@ -104,7 +104,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override;
+  VerifyInputInformation() const override;
 
   /** Overrides GenerateOutputInformation() in order to produce
    * an image which has a different information than the first input.

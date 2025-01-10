@@ -122,8 +122,8 @@ public:
   using typename Superclass::InputImageType;
   using typename Superclass::InputImagePointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorRescaleIntensityImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorRescaleIntensityImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

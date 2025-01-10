@@ -60,8 +60,8 @@ public:
   /** Standard New method */
   itkNewMacro(Self);
 
-  /** Runtime information support */
-  itkTypeMacro(DilateObjectMorphologyImageFilter, ObjectMorphologyImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DilateObjectMorphologyImageFilter);
 
   /** duplicates from base class to avoid compiler warnings */
   using typename Superclass::PixelType;

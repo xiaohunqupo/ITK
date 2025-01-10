@@ -82,8 +82,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageClassifierBase, ClassifierBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageClassifierBase);
 
   /** Type definition for the input image. */
   using InputImageType = TInputImage;

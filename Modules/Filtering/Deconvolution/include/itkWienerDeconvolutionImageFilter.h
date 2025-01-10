@@ -91,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(WienerDeconvolutionImageFilter, InverseDeconvolutionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WienerDeconvolutionImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

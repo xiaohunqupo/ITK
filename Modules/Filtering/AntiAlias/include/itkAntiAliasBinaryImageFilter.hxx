@@ -27,7 +27,7 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::AntiAliasBinaryImageFilter()
   : m_UpperBinaryValue(NumericTraits<BinaryValueType>::OneValue())
-  , m_LowerBinaryValue(NumericTraits<BinaryValueType>::ZeroValue())
+  , m_LowerBinaryValue(BinaryValueType{})
   , m_InputImage(nullptr)
 {
   m_CurvatureFunction = CurvatureFunctionType::New();
@@ -55,11 +55,11 @@ AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::AntiAliasBinaryImageFilte
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::ValueType
+auto
 AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::CalculateUpdateValue(const IndexType &    idx,
                                                                             const TimeStepType & dt,
                                                                             const ValueType &    value,
-                                                                            const ValueType &    change)
+                                                                            const ValueType &    change) -> ValueType
 {
   // This method introduces the constraint on the flow of the surface.
 
@@ -70,10 +70,8 @@ AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::CalculateUpdateValue(cons
   {
     return (std::max(new_value, this->GetValueZero()));
   }
-  else
-  {
-    return (std::min(new_value, this->GetValueZero()));
-  }
+
+  return (std::min(new_value, this->GetValueZero()));
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -93,8 +91,7 @@ AntiAliasBinaryImageFilter<TInputImage, TOutputImage>::GenerateData()
   // Find the minimum and maximum of the input image and use these values to
   // set m_UpperBinaryValue, m_LowerBinaryValue, and m_IsoSurfaceValue in the
   // parent class.
-  typename itk::MinimumMaximumImageCalculator<InputImageType>::Pointer minmax =
-    itk::MinimumMaximumImageCalculator<InputImageType>::New();
+  auto minmax = itk::MinimumMaximumImageCalculator<InputImageType>::New();
   minmax->SetImage(m_InputImage);
   minmax->ComputeMinimum();
   minmax->ComputeMaximum();

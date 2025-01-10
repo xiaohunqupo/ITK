@@ -35,10 +35,10 @@ GaussianRandomSpatialNeighborSubsampler<TSample, TRegion>::InternalClone() const
 {
   typename LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
+  const typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
   if (rval.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
 
   rval->m_Variance = this->m_Variance;
@@ -46,21 +46,21 @@ GaussianRandomSpatialNeighborSubsampler<TSample, TRegion>::InternalClone() const
 }
 
 template <typename TSample, typename TRegion>
-typename GaussianRandomSpatialNeighborSubsampler<TSample, TRegion>::RandomIntType
+auto
 GaussianRandomSpatialNeighborSubsampler<TSample, TRegion>::GetIntegerVariate(RandomIntType lowerBound,
                                                                              RandomIntType upperBound,
-                                                                             RandomIntType mean)
+                                                                             RandomIntType mean) -> RandomIntType
 {
   if (upperBound < lowerBound)
   {
-    itkExceptionMacro(<< "upperBound (" << upperBound << ") not >= to lowerBound(" << lowerBound << ')');
+    itkExceptionMacro("upperBound (" << upperBound << ") not >= to lowerBound(" << lowerBound << ')');
   }
 
   RandomIntType randInt = 0;
 
   do
   {
-    RealType randVar = this->m_RandomNumberGenerator->GetNormalVariate(mean, m_Variance);
+    const RealType randVar = this->m_RandomNumberGenerator->GetNormalVariate(mean, m_Variance);
     randInt = static_cast<RandomIntType>(std::floor(randVar));
   } while ((randInt < lowerBound) || (randInt > upperBound));
   return randInt;

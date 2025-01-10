@@ -101,8 +101,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LandmarkBasedTransformInitializer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LandmarkBasedTransformInitializer);
 
   /** Type of the transform to initialize. */
   using TransformType = TTransform;
@@ -212,8 +212,9 @@ private:
   PointType3D
   ComputeCentroid(const LandmarkPointContainer);
 
-  void CreateMatrix(itk::Matrix<ParametersValueType, 4, 4> &,
-                    const itk::Matrix<ParametersValueType, ImageDimension, ImageDimension>);
+  void
+  CreateMatrix(itk::Matrix<ParametersValueType, 4, 4> &,
+               const itk::Matrix<ParametersValueType, ImageDimension, ImageDimension>);
 
   FixedImagePointer      m_ReferenceImage{};
   TransformPointer       m_Transform{};

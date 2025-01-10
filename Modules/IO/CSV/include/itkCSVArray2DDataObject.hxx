@@ -45,7 +45,7 @@ CSVArray2DDataObject<TData>::GetRowIndexByName(const std::string & row_name) con
 {
   if (!this->m_HasRowHeaders)
   {
-    itkExceptionMacro(<< "The dataset does not contain any row headers!");
+    itkExceptionMacro("The dataset does not contain any row headers!");
   }
 
   const auto         it = std::find(this->m_RowHeaders.begin(), this->m_RowHeaders.end(), row_name);
@@ -53,7 +53,7 @@ CSVArray2DDataObject<TData>::GetRowIndexByName(const std::string & row_name) con
 
   if (it == this->m_RowHeaders.end())
   {
-    itkExceptionMacro(<< "The row name " << row_name << " does not exist. ");
+    itkExceptionMacro("The row name " << row_name << " does not exist. ");
   }
   return index;
 }
@@ -64,7 +64,7 @@ CSVArray2DDataObject<TData>::GetColumnIndexByName(const std::string & column_nam
 {
   if (!this->m_HasColumnHeaders)
   {
-    itkExceptionMacro(<< "The dataset does not contain any column headers!");
+    itkExceptionMacro("The dataset does not contain any column headers!");
   }
 
   const auto         it = std::find(this->m_ColumnHeaders.begin(), this->m_ColumnHeaders.end(), column_name);
@@ -72,7 +72,7 @@ CSVArray2DDataObject<TData>::GetColumnIndexByName(const std::string & column_nam
 
   if (it == this->m_ColumnHeaders.end())
   {
-    itkExceptionMacro(<< "The column name " << column_name << " does not exist.");
+    itkExceptionMacro("The column name " << column_name << " does not exist.");
   }
   return index;
 }
@@ -81,13 +81,13 @@ template <typename TData>
 auto
 CSVArray2DDataObject<TData>::GetRow(const unsigned int row_index) const -> NumericVectorType
 {
-  NumericVectorType row;
-  unsigned int      max_rows = this->m_Matrix.rows() - 1;
+  NumericVectorType  row;
+  const unsigned int max_rows = this->m_Matrix.rows() - 1;
   if (row_index > max_rows)
   {
-    itkExceptionMacro(<< " Row index: " << row_index << " exceeds matrix dimension: " << max_rows);
+    itkExceptionMacro(" Row index: " << row_index << " exceeds matrix dimension: " << max_rows);
   }
-  unsigned int vector_size = this->m_Matrix.cols();
+  const unsigned int vector_size = this->m_Matrix.cols();
   for (unsigned int i = 0; i < vector_size; ++i)
   {
     row.push_back(this->m_Matrix[row_index][i]);
@@ -99,8 +99,8 @@ template <typename TData>
 auto
 CSVArray2DDataObject<TData>::GetRow(const std::string & row_name) const -> NumericVectorType
 {
-  NumericVectorType row;
-  unsigned int      index = this->GetRowIndexByName(row_name);
+  NumericVectorType  row;
+  const unsigned int index = this->GetRowIndexByName(row_name);
   row = this->GetRow(index);
   return row;
 }
@@ -109,13 +109,13 @@ template <typename TData>
 auto
 CSVArray2DDataObject<TData>::GetColumn(const unsigned int column_index) const -> NumericVectorType
 {
-  NumericVectorType column;
-  unsigned int      max_columns = this->m_Matrix.columns() - 1;
+  NumericVectorType  column;
+  const unsigned int max_columns = this->m_Matrix.columns() - 1;
   if (column_index > max_columns)
   {
-    itkExceptionMacro(<< "Column index: " << column_index << " exceeds matrix dimension: " << max_columns);
+    itkExceptionMacro("Column index: " << column_index << " exceeds matrix dimension: " << max_columns);
   }
-  unsigned int vector_size = this->m_Matrix.rows();
+  const unsigned int vector_size = this->m_Matrix.rows();
   for (unsigned int i = 0; i < vector_size; ++i)
   {
     column.push_back(this->m_Matrix[i][column_index]);
@@ -127,8 +127,8 @@ template <typename TData>
 auto
 CSVArray2DDataObject<TData>::GetColumn(const std::string & column_name) const -> NumericVectorType
 {
-  NumericVectorType column;
-  unsigned int      index = this->GetColumnIndexByName(column_name);
+  NumericVectorType  column;
+  const unsigned int index = this->GetColumnIndexByName(column_name);
   column = this->GetColumn(index);
   return column;
 }
@@ -140,11 +140,11 @@ CSVArray2DDataObject<TData>::GetData(const unsigned int row, const unsigned int 
 {
   if (row > this->m_Matrix.rows() - 1)
   {
-    itkExceptionMacro(<< " Row index: " << row << " exceeds row dimension: " << this->m_Matrix.rows() - 1);
+    itkExceptionMacro(" Row index: " << row << " exceeds row dimension: " << this->m_Matrix.rows() - 1);
   }
   else if (column > this->m_Matrix.cols() - 1)
   {
-    itkExceptionMacro(<< " Column index: " << column << " exceeds column dimension: " << this->m_Matrix.columns() - 1);
+    itkExceptionMacro(" Column index: " << column << " exceeds column dimension: " << this->m_Matrix.columns() - 1);
   }
   return this->m_Matrix[row][column];
 }
@@ -153,8 +153,8 @@ template <typename TData>
 TData
 CSVArray2DDataObject<TData>::GetData(const std::string & row_name, const std::string & column_name) const
 {
-  unsigned int row_index = this->GetRowIndexByName(row_name);
-  unsigned int column_index = this->GetColumnIndexByName(column_name);
+  const unsigned int row_index = this->GetRowIndexByName(row_name);
+  const unsigned int column_index = this->GetColumnIndexByName(column_name);
   return this->GetData(row_index, column_index);
 }
 
@@ -163,7 +163,7 @@ template <typename TData>
 TData
 CSVArray2DDataObject<TData>::GetRowData(const std::string & row_name, const unsigned int column_index) const
 {
-  unsigned int row_index = this->GetRowIndexByName(row_name);
+  const unsigned int row_index = this->GetRowIndexByName(row_name);
   return this->GetData(row_index, column_index);
 }
 
@@ -171,7 +171,7 @@ template <typename TData>
 TData
 CSVArray2DDataObject<TData>::GetColumnData(const std::string & column_name, const unsigned int row_index) const
 {
-  unsigned int column_index = this->GetColumnIndexByName(column_name);
+  const unsigned int column_index = this->GetColumnIndexByName(column_name);
   return this->GetData(row_index, column_index);
 }
 
@@ -206,9 +206,9 @@ CSVArray2DDataObject<TData>::PrintSelf(std::ostream & os, Indent indent) const
   if (this->m_HasColumnHeaders)
   {
     os << indent << indent;
-    for (unsigned int i = 0; i < this->m_ColumnHeaders.size(); ++i)
+    for (const auto & m_ColumnHeader : this->m_ColumnHeaders)
     {
-      os << this->m_ColumnHeaders[i] << indent;
+      os << m_ColumnHeader << indent;
     }
     os << std::endl;
   }

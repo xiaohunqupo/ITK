@@ -82,8 +82,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryMask3DMeshSource, ImageToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryMask3DMeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
   using OutputMeshType = TOutputMesh;

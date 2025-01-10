@@ -54,7 +54,7 @@ ThresholdMaximumConnectedComponentsImageFilter<TInputImage,
 
   // Initialize values for the threshold filters
   // Default. Use ITK set macro "SetOutsideValue" to change
-  m_OutsideValue = NumericTraits<OutputPixelType>::ZeroValue();
+  m_OutsideValue = OutputPixelType{};
 
   // Default. Use ITK set macro "SetInsideValue" to change
   m_InsideValue = NumericTraits<OutputPixelType>::max();
@@ -88,7 +88,7 @@ ThresholdMaximumConnectedComponentsImageFilter<TInputImage, TOutputImage>::Gener
   //
   //  Setup pointers to get input image and send info to output image
   //
-  typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
+  const typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
 
   // Find the min and max of the image.
   m_MinMaxCalculator->SetImage(this->GetInput());

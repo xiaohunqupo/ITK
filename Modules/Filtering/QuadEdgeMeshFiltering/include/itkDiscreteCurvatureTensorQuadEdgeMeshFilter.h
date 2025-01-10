@@ -41,8 +41,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(DiscreteCurvatureTensorQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiscreteCurvatureTensorQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
@@ -56,11 +56,11 @@ public:
 
 protected:
   DiscreteCurvatureTensorQuadEdgeMeshFilter() = default;
-  ~DiscreteCurvatureTensorQuadEdgeMeshFilter() = default;
+  ~DiscreteCurvatureTensorQuadEdgeMeshFilter() override = default;
 
   /// TODO to be implemented
-  virtual void
-  GenerateData()
+  void
+  GenerateData() override
   {}
 };
 } // namespace itk

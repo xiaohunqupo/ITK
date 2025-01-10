@@ -26,9 +26,9 @@ namespace itk
 template <typename TInputImage, typename TMaskImage, typename TOutputImage>
 KappaSigmaThresholdImageFilter<TInputImage, TMaskImage, TOutputImage>::KappaSigmaThresholdImageFilter()
   : m_MaskValue(NumericTraits<MaskPixelType>::max())
-  , m_Threshold(NumericTraits<InputPixelType>::ZeroValue())
+  , m_Threshold(InputPixelType{})
   , m_InsideValue(NumericTraits<OutputPixelType>::max())
-  , m_OutsideValue(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_OutsideValue(OutputPixelType{})
 {}
 
 template <typename TInputImage, typename TMaskImage, typename TOutputImage>
@@ -49,8 +49,7 @@ KappaSigmaThresholdImageFilter<TInputImage, TMaskImage, TOutputImage>::GenerateD
 
   m_Threshold = thresholdImageCalculator->GetOutput();
 
-  typename BinaryThresholdImageFilter<TInputImage, TOutputImage>::Pointer threshold =
-    BinaryThresholdImageFilter<TInputImage, TOutputImage>::New();
+  auto threshold = BinaryThresholdImageFilter<TInputImage, TOutputImage>::New();
 
   progress->RegisterInternalFilter(threshold, .5f);
   threshold->GraftOutput(this->GetOutput());

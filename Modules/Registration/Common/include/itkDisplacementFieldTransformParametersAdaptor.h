@@ -75,8 +75,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DisplacementFieldTransformParametersAdaptor, TransformParametersAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DisplacementFieldTransformParametersAdaptor);
 
   /** Typedefs associated with the transform */
   using TransformType = TTransform;

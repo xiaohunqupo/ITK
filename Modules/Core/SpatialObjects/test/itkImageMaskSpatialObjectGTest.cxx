@@ -17,7 +17,9 @@
  *=========================================================================*/
 
 // Enable testing legacy member function GetAxisAlignedBoundingBoxRegion()
-#define ITK_LEGACY_TEST
+#ifndef ITK_LEGACY_REMOVE
+#  define ITK_LEGACY_TEST
+#endif
 
 // First include the header file to be tested:
 #include "itkImageMaskSpatialObject.h"
@@ -52,7 +54,7 @@ Expect_AxisAlignedBoundingBoxRegion_is_empty_when_all_pixel_values_are_zero(
   const auto image = itk::Image<TPixel, VImageDimension>::New();
 
   image->SetRegions(imageRegion);
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   EXPECT_EQ(ComputeAxisAlignedBoundingBoxRegionInImageGridSpace(*image).GetSize(), itk::Size<VImageDimension>{});
 }
@@ -87,16 +89,13 @@ Expect_AxisAlignedBoundingBoxRegion_equals_region_of_single_pixel_when_it_is_the
   const auto image = itk::Image<TPixel, VImageDimension>::New();
 
   image->SetRegions(imageRegion);
-
-  // Initialize all pixels to zero.
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   const itk::ImageRegionIndexRange<VImageDimension> indexRange{ imageRegion };
 
   // Expected size: the "region size" of a single pixel (1x1, in 2D, 1x1x1 in 3D).
   const itk::Size<VImageDimension> expectedSize = [] {
-    itk::Size<VImageDimension> size;
-    size.Fill(1);
+    auto size = itk::Size<VImageDimension>::Filled(1);
     return size;
   }();
 
@@ -250,7 +249,7 @@ TEST(ImageMaskSpatialObject, IsInsideSingleNonZeroPixel)
   // Create an image filled with zero valued pixels.
   const auto image = ImageType::New();
   image->SetRegions(SizeType::Filled(8));
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   constexpr itk::IndexValueType indexValue{ 4 };
   image->SetPixel({ { indexValue, indexValue } }, 1);
@@ -277,7 +276,7 @@ TEST(ImageMaskSpatialObject, IsInsideIndependentOfDistantPixels)
   // Create an image filled with zero valued pixels.
   const auto image = ImageType::New();
   image->SetRegions(SizeType::Filled(10));
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   // Set the value of a pixel to non-zero.
   constexpr itk::IndexValueType indexValue{ 8 };
@@ -288,7 +287,7 @@ TEST(ImageMaskSpatialObject, IsInsideIndependentOfDistantPixels)
   spatialObject->Update();
 
   // Point of interest: a point close to the non-zero pixel.
-  const auto pointOfInterest = itk::MakeFilled<PointType>(indexValue - 0.25);
+  constexpr auto pointOfInterest = itk::MakeFilled<PointType>(indexValue - 0.25);
 
   const bool isInsideBefore = spatialObject->IsInside(pointOfInterest);
 
@@ -316,10 +315,82 @@ TEST(ImageMaskSpatialObject, CornerPointIsNotInsideMaskOfZeroValues)
   // Create a mask image, and fill the image with zero vales.
   const auto image = itk::Image<unsigned char>::New();
   image->SetRegions(itk::Size<>{ { 2, 2 } });
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   const auto imageMaskSpatialObject = itk::ImageMaskSpatialObject<2>::New();
   imageMaskSpatialObject->SetImage(image);
-  const double cornerPoint[] = { 1.5, 1.5 };
+  constexpr double cornerPoint[] = { 1.5, 1.5 };
   ASSERT_FALSE(imageMaskSpatialObject->IsInsideInObjectSpace(cornerPoint));
+}
+
+// Check that the IsInsideInWorldSpace overloads yield the same result, when depth = 0 and name = "".
+TEST(ImageMaskSpatialObject, IsInsideInWorldSpaceOverloads)
+{
+  constexpr auto imageDimension = 2U;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<imageDimension>;
+  using MaskImageType = ImageMaskSpatialObjectType::ImageType;
+  using MaskPixelType = MaskImageType::PixelType;
+  using PointType = MaskImageType::PointType;
+
+  // Create a mask image.
+  const auto maskImage = MaskImageType::New();
+  maskImage->SetRegions(itk::Size<imageDimension>::Filled(2));
+  maskImage->AllocateInitialized();
+  maskImage->SetPixel({}, MaskPixelType{ 1 });
+  maskImage->SetSpacing(itk::MakeFilled<MaskImageType::SpacingType>(0.5));
+
+  const auto imageMaskSpatialObject = ImageMaskSpatialObjectType::New();
+  imageMaskSpatialObject->SetImage(maskImage);
+
+  for (const double pointValue : { -1.0, 0.0, 0.5, 1.0 })
+  {
+    const PointType point(pointValue);
+
+    EXPECT_EQ(imageMaskSpatialObject->IsInsideInWorldSpace(point),
+              imageMaskSpatialObject->IsInsideInWorldSpace(point, 0, ""));
+  }
+}
+
+
+// Check that regions of the mask image are stored in the spatial object.
+TEST(ImageMaskSpatialObject, StoresRegionsFromMaskImage)
+{
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<>;
+  using MaskImageType = ImageMaskSpatialObjectType::ImageType;
+
+  // Test image regions of various indices and sizes:
+  for (const itk::IndexValueType indexValue : { -1, 0, 1 })
+  {
+    // Just test some small sizes, to make the test run fast:
+    for (itk::SizeValueType sizeValue{ 2 }; sizeValue < 4; ++sizeValue)
+    {
+      using RegionType = MaskImageType::RegionType;
+      using IndexType = MaskImageType::IndexType;
+      using SizeType = MaskImageType::SizeType;
+
+      // Create a mask image.
+      const auto maskImage = MaskImageType::New();
+      maskImage->SetRegions(RegionType{ IndexType::Filled(indexValue), SizeType::Filled(sizeValue) });
+      maskImage->AllocateInitialized();
+
+      const auto imageMaskSpatialObject = ImageMaskSpatialObjectType::New();
+      imageMaskSpatialObject->SetImage(maskImage);
+
+      EXPECT_EQ(imageMaskSpatialObject->GetLargestPossibleRegion(), maskImage->GetLargestPossibleRegion());
+      EXPECT_EQ(imageMaskSpatialObject->GetBufferedRegion(), maskImage->GetBufferedRegion());
+      EXPECT_EQ(imageMaskSpatialObject->GetRequestedRegion(), maskImage->GetRequestedRegion());
+
+      // Modify one of the image regions.
+      maskImage->SetRequestedRegion(RegionType{ IndexType::Filled(indexValue + 1), SizeType::Filled(sizeValue - 1) });
+
+      // Note: when an image region is modified _after_ calling SetImage, the user must call Update() to keep the
+      // regions of the spatial object up-to-date.
+      imageMaskSpatialObject->Update();
+
+      // Do the same checks after the Update():
+      EXPECT_EQ(imageMaskSpatialObject->GetLargestPossibleRegion(), maskImage->GetLargestPossibleRegion());
+      EXPECT_EQ(imageMaskSpatialObject->GetBufferedRegion(), maskImage->GetBufferedRegion());
+      EXPECT_EQ(imageMaskSpatialObject->GetRequestedRegion(), maskImage->GetRequestedRegion());
+    }
+  }
 }

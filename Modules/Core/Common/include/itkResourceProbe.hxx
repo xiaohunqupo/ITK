@@ -91,15 +91,15 @@ template <typename ValueType, typename MeanType>
 void
 ResourceProbe<ValueType, MeanType>::Reset()
 {
-  this->m_TotalValue = NumericTraits<ValueType>::ZeroValue();
-  this->m_StartValue = NumericTraits<ValueType>::ZeroValue();
+  this->m_TotalValue = ValueType{};
+  this->m_StartValue = ValueType{};
   this->m_MinimumValue = NumericTraits<ValueType>::max();
   this->m_MaximumValue = NumericTraits<ValueType>::NonpositiveMin();
-  this->m_StandardDeviation = NumericTraits<ValueType>::ZeroValue();
+  this->m_StandardDeviation = ValueType{};
 
-  this->m_NumberOfStarts = NumericTraits<CountType>::ZeroValue();
-  this->m_NumberOfStops = NumericTraits<CountType>::ZeroValue();
-  this->m_NumberOfIteration = NumericTraits<CountType>::ZeroValue();
+  this->m_NumberOfStarts = CountType{};
+  this->m_NumberOfStops = CountType{};
+  this->m_NumberOfIteration = CountType{};
 
   this->m_ProbeValueList.clear();
 }
@@ -125,7 +125,7 @@ template <typename ValueType, typename MeanType>
 void
 ResourceProbe<ValueType, MeanType>::Start()
 {
-  this->m_NumberOfStarts++;
+  ++(this->m_NumberOfStarts);
   this->m_StartValue = this->GetInstantValue();
 }
 
@@ -143,30 +143,30 @@ ResourceProbe<ValueType, MeanType>::Stop()
   this->UpdateMinimumMaximumMeasuredValue(probevalue);
   this->m_TotalValue += probevalue;
   this->m_ProbeValueList.push_back(probevalue);
-  this->m_NumberOfStops++;
+  ++(this->m_NumberOfStops);
   this->m_NumberOfIteration = static_cast<CountType>(this->m_ProbeValueList.size());
 }
 
 
 template <typename ValueType, typename MeanType>
-typename ResourceProbe<ValueType, MeanType>::CountType
-ResourceProbe<ValueType, MeanType>::GetNumberOfStarts() const
+auto
+ResourceProbe<ValueType, MeanType>::GetNumberOfStarts() const -> CountType
 {
   return this->m_NumberOfStarts;
 }
 
 
 template <typename ValueType, typename MeanType>
-typename ResourceProbe<ValueType, MeanType>::CountType
-ResourceProbe<ValueType, MeanType>::GetNumberOfStops() const
+auto
+ResourceProbe<ValueType, MeanType>::GetNumberOfStops() const -> CountType
 {
   return this->m_NumberOfStops;
 }
 
 
 template <typename ValueType, typename MeanType>
-typename ResourceProbe<ValueType, MeanType>::CountType
-ResourceProbe<ValueType, MeanType>::GetNumberOfIteration() const
+auto
+ResourceProbe<ValueType, MeanType>::GetNumberOfIteration() const -> CountType
 {
   return this->m_NumberOfIteration;
 }
@@ -223,13 +223,12 @@ ResourceProbe<ValueType, MeanType>::GetStandardDeviation()
                  diff.begin(),
                  // Subtract mean from every value;
                  [realMean](const ValueType v) { return (static_cast<InternalComputeType>(v) - realMean); });
-  const InternalComputeType sqsum =
-    std::inner_product(diff.begin(), diff.end(), diff.begin(), NumericTraits<InternalComputeType>::ZeroValue());
+  const InternalComputeType sqsum = std::inner_product(diff.begin(), diff.end(), diff.begin(), InternalComputeType{});
 
   const InternalComputeType sz = static_cast<InternalComputeType>(this->m_ProbeValueList.size()) - 1.0;
   if (sz <= 0.0)
   {
-    this->m_StandardDeviation = NumericTraits<ValueType>::ZeroValue();
+    this->m_StandardDeviation = ValueType{};
   }
   else
   {
@@ -351,7 +350,7 @@ ResourceProbe<ValueType, MeanType>::ExpandedReport(std::ostream & os,
   ValueType ratioOfMeanToMinimum;
   if (Math::ExactlyEquals(this->GetMinimum(), 0.0))
   {
-    ratioOfMeanToMinimum = NumericTraits<ValueType>::ZeroValue();
+    ratioOfMeanToMinimum = ValueType{};
   }
   else
   {
@@ -361,7 +360,7 @@ ResourceProbe<ValueType, MeanType>::ExpandedReport(std::ostream & os,
   ValueType ratioOfMaximumToMean;
   if (Math::ExactlyEquals(this->GetMean(), 0.0))
   {
-    ratioOfMaximumToMean = NumericTraits<ValueType>::ZeroValue();
+    ratioOfMaximumToMean = ValueType{};
   }
   else
   {
@@ -403,7 +402,7 @@ ResourceProbe<ValueType, MeanType>::PrintJSONvar(std::ostream & os,
                                                  unsigned int   indent,
                                                  bool           comma)
 {
-  bool varIsNumber = mpl::IsNumber<T>::Value;
+  const bool varIsNumber = mpl::IsNumber<T>::Value;
   while (indent > 0)
   {
     os << ' ';
@@ -428,12 +427,12 @@ template <typename ValueType, typename MeanType>
 void
 ResourceProbe<ValueType, MeanType>::JSONReport(std::ostream & os)
 {
-  std::stringstream ss;
+  const std::stringstream ss;
 
   ValueType ratioOfMeanToMinimum;
   if (Math::ExactlyEquals(this->GetMinimum(), 0.0))
   {
-    ratioOfMeanToMinimum = NumericTraits<ValueType>::ZeroValue();
+    ratioOfMeanToMinimum = ValueType{};
   }
   else
   {
@@ -443,7 +442,7 @@ ResourceProbe<ValueType, MeanType>::JSONReport(std::ostream & os)
   ValueType ratioOfMaximumToMean;
   if (Math::ExactlyEquals(this->GetMean(), 0.0))
   {
-    ratioOfMaximumToMean = NumericTraits<ValueType>::ZeroValue();
+    ratioOfMaximumToMean = ValueType{};
   }
   else
   {
@@ -592,16 +591,6 @@ ResourceProbe<ValueType, MeanType>::PrintJSONSystemInformation(std::ostream & os
   PrintJSONvar(os, "ITKVersion", itkVersionStringStream.str(), 4, false);
   os << "  }";
 }
-
-
-// This protected member function that was introduced with ITK 4.8 has been deprecated
-// as of ITK 5.0. Please do not call or override this member function.
-#if !defined(ITK_LEGACY_REMOVE)
-template <typename ValueType, typename MeanType>
-void
-ResourceProbe<ValueType, MeanType>::GetSystemInformation()
-{}
-#endif
 
 } // end namespace itk
 

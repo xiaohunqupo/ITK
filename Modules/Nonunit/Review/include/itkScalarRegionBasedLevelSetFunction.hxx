@@ -23,10 +23,10 @@ namespace itk
 {
 
 template <typename TInputImage, typename TFeatureImage, typename TSharedData>
-typename ScalarRegionBasedLevelSetFunction<TInputImage, TFeatureImage, TSharedData>::ScalarValueType
+auto
 ScalarRegionBasedLevelSetFunction<TInputImage, TFeatureImage, TSharedData>::ComputeOverlapParameters(
   const FeatureIndexType & globalIndex,
-  ScalarValueType &        product)
+  ScalarValueType &        product) -> ScalarValueType
 {
   // This conditional statement computes the amount of overlap s
   // and the presence of background pr
@@ -37,8 +37,7 @@ ScalarRegionBasedLevelSetFunction<TInputImage, TFeatureImage, TSharedData>::Comp
 
   product = 1.;
 
-  ListPixelType L;
-  L = this->m_SharedData->m_NearestNeighborListImage->GetPixel(globalIndex);
+  ListPixelType L = this->m_SharedData->m_NearestNeighborListImage->GetPixel(globalIndex);
 
   InputPixelType hVal;
   InputIndexType otherIndex;

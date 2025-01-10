@@ -104,8 +104,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageToCooccurrenceMatrixFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarImageToCooccurrenceMatrixFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);

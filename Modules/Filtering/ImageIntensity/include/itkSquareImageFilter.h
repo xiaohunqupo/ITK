@@ -41,8 +41,6 @@ class Square
 {
 public:
   using RealType = typename NumericTraits<TInput>::RealType;
-  Square() = default;
-  ~Square() = default;
   bool
   operator==(const Square &) const
   {
@@ -76,8 +74,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(SquareImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SquareImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

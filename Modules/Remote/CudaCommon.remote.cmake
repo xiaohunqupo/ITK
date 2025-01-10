@@ -37,9 +37,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(CudaCommon
+itk_fetch_module(
+  CudaCommon
   "Framework for processing images with Cuda."
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/RTKConsortium/ITKCudaCommon.git
-  GIT_TAG f5a74bc70e31048665f71b6b92500babef6f395c
-)
+  GIT_REPOSITORY https://github.com/RTKConsortium/ITKCudaCommon.git
+  GIT_TAG cae7c93c2f6d4c5b3cb5f6e5ce4a97686e626bf7
+  )

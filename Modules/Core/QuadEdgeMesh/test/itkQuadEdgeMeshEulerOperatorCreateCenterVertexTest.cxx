@@ -18,6 +18,7 @@
 
 #include "itkQuadEdgeMeshEulerOperatorCreateCenterVertexFunction.h"
 #include "itkQuadEdgeMeshEulerOperatorsTestHelper.h"
+#include "itkTestingMacros.h"
 
 int
 itkQuadEdgeMeshEulerOperatorCreateCenterVertexTest(int, char *[])
@@ -59,7 +60,7 @@ itkQuadEdgeMeshEulerOperatorCreateCenterVertexTest(int, char *[])
 
   std::cout << "Checking CreateCenterVertex." << std::endl;
 
-  MeshPointer mesh = MeshType::New();
+  const MeshPointer mesh = MeshType::New();
   CreateSquareTriangularMesh<MeshType>(mesh);
 
   auto createCenterVertex = CreateCenterVertex::New();
@@ -73,8 +74,8 @@ itkQuadEdgeMeshEulerOperatorCreateCenterVertexTest(int, char *[])
   }
   std::cout << "OK" << std::endl;
 #endif
-
-  (void)createCenterVertex->GetNameOfClass();
+  ITK_TEST_EXPECT_EQUAL(std::string_view("QuadEdgeMeshEulerOperatorCreateCenterVertexFunction"),
+                        std::string_view(createCenterVertex->GetNameOfClass()));
 
   createCenterVertex->SetInput(mesh);
 #ifndef NDEBUG

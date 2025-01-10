@@ -62,8 +62,8 @@ public:
     MeasurementVectorType */
   using MeasurementVectorSizeType = unsigned int;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DistanceMetric, FunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DistanceMetric);
 
   using OriginType = Array<double>;
 
@@ -105,16 +105,14 @@ public:
       {
         return;
       }
-      else
-      {
-        this->m_MeasurementVectorSize = s;
-        this->Modified();
-      }
+
+      this->m_MeasurementVectorSize = s;
+      this->Modified();
     }
     else
     {
       // If this is a non-resizable vector type
-      MeasurementVectorSizeType defaultLength = NumericTraits<MeasurementVectorType>::GetLength({});
+      const MeasurementVectorSizeType defaultLength = NumericTraits<MeasurementVectorType>::GetLength({});
       // and the new length is different from the default one, then throw an
       // exception
       if (defaultLength != s)

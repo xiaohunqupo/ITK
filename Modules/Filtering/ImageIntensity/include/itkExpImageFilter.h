@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Exp
 {
 public:
-  Exp() = default;
-  ~Exp() = default;
   bool
   operator==(const Exp &) const
   {
@@ -79,8 +77,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ExpImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExpImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Solver, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Solver);
 
   static constexpr unsigned int FEMDimension = VDimension;
   static constexpr unsigned int MaxDimensions = 3;
@@ -228,9 +228,7 @@ public:
   void
   InitializeInterpolationGrid(const InterpolationGridSizeType & size)
   {
-    InterpolationGridPointType bb1;
-
-    bb1.Fill(0.0);
+    InterpolationGridPointType bb1{};
 
     InterpolationGridPointType bb2;
     for (unsigned int i = 0; i < FEMDimension; ++i)

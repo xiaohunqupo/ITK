@@ -171,8 +171,8 @@ public:
   /** The type used for the advection field */
   using VectorImageType = typename SegmentationFunctionType::VectorImageType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NarrowBandLevelSetImageFilter, NarrowBandImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NarrowBandLevelSetImageFilter);
 
   /** Set/Get the feature image to be used for speed function of the level set
    *  equation.  Equivalent to calling Set/GetInput(1, ..) */
@@ -233,8 +233,8 @@ public:
   void
   SetUseNegativeFeatures(bool u)
   {
-    itkWarningMacro(<< "SetUseNegativeFeatures has been deprecated.  Please use SetReverseExpansionDirection instead");
-    if (u == true)
+    itkWarningMacro("SetUseNegativeFeatures has been deprecated.  Please use SetReverseExpansionDirection instead");
+    if (u)
     {
       this->SetReverseExpansionDirection(false);
     }
@@ -253,10 +253,8 @@ public:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
   /** Turn On/Off the flag which determines whether Positive or Negative speed

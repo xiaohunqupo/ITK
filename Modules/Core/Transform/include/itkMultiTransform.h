@@ -71,8 +71,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiTransform, Transform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultiTransform);
 
   /** Sub transform type **/
   using TransformType = Transform<TParametersValueType, VSubDimensions, VSubDimensions>;

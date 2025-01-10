@@ -10,24 +10,31 @@ ITK: The Insight Toolkit
 [![DOI](https://zenodo.org/badge/800928.svg)](https://zenodo.org/badge/latestdoi/800928)
 [![Powered by NumFOCUS](https://img.shields.io/badge/powered%20by-NumFOCUS-orange.svg?style=flat&colorA=E1523D&colorB=007D8A)](https://numfocus.org)
 
-| | C++ | Python |
-|:------:|:--------:|:--------:|
-| Linux | [![Build Status](https://dev.azure.com/itkrobotlinux/ITK.Linux/_apis/build/status/ITK.Linux?branchName=master)](https://dev.azure.com/itkrobotlinux/ITK.Linux/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotlinuxpython/ITK.Linux.Python/_apis/build/status/ITK.Linux.Python?branchName=master)](https://dev.azure.com/itkrobotlinuxpython/ITK.Linux.Python/_build/latest?definitionId=3&branchName=master) |
-| macOS | [![Build Status](https://dev.azure.com/itkrobotmacos/ITK.macOS/_apis/build/status/ITK.macOS?branchName=master)](https://dev.azure.com/itkrobotmacos/ITK.macOS/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotmacospython/ITK.macOS.Python/_apis/build/status/ITK.macOS.Python?branchName=master)](https://dev.azure.com/itkrobotmacospython/ITK.macOS.Python/_build/latest?definitionId=2&branchName=master) |
-| Windows | [![Build Status](https://dev.azure.com/itkrobotwindow/ITK.Windows/_apis/build/status/ITK.Windows?branchName=master)](https://dev.azure.com/itkrobotwindow/ITK.Windows/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotwindowpython/ITK.Windows.Python/_apis/build/status/ITK.Windows.Python?branchName=master)](https://dev.azure.com/itkrobotwindowpython/ITK.Windows.Python/_build/latest?definitionId=1) |
-| Linux (Code coverage)| [![Build Status](https://dev.azure.com/itkrobotbatch/ITK.Coverage/_apis/build/status/ITK.Coverage?branchName=master)](https://dev.azure.com/itkrobotbatch/ITK.Coverage/_build/latest?definitionId=3&branchName=master) | |
+| | | C++ | Python |
+|:------:|:------:|:--------:|:--------:|
+| Azure Pipelines | Linux | [![Build Status](https://dev.azure.com/itkrobotlinux/ITK.Linux/_apis/build/status/ITK.Linux?branchName=master)](https://dev.azure.com/itkrobotlinux/ITK.Linux/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotlinuxpython/ITK.Linux.Python/_apis/build/status/ITK.Linux.Python?branchName=master)](https://dev.azure.com/itkrobotlinuxpython/ITK.Linux.Python/_build/latest?definitionId=3&branchName=master) |
+| Azure Pipelines | Windows | [![Build Status](https://dev.azure.com/itkrobotwindow/ITK.Windows/_apis/build/status/ITK.Windows?branchName=master)](https://dev.azure.com/itkrobotwindow/ITK.Windows/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotwindowpython/ITK.Windows.Python/_apis/build/status/ITK.Windows.Python?branchName=master)](https://dev.azure.com/itkrobotwindowpython/ITK.Windows.Python/_build/latest?definitionId=1) |
+| Azure Pipelines | macOS | [![Build Status](https://dev.azure.com/itkrobotmacos/ITK.macOS/_apis/build/status/ITK.macOS?branchName=master)](https://dev.azure.com/itkrobotmacos/ITK.macOS/_build/latest?definitionId=2&branchName=master) | [![Build Status](https://dev.azure.com/itkrobotmacospython/ITK.macOS.Python/_apis/build/status/ITK.macOS.Python?branchName=master)](https://dev.azure.com/itkrobotmacospython/ITK.macOS.Python/_build/latest?definitionId=2&branchName=master) |
+| GitHub Actions | Linux, Windows, macOS | [![ITK.Pixi](https://github.com/InsightSoftwareConsortium/ITK/actions/workflows/pixi.yml/badge.svg)](https://github.com/InsightSoftwareConsortium/ITK/actions/workflows/pixi.yml) | |
+| GitHub Actions | macOS (Apple Silicon)|  [![ITK.macOS.Arm64](https://github.com/InsightSoftwareConsortium/ITK/actions/workflows/macos-arm.yml/badge.svg)](https://github.com/InsightSoftwareConsortium/ITK/actions/workflows/macos-arm.yml)| |
+| Azure Pipelines | Linux (Code coverage)| [![Build Status](https://dev.azure.com/itkrobotbatch/ITK.Coverage/_apis/build/status/ITK.Coverage?branchName=master)](https://dev.azure.com/itkrobotbatch/ITK.Coverage/_build/latest?definitionId=3&branchName=master) | |
 
 Links
 -----
 
 * [Homepage](https://itk.org)
-* [Download](https://itk.org/download/)
+* [Download](https://docs.itk.org/en/latest/download.html)
+* [Documentation](https://docs.itk.org/)
 * [Discussion](https://discourse.itk.org/)
 * [Software Guide](https://itk.org/ItkSoftwareGuide.pdf)
-* [Help](https://itk.org/resources/)
 * [Examples](https://examples.itk.org/)
 * [Issue tracking](https://github.com/InsightSoftwareConsortium/ITK/issues)
 * [Submit a patch](CONTRIBUTING.md)
+
+*Note*: For questions related to ITK, please use the official [Discussion](https://discourse.itk.org/)
+space: the [issue tracker](https://github.com/InsightSoftwareConsortium/ITK/issues)
+is reserved to track different aspects of the software development process, as
+highlighted by the available templates.
 
 
 About
@@ -60,25 +67,18 @@ pay for developer time, professional services, travel, workshops, and a variety 
 
 ITK is distributed in binary Python packages. To install:
 
-```sh
+```bash
 pip install itk
 ```
 
 or
 
-```sh
+```bash
 conda install -c conda-forge itk
-```
-
-If you're a [Homebrew](https://brew.sh/) user, you can install [itk](https://formulae.brew.sh/formula/itk) via:
-
-```sh
-brew install itk
 ```
 
 The cross-platform, C++ core of the toolkit may be built from source using
 [CMake](https://cmake.org).
-
 
 Copyright
 ---------
@@ -145,3 +145,5 @@ Once your work has been published, please create a pull request to add
 the publication to the
 [ITKBibliography.bib](https://github.com/InsightSoftwareConsortium/insightsoftwareconsortium.org/blob/master/static/citations-visualization/ITKBibliography.bib)
 file.
+
+[![Alt](https://repobeats.axiom.co/api/embed/e2194d411e086b1a9a9db4336692fdb302612295.svg "Repobeats analytics image")](https://github.com/InsightSoftwareConsortium/ITK/pulse/monthly)

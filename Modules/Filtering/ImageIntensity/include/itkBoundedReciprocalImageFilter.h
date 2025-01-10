@@ -47,8 +47,6 @@ template <typename TInput, typename TOutput>
 class BoundedReciprocal
 {
 public:
-  BoundedReciprocal() = default;
-  ~BoundedReciprocal() = default;
   bool
   operator==(const BoundedReciprocal &) const
   {
@@ -81,8 +79,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(BoundedReciprocalImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BoundedReciprocalImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

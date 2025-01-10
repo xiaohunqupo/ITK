@@ -99,8 +99,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ReconstructionByDilationImageFilter, ReconstructionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ReconstructionByDilationImageFilter);
 
 protected:
   ReconstructionByDilationImageFilter()

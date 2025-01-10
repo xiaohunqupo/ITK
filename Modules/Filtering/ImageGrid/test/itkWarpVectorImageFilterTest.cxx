@@ -102,9 +102,6 @@ itkWarpVectorImageFilterTest(int, char *[])
 
   bool testPassed = true;
 
-
-  //=============================================================
-
   std::cout << "Create the input image pattern." << std::endl;
   ImageType::RegionType region;
   ImageType::SizeType   size = { { 64, 64 } };
@@ -126,18 +123,16 @@ itkWarpVectorImageFilterTest(int, char *[])
 
   using Iterator = itk::ImageRegionIteratorWithIndex<ImageType>;
 
-  float padValue = 4.0;
+  constexpr float padValue = 4.0;
 
   for (Iterator inIter(input, region); !inIter.IsAtEnd(); ++inIter)
   {
     inIter.Set(PixelType(pattern.Evaluate(inIter.GetIndex(), size, size, padValue)));
   }
 
-  //=============================================================
-
   std::cout << "Create the input displacement field." << std::endl;
 
-  unsigned int factors[ImageDimension] = { 2, 3 };
+  constexpr unsigned int factors[ImageDimension] = { 2, 3 };
 
   ImageType::RegionType fieldRegion;
   ImageType::SizeType   fieldSize;
@@ -165,10 +160,7 @@ itkWarpVectorImageFilterTest(int, char *[])
     fieldIter.Set(displacement);
   }
 
-  //=============================================================
-
-  std::cout << "Run WarpVectorImageFilter in standalone mode with progress.";
-  std::cout << std::endl;
+  std::cout << "Run WarpVectorImageFilter in standalone mode with progress." << std::endl;
   using WarperType = itk::WarpVectorImageFilter<ImageType, ImageType, FieldType>;
   auto warper = WarperType::New();
 
@@ -182,14 +174,13 @@ itkWarpVectorImageFilterTest(int, char *[])
   warper->SetEdgePaddingValue(PixelType(padValue));
   ITK_TEST_SET_GET_VALUE(PixelType(padValue), warper->GetEdgePaddingValue());
 
-  ShowProgressObject                                    progressWatch(warper);
-  itk::SimpleMemberCommand<ShowProgressObject>::Pointer command;
-  command = itk::SimpleMemberCommand<ShowProgressObject>::New();
+  ShowProgressObject                                          progressWatch(warper);
+  const itk::SimpleMemberCommand<ShowProgressObject>::Pointer command =
+    itk::SimpleMemberCommand<ShowProgressObject>::New();
   command->SetCallbackFunction(&progressWatch, &ShowProgressObject::ShowProgress);
   warper->AddObserver(itk::ProgressEvent(), command);
 
-  itk::FixedArray<double, ImageDimension> array;
-  array.Fill(2.0);
+  auto array = itk::MakeFilled<itk::FixedArray<double, ImageDimension>>(2.0);
   warper->SetOutputSpacing(array.GetDataPointer());
   ITK_TEST_SET_GET_VALUE(array, warper->GetOutputSpacing());
 
@@ -197,8 +188,7 @@ itkWarpVectorImageFilterTest(int, char *[])
   warper->SetOutputSpacing(array.GetDataPointer());
   ITK_TEST_SET_GET_VALUE(array, warper->GetOutputSpacing());
 
-  WarperType::PointType ptarray;
-  ptarray.Fill(-10.0);
+  auto ptarray = itk::MakeFilled<WarperType::PointType>(-10.0);
   warper->SetOutputOrigin(ptarray.GetDataPointer());
   ITK_TEST_SET_GET_VALUE(ptarray, warper->GetOutputOrigin());
 
@@ -213,8 +203,6 @@ itkWarpVectorImageFilterTest(int, char *[])
 
   // Update the filter
   warper->Update();
-
-  //=============================================================
 
   std::cout << "Checking the output against expected." << std::endl;
 
@@ -268,43 +256,40 @@ itkWarpVectorImageFilterTest(int, char *[])
   Iterator outIter(warper->GetOutput(), warper->GetOutput()->GetBufferedRegion());
   while (!outIter.IsAtEnd())
   {
-    IndexType index = outIter.GetIndex();
-    PixelType value = outIter.Get();
+    const IndexType index = outIter.GetIndex();
+    PixelType       value = outIter.Get();
 
     if (validRegion.IsInside(index))
     {
-
       PixelType trueValue(pattern.Evaluate(outIter.GetIndex(), validSize, clampSize, padValue));
       for (unsigned int k = 0; k < ImageDimension; ++k)
       {
         if (itk::Math::abs(trueValue[k] - value[k]) > 1e-4)
         {
+          std::cerr << "Test failed!" << std::endl;
+          std::cerr << "Error in Evaluate at index [" << index << "]" << std::endl;
+          std::cerr << "Expected value " << trueValue << std::endl;
+          std::cerr << " differs from " << value << std::endl;
           testPassed = false;
-          std::cout << "Error at Index: " << index << ' ';
-          std::cout << "Expected: " << trueValue << ' ';
-          std::cout << "Actual: " << value << std::endl;
           break;
         }
       }
     }
     else
     {
-
       if (value != PixelType(padValue))
       {
+        std::cerr << "Test failed!" << std::endl;
+        std::cerr << "Error in Evaluate at index [" << index << "]" << std::endl;
+        std::cerr << "Expected value " << padValue << std::endl;
+        std::cerr << " differs from " << value << std::endl;
         testPassed = false;
-        std::cout << "Error at Index: " << index << ' ';
-        std::cout << "Expected: " << padValue << ' ';
-        std::cout << "Actual: " << value << std::endl;
       }
     }
     ++outIter;
   }
 
-  //=============================================================
-
-  std::cout << "Run ExpandImageFilter with streamer";
-  std::cout << std::endl;
+  std::cout << "Run ExpandImageFilter with streamer" << std::endl;
 
   using VectorCasterType = itk::CastImageFilter<FieldType, FieldType>;
   auto vcaster = VectorCasterType::New();
@@ -323,7 +308,6 @@ itkWarpVectorImageFilterTest(int, char *[])
   streamer->SetNumberOfStreamDivisions(3);
   streamer->Update();
 
-  //=============================================================
   std::cout << "Compare standalone and streamed outputs" << std::endl;
 
   Iterator streamIter(streamer->GetOutput(), streamer->GetOutput()->GetBufferedRegion());
@@ -335,6 +319,10 @@ itkWarpVectorImageFilterTest(int, char *[])
   {
     if (outIter.Get() != streamIter.Get())
     {
+      std::cerr << "Test failed!" << std::endl;
+      std::cerr << "Error in streamed output at index [" << outIter.GetIndex() << "]" << std::endl;
+      std::cerr << "Expected value " << outIter.Get() << std::endl;
+      std::cerr << " differs from " << streamIter.Get() << std::endl;
       testPassed = false;
     }
     ++outIter;
@@ -351,30 +339,19 @@ itkWarpVectorImageFilterTest(int, char *[])
   // Exercise error handling
 
   using InterpolatorType = WarperType::InterpolatorType;
-  InterpolatorType::Pointer interp = warper->GetModifiableInterpolator();
+  const InterpolatorType::Pointer interp = warper->GetModifiableInterpolator();
 
-  try
-  {
-    std::cout << "Setting interpolator to nullptr" << std::endl;
-    testPassed = false;
-    warper->SetInterpolator(nullptr);
-    warper->Update();
-  }
-  catch (const itk::ExceptionObject & err)
-  {
-    std::cout << err << std::endl;
-    testPassed = true;
-    warper->ResetPipeline();
-    warper->SetInterpolator(interp);
-    ITK_TEST_SET_GET_VALUE(interp, warper->GetInterpolator());
-  }
+  std::cout << "Setting interpolator to nullptr" << std::endl;
+  warper->SetInterpolator(nullptr);
 
-  if (!testPassed)
-  {
-    std::cout << "Test failed" << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_EXCEPTION(warper->Update());
 
-  std::cout << "Test passed." << std::endl;
+  warper->ResetPipeline();
+  warper->SetInterpolator(interp);
+
+  ITK_TEST_SET_GET_VALUE(interp, warper->GetInterpolator());
+
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

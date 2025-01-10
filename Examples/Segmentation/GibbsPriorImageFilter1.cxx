@@ -111,10 +111,9 @@ main(int argc, char * argv[])
   //
   auto vecImage = VecImageType::New();
   using VecImagePixelType = VecImageType::PixelType;
-  VecImageType::SizeType vecImgSize = { { 181, 217, 1 } };
+  constexpr VecImageType::SizeType vecImgSize = { { 181, 217, 1 } };
 
-  VecImageType::IndexType index;
-  index.Fill(0);
+  constexpr VecImageType::IndexType index{};
 
   VecImageType::RegionType region;
 
@@ -225,7 +224,7 @@ main(int argc, char * argv[])
   using ClassifierType =
     itk::ImageClassifierBase<VecImageType, ClassImageType>;
   using ClassifierPointer = ClassifierType::Pointer;
-  ClassifierPointer myClassifier = ClassifierType::New();
+  const ClassifierPointer myClassifier = ClassifierType::New();
   // Software Guide : EndCodeSnippet
 
   // Set the Classifier parameters
@@ -240,7 +239,7 @@ main(int argc, char * argv[])
     myClassifier->AddMembershipFunction(membershipFunctions[i]);
   }
 
-  // Set the Gibbs Prior labeller
+  // Set the Gibbs Prior labeler
   //  Software Guide : BeginLatex
   //
   //  After that we can define the multi-channel Gibbs prior model.
@@ -253,7 +252,7 @@ main(int argc, char * argv[])
   auto applyGibbsImageFilter = GibbsPriorFilterType::New();
   // Software Guide : EndCodeSnippet
 
-  // Set the MRF labeller parameters
+  // Set the MRF labeler parameters
   //  Software Guide : BeginLatex
   //
   //  The parameters for the Gibbs prior filter are defined

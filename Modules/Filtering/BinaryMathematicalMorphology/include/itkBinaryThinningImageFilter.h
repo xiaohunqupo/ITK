@@ -73,8 +73,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryThinningImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryThinningImageFilter);
 
   /** Type for input image. */
   using InputImageType = TInputImage;

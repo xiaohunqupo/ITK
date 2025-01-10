@@ -43,8 +43,7 @@ namespace itk
  *
  * "Grayscale morphological attribute operations"
  * by Beare R.
- * https://hdl.handle.net/1926/1316
- * https://www.insight-journal.org/browse/publication/203
+ * https://doi.org/10.54294/ifvjls
  *
  * \author Richard Beare. Department of Medicine, Monash University, Melbourne, Australia.
  *
@@ -100,7 +99,7 @@ public:
   /**
    * Run-time type information (and related methods)
    */
-  itkTypeMacro(AttributeMorphologyBaseImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(AttributeMorphologyBaseImageFilter);
 
   /**
    * Method for creation through the object factory.
@@ -197,7 +196,7 @@ private:
     // largest or smallest pixel.
     InputPixelType * buf;
     bool
-    operator()(OffsetValueType const & l, OffsetValueType const & r) const
+    operator()(const OffsetValueType & l, const OffsetValueType & r) const
     {
       return (m_TFunction(buf[l], buf[r]));
     }

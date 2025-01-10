@@ -43,7 +43,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Emiliano Beronich and
  * Gaetan Lehmann. The original paper can be found at
- * https://www.insight-journal.org/browse/publication/71
+ * https://doi.org/10.54294/0pjyho
  *
  * \author Emiliano Beronich
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -68,8 +68,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ProjectionImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ProjectionImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;

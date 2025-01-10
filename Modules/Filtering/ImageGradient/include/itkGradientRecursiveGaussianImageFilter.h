@@ -126,8 +126,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GradientRecursiveGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientRecursiveGaussianImageFilter);
 
   /** Set/Get the Sigma value. Sigma is measured in the units of image spacing. */
   void
@@ -202,7 +202,7 @@ private:
   TransformOutputPixel(ImageRegionIterator<VectorImage<TValue, ImageDimension>> & it)
   {
     // To transform Variable length vector we need to convert to and
-    // fro the CovariantVectorType
+    // from the CovariantVectorType
     const CovariantVectorType gradient(it.Get().GetDataPointer());
     CovariantVectorType       physicalGradient;
     it.GetImage()->TransformLocalVectorToPhysicalVector(gradient, physicalGradient);
@@ -255,7 +255,7 @@ private:
   bool m_NormalizeAcrossScale{};
 
   /** Take into account image orientation when computing the Gradient */
-  bool m_UseImageDirection{};
+  bool m_UseImageDirection{ true };
 
   /** Standard deviation of the gaussian */
   SigmaArrayType m_Sigma{};

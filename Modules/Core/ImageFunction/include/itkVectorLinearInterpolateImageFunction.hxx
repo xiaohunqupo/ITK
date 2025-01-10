@@ -20,19 +20,20 @@
 
 
 #include "itkMath.h"
+#include <algorithm> // For min and max.
 
 namespace itk
 {
 
-template <typename TInputImage, typename TCoordRep>
-const unsigned long VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::m_Neighbors =
+template <typename TInputImage, typename TCoordinate>
+const unsigned long VectorLinearInterpolateImageFunction<TInputImage, TCoordinate>::m_Neighbors =
   1 << TInputImage::ImageDimension;
 
 
-template <typename TInputImage, typename TCoordRep>
-typename VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::OutputType
-VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuousIndex(
-  const ContinuousIndexType & index) const
+template <typename TInputImage, typename TCoordinate>
+auto
+VectorLinearInterpolateImageFunction<TInputImage, TCoordinate>::EvaluateAtContinuousIndex(
+  const ContinuousIndexType & index) const -> OutputType
 {
   //
   // Compute base index = closet index below point
@@ -52,8 +53,7 @@ VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
    * neighbors. The weight for each neighbor is the fraction overlap
    * of the neighbor pixel with respect to a pixel centered on point.
    */
-  OutputType output;
-  output.Fill(0.0);
+  OutputType output{};
 
   using ScalarRealType = typename NumericTraits<PixelType>::ScalarRealType;
   ScalarRealType totalOverlap{};
@@ -72,10 +72,7 @@ VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
         neighIndex[dim] = baseIndex[dim] + 1;
         // Take care of the case where the pixel is just
         // in the outer upper boundary of the image grid.
-        if (neighIndex[dim] > this->m_EndIndex[dim])
-        {
-          neighIndex[dim] = this->m_EndIndex[dim];
-        }
+        neighIndex[dim] = std::min(neighIndex[dim], this->m_EndIndex[dim]);
         overlap *= distance[dim];
       }
       else
@@ -83,10 +80,7 @@ VectorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
         neighIndex[dim] = baseIndex[dim];
         // Take care of the case where the pixel is just
         // in the outer lower boundary of the image grid.
-        if (neighIndex[dim] < this->m_StartIndex[dim])
-        {
-          neighIndex[dim] = this->m_StartIndex[dim];
-        }
+        neighIndex[dim] = std::max(neighIndex[dim], this->m_StartIndex[dim]);
         overlap *= 1.0 - distance[dim];
       }
       upper >>= 1;

@@ -19,15 +19,17 @@
 #include "itkImageFileWriter.h"
 #include "itkBioRadImageIO.h"
 #include "itkImage.h"
+#include "itkTestingMacros.h"
 
-// Specific ImageIO test
 
 int
 itkBioRadImageIOTest(int argc, char * argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Usage: " << argv[0] << " BioRad.pic OutputImage.pic\n";
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << " BioRad.pic OutputImage.pic" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -43,39 +45,25 @@ itkBioRadImageIOTest(int argc, char * argv[])
   reader->SetFileName(filename);
 
   auto bioradImageIO = ImageIOType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(bioradImageIO, BioRadImageIO, ImageIOBase);
+
+
   reader->SetImageIO(bioradImageIO);
   bioradImageIO->DebugOn();
 
-  try
-  {
-    reader->Update();
-  }
-  catch (const itk::ExceptionObject & e)
-  {
-    std::cerr << "exception in file reader " << std::endl;
-    std::cerr << e << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
-  //
+
   using WriterType = itk::ImageFileWriter<InputImageType>;
   auto writer = WriterType::New();
   writer->SetImageIO(bioradImageIO);
   writer->SetFileName(outfilename);
   writer->SetInput(reader->GetOutput());
 
-  try
-  {
-    writer->Update();
-  }
-  catch (const itk::ExceptionObject & e)
-  {
-    std::cerr << "exception in file writer " << std::endl;
-    std::cerr << e << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
-  bioradImageIO->Print(std::cout);
 
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

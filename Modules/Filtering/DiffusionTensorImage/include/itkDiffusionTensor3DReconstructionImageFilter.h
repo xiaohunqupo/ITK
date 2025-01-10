@@ -51,7 +51,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKDiffusionTensorImage_EXPORT std::ostream &
-                                      operator<<(std::ostream & out, const DiffusionTensor3DReconstructionImageFilterEnums::GradientImageFormat value);
+operator<<(std::ostream & out, const DiffusionTensor3DReconstructionImageFilterEnums::GradientImageFormat value);
 
 /** \class DiffusionTensor3DReconstructionImageFilter
  * \brief This class takes as input one or more reference image (acquired in the
@@ -159,8 +159,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(DiffusionTensor3DReconstructionImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiffusionTensor3DReconstructionImageFilter);
 
   using ReferencePixelType = TReferenceImagePixelType;
 
@@ -226,8 +226,8 @@ public:
     if (m_GradientImageTypeEnumeration ==
         DiffusionTensor3DReconstructionImageFilterEnums::GradientImageFormat::GradientIsInASingleImage)
     {
-      itkExceptionMacro(<< "Cannot call both methods:"
-                        << "AddGradientImage and SetGradientImage. Please call only one of them.");
+      itkExceptionMacro(
+        "Cannot call both methods:AddGradientImage and SetGradientImage. Please call only one of them.");
     }
 
     this->ProcessObject::SetNthInput(0, referenceImage);
@@ -249,7 +249,7 @@ public:
   {
     if (idx >= m_NumberOfGradientDirections)
     {
-      itkExceptionMacro(<< "Gradient direction " << idx << " does not exist");
+      itkExceptionMacro("Gradient direction " << idx << " does not exist");
     }
     return m_GradientDirectionContainer->ElementAt(idx);
   }
@@ -312,7 +312,7 @@ protected:
   DynamicThreadedGenerateData(const OutputImageRegionType & outputRegionForThread) override;
 
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   /** Enables backwards compatibility for enum values */
   using GradientImageTypeEnumeration = DiffusionTensor3DReconstructionImageFilterEnums::GradientImageFormat;

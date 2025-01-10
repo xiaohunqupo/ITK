@@ -28,7 +28,7 @@ template <typename TMoving, typename TFixed>
 FiniteDifferenceFunctionLoad<TMoving, TFixed>::FiniteDifferenceFunctionLoad()
   : m_MovingImage(nullptr)
   , m_FixedImage(nullptr)
-  , m_Gamma(NumericTraits<Float>::ZeroValue())
+  , m_Gamma(Float{})
 {
   m_MovingSize.Fill(0);
   m_FixedSize.Fill(0);
@@ -243,7 +243,7 @@ FiniteDifferenceFunctionLoad<TMoving, TFixed>::Fe(FEMVectorType Gpos) -> FEMVect
     physicalPoint[k] = Gpos[k];
   }
 
-  m_FixedImage->TransformPhysicalPointToIndex(physicalPoint, oindex);
+  oindex = m_FixedImage->TransformPhysicalPointToIndex(physicalPoint);
 
   for (unsigned int k = 0; k < ImageDimension; ++k)
   {

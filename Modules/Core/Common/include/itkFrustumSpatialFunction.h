@@ -32,7 +32,7 @@ namespace itk
 class FrustumSpatialFunctionEnums
 {
 public:
-  /** \class RotationPlane
+  /**
    *  \ingroup ITKCommon
    */
   enum class RotationPlane : uint8_t
@@ -72,8 +72,8 @@ public:
 
   using RotationPlaneEnum = FrustumSpatialFunctionEnums::RotationPlane;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FrustumSpatialFunction, InteriorExteriorSpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FrustumSpatialFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

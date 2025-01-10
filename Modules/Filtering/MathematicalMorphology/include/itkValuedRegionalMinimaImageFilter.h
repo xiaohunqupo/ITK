@@ -36,7 +36,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Finding regional extrema - methods and performance"
  * by Beare R., Lehmann G.
- * https://www.insight-journal.org/browse/publication/65
+ * https://doi.org/10.54294/hva3gz
  *
  * \author Richard Beare. Department of Medicine, Monash University,
  * Melbourne, Australia.
@@ -76,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ValuedRegionalMinimaImageFilter, ValuedRegionalExtremaImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ValuedRegionalMinimaImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

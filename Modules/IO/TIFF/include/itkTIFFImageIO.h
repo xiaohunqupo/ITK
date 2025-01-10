@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TIFFImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TIFFImageIO);
 
   /*-------- This part of the interface deals with reading data. ------ */
 

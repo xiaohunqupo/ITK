@@ -68,8 +68,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(NormalVectorDiffusionFunction, NormalVectorFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NormalVectorDiffusionFunction);
 
   /** Image dimension derived from the superclass. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
@@ -161,10 +161,8 @@ protected:
     {
       return NumericTraits<NodeValueType>::OneValue();
     }
-    else
-    {
-      return static_cast<NodeValueType>(std::exp(m_FluxStopConstant * v));
-    }
+
+    return static_cast<NodeValueType>(std::exp(m_FluxStopConstant * v));
   }
 
 private:

@@ -49,8 +49,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = Object;
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetContainerBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetContainerBase);
 
   /** type alias related to the type of level set*/
   using LevelSetType = TLevelSet;
@@ -110,8 +110,16 @@ public:
       : m_Iterator(it.m_Iterator)
     {}
 
-    ConstIterator & operator*() { return *this; }
-    ConstIterator * operator->() { return this; }
+    ConstIterator &
+    operator*()
+    {
+      return *this;
+    }
+    ConstIterator *
+    operator->()
+    {
+      return this;
+    }
     ConstIterator &
     operator++()
     {
@@ -186,8 +194,16 @@ public:
     {}
     ~Iterator() = default;
 
-    Iterator & operator*() { return *this; }
-    Iterator * operator->() { return this; }
+    Iterator &
+    operator*()
+    {
+      return *this;
+    }
+    Iterator *
+    operator->()
+    {
+      return this;
+    }
     Iterator &
     operator++()
     {

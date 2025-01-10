@@ -31,6 +31,10 @@ namespace itk
  * but with a large difference in performance since the affine transform will
  * use a matrix multiplication using a diagonal matrix.
  *
+ * The ND Parameters represent the scale in each dimension.
+ * The ND FixedParameters represent the fixed point (i.e. center point) from
+ * which scaling originates.
+ *
  * \ingroup ITKTransform
  *
  * \sphinx
@@ -53,8 +57,8 @@ public:
   /** New macro for creation of through a smart pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScaleTransform, Transform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScaleTransform);
 
   /** Dimension of the domain space. */
   static constexpr unsigned int SpaceDimension = VDimension;

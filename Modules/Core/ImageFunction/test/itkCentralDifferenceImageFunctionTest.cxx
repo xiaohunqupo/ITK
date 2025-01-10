@@ -30,10 +30,9 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
   using PixelType = unsigned int;
   using ImageType = itk::Image<PixelType, ImageDimension>;
 
-  auto                image = ImageType::New();
-  ImageType::SizeType size;
-  size.Fill(16);
-  ImageType::RegionType region(size);
+  auto                        image = ImageType::New();
+  auto                        size = ImageType::SizeType::Filled(16);
+  const ImageType::RegionType region(size);
 
   image->SetRegions(region);
   image->Allocate();
@@ -52,8 +51,8 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
   }
 
   // set up central difference calculator
-  using CoordRepType = float;
-  using FunctionType = itk::CentralDifferenceImageFunction<ImageType, CoordRepType>;
+  using CoordinateType = float;
+  using FunctionType = itk::CentralDifferenceImageFunction<ImageType, CoordinateType>;
   using OutputType = FunctionType::OutputType;
   using OutputValueType = FunctionType::OutputValueType;
 
@@ -77,8 +76,7 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
     std::cout << "Index: " << index << " is inside the BufferedRegion." << std::endl;
   }
 
-  FunctionType::ContinuousIndexType cindex;
-  cindex.Fill(8.0);
+  auto       cindex = itk::MakeFilled<FunctionType::ContinuousIndexType>(8.0);
   OutputType continuousIndexOutput = function->EvaluateAtContinuousIndex(cindex);
   std::cout << "ContinuousIndex: " << cindex << " Derivative: ";
   std::cout << continuousIndexOutput << std::endl;
@@ -89,8 +87,7 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
     result = EXIT_FAILURE;
   }
 
-  FunctionType::PointType point;
-  point.Fill(8.0);
+  auto       point = itk::MakeFilled<FunctionType::PointType>(8.0);
   OutputType pointOutput = function->Evaluate(point);
   std::cout << "Point: " << point << " Derivative: ";
   std::cout << pointOutput << std::endl;
@@ -114,7 +111,7 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
   {
     std::cout << "Index: " << index << " is inside the BufferedRegion." << std::endl;
   }
-  if (itk::Math::NotExactlyEquals(indexOutput[0], itk::NumericTraits<OutputValueType>::ZeroValue()))
+  if (itk::Math::NotExactlyEquals(indexOutput[0], OutputValueType{}))
   {
     std::cout << "ERROR: Index: " << index << " - expected result dim 0 to have value 0. " << std::endl;
     result = EXIT_FAILURE;
@@ -157,7 +154,7 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
   {
     std::cout << "Index: " << index << " is inside the BufferedRegion." << std::endl;
   }
-  if (itk::Math::NotExactlyEquals(indexOutput[1], itk::NumericTraits<OutputValueType>::ZeroValue()))
+  if (itk::Math::NotExactlyEquals(indexOutput[1], OutputValueType{}))
   {
     std::cout << "ERROR: Index: " << index << " - expected result dim 1 to have value 0. " << std::endl;
     result = EXIT_FAILURE;
@@ -298,10 +295,10 @@ itkCentralDifferenceImageFunctionTest(int, char *[])
 
   // with image direction disabled, result should be same as with
   // identity direction
-  bool useImageDirection = false;
+  constexpr bool useImageDirection = false;
   ITK_TEST_SET_GET_BOOLEAN(function, UseImageDirection, useImageDirection);
 
-  OutputType directionOffDerivative = function->Evaluate(point);
+  const OutputType directionOffDerivative = function->Evaluate(point);
   std::cout << "Point: " << point << " directionOffDerivative: " << directionOffDerivative << std::endl;
 
   if (directionOffDerivative != origDerivative)

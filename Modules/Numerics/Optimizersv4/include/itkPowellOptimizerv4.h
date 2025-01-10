@@ -69,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PowellOptimizerv4, ObjectToObjectOptimizerBaseTemplate);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PowellOptimizerv4);
 
   using typename Superclass::ParametersType;
   using typename Superclass::MeasureType;
@@ -131,7 +131,7 @@ public:
   itkGetConstReferenceMacro(MetricWorstPossibleValue, double);
   itkSetMacro(MetricWorstPossibleValue, double);
 
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
 protected:

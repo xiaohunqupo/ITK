@@ -46,7 +46,7 @@ namespace itk
  * \author Marius Staring, Leiden University Medical Center, The Netherlands.
  *
  * This class was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/240
+ * https://doi.org/10.54294/4ids6q
  *
  * \ingroup GeometricTransform
  * \ingroup ITKDisplacementField
@@ -69,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformToDisplacementFieldFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformToDisplacementFieldFilter);
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

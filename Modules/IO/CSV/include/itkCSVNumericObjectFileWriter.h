@@ -73,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CSVNumericObjectFileWriter, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CSVNumericObjectFileWriter);
 
   // Matrix types
   using vnlMatrixType = vnl_matrix<TValue>;

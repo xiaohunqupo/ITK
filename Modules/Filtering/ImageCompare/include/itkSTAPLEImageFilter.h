@@ -84,7 +84,7 @@ namespace itk
  * ConfidenceWeight should be left to the default of 1.0.
  *
  * You must provide a foreground value using SetForegroundValue that the STAPLE
- * algorithm will use to identify positively classified pixels in the the input
+ * algorithm will use to identify positively classified pixels in the input
  * images.  All other values in the image will be treated as background values.
  * For example, if your input segmentations consist of 1's everywhere inside
  * the segmented region, then use SetForegroundValue(1).
@@ -133,8 +133,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(STAPLEImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(STAPLEImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -184,7 +184,7 @@ public:
   {
     if (i > this->GetNumberOfIndexedInputs())
     {
-      itkExceptionMacro(<< "Array reference out of bounds.");
+      itkExceptionMacro("Array reference out of bounds.");
     }
     return m_Sensitivity[i];
   }
@@ -196,7 +196,7 @@ public:
   {
     if (i > this->GetNumberOfIndexedInputs())
     {
-      itkExceptionMacro(<< "Array reference out of bounds.");
+      itkExceptionMacro("Array reference out of bounds.");
     }
     return m_Specificity[i];
   }

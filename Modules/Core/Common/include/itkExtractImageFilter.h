@@ -35,7 +35,7 @@ namespace itk
 class ExtractImageFilterEnums
 {
 public:
-  /** \class DirectionCollapseStrategy
+  /**
    * \ingroup ITKCommon
    * Strategy to be used to collapse physical space dimensions
    */
@@ -129,8 +129,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExtractImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExtractImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;
@@ -201,7 +201,7 @@ public:
         break;
       case DirectionCollapseStrategyEnum::DIRECTIONCOLLAPSETOUNKOWN:
       default:
-        itkExceptionMacro(<< "Invalid Strategy Chosen for itk::ExtractImageFilter");
+        itkExceptionMacro("Invalid Strategy Chosen for itk::ExtractImageFilter");
     }
 
     this->m_DirectionCollapseStrategy = choosenStrategy;

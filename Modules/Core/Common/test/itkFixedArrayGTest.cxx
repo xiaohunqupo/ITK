@@ -17,7 +17,9 @@
  *=========================================================================*/
 
 // Enable testing legacy member functions rBegin() and rEnd().
-#define ITK_LEGACY_TEST
+#ifndef ITK_LEGACY_REMOVE
+#  define ITK_LEGACY_TEST
+#endif
 
 // First include the header file to be tested:
 #include "itkFixedArray.h"
@@ -56,7 +58,7 @@ Check_FixedArray_supports_retrieving_values_by_range_based_for_loop()
   EXPECT_EQ(stdArrayIterator, stdArray.cend());
 
   // Now test retrieving the values from a non-const FixedArray:
-  itk::FixedArray<TValue, VLength> nonConstFixedArray{ stdArray };
+  const itk::FixedArray<TValue, VLength> nonConstFixedArray{ stdArray };
 
   stdArrayIterator = stdArray.cbegin();
 

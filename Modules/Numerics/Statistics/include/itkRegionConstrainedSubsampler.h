@@ -63,8 +63,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(RegionConstrainedSubsampler, SubsamplerBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegionConstrainedSubsampler);
 
   /** type alias alias for the source data container */
   using SampleType = TSample;

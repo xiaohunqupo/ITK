@@ -89,8 +89,8 @@ public:
 
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TemporalDataObject, DataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TemporalDataObject);
 
   /** Get the type of temporal units we care about (Defaults to Frame)*/
   virtual TemporalUnitType

@@ -44,10 +44,10 @@
 #--     and memcheck
 #--
 # Contact: Stephen Aylward <stephen.aylward@kitware.com>
-itk_fetch_module(TubeTK
+itk_fetch_module(
+  TubeTK
   "http://www.tubetk.org"
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKTubeTK.git
-  GIT_TAG 00d554bb402ffdedc452b2e311aaf6d1e4b1fd36
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKTubeTK.git
+  GIT_TAG e29408eb2fa55ec21b9a9b8197f8a61ecbb3e5d1
   )
-# Release v1.3.5

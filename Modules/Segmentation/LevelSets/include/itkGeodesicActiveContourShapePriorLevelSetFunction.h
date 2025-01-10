@@ -106,8 +106,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GeodesicActiveContourShapePriorLevelSetFunction, ShapePriorSegmentationLevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GeodesicActiveContourShapePriorLevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   using typename Superclass::ImageType;

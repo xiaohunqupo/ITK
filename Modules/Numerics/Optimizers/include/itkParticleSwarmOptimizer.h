@@ -71,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleSwarmOptimizer, ParticleSwarmOptimizerBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ParticleSwarmOptimizer);
 
   /** The Particle swarm optimizer uses the following update formula:
    * v_i(t+1) = w*v_i(t) +

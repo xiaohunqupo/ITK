@@ -47,8 +47,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RegistrationParameterScalesFromIndexShift, RegistrationParameterScalesFromShiftBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegistrationParameterScalesFromIndexShift);
 
   /** Type of scales */
   using typename Superclass::ScalesType;

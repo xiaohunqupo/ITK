@@ -54,7 +54,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/154
+ * https://doi.org/10.54294/ux2obj
  *
  * \ingroup ITKDisplacementField
  */
@@ -73,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExponentialDisplacementFieldImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExponentialDisplacementFieldImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;

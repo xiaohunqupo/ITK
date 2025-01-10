@@ -193,7 +193,7 @@ private:
  * cleanly the initialization and cleanup of FFTW.
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/717
+ * https://doi.org/10.54294/0iky0u
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  * \author Hans Johnson, The University of Iowa
@@ -212,8 +212,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using MutexType = std::mutex;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FFTWGlobalConfiguration, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FFTWGlobalConfiguration);
 
   /** Get the mutex that protects calls to FFTW functions. */
   static std::mutex &
@@ -367,7 +367,7 @@ private:
 
   static FFTWGlobalConfigurationGlobals * m_PimplGlobals;
 
-  std::mutex  m_Lock;
+  std::mutex  m_Mutex;
   bool        m_NewWisdomAvailable{ false };
   int         m_PlanRigor{ 0 };
   bool        m_WriteWisdomCache{ false };

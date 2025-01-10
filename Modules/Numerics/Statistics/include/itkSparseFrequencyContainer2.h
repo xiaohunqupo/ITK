@@ -50,8 +50,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(SparseFrequencyContainer2, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SparseFrequencyContainer2);
   itkNewMacro(Self);
 
   /** instance identifier alias */

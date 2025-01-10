@@ -29,8 +29,8 @@ void
 VnlHalfHermitianToRealInverseFFTImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   // Get pointers to the input and output.
-  typename InputImageType::ConstPointer inputPtr = this->GetInput();
-  typename OutputImageType::Pointer     outputPtr = this->GetOutput();
+  const typename InputImageType::ConstPointer inputPtr = this->GetInput();
+  const typename OutputImageType::Pointer     outputPtr = this->GetOutput();
 
   if (!inputPtr || !outputPtr)
   {
@@ -39,7 +39,7 @@ VnlHalfHermitianToRealInverseFFTImageFilter<TInputImage, TOutputImage>::Generate
 
   // We don't have a nice progress to report, but at least this simple line
   // reports the beginning and the end of the process.
-  ProgressReporter progress(this, 0, 1);
+  const ProgressReporter progress(this, 0, 1);
 
   const InputSizeType   inputSize = inputPtr->GetLargestPossibleRegion().GetSize();
   const InputIndexType  inputIndex = inputPtr->GetLargestPossibleRegion().GetIndex();
@@ -55,7 +55,8 @@ VnlHalfHermitianToRealInverseFFTImageFilter<TInputImage, TOutputImage>::Generate
   {
     if (!VnlFFTCommon::IsDimensionSizeLegal(outputSize[i]))
     {
-      itkExceptionMacro(<< "Cannot compute FFT of image with size " << outputSize
+      itkExceptionMacro("Cannot compute FFT of image with size "
+                        << outputSize
                         << ". VnlHalfHermitianToRealInverseFFTImageFilter operates only on images whose size in each "
                            "dimension has only a combination of 2,3, and 5 as prime factors.");
     }
@@ -66,8 +67,8 @@ VnlHalfHermitianToRealInverseFFTImageFilter<TInputImage, TOutputImage>::Generate
   // produce it here from the half complex image assumed when the output is real.
   SignalVectorType signal(vectorSize);
 
-  OutputIndexValueType maxXIndex = inputIndex[0] + static_cast<OutputIndexValueType>(inputSize[0]);
-  unsigned int         si = 0;
+  const OutputIndexValueType maxXIndex = inputIndex[0] + static_cast<OutputIndexValueType>(inputSize[0]);
+  unsigned int               si = 0;
   for (ImageRegionIteratorWithIndex<OutputImageType> oIt(outputPtr, outputPtr->GetLargestPossibleRegion());
        !oIt.IsAtEnd();
        ++oIt)

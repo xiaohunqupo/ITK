@@ -90,8 +90,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(CSVArray2DFileReader, CSVFileReaderBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CSVArray2DFileReader);
 
   /** DataFrame Object types */
   using Array2DDataObjectType = typename itk::CSVArray2DDataObject<TData>;

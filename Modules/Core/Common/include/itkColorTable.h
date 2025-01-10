@@ -51,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ColorTable, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ColorTable);
 
   /** Generate a lookup table of 8 discrete colors. The colors are Red,
    * Purple, Aqua, Yellow, Green, Blue, Grey0.70, White. For integral
@@ -62,7 +62,7 @@ public:
   void
   UseDiscreteColors();
 
-  /** Generate a lookuptable of n grayscale values. For integral pixel
+  /** Generate a lookup table of n grayscale values. For integral pixel
    * types, a ramp is generated from NonpositiveMin() to max() of the
    * pixel type. For continuous pixel types, the range is 0.0 to 1.0.
    */

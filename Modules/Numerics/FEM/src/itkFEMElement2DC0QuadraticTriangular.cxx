@@ -115,21 +115,18 @@ Element2DC0QuadraticTriangular::JacobianDeterminant(const VectorType & pt, const
 {
   //  return Superclass::JacobianDeterminant( pt, pJ );
 
-  MatrixType * pJlocal = nullptr;
+  MatrixType jlocal{};
 
   // If Jacobian was not provided, we
   // need to compute it here
   if (pJ == nullptr)
   {
-    pJlocal = new MatrixType();
-    this->Jacobian(pt, *pJlocal);
-    pJ = pJlocal;
+    this->Jacobian(pt, jlocal);
+    pJ = &jlocal;
   }
 
   Float det = (((*pJ)[1][0] - (*pJ)[0][0]) * ((*pJ)[2][1] - (*pJ)[0][1])) -
               (((*pJ)[0][1] - (*pJ)[1][1]) * ((*pJ)[0][0] - (*pJ)[2][0]));
-
-  delete pJlocal;
 
   return det;
 }
@@ -137,15 +134,14 @@ Element2DC0QuadraticTriangular::JacobianDeterminant(const VectorType & pt, const
 void
 Element2DC0QuadraticTriangular::JacobianInverse(const VectorType & pt, MatrixType & invJ, const MatrixType * pJ) const
 {
-  MatrixType * pJlocal = nullptr;
+  MatrixType jlocal{};
 
   // If Jacobian was not provided, we
   // need to compute it here
   if (pJ == nullptr)
   {
-    pJlocal = new MatrixType();
-    this->Jacobian(pt, *pJlocal);
-    pJ = pJlocal;
+    this->Jacobian(pt, jlocal);
+    pJ = &jlocal;
   }
 
   // Note that inverse of Jacobian is not quadratic matrix
@@ -159,8 +155,6 @@ Element2DC0QuadraticTriangular::JacobianInverse(const VectorType & pt, MatrixTyp
   invJ[1][0] = idet * ((*pJ)[2][0] - (*pJ)[1][0]);
   invJ[1][1] = idet * ((*pJ)[0][0] - (*pJ)[2][0]);
   invJ[1][2] = idet * ((*pJ)[1][0] - (*pJ)[0][0]);
-
-  delete pJlocal;
 }
 
 bool
@@ -170,16 +164,14 @@ Element2DC0QuadraticTriangular::GetLocalFromGlobalCoordinates(const VectorType &
   int LinearTris[4][3] = { { 0, 3, 5 }, { 3, 1, 4 }, { 5, 4, 2 }, { 4, 5, 3 } };
 
   VectorType pc(3);
-  int        i, subId;
+  int        subId;
   bool       returnStatus = false;
   VectorType tempWeights(3);
   VectorType closest(3);
 
-  itk::fem::Element2DC0LinearTriangularMembrane::Pointer e1;
-
-  e1 = itk::fem::Element2DC0LinearTriangularMembrane::New();
+  auto e1 = itk::fem::Element2DC0LinearTriangularMembrane::New();
   // four linear triangles are used
-  for (i = 0; i < 4; ++i)
+  for (int i = 0; i < 4; ++i)
   {
     e1->SetNode(0, this->GetNode(LinearTris[i][0]));
     e1->SetNode(1, this->GetNode(LinearTris[i][1]));

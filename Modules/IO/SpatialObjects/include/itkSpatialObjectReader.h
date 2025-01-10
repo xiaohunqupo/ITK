@@ -57,11 +57,17 @@ public:
 
   /** Run-time type information (and related methods). */
   using Superclass = Object;
-  itkTypeMacro(SpatialObjectReader, Object);
+  itkOverrideGetNameOfClassMacro(SpatialObjectReader);
 
   /** Load a scene file. */
   void
   Update();
+
+  /** Set the version of MetaIO to use */
+  void
+  SetMetaIOVersion(unsigned int ver);
+  unsigned int
+  GetMetaIOVersion() const;
 
   /** Set the filename  */
   itkSetStringMacro(FileName);

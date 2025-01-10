@@ -22,7 +22,6 @@
 #include "metaImage.h"
 #include "itkMetaConverterBase.h"
 #include "itkImageSpatialObject.h"
-#include "itkMetaConverterBase.h"
 
 namespace itk
 {
@@ -51,8 +50,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MetaImageConverter, MetaConverterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MetaImageConverter);
 
   using typename Superclass::SpatialObjectType;
   using SpatialObjectPointer = typename SpatialObjectType::Pointer;

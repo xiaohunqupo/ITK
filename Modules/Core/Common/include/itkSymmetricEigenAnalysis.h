@@ -38,20 +38,20 @@ const TValueType *
 GetPointerToMatrixData(const vnl_matrix_fixed<TValueType, VRows, VColumns> & inputMatrix)
 {
   return inputMatrix.data_block();
-};
+}
 template <typename TValueType>
 const TValueType *
 GetPointerToMatrixData(const vnl_matrix<TValueType> & inputMatrix)
 {
   return inputMatrix.data_block();
-};
+}
 
 template <typename TValueType, unsigned int VRows, unsigned int VColumns>
 const TValueType *
 GetPointerToMatrixData(const itk::Matrix<TValueType, VRows, VColumns> & inputMatrix)
 {
   return inputMatrix.GetVnlMatrix().data_block();
-};
+}
 
 /** Sort input to be ordered by magnitude, and returns container with the
  * permutations required for the sorting.
@@ -119,7 +119,7 @@ permuteColumnsWithSortIndices(QMatrix & eigenVectors, const std::vector<int> & i
 class SymmetricEigenAnalysisEnums
 {
 public:
-  /** \class EigenValueOrder
+  /**
    * \ingroup ITKCommon
    * Order of eigen values
    * OrderByValue:      lambda_1 < lambda_2 < ....
@@ -153,7 +153,7 @@ Int2EigenValueOrderEnum(const uint8_t value)
     default:
       break;
   }
-  itkGenericExceptionMacro(<< "Error: Invalid value for conversion.");
+  itkGenericExceptionMacro("Error: Invalid value for conversion.");
 }
 
 #if !defined(ITK_LEGACY_REMOVE)
@@ -556,8 +556,8 @@ private:
       }
     }
     using EigenSolverType = Eigen::SelfAdjointEigenSolver<EigenLibMatrixType>;
-    EigenSolverType solver(inputMatrix); // Computes EigenValues and EigenVectors
-    const auto &    eigenValues = solver.eigenvalues();
+    const EigenSolverType solver(inputMatrix); // Computes EigenValues and EigenVectors
+    const auto &          eigenValues = solver.eigenvalues();
     /* Column  k  of the returned matrix is an eigenvector corresponding to
      * eigenvalue number $ k $ as returned by eigenvalues().
      * The eigenvectors are normalized to have (Euclidean) norm equal to one. */
@@ -683,8 +683,8 @@ private:
       }
     }
     using EigenSolverType = Eigen::SelfAdjointEigenSolver<EigenLibMatrixType>;
-    EigenSolverType solver(inputMatrix, Eigen::EigenvaluesOnly);
-    auto            eigenValues = solver.eigenvalues();
+    const EigenSolverType solver(inputMatrix, Eigen::EigenvaluesOnly);
+    auto                  eigenValues = solver.eigenvalues();
     if (m_OrderEigenValues == EigenValueOrderEnum::OrderByMagnitude)
     {
       detail::sortEigenValuesByMagnitude(eigenValues, m_Dimension);
@@ -763,9 +763,6 @@ public:
   static constexpr EigenValueOrderEnum OrderByMagnitude = EigenValueOrderEnum::OrderByMagnitude;
   static constexpr EigenValueOrderEnum DoNotOrder = EigenValueOrderEnum::DoNotOrder;
 #endif
-
-  SymmetricEigenAnalysisFixedDimension() = default;
-  ~SymmetricEigenAnalysisFixedDimension() = default;
 
   using MatrixType = TMatrix;
   using EigenMatrixType = TEigenMatrix;
@@ -974,8 +971,8 @@ private:
       }
     }
     using EigenSolverType = Eigen::SelfAdjointEigenSolver<EigenLibMatrixType>;
-    EigenSolverType solver(inputMatrix); // Computes EigenValues and EigenVectors
-    const auto &    eigenValues = solver.eigenvalues();
+    const EigenSolverType solver(inputMatrix); // Computes EigenValues and EigenVectors
+    const auto &          eigenValues = solver.eigenvalues();
     /* Column  k  of the returned matrix is an eigenvector corresponding to
      * eigenvalue number $ k $ as returned by eigenvalues().
      * The eigenvectors are normalized to have (Euclidean) norm equal to one. */
@@ -1033,8 +1030,8 @@ private:
       }
     }
     using EigenSolverType = Eigen::SelfAdjointEigenSolver<EigenLibMatrixType>;
-    EigenSolverType solver(inputMatrix, Eigen::EigenvaluesOnly);
-    auto            eigenValues = solver.eigenvalues();
+    const EigenSolverType solver(inputMatrix, Eigen::EigenvaluesOnly);
+    auto                  eigenValues = solver.eigenvalues();
     if (m_OrderEigenValues == EigenValueOrderEnum::OrderByMagnitude)
     {
       detail::sortEigenValuesByMagnitude(eigenValues, VDimension);

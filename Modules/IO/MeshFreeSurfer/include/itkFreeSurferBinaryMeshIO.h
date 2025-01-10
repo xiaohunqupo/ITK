@@ -53,8 +53,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FreeSurferBinaryMeshIO, MeshIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FreeSurferBinaryMeshIO);
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 

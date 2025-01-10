@@ -126,8 +126,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(DisplacementFieldJacobianDeterminantFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DisplacementFieldJacobianDeterminantFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -260,7 +260,7 @@ protected:
   WeightsType m_HalfDerivativeWeights{};
 
 private:
-  bool m_UseImageSpacing{};
+  bool m_UseImageSpacing{ true };
 
   ThreadIdType m_RequestedNumberOfWorkUnits{};
 

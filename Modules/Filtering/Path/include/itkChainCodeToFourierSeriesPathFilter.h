@@ -55,8 +55,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ChainCodeToFourierSeriesPathFilter, PathToPathFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ChainCodeToFourierSeriesPathFilter);
 
   /** Some convenient type alias. */
   using InputPathType = TInputChainCodePath;

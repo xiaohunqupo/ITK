@@ -65,8 +65,8 @@ public:
   /** Method of creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientVectorFlowImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientVectorFlowImageFilter);
 
   /** Some type alias. */
   using InputImageType = TInputImage;

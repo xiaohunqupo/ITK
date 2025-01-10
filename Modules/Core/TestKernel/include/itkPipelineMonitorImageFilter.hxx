@@ -41,7 +41,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyDownStreamFilterExecutedPropagatio
   if (m_OutputRequestedRegions.size() != this->GetNumberOfUpdates() ||
       m_InputRequestedRegions.size() != this->GetNumberOfUpdates())
   {
-    itkWarningMacro(<< "Down stream filter didn't execute PropagateRequestedRegion well");
+    itkWarningMacro("Down stream filter didn't execute PropagateRequestedRegion well");
     ret = false;
   }
   return ret;
@@ -56,7 +56,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterExecutedStreaming(int e
   {
     return true;
   }
-  else if (expectedNumber < 0 && static_cast<unsigned int>(-expectedNumber) <= this->GetNumberOfUpdates())
+  if (expectedNumber < 0 && static_cast<unsigned int>(-expectedNumber) <= this->GetNumberOfUpdates())
   {
     return true;
   }
@@ -64,8 +64,9 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterExecutedStreaming(int e
   {
     return true;
   }
-  itkWarningMacro(<< "Streamed pipeline was executed " << this->GetNumberOfUpdates()
-                  << " times which was not the expected number " << expectedNumber << " of times.");
+  itkWarningMacro("Streamed pipeline was executed " << this->GetNumberOfUpdates()
+                                                    << " times which was not the expected number " << expectedNumber
+                                                    << " of times.");
   return false;
 }
 
@@ -74,33 +75,33 @@ template <typename TImageType>
 bool
 PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedUpdateOutputInformation()
 {
-  InputImageConstPointer input = this->GetInput();
+  const InputImageConstPointer input = this->GetInput();
   if (input->GetSpacing() != m_UpdatedOutputSpacing)
   {
-    itkWarningMacro(<< "The input filter's Spacing does not match UpdateOutputInformation");
+    itkWarningMacro("The input filter's Spacing does not match UpdateOutputInformation");
     return false;
   }
   if (input->GetOrigin() != m_UpdatedOutputOrigin)
   {
-    itkWarningMacro(<< "The input filter's Origin does not match UpdateOutputInformation");
+    itkWarningMacro("The input filter's Origin does not match UpdateOutputInformation");
     return false;
   }
   if (input->GetDirection() != m_UpdatedOutputDirection)
   {
-    itkWarningMacro(<< "The input filter's Direction does not match UpdateOutputInformation");
+    itkWarningMacro("The input filter's Direction does not match UpdateOutputInformation");
     return false;
   }
   if (input->GetLargestPossibleRegion() != m_UpdatedOutputLargestPossibleRegion)
   {
-    itkWarningMacro(<< "The input filter's LargestPossibleRegion does not match UpdateOutputInformation");
-    itkWarningMacro(<< "input: " << input->GetLargestPossibleRegion()
-                    << "updated: " << m_UpdatedOutputLargestPossibleRegion);
+    itkWarningMacro("The input filter's LargestPossibleRegion does not match UpdateOutputInformation");
+    itkWarningMacro("input: " << input->GetLargestPossibleRegion()
+                              << "updated: " << m_UpdatedOutputLargestPossibleRegion);
     return false;
   }
   if (!m_UpdatedBufferedRegions.empty() &&
       !m_UpdatedOutputLargestPossibleRegion.IsInside(m_UpdatedBufferedRegions.back()))
   {
-    itkWarningMacro(<< "The input filter's BufferedRegion is not contained by LargestPossibleRegion");
+    itkWarningMacro("The input filter's BufferedRegion is not contained by LargestPossibleRegion");
     return false;
   }
   return true;
@@ -113,13 +114,12 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterBufferedRequestedRegion
 {
   // we expect that the input filter's output image's buffered
   // region is going to match its requested region
-  bool         ret = true;
-  unsigned int i;
-  for (i = 0; i < m_UpdatedBufferedRegions.size(); ++i)
+  bool ret = true;
+  for (unsigned int i = 0; i < m_UpdatedBufferedRegions.size(); ++i)
   {
     if (m_UpdatedBufferedRegions[i] != m_UpdatedRequestedRegions[i])
     {
-      itkWarningMacro(<< "The input filter's updated buffered region was not the requested region");
+      itkWarningMacro("The input filter's updated buffered region was not the requested region");
       ret = false;
     }
   }
@@ -143,7 +143,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedRequestedRegions
   {
     if (m_UpdatedBufferedRegions[--i] != m_InputRequestedRegions[--j])
     {
-      itkWarningMacro(<< "The input filter's updated buffer region was not the region we requested");
+      itkWarningMacro("The input filter's updated buffer region was not the region we requested");
       ret = false;
     }
   }
@@ -158,7 +158,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterRequestedLargestRegion(
 {
   if (m_InputRequestedRegions.back() != m_UpdatedOutputLargestPossibleRegion)
   {
-    itkWarningMacro(<< "The input filter didn't set its output request to the largest region");
+    itkWarningMacro("The input filter didn't set its output request to the largest region");
     return false;
   }
   return true;
@@ -220,7 +220,7 @@ PipelineMonitorImageFilter<TImageType>::GenerateOutputInformation()
 
   Superclass::GenerateOutputInformation();
 
-  InputImageConstPointer input = this->GetInput();
+  const InputImageConstPointer input = this->GetInput();
   m_UpdatedOutputOrigin = input->GetOrigin();
   m_UpdatedOutputDirection = input->GetDirection();
   m_UpdatedOutputSpacing = input->GetSpacing();
@@ -272,8 +272,8 @@ void
 PipelineMonitorImageFilter<TImageType>::GenerateData()
 {
   // Get pointers to the input and output
-  InputImagePointer output = this->GetOutput();
-  InputImagePointer input = const_cast<TImageType *>(this->GetInput());
+  const InputImagePointer output = this->GetOutput();
+  const InputImagePointer input = const_cast<TImageType *>(this->GetInput());
 
   // Graft the input Onto the output, so that we run "in-place"
   this->GraftOutput(input);
@@ -299,9 +299,7 @@ PipelineMonitorImageFilter<TImageType>::PrintSelf(std::ostream & os, Indent inde
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent
-     << "ClearPipelineOnGenerateOutputInformation: " << (m_ClearPipelineOnGenerateOutputInformation ? "On" : "Off")
-     << std::endl;
+  itkPrintSelfBooleanMacro(ClearPipelineOnGenerateOutputInformation);
   os << indent << "NumberOfUpdates: " << m_NumberOfUpdates << std::endl;
   os << indent << "NumberOfClearPipeline: " << m_NumberOfClearPipeline << std::endl;
 

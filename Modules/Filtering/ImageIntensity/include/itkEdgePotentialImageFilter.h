@@ -43,8 +43,6 @@ template <typename TInput, typename TOutput>
 class EdgePotential
 {
 public:
-  EdgePotential() = default;
-  ~EdgePotential() = default;
   bool
   operator==(const EdgePotential &) const
   {
@@ -77,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(EdgePotentialImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(EdgePotentialImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

@@ -43,7 +43,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKQuadEdgeMeshFiltering_EXPORT std::ostream &
-                                       operator<<(std::ostream & out, const NormalQuadEdgeMeshFilterEnums::Weight value);
+operator<<(std::ostream & out, const NormalQuadEdgeMeshFilterEnums::Weight value);
 
 /** \class NormalQuadEdgeMeshFilter
  *
@@ -102,7 +102,7 @@ public:
 
   itkNewMacro(Self);
 
-  itkTypeMacro(NormalQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
+  itkOverrideGetNameOfClassMacro(NormalQuadEdgeMeshFilter);
 
   using InputMeshType = TInputMesh;
   using InputMeshPointer = typename InputMeshType::Pointer;

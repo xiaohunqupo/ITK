@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryMaskToNarrowBandPointSetFilter, ImageToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryMaskToNarrowBandPointSetFilter);
 
   /** Some type alias associated with the input images. */
   using InputImageType = TInputImage;

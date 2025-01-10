@@ -43,37 +43,15 @@ TubeSpatialObjectPoint<TPointDimension>::TubeSpatialObjectPoint()
 }
 
 template <unsigned int TPointDimension>
-TubeSpatialObjectPoint<TPointDimension>::TubeSpatialObjectPoint(const TubeSpatialObjectPoint & other)
-  : Superclass(other)
-{
-  this->SetRadiusInObjectSpace(other.GetRadiusInObjectSpace());
-  this->SetTangentInObjectSpace(other.GetTangentInObjectSpace());
-  this->SetNormal1InObjectSpace(other.GetNormal1InObjectSpace());
-  this->SetNormal2InObjectSpace(other.GetNormal2InObjectSpace());
-
-  this->SetRidgeness(other.GetRidgeness());
-  this->SetMedialness(other.GetMedialness());
-  this->SetBranchness(other.GetBranchness());
-  this->SetCurvature(other.GetCurvature());
-  this->SetLevelness(other.GetLevelness());
-  this->SetRoundness(other.GetRoundness());
-  this->SetIntensity(other.GetIntensity());
-  this->SetAlpha1(other.GetAlpha1());
-  this->SetAlpha2(other.GetAlpha2());
-  this->SetAlpha3(other.GetAlpha3());
-}
-
-template <unsigned int TPointDimension>
 double
 TubeSpatialObjectPoint<TPointDimension>::GetRadiusInWorldSpace() const
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
-  CovariantVectorType cVect;
-  cVect.Fill(m_RadiusInObjectSpace);
+  auto cVect = MakeFilled<CovariantVectorType>(m_RadiusInObjectSpace);
   cVect = Superclass::m_SpatialObject->GetObjectToWorldTransform()->TransformCovariantVector(cVect);
   double worldR = 0;
   for (unsigned int d = 0; d < TPointDimension; ++d)
@@ -90,11 +68,10 @@ TubeSpatialObjectPoint<TPointDimension>::SetRadiusInWorldSpace(double newR)
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
-  CovariantVectorType cVect;
-  cVect.Fill(newR);
+  auto cVect = MakeFilled<CovariantVectorType>(newR);
   cVect =
     Superclass::m_SpatialObject->GetObjectToWorldTransform()->GetInverseTransform()->TransformCovariantVector(cVect);
   m_RadiusInObjectSpace = 0;
@@ -111,7 +88,7 @@ TubeSpatialObjectPoint<TPointDimension>::GetTangentInWorldSpace() const -> const
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   return Superclass::m_SpatialObject->GetObjectToWorldTransform()->TransformVector(m_TangentInObjectSpace);
@@ -123,7 +100,7 @@ TubeSpatialObjectPoint<TPointDimension>::SetTangentInWorldSpace(const VectorType
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   m_TangentInObjectSpace =
@@ -136,7 +113,7 @@ TubeSpatialObjectPoint<TPointDimension>::GetNormal1InWorldSpace() const -> const
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   return Superclass::m_SpatialObject->GetObjectToWorldTransform()->TransformCovariantVector(m_Normal1InObjectSpace);
@@ -148,7 +125,7 @@ TubeSpatialObjectPoint<TPointDimension>::SetNormal1InWorldSpace(const CovariantV
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   m_Normal1InObjectSpace =
@@ -161,7 +138,7 @@ TubeSpatialObjectPoint<TPointDimension>::GetNormal2InWorldSpace() const -> const
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   return Superclass::m_SpatialObject->GetObjectToWorldTransform()->TransformCovariantVector(m_Normal2InObjectSpace);
@@ -173,7 +150,7 @@ TubeSpatialObjectPoint<TPointDimension>::SetNormal2InWorldSpace(const CovariantV
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   m_Normal2InObjectSpace =
@@ -203,32 +180,6 @@ TubeSpatialObjectPoint<TPointDimension>::PrintSelf(std::ostream & os, Indent ind
   os << indent << "RadiusInObjectSpace: " << m_RadiusInObjectSpace << std::endl;
 }
 
-template <unsigned int TPointDimension>
-auto
-TubeSpatialObjectPoint<TPointDimension>::operator=(const TubeSpatialObjectPoint & rhs) -> Self &
-{
-  if (this != &rhs)
-  {
-    Superclass::operator=(rhs);
-
-    this->SetRadiusInObjectSpace(rhs.GetRadiusInObjectSpace());
-    this->SetTangentInObjectSpace(rhs.GetTangentInObjectSpace());
-    this->SetNormal1InObjectSpace(rhs.GetNormal1InObjectSpace());
-    this->SetNormal2InObjectSpace(rhs.GetNormal2InObjectSpace());
-
-    this->SetRidgeness(rhs.GetRidgeness());
-    this->SetMedialness(rhs.GetMedialness());
-    this->SetBranchness(rhs.GetBranchness());
-    this->SetCurvature(rhs.GetCurvature());
-    this->SetLevelness(rhs.GetLevelness());
-    this->SetRoundness(rhs.GetRoundness());
-    this->SetIntensity(rhs.GetIntensity());
-    this->SetAlpha1(rhs.GetAlpha1());
-    this->SetAlpha2(rhs.GetAlpha2());
-    this->SetAlpha3(rhs.GetAlpha3());
-  }
-  return *this;
-}
 } // end namespace itk
 
 #endif

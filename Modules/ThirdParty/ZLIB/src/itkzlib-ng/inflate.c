@@ -5,7 +5,6 @@
 
 #include "zbuild.h"
 #include "zutil.h"
-#include "cpu_features.h"
 #include "inftrees.h"
 #include "inflate.h"
 #include "inflate_p.h"
@@ -110,19 +109,19 @@ int32_t Z_EXPORT PREFIX(inflateReset2)(PREFIX3(stream) *strm, int32_t windowBits
     /* extract wrap request from windowBits parameter */
     if (windowBits < 0) {
         wrap = 0;
-        if (windowBits < -15)
+        if (windowBits < -MAX_WBITS)
             return Z_STREAM_ERROR;
         windowBits = -windowBits;
     } else {
         wrap = (windowBits >> 4) + 5;
 #ifdef GUNZIP
         if (windowBits < 48)
-            windowBits &= 15;
+            windowBits &= MAX_WBITS;
 #endif
     }
 
     /* set number of window bits, free window if different */
-    if (windowBits && (windowBits < 8 || windowBits > 15))
+    if (windowBits && (windowBits < MIN_WBITS || windowBits > MAX_WBITS))
         return Z_STREAM_ERROR;
     if (state->window != NULL && state->wbits != (unsigned)windowBits) {
         ZFREE_WINDOW(strm, state->window);
@@ -140,17 +139,18 @@ int32_t ZNG_CONDEXPORT PREFIX(inflateInit2)(PREFIX3(stream) *strm, int32_t windo
     int32_t ret;
     struct inflate_state *state;
 
-    cpu_check_features();
+    /* Initialize functable earlier. */
+    functable.force_init();
 
     if (strm == NULL)
         return Z_STREAM_ERROR;
     strm->msg = NULL;                   /* in case we return an error */
     if (strm->zalloc == NULL) {
-        strm->zalloc = PREFIX3(calloc);
+        strm->zalloc = PREFIX(zcalloc);
         strm->opaque = NULL;
     }
     if (strm->zfree == NULL)
-        strm->zfree = PREFIX3(cfree);
+        strm->zfree = PREFIX(zcfree);
     state = ZALLOC_INFLATE_STATE(strm);
     if (state == NULL)
         return Z_MEM_ERROR;
@@ -193,6 +193,8 @@ int32_t Z_EXPORT PREFIX(inflatePrime)(PREFIX3(stream) *strm, int32_t bits, int32
 
     if (inflateStateCheck(strm))
         return Z_STREAM_ERROR;
+    if (bits == 0)
+        return Z_OK;
     INFLATE_PRIME_HOOK(strm, bits, value);  /* hook for IBM Z DFLTCC */
     state = (struct inflate_state *)strm->state;
     if (bits < 0) {
@@ -453,7 +455,7 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
 #ifdef GUNZIP
             if ((state->wrap & 2) && hold == 0x8b1f) {  /* gzip header */
                 if (state->wbits == 0)
-                    state->wbits = 15;
+                    state->wbits = MAX_WBITS;
                 state->check = CRC32_INITIAL_VALUE;
                 CRC2(state->check, hold);
                 INITBITS();
@@ -478,7 +480,7 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
             len = BITS(4) + 8;
             if (state->wbits == 0)
                 state->wbits = len;
-            if (len > 15 || len > state->wbits) {
+            if (len > MAX_WBITS || len > state->wbits) {
                 SET_BAD("invalid window size");
                 break;
             }
@@ -919,7 +921,7 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
             }
 
             /* length code */
-            state->extra = (here.op & 15);
+            state->extra = (here.op & MAX_BITS);
             state->mode = LENEXT;
             Z_FALLTHROUGH;
 
@@ -962,7 +964,7 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
                 break;
             }
             state->offset = here.val;
-            state->extra = (here.op & 15);
+            state->extra = (here.op & MAX_BITS);
             state->mode = DISTEXT;
             Z_FALLTHROUGH;
 
@@ -1113,11 +1115,12 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
      */
   inf_leave:
     RESTORE();
+    uint32_t check_bytes = out - strm->avail_out;
     if (INFLATE_NEED_UPDATEWINDOW(strm) &&
             (state->wsize || (out != strm->avail_out && state->mode < BAD &&
                  (state->mode < CHECK || flush != Z_FINISH)))) {
         /* update sliding window with respective checksum if not in "raw" mode */
-        if (updatewindow(strm, strm->next_out, out - strm->avail_out, state->wrap & 4)) {
+        if (updatewindow(strm, strm->next_out, check_bytes, state->wrap & 4)) {
             state->mode = MEM;
             return Z_MEM_ERROR;
         }
@@ -1130,8 +1133,13 @@ int32_t Z_EXPORT PREFIX(inflate)(PREFIX3(stream) *strm, int32_t flush) {
 
     strm->data_type = (int)state->bits + (state->last ? 64 : 0) +
                       (state->mode == TYPE ? 128 : 0) + (state->mode == LEN_ || state->mode == COPY_ ? 256 : 0);
-    if (((in == 0 && out == 0) || flush == Z_FINISH) && ret == Z_OK)
+    if (((in == 0 && out == 0) || flush == Z_FINISH) && ret == Z_OK) {
+        /* when no sliding window is used, hash the output bytes if no CHECK state */
+        if (INFLATE_NEED_CHECKSUM(strm) && !state->wsize && flush == Z_FINISH) {
+            inf_chksum(strm, put - check_bytes, check_bytes);
+        }
         ret = Z_BUF_ERROR;
+    }
     return ret;
 }
 
@@ -1292,8 +1300,8 @@ int32_t Z_EXPORT PREFIX(inflateSync)(PREFIX3(stream) *strm) {
     in = strm->total_in;
     out = strm->total_out;
     PREFIX(inflateReset)(strm);
-    strm->total_in = (z_size_t)in;
-    strm->total_out = (z_size_t)out;
+    strm->total_in = (z_uintmax_t)in; /* Can't use z_size_t here as it will overflow on 64-bit Windows */
+    strm->total_out = (z_uintmax_t)out;
     state->flags = flags;
     state->mode = TYPE;
     return Z_OK;
@@ -1320,8 +1328,6 @@ int32_t Z_EXPORT PREFIX(inflateSyncPoint)(PREFIX3(stream) *strm) {
 int32_t Z_EXPORT PREFIX(inflateCopy)(PREFIX3(stream) *dest, PREFIX3(stream) *source) {
     struct inflate_state *state;
     struct inflate_state *copy;
-    unsigned char *window;
-    unsigned wsize;
 
     /* check input */
     if (inflateStateCheck(source) || dest == NULL)
@@ -1332,15 +1338,6 @@ int32_t Z_EXPORT PREFIX(inflateCopy)(PREFIX3(stream) *dest, PREFIX3(stream) *sou
     copy = ZALLOC_INFLATE_STATE(source);
     if (copy == NULL)
         return Z_MEM_ERROR;
-    window = NULL;
-    if (state->window != NULL) {
-        wsize = 1U << state->wbits;
-        window = (unsigned char *)ZALLOC_WINDOW(source, wsize, sizeof(unsigned char));
-        if (window == NULL) {
-            ZFREE_STATE(source, copy);
-            return Z_MEM_ERROR;
-        }
-    }
 
     /* copy state */
     memcpy((void *)dest, (void *)source, sizeof(PREFIX3(stream)));
@@ -1351,10 +1348,17 @@ int32_t Z_EXPORT PREFIX(inflateCopy)(PREFIX3(stream) *dest, PREFIX3(stream) *sou
         copy->distcode = copy->codes + (state->distcode - state->codes);
     }
     copy->next = copy->codes + (state->next - state->codes);
-    if (window != NULL) {
-        ZCOPY_WINDOW(window, state->window, (size_t)1U << state->wbits);
+
+    /* window */
+    copy->window = NULL;
+    if (state->window != NULL) {
+        if (PREFIX(inflate_ensure_window)(copy)) {
+            ZFREE_STATE(source, copy);
+            return Z_MEM_ERROR;
+        }
+        ZCOPY_WINDOW(copy->window, state->window, (size_t)state->wsize);
     }
-    copy->window = window;
+
     dest->state = (struct internal_state *)copy;
     return Z_OK;
 }

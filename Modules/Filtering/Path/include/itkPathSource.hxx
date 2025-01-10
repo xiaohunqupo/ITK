@@ -29,7 +29,7 @@ PathSource<TOutputPath>::PathSource()
 {
   // Create the output. We use static_cast<> here because we know the default
   // output must be of type TOutputPath
-  OutputPathPointer output = static_cast<TOutputPath *>(this->MakeOutput(0).GetPointer());
+  const OutputPathPointer output = static_cast<TOutputPath *>(this->MakeOutput(0).GetPointer());
 
   this->ProcessObject::SetNumberOfRequiredOutputs(1);
   this->ProcessObject::SetNthOutput(0, output.GetPointer());
@@ -81,7 +81,7 @@ PathSource<TOutputPath>::GraftNthOutput(unsigned int idx, TOutputPath * graft)
     if (output && graft)
     {
       // Paths do not have a generic pointer to their bulk data
-      itkWarningMacro(<< "Warning:  GraftNthOutput() is broken");
+      itkWarningMacro("Warning:  GraftNthOutput() is broken");
 
       // possible VERY WRONG KLUDGE that should enable mini-pipelining:
       // Completely copy the path to graft over the current output path,
@@ -111,7 +111,8 @@ PathSource<TOutputPath>::GraftNthOutput(unsigned int idx, TOutputPath * graft)
  *
  */
 template <typename TOutputPath>
-typename PathSource<TOutputPath>::DataObjectPointer PathSource<TOutputPath>::MakeOutput(DataObjectPointerArraySizeType)
+typename PathSource<TOutputPath>::DataObjectPointer
+PathSource<TOutputPath>::MakeOutput(DataObjectPointerArraySizeType)
 {
   return itkDynamicCastInDebugMode<DataObject *>(TOutputPath::New().GetPointer());
 }

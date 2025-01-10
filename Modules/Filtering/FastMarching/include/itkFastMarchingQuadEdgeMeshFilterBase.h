@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingQuadEdgeMeshFilterBase, FastMarchingBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingQuadEdgeMeshFilterBase);
 
   using InputMeshType = typename Superclass::InputDomainType;
   using InputMeshPointer = typename Superclass::InputDomainPointer;

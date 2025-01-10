@@ -131,8 +131,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AntiAliasBinaryImageFilter, SparseFieldLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AntiAliasBinaryImageFilter);
 
   /** Get the upper and lower binary values in the input image. */
   itkGetConstMacro(UpperBinaryValue, BinaryValueType);

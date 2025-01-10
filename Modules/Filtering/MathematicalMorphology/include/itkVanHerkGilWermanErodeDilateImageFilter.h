@@ -69,8 +69,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(VanHerkGilWermanErodeDilateImageFilter, KernelImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VanHerkGilWermanErodeDilateImageFilter);
 
   /** Set/Get the boundary value. */
   itkSetMacro(Boundary, InputImagePixelType);

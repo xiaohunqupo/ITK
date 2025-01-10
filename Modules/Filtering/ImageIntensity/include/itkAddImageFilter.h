@@ -68,7 +68,8 @@ namespace itk
  *
  * \warning No numeric overflow checking is performed in this filter.
  *
- * \ingroup IntensityImageFilters  MultiThreaded
+ * \ingroup IntensityImageFilters
+ * \ingroup MultiThreaded
  * \ingroup ITKImageIntensity
  *
  * \sphinx
@@ -97,8 +98,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(AddImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AddImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

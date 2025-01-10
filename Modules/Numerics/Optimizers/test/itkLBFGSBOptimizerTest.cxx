@@ -49,7 +49,7 @@ public:
   using Pointer = itk::SmartPointer<Self>;
   using ConstPointer = itk::SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(LBFGSBCostFunction, SingleValuedCostFunction);
+  itkOverrideGetNameOfClassMacro(LBFGSBCostFunction);
 
   enum
   {
@@ -70,14 +70,14 @@ public:
   GetValue(const ParametersType & position) const override
   {
 
-    double x = position[0];
-    double y = position[1];
+    const double x = position[0];
+    const double y = position[1];
 
     std::cout << "GetValue ( ";
     std::cout << x << " , " << y;
     std::cout << ") = ";
 
-    double val = 0.5 * (3 * x * x + 4 * x * y + 6 * y * y) - 2 * x + 8 * y;
+    const double val = 0.5 * (3 * x * x + 4 * x * y + 6 * y * y) - 2 * x + 8 * y;
 
     std::cout << val << std::endl;
 
@@ -88,8 +88,8 @@ public:
   GetDerivative(const ParametersType & position, DerivativeType & derivative) const override
   {
 
-    double x = position[0];
-    double y = position[1];
+    const double x = position[0];
+    const double y = position[1];
 
     std::cout << "GetDerivative ( ";
     std::cout << x << " , " << y;
@@ -179,8 +179,6 @@ itkLBFGSBOptimizerTest(int, char *[])
 
   itk::OutputWindow::SetInstance(itk::TextOutput::New().GetPointer());
 
-  std::cout << "LBFGSB Optimizer Test \n \n";
-
   using OptimizerType = itk::LBFGSBOptimizer;
 
   // Declaration of an itkOptimizer
@@ -195,12 +193,12 @@ itkLBFGSBOptimizerTest(int, char *[])
 
   itkOptimizer->SetCostFunction(costFunction);
 
-  bool trace = false;
+  constexpr bool trace = false;
   ITK_TEST_SET_GET_BOOLEAN(itkOptimizer, Trace, trace);
 
-  const double  F_Convergence_Factor = 1e+7;  // Function value tolerance
-  const double  Projected_G_Tolerance = 1e-5; // Proj gradient tolerance
-  constexpr int Max_Iterations = 100;         // Maximum number of iterations
+  constexpr double F_Convergence_Factor = 1e+7;  // Function value tolerance
+  constexpr double Projected_G_Tolerance = 1e-5; // Proj gradient tolerance
+  constexpr int    Max_Iterations = 100;         // Maximum number of iterations
 
   itkOptimizer->SetCostFunctionConvergenceFactor(F_Convergence_Factor);
   ITK_TEST_SET_GET_VALUE(F_Convergence_Factor, itkOptimizer->GetCostFunctionConvergenceFactor());
@@ -214,9 +212,11 @@ itkLBFGSBOptimizerTest(int, char *[])
   itkOptimizer->SetMaximumNumberOfEvaluations(Max_Iterations);
   ITK_TEST_SET_GET_VALUE(Max_Iterations, itkOptimizer->GetMaximumNumberOfEvaluations());
 
-  unsigned int maximumNumberOfCorrections = 5;
+  constexpr unsigned int maximumNumberOfCorrections = 5;
   itkOptimizer->SetMaximumNumberOfCorrections(maximumNumberOfCorrections);
   ITK_TEST_SET_GET_VALUE(maximumNumberOfCorrections, itkOptimizer->GetMaximumNumberOfCorrections());
+
+  ITK_TEST_EXPECT_TRUE(!itkOptimizer->CanUseScales());
 
   constexpr unsigned int        SpaceDimension = 2;
   OptimizerType::ParametersType initialValue(SpaceDimension);
@@ -299,7 +299,7 @@ itkLBFGSBOptimizerTest(int, char *[])
   bool        pass = true;
   std::string errorIn;
 
-  double trueParameters[2] = { 4.0 / 3.0, -1.0 };
+  constexpr double trueParameters[2] = { 4.0 / 3.0, -1.0 };
   for (unsigned int j = 0; j < 2; ++j)
   {
     if (itk::Math::abs(finalPosition[j] - trueParameters[j]) > 0.01)

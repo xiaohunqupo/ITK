@@ -49,7 +49,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "BinShrink: A multi-resolution filter with cache efficient averaging"
  * by Lowekamp B., Chen D.
- * https://www.insight-journal.org/browse/publication/912
+ * https://doi.org/10.54294/p39qox
  *
  * \ingroup ITKImageGrid
  * \ingroup Streamed
@@ -69,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinShrinkImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinShrinkImageFilter);
 
   /** Typedef to images */
   using OutputImageType = TOutputImage;

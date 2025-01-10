@@ -46,7 +46,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "N-D C^k B-Spline Scattered Data Approximation"
  * by Nicholas J. Tustison, James C. Gee
- * https://www.insight-journal.org/browse/publication/57
+ * https://doi.org/10.54294/0d55to
  *
  *
  * \sa KernelFunctionBase
@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CoxDeBoorBSplineKernelFunction, KernelFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CoxDeBoorBSplineKernelFunction);
 
   using VectorType = vnl_vector<TRealValueType>;
   using PolynomialType = vnl_real_polynomial;

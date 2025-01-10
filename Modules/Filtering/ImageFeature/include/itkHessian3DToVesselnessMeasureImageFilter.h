@@ -101,8 +101,8 @@ public:
   using EigenAnalysisFilterType =
     SymmetricEigenAnalysisFixedDimensionImageFilter<ImageDimension, InputImageType, EigenValueImageType>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(Hessian3DToVesselnessMeasureImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Hessian3DToVesselnessMeasureImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

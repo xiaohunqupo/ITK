@@ -106,8 +106,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(VectorIndexSelectionCastImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorIndexSelectionCastImageFilter);
 
   /** Get/Set methods for the index */
   void
@@ -161,8 +161,8 @@ protected:
 
     if (index >= numberOfComponents)
     {
-      itkExceptionMacro(<< "Selected index = " << index
-                        << " is greater than the number of components = " << numberOfComponents);
+      itkExceptionMacro("Selected index = " << index
+                                            << " is greater than the number of components = " << numberOfComponents);
     }
   }
 };

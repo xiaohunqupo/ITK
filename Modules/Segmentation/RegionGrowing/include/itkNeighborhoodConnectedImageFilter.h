@@ -48,8 +48,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods).  */
-  itkTypeMacro(NeighborhoodConnectedImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NeighborhoodConnectedImageFilter);
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;

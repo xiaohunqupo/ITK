@@ -69,8 +69,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run time information. */
-  itkTypeMacro(ConicShellInteriorExteriorSpatialFunction, InteriorExteriorSpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConicShellInteriorExteriorSpatialFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -115,7 +115,7 @@ public:
 
   /** Set/Get direction along the gradient to search.
    * Set to true to use the direction that the gradient is pointing;
-   * set to false for the opposite direction. Default is Off. */
+   * set to false for the opposite direction. */
   itkGetConstMacro(Polarity, bool);
   itkSetMacro(Polarity, bool);
   itkBooleanMacro(Polarity);

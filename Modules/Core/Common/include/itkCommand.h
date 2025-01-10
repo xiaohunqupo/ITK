@@ -53,8 +53,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Command, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Command);
 
   /** Abstract method that defines the action to be taken by the command. */
   virtual void
@@ -99,8 +99,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MemberCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MemberCommand);
 
   /**  Set the callback function along with the object that it will
    *  be invoked on. */
@@ -173,8 +173,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ReceptorMemberCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ReceptorMemberCommand);
 
   /**  Set the callback function along with the object that it will
    *  be invoked on. */
@@ -236,8 +236,8 @@ public:
   using Self = SimpleMemberCommand;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SimpleMemberCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SimpleMemberCommand);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -300,8 +300,8 @@ public:
   using Self = SimpleConstMemberCommand;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SimpleConstMemberCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SimpleConstMemberCommand);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -366,8 +366,8 @@ public:
   using Self = CStyleCommand;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CStyleCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CStyleCommand);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -424,8 +424,8 @@ public:
 
   using FunctionObjectType = std::function<void(const EventObject &)>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FunctionCommand, Command);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FunctionCommand);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

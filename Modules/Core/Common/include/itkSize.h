@@ -29,8 +29,7 @@
 namespace itk
 {
 
-/** \struct Size
- * \brief Represent a n-dimensional size (bounds) of a n-dimensional image.
+/** \brief Represent a n-dimensional size (bounds) of a n-dimensional image.
  *
  * Size is a templated class to represent multi-dimensional array bounds,
  * i.e. (I,J,K,...).  Size is templated over the dimension of the bounds.
@@ -139,7 +138,8 @@ public:
   }
 
   /** Multiply two sizes (elementwise product).  */
-  const Self operator*(const Self & vec) const
+  const Self
+  operator*(const Self & vec) const
   {
     Self result;
 
@@ -211,6 +211,19 @@ public:
     std::fill_n(begin(), size(), value);
   } // MATCH std::array assign, ITK Fill
 
+  /** Multiplies all elements. Yields the number of pixels of an image of this size. */
+  [[nodiscard]] constexpr SizeValueType
+  CalculateProductOfElements() const
+  {
+    SizeValueType product{ 1 };
+
+    for (const SizeValueType value : m_InternalArray)
+    {
+      product *= value;
+    }
+    return product;
+  }
+
   /** Size is an "aggregate" class.  Its data is public (m_InternalArray)
    * allowing for fast and convenient instantiations/assignments.
    * ( See main class documentation for an example of initialization)
@@ -255,7 +268,7 @@ public:
   }
 
   void
-  swap(Size & other)
+  swap(Size & other) noexcept
   {
     std::swap(m_InternalArray, other.m_InternalArray);
   }
@@ -338,9 +351,17 @@ public:
     return false;
   }
 
-  constexpr reference operator[](size_type pos) { return m_InternalArray[pos]; }
+  constexpr reference
+  operator[](size_type pos)
+  {
+    return m_InternalArray[pos];
+  }
 
-  constexpr const_reference operator[](size_type pos) const { return m_InternalArray[pos]; }
+  constexpr const_reference
+  operator[](size_type pos) const
+  {
+    return m_InternalArray[pos];
+  }
 
   reference
   at(size_type pos)
@@ -356,25 +377,25 @@ public:
     return m_InternalArray[pos];
   }
 
-  reference
+  constexpr reference
   front()
   {
     return *begin();
   }
 
-  const_reference
+  constexpr const_reference
   front() const
   {
     return *begin();
   }
 
-  reference
+  constexpr reference
   back()
   {
     return VDimension ? *(end() - 1) : *end();
   }
 
-  const_reference
+  constexpr const_reference
   back() const
   {
     return VDimension ? *(end() - 1) : *end();
@@ -423,7 +444,7 @@ operator<<(std::ostream & os, const Size<VDimension> & obj)
   {
     os << obj[i] << ", ";
   }
-  if (VDimension >= 1)
+  if constexpr (VDimension >= 1)
   {
     os << obj[VDimension - 1];
   }
@@ -478,7 +499,7 @@ operator>=(const Size<VDimension> & one, const Size<VDimension> & two)
 // Specialized algorithms [6.2.2.2].
 template <unsigned int VDimension>
 inline void
-swap(Size<VDimension> & one, Size<VDimension> & two)
+swap(Size<VDimension> & one, Size<VDimension> & two) noexcept
 {
   std::swap(one.m_InternalArray, two.m_InternalArray);
 }
@@ -495,11 +516,6 @@ MakeSize(const T... values)
   };
   return Size<sizeof...(T)>{ { toValueType(values)... } };
 }
-
-
-// static constexpr definition explicitly needed in C++11
-template <unsigned int VDimension>
-constexpr unsigned int Size<VDimension>::Dimension;
 
 } // end namespace itk
 

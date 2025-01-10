@@ -90,7 +90,8 @@ public:
     return VVectorDimension;
   }
 
-  /** Set a vnl_vector_ref referencing the same memory block. */
+  /** Copy values from the vnl_vector input to the internal memory block.  The minimum of
+   *  VVectorDimension and vnl_vector::size() elements are copied. */
   void
   SetVnlVector(const vnl_vector<T> &);
 
@@ -110,7 +111,7 @@ public:
   /** Constructor to initialize entire vector to one value.
    * \warning Not intended to convert a scalar value into
    * a Vector filled with that value.
-   * \deprecated */
+   * Deprecated */
   Vector(const ValueType & r);
 #else
   /** Constructor to initialize entire vector to one value,
@@ -198,11 +199,13 @@ public:
 
   /** Vector operator*.  Performs the inner product of two vectors.
    * this is also known as the scalar product. */
-  ValueType operator*(const Self & other) const;
+  ValueType
+  operator*(const Self & other) const;
 
   /** Scalar operator*. Scale the elements of a vector by a scalar.
    * Return a new vector. */
-  inline Self operator*(const ValueType & value) const
+  inline Self
+  operator*(const ValueType & value) const
   {
     Self result;
 
@@ -240,7 +243,7 @@ public:
 
   ITK_UNEQUAL_OPERATOR_MEMBER_FUNCTION(Self);
 
-  /** Returns the Euclidean Norm of the vector  */
+  /** Returns the Euclidean Norm of the vector (also referred to as its "magnitude"). */
   RealValueType
   GetNorm() const;
 
@@ -268,9 +271,9 @@ public:
 
   /** Copy from another Vector with a different representation type.
    *  Casting is done with C-Like rules  */
-  template <typename TCoordRepB>
+  template <typename TCoordinateB>
   void
-  CastFrom(const Vector<TCoordRepB, VVectorDimension> & pa)
+  CastFrom(const Vector<TCoordinateB, VVectorDimension> & pa)
   {
     for (unsigned int i = 0; i < VVectorDimension; ++i)
     {
@@ -278,13 +281,13 @@ public:
     }
   }
 
-  template <typename TCoordRepB>
-  operator Vector<TCoordRepB, VVectorDimension>()
+  template <typename TCoordinateB>
+  operator Vector<TCoordinateB, VVectorDimension>()
   {
-    Vector<TCoordRepB, VVectorDimension> r;
+    Vector<TCoordinateB, VVectorDimension> r;
     for (unsigned int i = 0; i < VVectorDimension; ++i)
     {
-      r[i] = static_cast<TCoordRepB>((*this)[i]);
+      r[i] = static_cast<TCoordinateB>((*this)[i]);
     }
     return r;
   }
@@ -293,7 +296,8 @@ public:
 /** Premultiply Operator for product of a vector and a scalar.
  *  Vector< T, N >  =  T * Vector< T,N > */
 template <typename T, unsigned int VVectorDimension>
-inline Vector<T, VVectorDimension> operator*(const T & scalar, const Vector<T, VVectorDimension> & v)
+inline Vector<T, VVectorDimension>
+operator*(const T & scalar, const Vector<T, VVectorDimension> & v)
 {
   return v.operator*(scalar);
 }
@@ -320,7 +324,7 @@ ITKCommon_EXPORT Vector<int, 3>
 
 template <typename T, unsigned int VVectorDimension>
 inline void
-swap(Vector<T, VVectorDimension> & a, Vector<T, VVectorDimension> & b)
+swap(Vector<T, VVectorDimension> & a, Vector<T, VVectorDimension> & b) noexcept
 {
   a.swap(b);
 }
@@ -331,14 +335,8 @@ template <typename TValue, typename... TVariadic>
 auto
 MakeVector(const TValue firstValue, const TVariadic... otherValues)
 {
-  // Assert that the other values have the same type as the first value.
-  const auto assertSameType = [](const auto value) {
-    static_assert(std::is_same_v<decltype(value), const TValue>, "Each value must have the same type!");
-    return true;
-  };
-  const bool assertions[] = { true, assertSameType(otherValues)... };
-  (void)assertions;
-  (void)assertSameType;
+  static_assert(std::conjunction_v<std::is_same<TVariadic, TValue>...>,
+                "The other values should have the same type as the first value.");
 
   constexpr unsigned int              dimension{ 1 + sizeof...(TVariadic) };
   const std::array<TValue, dimension> stdArray{ { firstValue, otherValues... } };

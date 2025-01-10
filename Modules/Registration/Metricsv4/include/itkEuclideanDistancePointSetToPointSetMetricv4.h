@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(EuclideanDistancePointSetToPointSetMetricv4, PointSetToPointSetMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(EuclideanDistancePointSetToPointSetMetricv4);
 
   /** Types transferred from the base class */
   using typename Superclass::MeasureType;

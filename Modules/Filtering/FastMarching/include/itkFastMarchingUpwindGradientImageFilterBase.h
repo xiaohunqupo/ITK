@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingUpwindGradientImageFilterBase, FastMarchingImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingUpwindGradientImageFilterBase);
 
   /** The dimension of the level set. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;

@@ -41,8 +41,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DummyImageSource, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DummyImageSource);
 
   /** Index for which exception is thrown. */
   itkSetMacro(ExceptionIndex, IndexValueType);
@@ -66,7 +66,7 @@ protected:
     if (outputRegionForThread.GetIndex(0) == m_ExceptionIndex)
     {
       std::cout << "Exception launched" << std::endl;
-      itkGenericExceptionMacro(<< "Error");
+      itkGenericExceptionMacro("Error");
     }
   }
 
@@ -83,15 +83,18 @@ itkMultiThreaderExceptionsTest(int, char *[])
 
   using OutputImageType = itk::Image<OutputPixelType, Dimension>;
 
-  std::set<ThreaderEnum> threadersToTest = { ThreaderEnum::Platform, ThreaderEnum::Pool };
+  const std::set<ThreaderEnum> threadersToTest = {
+    ThreaderEnum::Platform,
+    ThreaderEnum::Pool,
 #ifdef ITK_USE_TBB
-  threadersToTest.insert(ThreaderEnum::TBB);
+    ThreaderEnum::TBB,
 #endif // ITK_USE_TBB
+  };
   for (auto thType : threadersToTest)
   {
     itk::MultiThreaderBase::SetGlobalDefaultThreader(thType);
-    typename itk::DummyImageSource<OutputImageType>::Pointer dummySrc;
-    dummySrc = itk::DummyImageSource<OutputImageType>::New();
+    const typename itk::DummyImageSource<OutputImageType>::Pointer dummySrc =
+      itk::DummyImageSource<OutputImageType>::New();
     dummySrc->SetNumberOfWorkUnits(4);
     for (itk::IndexValueType i = 0; i < 4; ++i)
     {

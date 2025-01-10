@@ -65,8 +65,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScaleSkewVersor3DTransform, VersorRigid3DTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScaleSkewVersor3DTransform);
 
   /** Dimension of parameters. */
   static constexpr unsigned int InputSpaceDimension = 3;
@@ -155,7 +155,10 @@ public:
 
 protected:
   ScaleSkewVersor3DTransform();
-  ScaleSkewVersor3DTransform(const MatrixType & matrix, const OutputVectorType & offset);
+#if !defined(ITK_LEGACY_REMOVE)
+  [[deprecated("Removed unused constructor")]] ScaleSkewVersor3DTransform(const MatrixType &       matrix,
+                                                                          const OutputVectorType & offset);
+#endif
   ScaleSkewVersor3DTransform(unsigned int parametersDimension);
   ~ScaleSkewVersor3DTransform() override = default;
 

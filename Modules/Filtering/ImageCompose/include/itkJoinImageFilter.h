@@ -48,9 +48,6 @@ template <typename TPixel1, typename TPixel2>
 class JoinFunctor
 {
 public:
-  JoinFunctor() = default;
-  ~JoinFunctor() = default;
-
   /** Standard type alias */
   using Self = JoinFunctor;
 
@@ -130,7 +127,8 @@ private:
   }
 
   /** Copier function specific to a scalar first pixel. */
-  void FirstCopier(CopierDispatch<1>, JoinType & out, unsigned int idx, const TPixel1 & A) const
+  void
+  FirstCopier(CopierDispatch<1>, JoinType & out, unsigned int idx, const TPixel1 & A) const
   {
     out[idx] = static_cast<JoinValueType>(A);
   }
@@ -157,7 +155,8 @@ private:
   }
 
   /** Copier function specific to a scalar second pixel. */
-  void SecondCopier(CopierDispatch<1>, JoinType & out, unsigned int idx, const TPixel2 & B) const
+  void
+  SecondCopier(CopierDispatch<1>, JoinType & out, unsigned int idx, const TPixel2 & B) const
   {
     out[idx] = static_cast<JoinValueType>(B);
   }
@@ -230,8 +229,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(JoinImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JoinImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

@@ -54,7 +54,7 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (m_FileName.empty())
   {
-    itkExceptionMacro(<< "No input FileName");
+    itkExceptionMacro("No input FileName");
   }
 
   //
@@ -64,8 +64,7 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (!inputFile.is_open())
   {
-    itkExceptionMacro(<< "Unable to open file\n"
-                      << "inputFilename= " << m_FileName);
+    itkExceptionMacro("Unable to open file\ninputFilename= " << m_FileName);
   }
 
   inputFile.imbue(std::locale::classic());
@@ -76,7 +75,7 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
   std::getline(inputFile, m_Version, '\n');
   if (inputFile.fail())
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to read first line.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to read first line.");
   }
 
   if (m_Version.find("# vtk DataFile Version ") == std::string::npos)
@@ -90,20 +89,20 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
   std::getline(inputFile, m_Header, '\n');
   if (inputFile.eof())
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to read header.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to read header.");
   }
 
   // Next is the file format
   std::getline(inputFile, line, '\n');
   if (inputFile.eof())
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to file format.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file trying to file format.");
   }
 
   if (line.find("ASCII") == std::string::npos)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFile format is " << line
-                      << " but only ASCII files can be read.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nFile format is " << line
+                                             << " but only ASCII files can be read.");
   }
 
   bool foundPoints = false;
@@ -120,27 +119,27 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (!foundPoints)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding POINTS.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding POINTS.");
   }
   itkDebugMacro("POINTS line" << line);
 
   std::string pointLine(line, strlen("POINTS "), line.length());
   itkDebugMacro("pointLine " << pointLine);
 
-  unsigned long numberOfPoints = NumericTraits<unsigned long>::ZeroValue();
+  unsigned long numberOfPoints{};
 
   if (sscanf(pointLine.c_str(), "%lu", &numberOfPoints) != 1)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFailed to read numberOfPoints.\n"
-                      << "       pointLine= " << pointLine);
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nFailed to read numberOfPoints.\n"
+                                             << "       pointLine= " << pointLine);
   }
 
   itkDebugMacro("numberOfPoints= " << numberOfPoints);
 
   if (numberOfPoints < 1)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "numberOfPoints < 1"
-                      << "       numberOfPoints line= " << numberOfPoints);
+    itkExceptionMacro("Error reading file: " << m_FileName << "numberOfPoints < 1"
+                                             << "       numberOfPoints line= " << numberOfPoints);
   }
 
   PointsContainer * points = outputMesh->GetPoints();
@@ -157,13 +156,13 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
     inputFile >> point;
     if (inputFile.eof())
     {
-      itkExceptionMacro(<< "Error while reading file: " << m_FileName
-                        << "\nUnexpected end-of-file trying to read points.");
+      itkExceptionMacro("Error while reading file: " << m_FileName
+                                                     << "\nUnexpected end-of-file trying to read points.");
     }
 
     if (inputFile.fail())
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nInput could not be interpreted as a point.");
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nInput could not be interpreted as a point.");
     }
 
     outputMesh->SetPoint(pointId, point);
@@ -183,7 +182,7 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (!foundCells)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding CELLS.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding CELLS.");
   }
 
   itkDebugMacro("CELLS line" << line);
@@ -195,13 +194,13 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
   // Read the number of cells
   //
 
-  unsigned long numberOfCells = NumericTraits<unsigned long>::ZeroValue();
-  unsigned long numberOfIndices = NumericTraits<unsigned long>::ZeroValue();
+  unsigned long numberOfCells{};
+  unsigned long numberOfIndices{};
 
   if (sscanf(cellsLine.c_str(), "%lu %lu", &numberOfCells, &numberOfIndices) != 2)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFailed to read numberOfCells from subline2"
-                      << "\ncellsLine = " << cellsLine);
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nFailed to read numberOfCells from subline2"
+                                             << "\ncellsLine = " << cellsLine);
   }
 
   itkDebugMacro("numberOfCells " << numberOfCells);
@@ -209,15 +208,14 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (numberOfCells < 1)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName
-                      << "\nnumberOfCells < 1\nnumberOfCells= " << numberOfCells);
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nnumberOfCells < 1\nnumberOfCells= " << numberOfCells);
   }
 
   if (numberOfIndices < numberOfCells)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nnumberOfIndices < numberOfCells\n"
-                      << "numberOfIndices= " << numberOfIndices << '\n'
-                      << "numberOfCells= " << numberOfCells);
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nnumberOfIndices < numberOfCells\n"
+                                             << "numberOfIndices= " << numberOfIndices << '\n'
+                                             << "numberOfCells= " << numberOfCells);
   }
 
   //
@@ -232,39 +230,39 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
     std::getline(inputFile, line, '\n');
     if (inputFile.eof())
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFailed to read " << numberOfCells
-                        << " cells before the end of file."
-                        << " Only read " << cellId + 1);
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nFailed to read " << numberOfCells
+                                               << " cells before the end of file."
+                                               << " Only read " << cellId + 1);
     }
 
     if (line.find("DATA") != std::string::npos)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nRead keyword DATA");
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nRead keyword DATA");
     }
 
     unsigned long numberOfPointsFound;
     if ((numberOfPointsFound =
            sscanf(line.c_str(), "%lu %ld %ld %ld %ld", &numberOfCellPoints, &ids[0], &ids[1], &ids[2], &ids[3])) != 5)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName
-                        << "\nError parsing Tetrahedron CELLS . Expected 5 items but got " << numberOfPointsFound
-                        << std::endl
-                        << "Line is: " << line);
+      itkExceptionMacro("Error reading file: " << m_FileName
+                                               << "\nError parsing Tetrahedron CELLS . Expected 5 items but got "
+                                               << numberOfPointsFound << std::endl
+                                               << "Line is: " << line);
     }
 
     if (numberOfCellPoints != 4)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nnumberOfCellPoints != 4\n"
-                        << "numberOfCellPoints= " << numberOfCellPoints << "\ncellId = " << cellId
-                        << ". VTKTetrahedralMeshReader can only read tetrahedra");
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nnumberOfCellPoints != 4\n"
+                                               << "numberOfCellPoints= " << numberOfCellPoints << "\ncellId = "
+                                               << cellId << ". VTKTetrahedralMeshReader can only read tetrahedra");
     }
 
     if (ids[0] < 0 || ids[1] < 0 || ids[2] < 0 || ids[3] < 0)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName
-                        << "point ids must be >= 0.\n"
-                           "ids="
-                        << ids[0] << ' ' << ids[1] << ' ' << ids[2] << ' ' << ids[3]);
+      itkExceptionMacro("Error reading file: " << m_FileName
+                                               << "point ids must be >= 0.\n"
+                                                  "ids="
+                                               << ids[0] << ' ' << ids[1] << ' ' << ids[2] << ' ' << ids[3]);
     }
 
     if (static_cast<PointIdentifier>(ids[0]) >= numberOfPoints ||
@@ -272,8 +270,9 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
         static_cast<PointIdentifier>(ids[2]) >= numberOfPoints ||
         static_cast<PointIdentifier>(ids[3]) >= numberOfPoints)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "Point ids must be < number of points: "
-                        << numberOfPoints << "\nids= " << ids[0] << ' ' << ids[1] << ' ' << ids[2] << ' ' << ids[3]);
+      itkExceptionMacro("Error reading file: " << m_FileName << "Point ids must be < number of points: "
+                                               << numberOfPoints << "\nids= " << ids[0] << ' ' << ids[1] << ' '
+                                               << ids[2] << ' ' << ids[3]);
     }
 
     CellAutoPointer cell;
@@ -303,7 +302,7 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
   if (!bfoundCellTypes)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding CELL_TYPES.");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nUnexpected end-of-file before finding CELL_TYPES.");
   }
 
   itkDebugMacro("CELL_TYPES line" << line);
@@ -316,14 +315,14 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
   unsigned int numberOfCellTypes = 0;
   if (sscanf(cellsTypesLine.c_str(), "%u", &numberOfCellTypes) != 1)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFailed to read numberOfCellTypes from subline2"
-                      << "\ncellsTypesLine = " << cellsTypesLine);
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nFailed to read numberOfCellTypes from subline2"
+                                             << "\ncellsTypesLine = " << cellsTypesLine);
   }
 
 
   if (static_cast<CellIdentifier>(numberOfCellTypes) != numberOfCells)
   {
-    itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nnumberOfCellTypes < numberOfCells ");
+    itkExceptionMacro("Error reading file: " << m_FileName << "\nnumberOfCellTypes < numberOfCells ");
   }
 
 
@@ -332,9 +331,9 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
     std::getline(inputFile, line, '\n');
     if (inputFile.eof())
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nFailed to read " << numberOfCellTypes
-                        << " cells before the end of file."
-                        << " Only read " << cellId + 1);
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nFailed to read " << numberOfCellTypes
+                                               << " cells before the end of file."
+                                               << " Only read " << cellId + 1);
     }
 
 
@@ -342,9 +341,9 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
     int cellTypeFound;
     if ((cellTypeFound = sscanf(line.c_str(), "%d ", &cellTypeID)) != 1)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName
-                        << "\nError parsing Cells types. Expected 1 item but got " << cellTypeFound << std::endl
-                        << "Line is: " << line);
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nError parsing Cells types. Expected 1 item but got "
+                                               << cellTypeFound << std::endl
+                                               << "Line is: " << line);
     }
 
 
@@ -352,8 +351,9 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
 
     if (cellTypeID != tetrahedralCellTypeID)
     {
-      itkExceptionMacro(<< "Error reading file: " << m_FileName << "\nCell type != 10\n"
-                        << "Cell type = " << cellTypeID << ". VTKTetrahedralMeshReader can only read tetrahedra");
+      itkExceptionMacro("Error reading file: " << m_FileName << "\nCell type != 10\n"
+                                               << "Cell type = " << cellTypeID
+                                               << ". VTKTetrahedralMeshReader can only read tetrahedra");
     }
   }
 
@@ -404,9 +404,9 @@ VTKTetrahedralMeshReader<TOutputMesh>::GenerateData()
     {
       if (inputFile.eof())
       {
-        itkExceptionMacro(<< "Error reading file: " << m_FileName
-                          << "\nUnexpected end-of-file while trying to read POINT_DATA."
-                          << "Failed while trying to reading point data for id: " << pid);
+        itkExceptionMacro("Error reading file: " << m_FileName
+                                                 << "\nUnexpected end-of-file while trying to read POINT_DATA."
+                                                 << "Failed while trying to reading point data for id: " << pid);
       }
       inputFile >> pointData;
       outputMesh->SetPointData(pid, pointData);

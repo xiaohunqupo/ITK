@@ -33,19 +33,21 @@ VersorRigid3DTransform<TParametersValueType>::VersorRigid3DTransform(unsigned in
   : Superclass(paramDim)
 {}
 
+#if !defined(ITK_LEGACY_REMOVE)
 // Constructor with arguments
 template <typename TParametersValueType>
 VersorRigid3DTransform<TParametersValueType>::VersorRigid3DTransform(const MatrixType &       matrix,
                                                                      const OutputVectorType & offset)
   : Superclass(matrix, offset)
 {}
+#endif
 
 // Set Parameters
 template <typename TParametersValueType>
 void
 VersorRigid3DTransform<TParametersValueType>::SetParameters(const ParametersType & parameters)
 {
-  itkDebugMacro(<< "Setting parameters " << parameters);
+  itkDebugMacro("Setting parameters " << parameters);
 
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if (&parameters != &(this->m_Parameters))
@@ -73,7 +75,7 @@ VersorRigid3DTransform<TParametersValueType>::SetParameters(const ParametersType
   this->SetVarVersor(newVersor);
   this->ComputeMatrix();
 
-  itkDebugMacro(<< "Versor is now " << this->GetVersor());
+  itkDebugMacro("Versor is now " << this->GetVersor());
 
   // Transfer the translation part
   TranslationType newTranslation;
@@ -87,7 +89,7 @@ VersorRigid3DTransform<TParametersValueType>::SetParameters(const ParametersType
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<< "After setting parameters ");
+  itkDebugMacro("After setting parameters ");
 }
 
 //
@@ -103,7 +105,7 @@ template <typename TParametersValueType>
 auto
 VersorRigid3DTransform<TParametersValueType>::GetParameters() const -> const ParametersType &
 {
-  itkDebugMacro(<< "Getting parameters ");
+  itkDebugMacro("Getting parameters ");
 
   this->m_Parameters[0] = this->GetVersor().GetX();
   this->m_Parameters[1] = this->GetVersor().GetY();
@@ -114,7 +116,7 @@ VersorRigid3DTransform<TParametersValueType>::GetParameters() const -> const Par
   this->m_Parameters[4] = this->GetTranslation()[1];
   this->m_Parameters[5] = this->GetTranslation()[2];
 
-  itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
+  itkDebugMacro("After getting parameters " << this->m_Parameters);
 
   return this->m_Parameters;
 }
@@ -124,7 +126,7 @@ void
 VersorRigid3DTransform<TParametersValueType>::UpdateTransformParameters(const DerivativeType & update,
                                                                         TParametersValueType   factor)
 {
-  SizeValueType numberOfParameters = this->GetNumberOfParameters();
+  const SizeValueType numberOfParameters = this->GetNumberOfParameters();
 
   if (update.Size() != numberOfParameters)
   {
@@ -185,7 +187,7 @@ VersorRigid3DTransform<TParametersValueType>::UpdateTransformParameters(const De
   // Composing the currentRotation with the gradientRotation
   // produces the new Rotation versor
   //
-  VersorType newRotation = currentRotation * gradientRotation;
+  const VersorType newRotation = currentRotation * gradientRotation;
 
   ParametersType newParameters(numberOfParameters);
 

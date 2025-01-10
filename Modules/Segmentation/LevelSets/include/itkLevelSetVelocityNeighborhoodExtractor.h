@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LevelSetVelocityNeighborhoodExtractor, LevelSetNeighborhoodExtractor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetVelocityNeighborhoodExtractor);
 
   /** The type of the level set. */
   using LevelSetType = LevelSetTypeDefault<TLevelSet>;
@@ -105,10 +105,8 @@ public:
     {
       return nullptr;
     }
-    else
-    {
-      return m_AuxImage[idx];
-    }
+
+    return m_AuxImage[idx];
   }
 
   /** Get the container of auxiliary values associated with the inside

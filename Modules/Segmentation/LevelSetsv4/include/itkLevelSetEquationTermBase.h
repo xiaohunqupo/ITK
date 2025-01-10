@@ -56,8 +56,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = Object;
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetEquationTermBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEquationTermBase);
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;

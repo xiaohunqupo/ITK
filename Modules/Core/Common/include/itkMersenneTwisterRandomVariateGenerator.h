@@ -135,8 +135,8 @@ public:
 
   using IntegerType = uint32_t;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MersenneTwisterRandomVariateGenerator, RandomVariateGeneratorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MersenneTwisterRandomVariateGenerator);
 
   /** \brief Method for creation through the object factory.
    *
@@ -159,6 +159,11 @@ public:
    */
   static Pointer
   GetInstance();
+
+  /** Resets the internal data that is used to calculate the next seed. (Does not reset the initial seed.) Allows
+   * generating a reproducible sequence of pseudo-random numbers. */
+  static void
+  ResetNextSeed();
 
   /** Length of state vector */
   static constexpr IntegerType StateVectorLength = 624;
@@ -324,7 +329,7 @@ private:
   CreateInstance();
 
   // Local lock to enable concurrent access to singleton
-  std::mutex m_InstanceLock{};
+  std::mutex m_InstanceMutex{};
 
   // Static/Global Variable need to be thread-safely accessed
 
@@ -337,7 +342,7 @@ private:
 inline void
 MersenneTwisterRandomVariateGenerator::Initialize(const IntegerType seed)
 {
-  const std::lock_guard mutexHolder(m_InstanceLock);
+  const std::lock_guard<std::mutex> lockGuard(m_InstanceMutex);
   this->m_Seed = seed;
   // Initialize generator state with seed
   // See Knuth TAOCP Vol 2, 3rd Ed, p.106 for multiplier.
@@ -345,10 +350,9 @@ MersenneTwisterRandomVariateGenerator::Initialize(const IntegerType seed)
   // only MSBs of the state array.  Modified 9 Jan 2002 by Makoto Matsumoto.
   IntegerType * s = state;
   IntegerType * r = state;
-  IntegerType   i = 1;
 
   *s++ = seed & 0xffffffffUL;
-  for (i = 1; i < MersenneTwisterRandomVariateGenerator::StateVectorLength; ++i)
+  for (IntegerType i = 1; i < MersenneTwisterRandomVariateGenerator::StateVectorLength; ++i)
   {
     *s++ = (1812433253UL * (*r ^ (*r >> 30)) + i) & 0xffffffffUL;
     ++r;
@@ -367,13 +371,12 @@ MersenneTwisterRandomVariateGenerator::reload()
   constexpr auto index = int{ M } - int{ MersenneTwisterRandomVariateGenerator::StateVectorLength };
 
   IntegerType * p = state;
-  int           i;
 
-  for (i = MersenneTwisterRandomVariateGenerator::StateVectorLength - M; i--; ++p)
+  for (int i = MersenneTwisterRandomVariateGenerator::StateVectorLength - M; i--; ++p)
   {
     *p = twist(p[M], p[0], p[1]);
   }
-  for (i = M; --i; ++p)
+  for (int i = M; --i; ++p)
   {
     *p = twist(p[index], p[0], p[1]);
   }
@@ -495,7 +498,8 @@ MersenneTwisterRandomVariateGenerator::GetIntegerVariate(const IntegerType & n)
 inline double
 MersenneTwisterRandomVariateGenerator::Get53BitVariate()
 {
-  IntegerType a = GetIntegerVariate() >> 5, b = GetIntegerVariate() >> 6;
+  const IntegerType a = GetIntegerVariate() >> 5;
+  const IntegerType b = GetIntegerVariate() >> 6;
 
   return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0); // by Isaku
                                                             // Wada
@@ -508,8 +512,8 @@ MersenneTwisterRandomVariateGenerator::GetNormalVariate(const double mean, const
 {
   // Return a real number from a normal (Gaussian) distribution with given
   // mean and variance by Box-Muller method
-  double r = std::sqrt(-2.0 * std::log(1.0 - GetVariateWithOpenRange()) * variance);
-  double phi = 2.0 * itk::Math::pi * GetVariateWithOpenUpperRange();
+  const double r = std::sqrt(-2.0 * std::log(1.0 - GetVariateWithOpenRange()) * variance);
+  const double phi = 2.0 * itk::Math::pi * GetVariateWithOpenUpperRange();
 
   return mean + r * std::cos(phi);
 }
@@ -519,7 +523,7 @@ MersenneTwisterRandomVariateGenerator::GetNormalVariate(const double mean, const
 inline double
 MersenneTwisterRandomVariateGenerator::GetUniformVariate(const double a, const double b)
 {
-  double u = GetVariateWithOpenUpperRange();
+  const double u = GetVariateWithOpenUpperRange();
 
   return ((1.0 - u) * a + u * b);
 }

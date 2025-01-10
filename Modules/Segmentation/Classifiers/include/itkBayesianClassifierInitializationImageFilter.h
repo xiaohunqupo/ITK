@@ -96,8 +96,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BayesianClassifierInitializationImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BayesianClassifierInitializationImageFilter);
 
   /** Input image iterators */
   using InputImageIteratorType = ImageRegionConstIterator<InputImageType>;

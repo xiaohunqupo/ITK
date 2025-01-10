@@ -51,9 +51,8 @@ MRCImageIOTester<TImageType>::Write(const std::string & filePrefix, std::string 
     using PixelType = typename ImageType::PixelType;
 
     // allocate an 10x10x10 image
-    auto                         image = ImageType::New();
-    typename ImageType::SizeType m_ImageSize;
-    m_ImageSize.Fill(10);
+    auto image = ImageType::New();
+    auto m_ImageSize = ImageType::SizeType::Filled(10);
     image->SetRegions(m_ImageSize);
     image->Allocate();
 
@@ -66,7 +65,7 @@ MRCImageIOTester<TImageType>::Write(const std::string & filePrefix, std::string 
       switch (cnt % 4)
       {
         case 0:
-          i.Set(itk::NumericTraits<PixelType>::ZeroValue());
+          i.Set(PixelType{});
           break;
         case 1:
           i.Set(itk::NumericTraits<PixelType>::OneValue());
@@ -189,7 +188,7 @@ MRCImageIOTester<TImageType>::Read(const std::string & filePrefix, std::string &
     reader->SetFileName(m_OutputFileName.str());
 
     // read the image
-    typename ImageType::Pointer image = reader->GetOutput();
+    const typename ImageType::Pointer image = reader->GetOutput();
     reader->Update();
 
     // test the CanReadFile function after the fact (should always be true at
@@ -200,9 +199,9 @@ MRCImageIOTester<TImageType>::Read(const std::string & filePrefix, std::string &
     }
 
     // check the size
-    typename ImageType::RegionType region = image->GetLargestPossibleRegion();
-    typename ImageType::SizeType   size = region.GetSize();
-    bool                           sizeGood = true;
+    const typename ImageType::RegionType region = image->GetLargestPossibleRegion();
+    typename ImageType::SizeType         size = region.GetSize();
+    bool                                 sizeGood = true;
     for (unsigned int i = 0; i < ImageType::GetImageDimension(); ++i)
     {
       if (size[i] != 10)
@@ -228,7 +227,7 @@ MRCImageIOTester<TImageType>::Read(const std::string & filePrefix, std::string &
       switch (cnt % 4)
       {
         case 0:
-          if (itk::Math::NotExactlyEquals(iter.Get(), itk::NumericTraits<PixelType>::ZeroValue()))
+          if (itk::Math::NotExactlyEquals(iter.Get(), PixelType{}))
           {
             pixelsGood = false;
           }
@@ -283,8 +282,8 @@ itkMRCImageIOTest(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  std::string outputPath = argv[1];
-  std::string filePrefix = argv[0];
+  std::string       outputPath = argv[1];
+  const std::string filePrefix = argv[0];
 
   //
   // test all usable pixeltypes

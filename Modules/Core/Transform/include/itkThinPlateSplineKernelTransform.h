@@ -46,8 +46,8 @@ public:
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThinPlateSplineKernelTransform, KernelTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThinPlateSplineKernelTransform);
 
   /** Scalar type. */
   using typename Superclass::ScalarType;

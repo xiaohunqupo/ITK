@@ -109,7 +109,7 @@ public:
 
   /** Set all the elements of the array to the specified value */
   void
-  Fill(TValue const & v)
+  Fill(const TValue & v)
   {
     this->fill(v);
   }
@@ -196,7 +196,7 @@ public:
 #endif
 
   void
-  Swap(Array & other)
+  Swap(Array & other) noexcept
   {
     using std::swap;
     this->VnlVectorType::swap(other);
@@ -229,14 +229,14 @@ operator<<(std::ostream & os, const Array<TValue> & arr)
 
 // declaration of specialization
 template <>
-ITKCommon_EXPORT std::ostream & operator<<<double>(std::ostream & os, const Array<double> & arr);
+ITKCommon_EXPORT std::ostream & operator<< <double>(std::ostream & os, const Array<double> & arr);
 template <>
-ITKCommon_EXPORT std::ostream & operator<<<float>(std::ostream & os, const Array<float> & arr);
+ITKCommon_EXPORT std::ostream & operator<< <float>(std::ostream & os, const Array<float> & arr);
 
 
 template <typename T>
 inline void
-swap(Array<T> & a, Array<T> & b)
+swap(Array<T> & a, Array<T> & b) noexcept
 {
   a.Swap(b);
 }

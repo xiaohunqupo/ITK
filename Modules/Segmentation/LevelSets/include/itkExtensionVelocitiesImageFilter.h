@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExtensionVelocitiesImageFilter, ReinitializeLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExtensionVelocitiesImageFilter);
 
   /** The type of level set and the pointer type. */
   using LevelSetType = LevelSetTypeDefault<TLevelSet>;

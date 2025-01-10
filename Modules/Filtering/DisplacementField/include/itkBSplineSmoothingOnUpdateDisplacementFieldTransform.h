@@ -61,8 +61,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineSmoothingOnUpdateDisplacementFieldTransform, DisplacementFieldTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineSmoothingOnUpdateDisplacementFieldTransform);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);

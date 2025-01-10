@@ -40,42 +40,41 @@ public:
 #define GIPL_INT 32
 #define GIPL_FLOAT 64
 #define GIPL_DOUBLE 65
-#define GIPL_C_SHORT 144
-#define GIPL_C_INT 160
-#define GIPL_C_FLOAT 192
-#define GIPL_C_DOUBLE 193
-#define GIPL_SURFACE 200
-#define GIPL_POLYGON 201
+// #define GIPL_C_SHORT 144
+// #define GIPL_C_INT 160
+// #define GIPL_C_FLOAT 192
+// #define GIPL_C_DOUBLE 193
+// #define GIPL_SURFACE 200
+// #define GIPL_POLYGON 201
 
 /*  ORIENTATION DEFINITIONS (flag1)  */
 
-#define UNDEFINED 0
-#define UNDEFINED_PROJECTION 1
-#define AP_PROJECTION 2
-#define LATERAL_PROJECTION 3
-#define OBLIQUE_PROJECTION 4
-#define UNDEFINED_TOMO 8
-#define AXIAL 9
-#define CORONAL 10
-#define SAGITTAL 11
-#define OBLIQUE_TOMO 12
+// #define UNDEFINED 0
+// #define UNDEFINED_PROJECTION 1
+// #define AP_PROJECTION 2
+// #define LATERAL_PROJECTION 3
+// #define OBLIQUE_PROJECTION 4
+// #define UNDEFINED_TOMO 8
+// #define AXIAL 9
+// #define CORONAL 10
+// #define SAGITTAL 11
+// #define OBLIQUE_TOMO 12
 
 /*  FORMAT DEFINITIONS  */
 
-#define FORMAT_GIPL 0
-#define FORMAT_GIPL_STRING "Gipl"
-#define FORMAT_MAYO 1
-#define FORMAT_MAYO_STRING "Mayo"
-#define FORMAT_NM_IGE 2
-#define FORMAT_NM_IGE_STRING "Starcam"
+// #define FORMAT_GIPL 0
+// #define FORMAT_GIPL_STRING "Gipl"
+// #define FORMAT_MAYO 1
+// #define FORMAT_MAYO_STRING "Mayo"
+// #define FORMAT_NM_IGE 2
+// #define FORMAT_NM_IGE_STRING "Starcam"
 
 #define GIPL_MAGIC_NUMBER 0xefffe9b0
 #define GIPL_MAGIC_NUMBER2 0x2ae389b8
 
 GiplImageIO::GiplImageIO()
+  : m_Internal(std::make_unique<GiplImageIOInternals>())
 {
-  m_Internal = new GiplImageIOInternals;
-  m_Internal->m_GzFile = nullptr;
   m_ByteOrder = IOByteOrderEnum::BigEndian;
   m_IsCompressed = false;
 }
@@ -94,18 +93,17 @@ GiplImageIO::~GiplImageIO()
   {
     m_Ifstream.close();
   }
-  delete m_Internal;
 }
 
 bool
 GiplImageIO::CanReadFile(const char * filename)
 {
   // First check the filename extension
-  bool extensionFound = CheckExtension(filename);
+  const bool extensionFound = CheckExtension(filename);
 
   if (!extensionFound)
   {
-    itkDebugMacro(<< "The filename extension is not recognized");
+    itkDebugMacro("The filename extension is not recognized");
     return false;
   }
 
@@ -179,18 +177,18 @@ GiplImageIO::CanReadFile(const char * filename)
 bool
 GiplImageIO::CanWriteFile(const char * name)
 {
-  std::string filename = name;
+  const std::string filename = name;
 
   if (filename.empty())
   {
-    itkDebugMacro(<< "No filename specified.");
+    itkDebugMacro("No filename specified.");
   }
 
-  bool extensionFound = CheckExtension(name);
+  const bool extensionFound = CheckExtension(name);
 
   if (!extensionFound)
   {
-    itkDebugMacro(<< "The filename extension is not recognized");
+    itkDebugMacro("The filename extension is not recognized");
     return false;
   }
 
@@ -255,8 +253,6 @@ GiplImageIO::Read(void * buffer)
 void
 GiplImageIO::ReadImageInformation()
 {
-  unsigned int i;
-
   CheckExtension(m_FileName.c_str());
 
   if (m_IsCompressed)
@@ -277,12 +273,12 @@ GiplImageIO::ReadImageInformation()
   unsigned short dims[4];
 
   unsigned int numberofdimension = 0;
-  for (i = 0; i < 4; ++i)
+  for (unsigned short & dim : dims)
   {
-    dims[i] = 0;
+    dim = 0;
   }
 
-  for (i = 0; i < 4; ++i)
+  for (unsigned int i = 0; i < 4; ++i)
   {
     if (m_IsCompressed)
     {
@@ -316,7 +312,7 @@ GiplImageIO::ReadImageInformation()
 
   this->SetNumberOfDimensions(numberofdimension);
 
-  for (i = 0; i < numberofdimension; ++i)
+  for (unsigned int i = 0; i < numberofdimension; ++i)
   {
     m_Dimensions[i] = dims[i];
   }
@@ -370,7 +366,7 @@ GiplImageIO::ReadImageInformation()
   }
 
   float pixdim[4]; /*   10   16  X,Y,Z,T pixel dimensions mm */
-  for (i = 0; i < 4; ++i)
+  for (unsigned int i = 0; i < 4; ++i)
   {
     if (m_IsCompressed)
     {
@@ -396,37 +392,37 @@ GiplImageIO::ReadImageInformation()
   }
 
   char line1[80]; /*   26   80  Patient / Text field        */
-  for (i = 0; i < 80; ++i)
+  for (char & it : line1)
   {
     if (m_IsCompressed)
     {
-      gzread(m_Internal->m_GzFile, (char *)&line1[i], static_cast<unsigned int>(sizeof(char)));
+      gzread(m_Internal->m_GzFile, (char *)&it, static_cast<unsigned int>(sizeof(char)));
     }
     else
     {
-      m_Ifstream.read((char *)&line1[i], sizeof(char));
+      m_Ifstream.read((char *)&it, sizeof(char));
     }
   }
 
   float matrix[20]; /*  106   80                              */
-  for (i = 0; i < 20; ++i)
+  for (float & it : matrix)
   {
     if (m_IsCompressed)
     {
-      gzread(m_Internal->m_GzFile, (char *)&matrix[i], static_cast<unsigned int>(sizeof(float)));
+      gzread(m_Internal->m_GzFile, (char *)&it, static_cast<unsigned int>(sizeof(float)));
     }
     else
     {
-      m_Ifstream.read((char *)&matrix[i], sizeof(float));
+      m_Ifstream.read((char *)&it, sizeof(float));
     }
 
     if (m_ByteOrder == IOByteOrderEnum::BigEndian)
     {
-      ByteSwapper<float>::SwapFromSystemToBigEndian(&matrix[i]);
+      ByteSwapper<float>::SwapFromSystemToBigEndian(&it);
     }
     else if (m_ByteOrder == IOByteOrderEnum::LittleEndian)
     {
-      ByteSwapper<float>::SwapFromSystemToLittleEndian(&matrix[i]);
+      ByteSwapper<float>::SwapFromSystemToLittleEndian(&it);
     }
   }
 
@@ -489,7 +485,7 @@ GiplImageIO::ReadImageInformation()
   }
 
   double origin[4]; /*  204   32  X,Y,Z,T offset              */
-  for (i = 0; i < 4; ++i)
+  for (unsigned int i = 0; i < 4; ++i)
   {
     if (m_IsCompressed)
     {
@@ -707,7 +703,7 @@ GiplImageIO::Write(const void * buffer)
 {
   CheckExtension(m_FileName.c_str());
 
-  unsigned int nDims = this->GetNumberOfDimensions();
+  const unsigned int nDims = this->GetNumberOfDimensions();
 
   if (m_IsCompressed)
   {
@@ -1104,11 +1100,11 @@ GiplImageIO::PrintSelf(std::ostream & os, Indent indent) const
 bool
 GiplImageIO::CheckExtension(const char * filename)
 {
-  std::string fname = filename;
+  const std::string fname = filename;
 
   if (fname.empty())
   {
-    itkDebugMacro(<< "No filename specified.");
+    itkDebugMacro("No filename specified.");
     return false;
   }
 

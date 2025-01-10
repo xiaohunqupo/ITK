@@ -96,7 +96,7 @@ public:
     m_Value = val;
   }
 
-  inline friend std::ostream &
+  friend inline std::ostream &
   operator<<(std::ostream & os, const ImageVoxel & val)
   {
     os << "Vpos: " << val.m_Vpos << std::endl;
@@ -131,7 +131,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKDeformableMesh_EXPORT std::ostream &
-                                operator<<(std::ostream & out, const DeformableSimplexMesh3DGradientConstraintForceFilterEnums::SIDE value);
+operator<<(std::ostream & out, const DeformableSimplexMesh3DGradientConstraintForceFilterEnums::SIDE value);
 /**
  * \class DeformableSimplexMesh3DGradientConstraintForceFilter
  * \brief
@@ -162,8 +162,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DeformableSimplexMesh3DGradientConstraintForceFilter, DeformableSimplexMesh3DFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DeformableSimplexMesh3DGradientConstraintForceFilter);
 
   /** Some type alias. */
   using InputMeshType = TInputMesh;

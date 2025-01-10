@@ -36,8 +36,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingStoppingCriterionBaseHelperTest, FastMarchingStoppingCriterionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingStoppingCriterionBaseHelperTest);
 
   bool
   IsSatisfied() const override

@@ -56,8 +56,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Element3DMembrane, TBaseClass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Element3DMembrane);
 
   // Repeat the required type alias and enums from parent class
   using typename Superclass::Float;

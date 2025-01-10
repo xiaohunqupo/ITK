@@ -31,7 +31,8 @@ namespace itk
  * This PSO algorithm was originally described in:
  * M. P. Wachowiak, R. Smolikova, Y. Zheng, J. M. Zurada, A. S. Elmaghraby,
  * "An approach to multimodal biomedical image registration utilizing particle
- * swarm optimization", IEEE Trans. Evol. Comput., vol. 8(3): 289-301, 2004.
+ * swarm optimization", IEEE Transactions on Evolutionary Computing,
+ * vol. 8(3): 289-301, 2004.
  *
  * The algorithm uses a stochastic optimization approach. Optimization
  * is performed by maintaining a swarm (flock) of
@@ -85,8 +86,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(InitializationBiasedParticleSwarmOptimizer, ParticleSwarmOptimizerBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InitializationBiasedParticleSwarmOptimizer);
 
   /** The Particle swarm optimizer uses the following update formula:
    * \f[c_3 =  c_{3initial}(1.0 - IterationIndex/MaximalNumberOfIterations)\f]

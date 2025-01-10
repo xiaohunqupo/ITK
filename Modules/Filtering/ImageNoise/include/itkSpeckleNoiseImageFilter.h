@@ -47,7 +47,7 @@ namespace itk
  * \author Gaetan Lehmann
  *
  * This code was contributed in the Insight Journal paper "Noise
- * Simulation". https://www.insight-journal.org/browse/publication/721
+ * Simulation". https://doi.org/10.54294/vh6vbw
  *
  * \ingroup ITKImageNoise
  */
@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SpeckleNoiseImageFilter, NoiseBaseImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SpeckleNoiseImageFilter);
 
   /** Superclass type alias. */
   using typename Superclass::OutputImageType;

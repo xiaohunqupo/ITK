@@ -80,10 +80,10 @@ public:
   CompensatedSummation(FloatType value);
 
   /** Copy constructor. */
-  CompensatedSummation(const Self & rhs);
+  CompensatedSummation(const Self &) = default;
   /** Assignment operator. */
   Self &
-  operator=(const Self & rhs);
+  operator=(const Self &) = default;
 
   /** Add an element to the sum. */
   void
@@ -117,7 +117,8 @@ public:
   GetSum() const;
 
   /** explicit conversion */
-  explicit operator FloatType() const;
+  explicit
+  operator FloatType() const;
 
 private:
   AccumulateType m_Sum{};
@@ -130,9 +131,9 @@ private:
 };
 
 void ITKCommon_EXPORT
-     CompensatedSummationAddElement(float & compensation, float & sum, const float element);
+CompensatedSummationAddElement(float & compensation, float & sum, const float element);
 void ITKCommon_EXPORT
-     CompensatedSummationAddElement(double & compensation, double & sum, const double element);
+CompensatedSummationAddElement(double & compensation, double & sum, const double element);
 
 } // end namespace itk
 

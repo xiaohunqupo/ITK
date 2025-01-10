@@ -50,7 +50,7 @@ public:
 
   itkNewMacro(Self);
 
-  itkTypeMacro(GPUImage, Image);
+  itkOverrideGetNameOfClassMacro(GPUImage);
 
   static constexpr unsigned int ImageDimension = VImageDimension;
 
@@ -95,9 +95,11 @@ public:
   TPixel &
   GetPixel(const IndexType & index);
 
-  const TPixel & operator[](const IndexType & index) const;
+  const TPixel &
+  operator[](const IndexType & index) const;
 
-  TPixel & operator[](const IndexType & index);
+  TPixel &
+  operator[](const IndexType & index);
 
   /** Explicit synchronize CPU/GPU buffers */
   void
@@ -237,8 +239,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GPUImageFactory, itk::ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUImageFactory);
 
   /** Register one factory of this type  */
   static void

@@ -50,8 +50,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = Object;
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetEvolutionBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEvolutionBase);
 
   using EquationContainerType = TEquationContainer;
   using EquationContainerPointer = typename EquationContainerType::Pointer;

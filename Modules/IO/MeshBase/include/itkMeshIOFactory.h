@@ -21,7 +21,6 @@
 
 #include "itkObject.h"
 #include "itkMeshIOBase.h"
-#include "ITKIOMeshBaseExport.h"
 
 namespace itk
 {
@@ -53,8 +52,8 @@ public:
   /** Class Methods used to interface with the registered factories */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MeshIOFactory, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeshIOFactory);
 
   /** Convenient type alias. */
   using MeshIOBasePointer = itk::MeshIOBase::Pointer;

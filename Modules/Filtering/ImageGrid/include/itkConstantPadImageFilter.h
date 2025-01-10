@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ConstantPadImageFilter, PadImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConstantPadImageFilter);
 
   /** Typedef to describe the output image region type. */
   using typename Superclass::OutputImageRegionType;

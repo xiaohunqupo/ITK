@@ -91,7 +91,7 @@ namespace itk
  * must be set at the filter level.
  *
  * This class was contributed to the Insight Journal by Zachary Pincus.
- * https://www.insight-journal.org/browse/publication/72
+ * https://doi.org/10.54294/olkmog
  *
  * \sa Image
  * \sa Path
@@ -127,8 +127,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ContourExtractor2DImageFilter, ImageToPathFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ContourExtractor2DImageFilter);
 
   /** Image and path type alias support */
   using InputImagePointer = typename InputImageType::Pointer;
@@ -264,7 +264,7 @@ private:
 
   struct VertexHash
   {
-    using CoordinateType = typename VertexType::CoordRepType;
+    using CoordinateType = typename VertexType::CoordinateType;
     inline size_t
     operator()(const VertexType & v) const noexcept
     {
@@ -280,7 +280,7 @@ private:
   void
   CreateSingleContour(InputPixelType         label,
                       const InputImageType * input,
-                      const InputRegionType  extendedRegion,
+                      const InputRegionType  usableRegion,
                       SizeValueType          totalNumberOfPixels,
                       ContourContainerType & contoursOutput);
 

@@ -109,7 +109,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "N-D C^k B-Spline Scattered Data Approximation"
  * by Nicholas J. Tustison, James C. Gee
- * https://www.insight-journal.org/browse/publication/57
+ * https://doi.org/10.54294/0d55to
  *
  *
  * \par REFERENCE
@@ -144,8 +144,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineScatteredDataPointSetToImageFilter, PointSetToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineScatteredDataPointSetToImageFilter);
 
   /** Extract dimension from the output image. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

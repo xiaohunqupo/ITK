@@ -41,7 +41,7 @@ class GenericCUBFileAdaptor;
  * \author Burstein, Pablo D.; Yushkevich, Paul; Gee, James C.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * https://hdl.handle.net/1926/303
+ * https://doi.org/10.54294/k9nj7c
  *
  * \ingroup IOFilters
  *
@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VoxBoCUBImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VoxBoCUBImageIO);
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 

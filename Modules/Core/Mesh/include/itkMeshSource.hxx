@@ -27,7 +27,7 @@ MeshSource<TOutputMesh>::MeshSource()
 {
   // Create the output. We use static_cast<> here because we know the default
   // output must be of type TOutputMesh
-  OutputMeshPointer output = static_cast<TOutputMesh *>(this->MakeOutput(0).GetPointer());
+  const OutputMeshPointer output = static_cast<TOutputMesh *>(this->MakeOutput(0).GetPointer());
 
   this->ProcessObject::SetNumberOfRequiredOutputs(1);
   this->ProcessObject::SetNthOutput(0, output.GetPointer());
@@ -37,7 +37,8 @@ MeshSource<TOutputMesh>::MeshSource()
 }
 
 template <typename TOutputMesh>
-typename MeshSource<TOutputMesh>::DataObjectPointer MeshSource<TOutputMesh>::MakeOutput(DataObjectPointerArraySizeType)
+typename MeshSource<TOutputMesh>::DataObjectPointer
+MeshSource<TOutputMesh>::MakeOutput(DataObjectPointerArraySizeType)
 {
   return TOutputMesh::New().GetPointer();
 }
@@ -60,8 +61,8 @@ template <typename TOutputMesh>
 void
 MeshSource<TOutputMesh>::SetOutput(OutputMeshType * output)
 {
-  itkWarningMacro(<< "SetOutput(): This method is slated to be removed from ITK.  Please use GraftOutput() in possible "
-                     "combination with DisconnectPipeline() instead.");
+  itkWarningMacro("SetOutput(): This method is slated to be removed from ITK.  Please use GraftOutput() in possible "
+                  "combination with DisconnectPipeline() instead.");
   this->ProcessObject::SetNthOutput(0, output);
 }
 
@@ -85,7 +86,7 @@ MeshSource<TOutputMesh>::GraftOutput(const DataObjectIdentifierType & key, DataO
 {
   if (!graft)
   {
-    itkExceptionMacro(<< "Requested to graft output that is a nullptr pointer");
+    itkExceptionMacro("Requested to graft output that is a nullptr pointer");
   }
 
   // we use the process object method since all out output may not be
@@ -102,8 +103,8 @@ MeshSource<TOutputMesh>::GraftNthOutput(unsigned int idx, DataObject * graft)
 {
   if (idx >= this->GetNumberOfIndexedOutputs())
   {
-    itkExceptionMacro(<< "Requested to graft output " << idx << " but this filter only has "
-                      << this->GetNumberOfIndexedOutputs() << " indexed Outputs.");
+    itkExceptionMacro("Requested to graft output " << idx << " but this filter only has "
+                                                   << this->GetNumberOfIndexedOutputs() << " indexed Outputs.");
   }
   this->GraftOutput(this->MakeNameFromOutputIndex(idx), graft);
 }

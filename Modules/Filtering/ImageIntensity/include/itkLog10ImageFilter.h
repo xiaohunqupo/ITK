@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Log10
 {
 public:
-  Log10() = default;
-  ~Log10() = default;
   bool
   operator==(const Log10 &) const
   {
@@ -78,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(Log10ImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Log10ImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking

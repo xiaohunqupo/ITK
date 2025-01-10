@@ -58,8 +58,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(UniformRandomSpatialNeighborSubsampler, SpatialNeighborSubsampler);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(UniformRandomSpatialNeighborSubsampler);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

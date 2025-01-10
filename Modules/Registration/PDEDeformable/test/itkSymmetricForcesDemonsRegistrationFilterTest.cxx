@@ -56,7 +56,7 @@ FillWithCircle(TImage *                   image,
   it.GoToBegin();
 
   typename TImage::IndexType index;
-  double                     r2 = itk::Math::sqr(radius);
+  const double               r2 = itk::Math::sqr(radius);
 
   while (!it.IsAtEnd())
   {
@@ -109,7 +109,6 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   using SizeType = ImageType::SizeType;
   using RegionType = ImageType::RegionType;
 
-  //--------------------------------------------------------
   std::cout << "Generate input images and initial deformation field";
   std::cout << std::endl;
 
@@ -117,12 +116,9 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   SizeType                      size;
   size.SetSize(sizeArray);
 
-  IndexType index;
-  index.Fill(0);
+  constexpr IndexType index{};
 
-  RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
+  const RegionType region{ index, size };
 
   auto moving = ImageType::New();
   auto fixed = ImageType::New();
@@ -140,15 +136,14 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   initField->SetBufferedRegion(region);
   initField->Allocate();
 
-  double    center[ImageDimension];
-  double    radius;
-  PixelType fgnd = 250;
-  PixelType bgnd = 15;
+  double              center[ImageDimension];
+  constexpr PixelType fgnd = 250;
+  constexpr PixelType bgnd = 15;
 
   // fill moving with circle
   center[0] = 64;
   center[1] = 64;
-  radius = 30;
+  double radius = 30;
   FillWithCircle<ImageType>(moving, center, radius, fgnd, bgnd);
 
   // fill fixed with circle
@@ -158,11 +153,9 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   FillWithCircle<ImageType>(fixed, center, radius, fgnd, bgnd);
 
   // fill initial deformation with zero vectors
-  VectorType zeroVec;
-  zeroVec.Fill(0.0);
+  constexpr VectorType zeroVec{};
   initField->FillBuffer(zeroVec);
 
-  //-------------------------------------------------------------
   std::cout << "Run registration and warp moving" << std::endl;
 
   using RegistrationType = itk::SymmetricForcesDemonsRegistrationFilter<ImageType, ImageType, FieldType>;
@@ -178,12 +171,12 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   registrator->SetStandardDeviations(2.0);
   registrator->SetStandardDeviations(1.0);
 
-  double intensityDifferenceThreshold = 0.001;
+  constexpr double intensityDifferenceThreshold = 0.001;
   registrator->SetIntensityDifferenceThreshold(intensityDifferenceThreshold);
   ITK_TEST_SET_GET_VALUE(intensityDifferenceThreshold, registrator->GetIntensityDifferenceThreshold());
 
 
-  std::cout << "\n\n\nPrinting function" << std::endl;
+  std::cout << "Printing function" << std::endl;
   using FunctionType = RegistrationType::DemonsRegistrationFunctionType;
   auto * fptr = dynamic_cast<FunctionType *>(registrator->GetDifferenceFunction().GetPointer());
   if (fptr != nullptr)
@@ -201,9 +194,9 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   }
   registrator->SetStandardDeviations(v);
 
-  ShowProgressObject                                    progressWatch(registrator);
-  itk::SimpleMemberCommand<ShowProgressObject>::Pointer command;
-  command = itk::SimpleMemberCommand<ShowProgressObject>::New();
+  ShowProgressObject                                          progressWatch(registrator);
+  const itk::SimpleMemberCommand<ShowProgressObject>::Pointer command =
+    itk::SimpleMemberCommand<ShowProgressObject>::New();
   command->SetCallbackFunction(&progressWatch, &ShowProgressObject::ShowProgress);
   registrator->AddObserver(itk::ProgressEvent(), command);
 
@@ -213,8 +206,8 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
   using WarperType = itk::WarpImageFilter<ImageType, ImageType, FieldType>;
   auto warper = WarperType::New();
 
-  using CoordRepType = WarperType::CoordRepType;
-  using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, CoordRepType>;
+  using CoordinateType = WarperType::CoordinateType;
+  using InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, CoordinateType>;
   auto interpolator = InterpolatorType::New();
 
 
@@ -231,7 +224,6 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
 
   std::cout << "Registration RMS change: " << registrator->GetRMSChange() << std::endl;
 
-  // ---------------------------------------------------------
   std::cout << "Compare warped moving and fixed." << std::endl;
 
   // compare the warp and fixed images
@@ -249,92 +241,42 @@ itkSymmetricForcesDemonsRegistrationFilterTest(int, char *[])
     ++warpedIter;
   }
 
-  std::cout << "Number of pixels different: " << numPixelsDifferent;
-  std::cout << std::endl;
+  std::cout << "Number of pixels different: " << numPixelsDifferent << std::endl;
 
-  if (numPixelsDifferent > 10)
-  {
-    std::cout << "Test failed - too many pixels different." << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TEST_EXPECT_TRUE(numPixelsDifferent <= 10);
 
-  // -----------------------------------------------------------
-  std::cout << "Test running registrator without initial deformation field.";
-  std::cout << std::endl;
+  std::cout << "Test running registrator without initial deformation field." << std::endl;
 
-  bool passed = true;
-  try
-  {
-    registrator->SetInput(nullptr);
-    registrator->SetNumberOfIterations(2);
-    registrator->Update();
-  }
-  catch (const itk::ExceptionObject & err)
-  {
-    std::cout << "Unexpected error." << std::endl;
-    std::cout << err << std::endl;
-    passed = false;
-  }
+  registrator->SetInput(nullptr);
+  registrator->SetNumberOfIterations(2);
 
-  if (!passed)
-  {
-    std::cout << "Test failed" << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(registrator->Update());
 
-  //--------------------------------------------------------------
+
   std::cout << "Test exception handling." << std::endl;
 
   std::cout << "Test nullptr moving image. " << std::endl;
-  passed = false;
-  try
-  {
-    registrator->SetInput(initField);
-    registrator->SetMovingImage(nullptr);
-    registrator->Update();
-  }
-  catch (const itk::ExceptionObject & err)
-  {
-    std::cout << "Caught expected error." << std::endl;
-    std::cout << err << std::endl;
-    passed = true;
-  }
 
-  if (!passed)
-  {
-    std::cout << "Test failed" << std::endl;
-    return EXIT_FAILURE;
-  }
+  registrator->SetInput(initField);
+  registrator->SetMovingImage(nullptr);
+
+  ITK_TRY_EXPECT_EXCEPTION(registrator->Update());
+
+
   registrator->SetMovingImage(moving);
   registrator->ResetPipeline();
 
   std::cout << "Test nullptr moving image interpolator. " << std::endl;
-  passed = false;
-  try
-  {
-    fptr = dynamic_cast<FunctionType *>(registrator->GetDifferenceFunction().GetPointer());
-    if (fptr == nullptr)
-    {
-      std::cerr << "dynamic_cast of registrator difference function failed";
-      return EXIT_FAILURE;
-    }
-    fptr->SetMovingImageInterpolator(nullptr);
-    registrator->SetInput(initField);
-    registrator->Update();
-  }
-  catch (const itk::ExceptionObject & err)
-  {
-    std::cout << "Caught expected error." << std::endl;
-    std::cout << err << std::endl;
-    passed = true;
-  }
 
-  if (!passed)
-  {
-    std::cout << "Test failed" << std::endl;
-    return EXIT_FAILURE;
-  }
+  fptr = dynamic_cast<FunctionType *>(registrator->GetDifferenceFunction().GetPointer());
+  ITK_TEST_EXPECT_TRUE(fptr);
 
-  std::cout << "Test passed" << std::endl;
+  fptr->SetMovingImageInterpolator(nullptr);
+  registrator->SetInput(initField);
+
+  ITK_TRY_EXPECT_EXCEPTION(registrator->Update());
+
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

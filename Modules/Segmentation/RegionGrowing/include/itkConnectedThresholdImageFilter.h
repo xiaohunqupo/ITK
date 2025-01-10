@@ -49,7 +49,7 @@ public:
 
 // Define how to print enumeration
 extern ITKRegionGrowing_EXPORT std::ostream &
-                               operator<<(std::ostream & out, const ConnectedThresholdImageFilterEnums::Connectivity value);
+operator<<(std::ostream & out, const ConnectedThresholdImageFilterEnums::Connectivity value);
 /**
  * \class ConnectedThresholdImageFilter
  * \brief Label pixels that are connected to a seed and lie within a range of values
@@ -79,8 +79,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ConnectedThresholdImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConnectedThresholdImageFilter);
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;

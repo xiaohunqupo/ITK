@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(StatisticsImageFilter, ImageSink);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(StatisticsImageFilter);
 
   /** Image related type alias. */
   using InputImagePointer = typename TInputImage::Pointer;

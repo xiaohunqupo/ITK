@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MirrorPadImageFilter, PadImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MirrorPadImageFilter);
 
   using InputImageType = TInputImage;
   using OutputImageType = TOutputImage;

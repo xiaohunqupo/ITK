@@ -94,8 +94,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(RobustSolver, Solver);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RobustSolver);
 
   /** Inherit some types from the superclass. */
   using typename Superclass::VectorType;

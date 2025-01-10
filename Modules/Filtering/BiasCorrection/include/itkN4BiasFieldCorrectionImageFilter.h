@@ -75,7 +75,7 @@ namespace itk
  * \author Nicholas J. Tustison
  *
  * Contributed by Nicholas J. Tustison, James C. Gee in the Insight Journal
- * paper: https://www.insight-journal.org/browse/publication/640
+ * paper: https://doi.org/10.54294/jculxw
  *
  * \par REFERENCE
  *
@@ -104,8 +104,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Runtime information support. */
-  itkTypeMacro(N4BiasFieldCorrectionImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(N4BiasFieldCorrectionImageFilter);
 
   /** Standard New method. */
   itkNewMacro(Self);
@@ -301,9 +301,7 @@ public:
   void
   SetNumberOfFittingLevels(unsigned int n)
   {
-    ArrayType nlevels;
-
-    nlevels.Fill(n);
+    auto nlevels = MakeFilled<ArrayType>(n);
     this->SetNumberOfFittingLevels(nlevels);
   }
 

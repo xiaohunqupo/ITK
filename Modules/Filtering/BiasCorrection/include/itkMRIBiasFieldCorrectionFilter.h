@@ -29,6 +29,9 @@
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "itkImageRegionIterator.h"
 
+#include <memory> // For unique_ptr.
+
+
 namespace itk
 {
 /**
@@ -56,8 +59,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MRIBiasEnergyFunction, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MRIBiasEnergyFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -154,7 +157,7 @@ protected:
   MRIBiasEnergyFunction();
 
   /** Destructor. */
-  ~MRIBiasEnergyFunction() override;
+  ~MRIBiasEnergyFunction() override = default;
 
 private:
   /** Bias field object pointer. */
@@ -170,7 +173,7 @@ private:
   ImageRegionType m_Region{};
 
   /** Internal energy function object pointer. */
-  InternalEnergyFunction * m_InternalEnergyFunction{};
+  std::unique_ptr<InternalEnergyFunction> m_InternalEnergyFunction;
 
   /** Sampling factors */
   SamplingFactorType m_SamplingFactor{};
@@ -242,8 +245,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MRIBiasFieldCorrectionFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MRIBiasFieldCorrectionFilter);
 
   /** The dimension of the image. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

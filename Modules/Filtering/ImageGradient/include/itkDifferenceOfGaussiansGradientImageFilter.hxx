@@ -27,7 +27,7 @@ namespace itk
 template <typename TInputImage, typename TDataType>
 DifferenceOfGaussiansGradientImageFilter<TInputImage, TDataType>::DifferenceOfGaussiansGradientImageFilter()
 {
-  itkDebugMacro(<< "DifferenceOfGaussiansGradientImageFilter::DifferenceOfGaussiansGradientImageFilter() called");
+  itkDebugMacro("DifferenceOfGaussiansGradientImageFilter::DifferenceOfGaussiansGradientImageFilter() called");
 
   m_Width = 2;
 }
@@ -36,17 +36,17 @@ template <typename TInputImage, typename TDataType>
 void
 DifferenceOfGaussiansGradientImageFilter<TInputImage, TDataType>::GenerateData()
 {
-  itkDebugMacro(<< "DifferenceOfGaussiansGradientImageFilter::GenerateData() called");
+  itkDebugMacro("DifferenceOfGaussiansGradientImageFilter::GenerateData() called");
 
   // Get the input and output pointers
-  typename Superclass::InputImagePointer  inputPtr = const_cast<TInputImage *>(this->GetInput(0));
-  typename Superclass::OutputImagePointer outputPtr = this->GetOutput(0);
+  const typename Superclass::InputImagePointer  inputPtr = const_cast<TInputImage *>(this->GetInput(0));
+  const typename Superclass::OutputImagePointer outputPtr = this->GetOutput(0);
 
   // Make sure we're getting everything
   inputPtr->SetRequestedRegionToLargestPossibleRegion();
 
   // How big is the input image?
-  typename TInputImage::SizeType size = inputPtr->GetLargestPossibleRegion().GetSize();
+  const typename TInputImage::SizeType size = inputPtr->GetLargestPossibleRegion().GetSize();
 
   // Create a region object native to the output image type
   OutputImageRegionType outputRegion;
@@ -128,7 +128,7 @@ DifferenceOfGaussiansGradientImageFilter<TInputImage, TDataType>::GenerateData()
     progress.CompletedPixel();
   }
 
-  itkDebugMacro(<< "DifferenceOfGaussiansGradientImageFilter::GenerateData() finished");
+  itkDebugMacro("DifferenceOfGaussiansGradientImageFilter::GenerateData() finished");
 }
 
 template <typename TInputImage, typename TDataType>

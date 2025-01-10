@@ -28,7 +28,7 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 CyclicShiftImageFilter<TInputImage, TOutputImage>::CyclicShiftImageFilter()
 {
-  m_Shift.Fill(NumericTraits<OffsetValueType>::ZeroValue());
+  m_Shift.Fill(OffsetValueType{});
   this->DynamicMultiThreadingOn();
   this->ThreaderUpdateProgressOff();
 }
@@ -41,7 +41,7 @@ CyclicShiftImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion(
   Superclass::GenerateInputRequestedRegion();
 
   // We need all the input.
-  InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
+  const InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
   if (!input)
   {
     return;

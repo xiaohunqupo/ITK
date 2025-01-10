@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(InterpolateImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InterpolateImageFilter);
 
   /** Inherit type alias from Superclass */
   using typename Superclass::InputImageType;
@@ -103,8 +103,11 @@ public:
   itkSetObjectMacro(Interpolator, InterpolatorType);
   itkGetModifiableObjectMacro(Interpolator, InterpolatorType);
 
-  /** This method is used to set the state of the filter before
-   * multi-threading. */
+  /**
+   * Set up the state of the filter before multi-threading.
+   * InterpolatorType::SetInputImage is not thread-safe and hence
+   * has to be setup before ThreadedGenerateData.
+   */
   void
   BeforeThreadedGenerateData() override;
 

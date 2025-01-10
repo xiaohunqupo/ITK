@@ -44,8 +44,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToMeshFilter, MeshSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToMeshFilter);
 
   /** Create a valid output. */
   using DataObjectPointerArraySizeType = ProcessObject::DataObjectPointerArraySizeType;

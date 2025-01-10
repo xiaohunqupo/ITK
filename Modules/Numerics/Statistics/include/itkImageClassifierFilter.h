@@ -57,8 +57,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(ImageClassifierFilter, ImageToImagefilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageClassifierFilter);
   itkNewMacro(Self);
 
   /** Image pixel value type alias. */

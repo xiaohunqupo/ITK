@@ -73,8 +73,8 @@ public:
   /** Instantiation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information. */
-  itkTypeMacro(VectorGradientAnisotropicDiffusionImageFilter, AnisotropicDiffusionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorGradientAnisotropicDiffusionImageFilter);
 
   /** Extract information from the superclass. */
   using typename Superclass::UpdateBufferType;
@@ -93,8 +93,7 @@ public:
 protected:
   VectorGradientAnisotropicDiffusionImageFilter()
   {
-    typename VectorGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::Pointer p =
-      VectorGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
+    auto p = VectorGradientNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
     this->SetDifferenceFunction(p);
   }
 

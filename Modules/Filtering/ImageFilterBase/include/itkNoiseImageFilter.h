@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NoiseImageFilter, BoxImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NoiseImageFilter);
 
   /** Image type alias support */
   using InputPixelType = typename InputImageType::PixelType;

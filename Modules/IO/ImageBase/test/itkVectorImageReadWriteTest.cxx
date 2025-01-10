@@ -27,7 +27,7 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
 
   if (argc < 2)
   {
-    itkGenericOutputMacro(<< "Need a file to process");
+    itkGenericOutputMacro("Need a file to process");
     return EXIT_FAILURE;
   }
 
@@ -50,8 +50,8 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
   // RecursiveGaussianImageFilter and compare a few filtered pixels.
   //
   // Create ON and OFF vectors
-  PixelType vector0{};
-  PixelType vector1;
+  constexpr PixelType vector0{};
+  PixelType           vector1;
   vector1[0] = 1.0;
   vector1[1] = 2.0;
   vector1[2] = 3.0;
@@ -60,13 +60,9 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
   using ConstIteratorType = itk::ImageLinearConstIteratorWithIndex<ImageType>;
 
   // Create the 9x9 input image
-  ImageType::SizeType size;
-  size.Fill(9);
-  ImageType::IndexType index;
-  index.Fill(0);
-  ImageType::RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
+  auto                        size = ImageType::SizeType::Filled(9);
+  ImageType::IndexType        index{};
+  const ImageType::RegionType region{ index, size };
   inputImage->SetRegions(region);
   inputImage->Allocate();
   inputImage->FillBuffer(vector0);
@@ -89,7 +85,7 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
 
   reader->SetFileName(argv[1]);
   reader->Update();
-  ImageType::Pointer outputImage = reader->GetOutput();
+  const ImageType::Pointer outputImage = reader->GetOutput();
 
   ConstIteratorType cit(outputImage, outputImage->GetLargestPossibleRegion());
   index[0] = 4;
@@ -109,7 +105,7 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  itk::ImageIOBase::Pointer io = reader->GetModifiableImageIO();
+  const itk::ImageIOBase::Pointer io = reader->GetModifiableImageIO();
 
 
   std::cout << "ImageIO Pixel Information: " << io->GetPixelTypeAsString(io->GetPixelType()) << ' '
@@ -125,8 +121,7 @@ itkVectorImageReadWriteTest(int argc, char * argv[])
   std::cout << "Image of vector pixels write-read [PASSED]" << std::endl;
 
   std::cout << "Test << operator:: Vector1 = " << vector1 << "[PASSED]" << std::endl;
-  std::cout << "Test NumericTraits<Vector<double,4>>::ZeroValue() " << itk::NumericTraits<PixelType>::ZeroValue()
-            << std::endl;
+  std::cout << "Test NumericTraits<Vector<double,4>>::ZeroValue() " << PixelType{} << std::endl;
   std::cout << "Test NumericTraits <Vector <double,4 > >::OneValue() " << itk::NumericTraits<PixelType>::OneValue()
             << std::endl;
 

@@ -74,8 +74,8 @@ public:
    */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(DivideImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DivideImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   // Begin concept checking
@@ -98,16 +98,15 @@ protected:
   ~DivideImageFilter() override = default;
 
   void
-  VerifyPreconditions() ITKv5_CONST override
+  VerifyPreconditions() const override
   {
     Superclass::VerifyPreconditions();
 
     const auto * input =
       dynamic_cast<const typename Superclass::DecoratedInput2ImagePixelType *>(this->ProcessObject::GetInput(1));
-    if (input != nullptr &&
-        itk::Math::AlmostEquals(input->Get(), itk::NumericTraits<typename TInputImage2::PixelType>::ZeroValue()))
+    if (input != nullptr && itk::Math::AlmostEquals(input->Get(), typename TInputImage2::PixelType{}))
     {
-      itkGenericExceptionMacro(<< "The constant value used as denominator should not be set to zero");
+      itkGenericExceptionMacro("The constant value used as denominator should not be set to zero");
     }
   }
 };

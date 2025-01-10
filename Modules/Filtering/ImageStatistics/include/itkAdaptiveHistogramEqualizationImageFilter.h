@@ -97,10 +97,10 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AdaptiveHistogramEqualizationImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AdaptiveHistogramEqualizationImageFilter);
 
-  /** Image type type alias support */
+  /** Image type alias support */
   using ImageType = TImageType;
   using InputPixelType = typename ImageType::PixelType;
   using ImageSizeType = typename ImageType::SizeType;

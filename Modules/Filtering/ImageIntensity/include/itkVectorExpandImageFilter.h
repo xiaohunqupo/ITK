@@ -90,8 +90,8 @@ public:
   using OutputImagePointer = typename TOutputImage::Pointer;
   using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorExpandImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorExpandImageFilter);
 
   /** ImageDimension enumeration */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -117,10 +117,14 @@ public:
   using ExpandFactorsArrayType = FixedArray<ExpandFactorsType, ImageDimension>;
 
   /** Typedef support for the interpolation function */
-  using CoordRepType = double;
-  using InterpolatorType = VectorInterpolateImageFunction<InputImageType, CoordRepType>;
+  using CoordinateType = double;
+#  ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#  endif
+  using InterpolatorType = VectorInterpolateImageFunction<InputImageType, CoordinateType>;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
-  using DefaultInterpolatorType = VectorLinearInterpolateImageFunction<InputImageType, CoordRepType>;
+  using DefaultInterpolatorType = VectorLinearInterpolateImageFunction<InputImageType, CoordinateType>;
 
   /** Get/Set the interpolator function. */
   itkSetObjectMacro(Interpolator, InterpolatorType);

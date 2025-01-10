@@ -44,8 +44,6 @@ class SymmetricEigenAnalysisFunction
 {
 public:
   using RealValueType = typename TInput::RealValueType;
-  SymmetricEigenAnalysisFunction() = default;
-  ~SymmetricEigenAnalysisFunction() = default;
   using CalculatorType = SymmetricEigenAnalysis<TInput, TOutput>;
   bool
   operator==(const SymmetricEigenAnalysisFunction &) const
@@ -58,7 +56,7 @@ public:
   inline TOutput
   operator()(const TInput & x) const
   {
-    TOutput eigenValues;
+    TOutput eigenValues{};
 
     m_Calculator.ComputeEigenValues(x, eigenValues);
     return eigenValues;
@@ -131,8 +129,6 @@ class SymmetricEigenAnalysisFixedDimensionFunction
 {
 public:
   using RealValueType = typename TInput::RealValueType;
-  SymmetricEigenAnalysisFixedDimensionFunction() = default;
-  ~SymmetricEigenAnalysisFixedDimensionFunction() = default;
   using CalculatorType = SymmetricEigenAnalysisFixedDimension<TMatrixDimension, TInput, TOutput>;
   bool
   operator==(const SymmetricEigenAnalysisFixedDimensionFunction &) const
@@ -213,7 +209,7 @@ extern ITKImageIntensity_EXPORT std::ostream &
  *
  * \ingroup ITKImageIntensity
  */
-template <typename TInputImage, typename TOutputImage = TInputImage>
+template <typename TInputImage, typename TOutputImage>
 class SymmetricEigenAnalysisImageFilter
   : public UnaryFunctorImageFilter<
       TInputImage,
@@ -262,8 +258,8 @@ public:
     return this->GetFunctor().GetOrderEigenValuesBy();
   }
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(SymmetricEigenAnalysisImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SymmetricEigenAnalysisImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -358,8 +354,8 @@ public:
     this->GetFunctor().OrderEigenValuesBy(order);
   }
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(SymmetricEigenAnalysisFixedDimensionImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SymmetricEigenAnalysisFixedDimensionImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

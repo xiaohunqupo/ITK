@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(OtsuMultipleThresholdsImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(OtsuMultipleThresholdsImageFilter);
 
   /** Image pixel value type alias. */
   using InputPixelType = typename TInputImage::PixelType;
@@ -109,10 +109,7 @@ public:
   itkGetConstMacro(NumberOfThresholds, SizeValueType);
 
   /** Set/Get the offset which labels have to start from. Default is 0. */
-  itkSetClampMacro(LabelOffset,
-                   OutputPixelType,
-                   NumericTraits<OutputPixelType>::ZeroValue(),
-                   NumericTraits<OutputPixelType>::max());
+  itkSetClampMacro(LabelOffset, OutputPixelType, OutputPixelType{}, NumericTraits<OutputPixelType>::max());
   itkGetConstMacro(LabelOffset, OutputPixelType);
 
   /** Set/Get the use of valley emphasis. Default is false. */
@@ -158,11 +155,7 @@ private:
   OutputPixelType     m_LabelOffset{};
   ThresholdVectorType m_Thresholds{};
   bool                m_ValleyEmphasis{ false };
-#if defined(ITKV4_COMPATIBILITY)
-  bool m_ReturnBinMidpoint{ true };
-#else
-  bool m_ReturnBinMidpoint{ false };
-#endif
+  bool                m_ReturnBinMidpoint{ false };
 };
 } // end namespace itk
 

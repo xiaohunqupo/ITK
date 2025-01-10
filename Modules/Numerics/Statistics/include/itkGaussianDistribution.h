@@ -69,8 +69,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(GaussianDistribution, ProbabilityDistribution);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianDistribution);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

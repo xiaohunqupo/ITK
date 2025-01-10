@@ -166,7 +166,7 @@ main(int argc, char * argv[])
   using LaplacianSegmentationLevelSetImageFilterType =
     itk::LaplacianSegmentationLevelSetImageFilter<InternalImageType,
                                                   InternalImageType>;
-  LaplacianSegmentationLevelSetImageFilterType::Pointer
+  const LaplacianSegmentationLevelSetImageFilterType::Pointer
     laplacianSegmentation =
       LaplacianSegmentationLevelSetImageFilterType::New();
   // Software Guide : EndCodeSnippet
@@ -264,8 +264,7 @@ main(int argc, char * argv[])
             << std::endl;
 
   // Write out the speed (propagation) image for parameter tuning purposes.
-  itk::ImageFileWriter<InternalImageType>::Pointer speedWriter =
-    itk::ImageFileWriter<InternalImageType>::New();
+  auto speedWriter = itk::ImageFileWriter<InternalImageType>::New();
   speedWriter->SetInput(laplacianSegmentation->GetSpeedImage());
   speedWriter->SetFileName("speedImage.mha");
   speedWriter->Update();

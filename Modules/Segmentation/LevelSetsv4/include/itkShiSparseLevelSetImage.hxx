@@ -34,8 +34,8 @@ template <unsigned int VDimension>
 auto
 ShiSparseLevelSetImage<VDimension>::Evaluate(const InputType & inputIndex) const -> OutputType
 {
-  InputType mapIndex = inputIndex - this->m_DomainOffset;
-  auto      layerIt = this->m_Layers.begin();
+  const InputType mapIndex = inputIndex - this->m_DomainOffset;
+  auto            layerIt = this->m_Layers.begin();
 
   while (layerIt != this->m_Layers.end())
   {
@@ -52,18 +52,16 @@ ShiSparseLevelSetImage<VDimension>::Evaluate(const InputType & inputIndex) const
   {
     return static_cast<OutputType>(this->MinusThreeLayer());
   }
+
+  const LayerIdType status = this->m_LabelMap->GetPixel(mapIndex);
+
+  if (status == this->PlusThreeLayer())
+  {
+    return static_cast<OutputType>(this->PlusThreeLayer());
+  }
   else
   {
-    const LayerIdType status = this->m_LabelMap->GetPixel(mapIndex);
-
-    if (status == this->PlusThreeLayer())
-    {
-      return static_cast<OutputType>(this->PlusThreeLayer());
-    }
-    else
-    {
-      itkGenericExceptionMacro(<< "status " << static_cast<int>(status) << " should be 3 or -3");
-    }
+    itkGenericExceptionMacro("status " << static_cast<int>(status) << " should be 3 or -3");
   }
 }
 
@@ -72,7 +70,7 @@ template <unsigned int VDimension>
 auto
 ShiSparseLevelSetImage<VDimension>::EvaluateHessian(const InputType & itkNotUsed(inputIndex)) const -> HessianType
 {
-  itkGenericExceptionMacro(<< "The approximation of the hessian in the Shi's"
+  itkGenericExceptionMacro("The approximation of the hessian in the Shi's"
                            << " representation is poor, and far to be representative."
                            << " If it was required for regularization purpose, "
                            << " you better check recommended regularization methods"
@@ -84,7 +82,7 @@ template <unsigned int VDimension>
 auto
 ShiSparseLevelSetImage<VDimension>::EvaluateLaplacian(const InputType & itkNotUsed(inputIndex)) const -> OutputRealType
 {
-  itkGenericExceptionMacro(<< "The approximation of the hessian in the Shi's"
+  itkGenericExceptionMacro("The approximation of the hessian in the Shi's"
                            << " representation is poor, and far to be representative."
                            << " If it was required for regularization purpose, "
                            << " you better check recommended regularization methods"
@@ -97,7 +95,7 @@ auto
 ShiSparseLevelSetImage<VDimension>::EvaluateMeanCurvature(const InputType & itkNotUsed(inputIndex)) const
   -> OutputRealType
 {
-  itkGenericExceptionMacro(<< "The approximation of the hessian in the Shi's"
+  itkGenericExceptionMacro("The approximation of the hessian in the Shi's"
                            << " representation is poor, and far to be representative."
                            << " If it was required for regularization purpose, "
                            << " you better check recommended regularization methods"

@@ -76,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastIncrementalBinaryDilateImageFilter, BinaryDilateImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastIncrementalBinaryDilateImageFilter);
 
 protected:
   FastIncrementalBinaryDilateImageFilter() = default;

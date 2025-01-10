@@ -107,27 +107,27 @@ public:
   using Self = ImageRegionReverseConstIterator;
   using Superclass = ImageReverseConstIterator<TImage>;
 
-  /** Index type alias support While this was already typdef'ed in the superclass
+  /** Index type alias support While this was already typedef'ed in the superclass
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using typename Superclass::IndexType;
 
-  /** Size type alias support While this was already typdef'ed in the superclass
+  /** Size type alias support While this was already typedef'ed in the superclass
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using typename Superclass::SizeType;
 
-  /** Offset type alias support While this was already typdef'ed in the superclass
+  /** Offset type alias support While this was already typedef'ed in the superclass
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using typename Superclass::OffsetType;
 
   /** Region type alias support */
   using typename Superclass::RegionType;
 
-  /** Image type alias support While this was already typdef'ed in the superclass
+  /** Image type alias support While this was already typedef'ed in the superclass
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using typename Superclass::ImageType;
 
   /** PixelContainer type alias support Used to refer to the container for
-   * the pixel data. While this was already typdef'ed in the superclass
+   * the pixel data. While this was already typedef'ed in the superclass
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using typename Superclass::PixelContainer;
   using PixelContainerPointer = typename PixelContainer::Pointer;
@@ -142,8 +142,8 @@ public:
    *  representations. */
   using typename Superclass::AccessorType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegionReverseConstIterator, ImageReverseConstIterator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageRegionReverseConstIterator);
 
   /** Default constructor. Needed since we provide a cast constructor. */
   ImageRegionReverseConstIterator()
@@ -153,8 +153,8 @@ public:
     m_SpanEndOffset = 0;
   }
 
-  /** Constructor establishes an iterator to walk a particular image and a
-   * particular region of that image. */
+  /** Constructor establishes an iterator to walk a particular image and a particular region of that image. Initializes
+   * the iterator at the begin of the region. */
   ImageRegionReverseConstIterator(const ImageType * ptr, const RegionType & region)
     : Superclass(ptr, region)
   {

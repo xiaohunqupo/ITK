@@ -65,8 +65,8 @@ public:
   using RealType = typename NumericTraits<PixelType>::RealType;
   using ScalarRealType = typename NumericTraits<PixelType>::ScalarRealType;
 
-  /** Runtime information support. */
-  itkTypeMacro(SmoothingRecursiveGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SmoothingRecursiveGaussianImageFilter);
 
   /** Image dimension. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

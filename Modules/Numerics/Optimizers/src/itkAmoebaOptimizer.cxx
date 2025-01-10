@@ -39,7 +39,7 @@ AmoebaOptimizer::AmoebaOptimizer()
 AmoebaOptimizer::~AmoebaOptimizer() = default;
 
 
-const std::string
+std::string
 AmoebaOptimizer::GetStopConditionDescription() const
 {
   return this->m_StopConditionDescription.str();
@@ -53,7 +53,7 @@ AmoebaOptimizer::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "MaximumNumberOfIterations: " << this->m_MaximumNumberOfIterations << std::endl;
   os << indent << "ParametersConvergenceTolerance: " << this->m_ParametersConvergenceTolerance << std::endl;
   os << indent << "FunctionConvergenceTolerance: " << this->m_FunctionConvergenceTolerance << std::endl;
-  os << indent << "AutomaticInitialSimplex: " << (this->m_AutomaticInitialSimplex ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(AutomaticInitialSimplex);
   os << indent << "InitialSimplexDelta: " << this->m_InitialSimplexDelta << std::endl;
 }
 
@@ -69,12 +69,12 @@ AmoebaOptimizer::GetValue() const
   {
     if (static_cast<unsigned int>(costFunction->get_number_of_unknowns()) != numberOfParameters)
     {
-      itkExceptionMacro(<< "cost function and current position dimensions mismatch");
+      itkExceptionMacro("cost function and current position dimensions mismatch");
     }
   }
   else
   {
-    itkExceptionMacro(<< "cost function not set");
+    itkExceptionMacro("cost function not set");
   }
 
   if (m_ScalesInitialized)
@@ -208,7 +208,6 @@ AmoebaOptimizer::StartOptimization()
   // multiple restart heuristic
   if (this->m_OptimizeWithRestarts)
   {
-    double       currentValue;
     auto         totalEvaluations = static_cast<unsigned int>(m_VnlOptimizer->get_num_evaluations());
     bool         converged = false;
     unsigned int i = 1;
@@ -219,7 +218,7 @@ AmoebaOptimizer::StartOptimization()
       delta = delta * (1.0 / pow(2.0, static_cast<double>(i)) * (rand() > RAND_MAX / 2 ? 1 : -1));
       m_VnlOptimizer->minimize(parameters, delta);
       totalEvaluations += static_cast<unsigned int>(m_VnlOptimizer->get_num_evaluations());
-      currentValue = adaptor->f(parameters);
+      const double currentValue = adaptor->f(parameters);
       // be consistent with the underlying vnl amoeba implementation
       double maxAbs = 0.0;
       for (unsigned int j = 0; j < n; ++j)
@@ -279,7 +278,7 @@ AmoebaOptimizer::ValidateSettings()
   // we have to have a cost function
   if (GetCostFunctionAdaptor() == nullptr)
   {
-    itkExceptionMacro(<< "nullptr cost function");
+    itkExceptionMacro("nullptr cost function");
   }
   // if we got here it is safe to get the number of parameters the cost
   // function expects
@@ -288,7 +287,7 @@ AmoebaOptimizer::ValidateSettings()
   // check that the number of parameters match
   if (GetInitialPosition().Size() != n)
   {
-    itkExceptionMacro(<< "cost function and initial position dimensions mismatch");
+    itkExceptionMacro("cost function and initial position dimensions mismatch");
   }
 
   // the user gave us data to use for the initial simplex, check that it
@@ -299,7 +298,7 @@ AmoebaOptimizer::ValidateSettings()
   {
     if (m_InitialSimplexDelta.size() != n)
     {
-      itkExceptionMacro(<< "cost function and simplex delta dimensions mismatch");
+      itkExceptionMacro("cost function and simplex delta dimensions mismatch");
     }
   }
   // check that the number of scale factors matches
@@ -307,18 +306,18 @@ AmoebaOptimizer::ValidateSettings()
   {
     if (this->GetScales().Size() != n)
     {
-      itkExceptionMacro(<< "cost function and scaling information dimensions mismatch");
+      itkExceptionMacro("cost function and scaling information dimensions mismatch");
     }
   }
   // parameters' convergence tolerance has to be positive
   if (this->m_ParametersConvergenceTolerance < 0)
   {
-    itkExceptionMacro(<< "negative parameters convergence tolerance");
+    itkExceptionMacro("negative parameters convergence tolerance");
   }
   // function convergence tolerance has to be positive
   if (this->m_FunctionConvergenceTolerance < 0)
   {
-    itkExceptionMacro(<< "negative function convergence tolerance");
+    itkExceptionMacro("negative function convergence tolerance");
   }
 }
 

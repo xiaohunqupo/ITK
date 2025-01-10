@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageKmeansImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarImageKmeansImageFilter);
 
   /** Image type alias support */
   using InputPixelType = typename InputImageType::PixelType;
@@ -167,7 +167,7 @@ protected:
   /* See superclass for doxygen. This methods additionally checks that
    * the number of means is not 0. */
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
 private:
   using MeansContainer = std::vector<RealPixelType>;

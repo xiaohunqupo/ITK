@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RingBuffer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RingBuffer);
 
   /** Set the number of buffers
    * WARNING: If the size is set smaller than the current buffer size, the tail

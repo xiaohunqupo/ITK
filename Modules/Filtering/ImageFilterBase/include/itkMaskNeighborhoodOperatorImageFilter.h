@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaskNeighborhoodOperatorImageFilter, NeighborhoodOperatorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaskNeighborhoodOperatorImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -147,7 +147,7 @@ public:
 
 protected:
   MaskNeighborhoodOperatorImageFilter()
-    : m_DefaultValue(NumericTraits<OutputPixelType>::ZeroValue())
+    : m_DefaultValue(OutputPixelType{})
   {}
   ~MaskNeighborhoodOperatorImageFilter() override = default;
   void

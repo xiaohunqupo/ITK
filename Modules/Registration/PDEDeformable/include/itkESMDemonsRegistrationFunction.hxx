@@ -26,10 +26,9 @@ namespace itk
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ESMDemonsRegistrationFunction()
 {
-  RadiusType   r;
-  unsigned int j;
+  RadiusType r;
 
-  for (j = 0; j < ImageDimension; ++j)
+  for (unsigned int j = 0; j < ImageDimension; ++j)
   {
     r[j] = 0;
   }
@@ -117,7 +116,7 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::In
 {
   if (!this->GetMovingImage() || !this->GetFixedImage() || !m_MovingImageInterpolator)
   {
-    itkExceptionMacro(<< "MovingImage, FixedImage and/or Interpolator not set");
+    itkExceptionMacro("MovingImage, FixedImage and/or Interpolator not set");
   }
 
   // cache fixed image information
@@ -165,11 +164,11 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::In
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-typename ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::PixelType
+auto
 ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ComputeUpdate(
   const NeighborhoodType & it,
   void *                   gd,
-  const FloatOffsetType &  itkNotUsed(offset))
+  const FloatOffsetType &  itkNotUsed(offset)) -> PixelType
 {
   auto *    globalData = (GlobalDataStruct *)gd;
   PixelType update;
@@ -216,7 +215,7 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Co
         warpedMovingGradient[dim] = 0.0;
         continue;
       }
-      else if (index[dim] == FirstIndex[dim])
+      if (index[dim] == FirstIndex[dim])
       {
         // compute derivative
         tmpIndex[dim] += 1;
@@ -313,7 +312,7 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Co
     }
     else
     {
-      itkExceptionMacro(<< "Unknown gradient type");
+      itkExceptionMacro("Unknown gradient type");
     }
   }
   else if (this->m_UseGradientType == GradientEnum::Fixed)
@@ -338,7 +337,7 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Co
   }
   else
   {
-    itkExceptionMacro(<< "Unknown gradient type");
+    itkExceptionMacro("Unknown gradient type");
   }
 
   const auto usedGradientTimes2 =
@@ -407,9 +406,9 @@ template <typename TFixedImage, typename TMovingImage, typename TDisplacementFie
 void
 ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ReleaseGlobalDataPointer(void * gd) const
 {
-  auto * globalData = (GlobalDataStruct *)gd;
+  const std::unique_ptr<const GlobalDataStruct> globalData(static_cast<GlobalDataStruct *>(gd));
 
-  m_MetricCalculationLock.lock();
+  const std::lock_guard<std::mutex> lockGuard(m_MetricCalculationMutex);
   m_SumOfSquaredDifference += globalData->m_SumOfSquaredDifference;
   m_NumberOfPixelsProcessed += globalData->m_NumberOfPixelsProcessed;
   m_SumOfSquaredChange += globalData->m_SumOfSquaredChange;
@@ -418,9 +417,6 @@ ESMDemonsRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Re
     m_Metric = m_SumOfSquaredDifference / static_cast<double>(m_NumberOfPixelsProcessed);
     m_RMSChange = std::sqrt(m_SumOfSquaredChange / static_cast<double>(m_NumberOfPixelsProcessed));
   }
-  m_MetricCalculationLock.unlock();
-
-  delete globalData;
 }
 } // end namespace itk
 

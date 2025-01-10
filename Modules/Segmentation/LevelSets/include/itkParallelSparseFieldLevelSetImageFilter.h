@@ -274,8 +274,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParallelSparseFieldLevelSetImageFilter, FiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ParallelSparseFieldLevelSetImageFilter);
 
   /** Information derived from the image types. */
   using InputImageType = TInputImage;
@@ -573,7 +573,7 @@ protected:
   TimeStepType
   CalculateChange() override
   {
-    return NumericTraits<TimeStepType>::ZeroValue();
+    return TimeStepType{};
   }
 
   /** This method does the actual work of calculating change over a region

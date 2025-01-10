@@ -80,8 +80,8 @@ public:
   /** Instantiation through object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information. */
-  itkTypeMacro(VectorCurvatureAnisotropicDiffusionImageFilter, AnisotropicDiffusionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorCurvatureAnisotropicDiffusionImageFilter);
 
   /** Convenient type alias. */
   using typename Superclass::UpdateBufferType;
@@ -100,8 +100,7 @@ public:
 protected:
   VectorCurvatureAnisotropicDiffusionImageFilter()
   {
-    typename VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::Pointer q =
-      VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
+    auto q = VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
     this->SetDifferenceFunction(q);
   }
 

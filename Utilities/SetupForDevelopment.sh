@@ -21,14 +21,11 @@
 
 cd "${BASH_SOURCE%/*}/.." &&
 Utilities/GitSetup/setup-user && echo &&
-Utilities/GitSetup/setup-hooks && echo &&
 Utilities/GitSetup/setup-git-aliases && echo &&
 (Utilities/GitSetup/setup-upstream ||
  echo 'Failed to setup origin.  Run this again to retry.') && echo &&
 (Utilities/GitSetup/setup-github ||
  echo 'Failed to setup GitHub.  Run this again to retry.') && echo &&
-(Utilities/GitSetup/setup-girder-api-key ||
- echo 'Failed to setup the Girder API key.  Run this again to retry.') && echo &&
 Utilities/GitSetup/tips &&
 Utilities/GitSetup/github-tips
 
@@ -108,7 +105,9 @@ elif test ${git_version_arr[0]} -eq $git_required_major_version; then
 fi
 echo -e "Git version $git_version is OK.\n"
 
+(Utilities/GitSetup/setup-precommit  ||
+ echo 'Failed to setup pre-commit.') && echo &&
 
 # Record the version of this setup so Hooks/pre-commit can check it.
-SetupForDevelopment_VERSION=9
+SetupForDevelopment_VERSION=11
 git config hooks.SetupForDevelopment ${SetupForDevelopment_VERSION}

@@ -50,8 +50,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = Object;
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetEvolutionBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEvolutionBase);
 
   using EquationContainerType = TEquationContainer;
   using EquationContainerPointer = typename EquationContainerType::Pointer;
@@ -140,16 +140,19 @@ protected:
   /** Initialize the update buffers for all level sets to hold the updates of
    *  equations in each iteration. No-op by default. */
   virtual void
-  AllocateUpdateBuffer();
+  AllocateUpdateBuffer()
+  {}
 
   /** Computer the update at each pixel and store in the update buffer. No-op by
    * default. */
   virtual void
-  ComputeIteration();
+  ComputeIteration()
+  {}
 
   /** Compute the time-step for the next iteration. No-op by default. */
   virtual void
-  ComputeTimeStepForNextIteration();
+  ComputeTimeStepForNextIteration()
+  {}
 
   virtual void
   UpdateLevelSets() = 0;

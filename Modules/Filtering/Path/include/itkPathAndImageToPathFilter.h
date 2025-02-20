@@ -50,8 +50,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PathAndImageToPathFilter, PathToPathFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PathAndImageToPathFilter);
 
   /** Some convenient type alias. */
   using InputPathType = TInputPath;

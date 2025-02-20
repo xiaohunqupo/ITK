@@ -29,7 +29,7 @@ ImageDuplicator<TInputImage>::Update()
 {
   if (!m_InputImage)
   {
-    itkExceptionMacro(<< "Input image has not been connected");
+    itkExceptionMacro("Input image has not been connected");
   }
 
   // Update only if the input image has been modified
@@ -51,7 +51,7 @@ ImageDuplicator<TInputImage>::Update()
   m_DuplicateImage->SetRequestedRegion(m_InputImage->GetRequestedRegion());
   m_DuplicateImage->SetBufferedRegion(m_InputImage->GetBufferedRegion());
   m_DuplicateImage->Allocate();
-  typename ImageType::RegionType region = m_InputImage->GetBufferedRegion();
+  const typename ImageType::RegionType region = m_InputImage->GetBufferedRegion();
   ImageAlgorithm::Copy(m_InputImage.GetPointer(), m_DuplicateImage.GetPointer(), region, region);
 }
 

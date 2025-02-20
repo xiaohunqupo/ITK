@@ -46,10 +46,8 @@ namespace itk
  * from the negative gradient of the edge potential image. This term behaves like
  * a doublet attracting the contour to the edges.
  *
- * \par This implementation is based on:
- *  L. Lorigo, O. Faugeras, W.E.L. Grimson, R. Keriven, R. Kikinis, A. Nabavi,
- *  and C.-F. Westin, Curves: Curve evolution for vessel segmentation.
- *  Medical Image Analysis, 5:195-206, 2001.
+ * \par Reference:
+ * This implementation is based on \cite lorigo2001.
  *
  * \sa LevelSetFunction
  * \sa SegmentationLevelSetImageFunction
@@ -75,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(CurvesLevelSetFunction, SegmentationLevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvesLevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   using PixelType = typename SuperSuperclass::PixelType;

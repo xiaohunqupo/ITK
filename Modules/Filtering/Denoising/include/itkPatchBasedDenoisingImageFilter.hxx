@@ -23,9 +23,9 @@
 #include "itkResampleImageFilter.h"
 #include "itkIdentityTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
-#include "itkImageFileWriter.h"
 #include "itkGaussianOperator.h"
 #include "itkImageAlgorithm.h"
+#include "itkIntTypes.h"
 #include "itkVectorImageToImageAdaptor.h"
 #include "itkSpatialNeighborSubsampler.h"
 #include "itkMacro.h"
@@ -43,7 +43,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PatchBasedDenoisingIm
   m_MinProbability(NumericTraits<RealValueType>::min() * 100)
   , // to avoid divide by zero
   m_SigmaUpdateDecimationFactor(
-    static_cast<unsigned int>(Math::Round<double>(1.0 / m_KernelBandwidthFractionPixelsForEstimation)))
+    static_cast<unsigned int>(Math::Round<int64_t>(1.0 / m_KernelBandwidthFractionPixelsForEstimation)))
   , m_NoiseSigma()
   , m_NoiseSigmaSquared()
   , m_SearchSpaceList(ListAdaptorType::New())
@@ -79,8 +79,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::SetThreadData(int thr
   }
   else
   {
-    itkExceptionMacro(<< "Invalid thread id " << threadId << " or SetThreadData called before m_ThreadData (size="
-                      << m_ThreadData.size() << ") was initialized.");
+    itkExceptionMacro("Invalid thread id " << threadId << " or SetThreadData called before m_ThreadData (size="
+                                           << m_ThreadData.size() << ") was initialized.");
   }
 }
 
@@ -92,11 +92,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::GetThreadData(int thr
   {
     return m_ThreadData[threadId];
   }
-  else
-  {
-    itkExceptionMacro(<< "Invalid thread id " << threadId << " or GetThreadData called before m_ThreadData (size="
-                      << m_ThreadData.size() << ") was initialized.");
-  }
+
+  itkExceptionMacro("Invalid thread id " << threadId << " or GetThreadData called before m_ThreadData (size="
+                                         << m_ThreadData.size() << ") was initialized.");
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -122,7 +120,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::CopyInputToOutput()
 {
   if (!this->m_InputImage || !this->m_OutputImage)
   {
-    itkExceptionMacro(<< "Input or Output image is nullptr.");
+    itkExceptionMacro("Input or Output image is nullptr.");
   }
 
   InputImageRegionConstIteratorType inputIt(this->m_InputImage, this->m_InputImage->GetRequestedRegion());
@@ -166,37 +164,35 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::GenerateInputRequeste
 
   // Get a copy of the input requested region (should equal the output
   // requested region)
-  typename InputImageType::RegionType inputRequestedRegion;
-  inputRequestedRegion = inputPtr->GetRequestedRegion();
+  typename InputImageType::RegionType inputRequestedRegion = inputPtr->GetRequestedRegion();
   // Pad the input requested region by the operator radius
   inputRequestedRegion.PadByRadius(voxelNeighborhoodSize);
 
-  itkDebugMacro(<< "Padding inputRequestedRegion by " << voxelNeighborhoodSize << '\n'
+  itkDebugMacro("Padding inputRequestedRegion by "
+                << voxelNeighborhoodSize << '\n'
                 << "inputRequestedRegion: " << inputRequestedRegion << '\n'
                 << "largestPossibleRegion: " << inputPtr->GetLargestPossibleRegion());
 
   // Crop the input requested region at the input's largest possible region
   if (inputRequestedRegion.Crop(inputPtr->GetLargestPossibleRegion()))
   {
-    itkDebugMacro(<< "Cropped inputRequestedRegion to: " << inputRequestedRegion);
+    itkDebugMacro("Cropped inputRequestedRegion to: " << inputRequestedRegion);
     inputPtr->SetRequestedRegion(inputRequestedRegion);
     return;
   }
-  else
-  {
-    // Couldn't crop the region (requested region is outside the largest
-    // possible region). Throw an exception.
 
-    // Store what we tried to request (prior to trying to crop)
-    inputPtr->SetRequestedRegion(inputRequestedRegion);
+  // Couldn't crop the region (requested region is outside the largest
+  // possible region). Throw an exception.
 
-    // Build an exception
-    InvalidRequestedRegionError e(__FILE__, __LINE__);
-    e.SetLocation(ITK_LOCATION);
-    e.SetDescription("Requested region is (at least partially) outside the largest possible region");
-    e.SetDataObject(inputPtr);
-    throw e;
-  }
+  // Store what we tried to request (prior to trying to crop)
+  inputPtr->SetRequestedRegion(inputRequestedRegion);
+
+  // Build an exception
+  InvalidRequestedRegionError e(__FILE__, __LINE__);
+  e.SetLocation(ITK_LOCATION);
+  e.SetDescription("Requested region is (at least partially) outside the largest possible region");
+  e.SetDataObject(inputPtr);
+  throw e;
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -216,19 +212,17 @@ template <typename TInputImage, typename TOutputImage>
 void
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Initialize()
 {
-  typename InputImageType::IndexType requiredIndex;
-  requiredIndex.Fill(0);
+  typename InputImageType::IndexType        requiredIndex{};
   const typename InputImageType::RegionType largestRegion = this->GetInput()->GetLargestPossibleRegion();
   const PatchRadiusType                     radius = this->GetPatchRadiusInVoxels();
-  PatchRadiusType                           two;
-  two.Fill(2);
+  auto                                      two = MakeFilled<PatchRadiusType>(2);
   requiredIndex += two * radius;
 
   if (!(largestRegion.IsInside(requiredIndex)))
   {
     // The image needs to be at least as big as a single patch
     // throw an exception when this isn't the case
-    itkExceptionMacro(<< "Patch is larger than the entire image (in at least one dimension)."
+    itkExceptionMacro("Patch is larger than the entire image (in at least one dimension)."
                       << "\nImage region: " << largestRegion << "\nPatch length (2*radius + 1): "
                       << this->GetPatchDiameterInVoxels() << "\nUse a smaller patch for this image.\n");
   }
@@ -238,16 +232,16 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Initialize()
 
   // For automatic sigma estimation, select every 'k'th pixel.
   m_SigmaUpdateDecimationFactor =
-    static_cast<unsigned int>(Math::Round<double>(1.0 / m_KernelBandwidthFractionPixelsForEstimation));
+    static_cast<unsigned int>(Math::Round<int64_t>(1.0 / m_KernelBandwidthFractionPixelsForEstimation));
   // For automatic sigma estimation, use at least 1% of pixels.
-  m_SigmaUpdateDecimationFactor = std::min(m_SigmaUpdateDecimationFactor,
-                                           static_cast<unsigned int>(Math::Round<double>(m_TotalNumberPixels / 100.0)));
+  m_SigmaUpdateDecimationFactor = std::min(
+    m_SigmaUpdateDecimationFactor, static_cast<unsigned int>(Math::Round<int64_t>(m_TotalNumberPixels / 100.0)));
   // For automatic sigma estimation, can't use more than 100% of pixels.
   m_SigmaUpdateDecimationFactor = std::max(m_SigmaUpdateDecimationFactor, 1u);
 
-  itkDebugMacro(<< "m_KernelBandwidthFractionPixelsForEstimation: " << m_KernelBandwidthFractionPixelsForEstimation
-                << ", "
-                << "m_SigmaUpdateDecimationFactor: " << m_SigmaUpdateDecimationFactor);
+  itkDebugMacro("m_KernelBandwidthFractionPixelsForEstimation: " << m_KernelBandwidthFractionPixelsForEstimation << ", "
+                                                                 << "m_SigmaUpdateDecimationFactor: "
+                                                                 << m_SigmaUpdateDecimationFactor);
 
   // Get the number of components per pixel in the input image.
   m_NumPixelComponents = this->GetInput()->GetNumberOfComponentsPerPixel();
@@ -336,13 +330,14 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Initialize()
       // Check that the set kernel sigma is valid
       if (m_KernelBandwidthSigma[ic] <= m_MinSigma)
       {
-        itkExceptionMacro(<< "Gaussian kernel sigma (" << m_KernelBandwidthSigma[ic] << ") must be larger than "
-                          << m_MinSigma);
+        itkExceptionMacro("Gaussian kernel sigma (" << m_KernelBandwidthSigma[ic] << ") must be larger than "
+                                                    << m_MinSigma);
       }
     }
   }
 
-  itkDebugMacro(<< "Image Intensity range: [" << m_ImageMin << ',' << m_ImageMax << "], "
+  itkDebugMacro("Image Intensity range: ["
+                << m_ImageMin << ',' << m_ImageMax << "], "
                 << "IntensityRescaleInvFactor: " << m_IntensityRescaleInvFactor << " , "
                 << "KernelBandwidthMultiplicationFactor: " << m_KernelBandwidthMultiplicationFactor << " , "
                 << "KernelBandwidthSigma initialized to: " << m_KernelBandwidthSigma);
@@ -363,7 +358,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Initialize()
       {
         invFactor = m_IntensityRescaleInvFactor[0];
       }
-      RealValueType sigma = 5.0 / invFactor;
+      const RealValueType sigma = 5.0 / invFactor;
       this->SetComponent(m_NoiseSigma, pc, sigma);
       this->SetComponent(m_NoiseSigmaSquared, pc, sigma * sigma);
     }
@@ -388,7 +383,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::EnforceConstraints()
   {
     if (m_ImageMax[ic] <= m_ImageMin[ic])
     {
-      itkExceptionMacro(<< "Each image component must be nonconstant.  "
+      itkExceptionMacro("Each image component must be nonconstant.  "
                         << "Component " << ic << " has the constant value " << m_ImageMax[ic] << ".\n");
     }
   }
@@ -399,9 +394,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::EnforceConstraints()
   {
     for (unsigned int ic = 0; ic < m_NumIndependentComponents; ++ic)
     {
-      if (m_ImageMin[ic] < NumericTraits<PixelValueType>::ZeroValue())
+      if (m_ImageMin[ic] < PixelValueType{})
       {
-        itkExceptionMacro(<< "When using POISSON or RICIAN noise models, "
+        itkExceptionMacro("When using POISSON or RICIAN noise models, "
                           << "all components of all pixels in the image must "
                           << "be >= 0.  The smallest value for component " << ic << " in the image is "
                           << m_ImageMin[ic] << ".\n");
@@ -415,7 +410,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::EnforceConstraints()
   {
     if (this->GetNoiseModelFidelityWeight() > 0)
     {
-      itkWarningMacro(<< "Noise model is undefined for RIEMANNIAN case, "
+      itkWarningMacro("Noise model is undefined for RIEMANNIAN case, "
                       << "disabling noise model by setting fidelity weight "
                       << "to zero.");
       this->SetNoiseModelFidelityWeight(0.0);
@@ -458,10 +453,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::InitializePatchWeight
   // Really we just want to handle relative anisotropies,
   // so base resampling on the deviation from the max spacing
   // in the input image.
-  typename WeightsImageType::SpacingType      physicalSpacing;
-  typename WeightsImageType::SpacingValueType maxSpacing;
-  physicalSpacing = this->m_InputImage->GetSpacing();
-  maxSpacing = physicalSpacing[0];
+  typename WeightsImageType::SpacingType      physicalSpacing = this->m_InputImage->GetSpacing();
+  typename WeightsImageType::SpacingValueType maxSpacing = physicalSpacing[0];
   for (unsigned int sp = 1; sp < physicalSpacing.Size(); ++sp)
   {
     if (physicalSpacing[sp] > maxSpacing)
@@ -473,24 +466,21 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::InitializePatchWeight
 
   // Allocate the patch weights (mask) as an image.
   // Done in physical space.
-  typename WeightsImageType::SizeType physicalSize;
-  physicalSize.Fill(physicalDiameter);
-  typename WeightsImageType::RegionType physicalRegion(physicalSize);
-  auto                                  physicalWeightsImage = WeightsImageType::New();
+  auto                                        physicalSize = WeightsImageType::SizeType::Filled(physicalDiameter);
+  const typename WeightsImageType::RegionType physicalRegion(physicalSize);
+  auto                                        physicalWeightsImage = WeightsImageType::New();
   physicalWeightsImage->SetRegions(physicalRegion);
   physicalWeightsImage->SetSpacing(physicalSpacing);
   physicalWeightsImage->Allocate();
   physicalWeightsImage->FillBuffer(1.0);
 
-  typename WeightsImageType::IndexType centerIndex;
-  centerIndex.Fill(patchRadius);
+  auto centerIndex = WeightsImageType::IndexType::Filled(patchRadius);
 
   unsigned int pos = 0;
   for (ImageRegionIteratorWithIndex<WeightsImageType> pwIt(physicalWeightsImage, physicalRegion); !pwIt.IsAtEnd();
        ++pwIt)
   {
-    typename WeightsImageType::IndexType curIndex;
-    curIndex = pwIt.GetIndex();
+    typename WeightsImageType::IndexType curIndex = pwIt.GetIndex();
     // Compute distances of each pixel from center pixel
     Vector<DistanceType, ImageDimension> distanceVector;
     for (unsigned int d = 0; d < ImageDimension; ++d)
@@ -564,17 +554,17 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::InitializePatchWeight
 
   } // end for each element in the patch
 
-  typename PatchWeightsType::ValueType centerWeight = patchWeights[(this->GetPatchLengthInVoxels() - 1) / 2];
+  const typename PatchWeightsType::ValueType centerWeight = patchWeights[(this->GetPatchLengthInVoxels() - 1) / 2];
   if (centerWeight != 1.0)
   {
     if (centerWeight <= 0.0)
     {
-      itkExceptionMacro(<< "Center pixel's weight (" << patchWeights[(this->GetPatchLengthInVoxels() - 1) / 2]
-                        << ") must be greater than 0.0 ");
+      itkExceptionMacro("Center pixel's weight (" << patchWeights[(this->GetPatchLengthInVoxels() - 1) / 2]
+                                                  << ") must be greater than 0.0 ");
     }
 
     // Normalize to the center weight to guarantee that the center weight == 1.0
-    typename PatchWeightsType::SizeValueType pSize = patchWeights.Size();
+    const typename PatchWeightsType::SizeValueType pSize = patchWeights.Size();
     for (pos = 0; pos < pSize; ++pos)
     {
       patchWeights[pos] = patchWeights[pos] / centerWeight;
@@ -634,9 +624,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::DispatchedRiemannianM
   str.Filter = this;
   str.Img = const_cast<InputImageType *>(img);
   this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
-  this->GetMultiThreader()->SetSingleMethod(this->RiemannianMinMaxThreaderCallback, &str);
-  // Multithread the execution
-  this->GetMultiThreader()->SingleMethodExecute();
+  this->GetMultiThreader()->SetSingleMethodAndExecute(this->RiemannianMinMaxThreaderCallback, &str);
   this->ResolveRiemannianMinMax();
 }
 
@@ -682,12 +670,11 @@ typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataSt
   using FaceCalculatorType = typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
   using FaceListType = typename FaceCalculatorType::FaceListType;
 
-  typename InputImageType::SizeType radius;
-  radius.Fill(1);
+  constexpr auto radius = InputImageType::SizeType::Filled(1);
 
   if (m_NumIndependentComponents != 1)
   {
-    itkWarningMacro(<< "ThreadedRiemannianMinMax calculation assumes that "
+    itkWarningMacro("ThreadedRiemannianMinMax calculation assumes that "
                     << "there is exactly 1 independent component, but "
                     << "num independent components = " << m_NumIndependentComponents << " instead.\n");
   }
@@ -706,12 +693,11 @@ typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataSt
   maxNorm.Fill(NumericTraits<RealValueType>::min());
   minNorm.Fill(NumericTraits<RealValueType>::max());
 
-  FaceCalculatorType              faceCalculator;
-  FaceListType                    faceList = faceCalculator(img, regionToProcess, radius);
-  typename FaceListType::iterator fIt;
-  bool                            foundMinMax = false;
+  FaceCalculatorType faceCalculator;
+  FaceListType       faceList = faceCalculator(img, regionToProcess, radius);
+  bool               foundMinMax = false;
 
-  for (fIt = faceList.begin(); fIt != faceList.end(); ++fIt)
+  for (auto fIt = faceList.begin(); fIt != faceList.end(); ++fIt)
   {
     if (!(fIt->GetNumberOfPixels()))
     {
@@ -720,7 +706,7 @@ typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataSt
     }
 
     // Only evaluating each pixel once, so nothing to cache
-    bool                              useCachedComputations = false;
+    const bool                        useCachedComputations = false;
     InputImageRegionConstIteratorType imgIt(img, *fIt);
     imgIt.GoToBegin();
     for (imgIt.GoToBegin(); !imgIt.IsAtEnd(); ++imgIt)
@@ -745,18 +731,18 @@ typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataSt
       }
       foundMinMax = true;
     } // end for each pixel in the region
-  }   // end for each region
+  } // end for each region
   if (foundMinMax)
   {
     threadData.validNorms[0] = 1;
     threadData.minNorm[0] = std::sqrt(minNorm[0]);
     threadData.maxNorm[0] = std::sqrt(maxNorm[0]);
 
-    itkDebugMacro(<< "threadData minNorm: " << minNorm[0] << ", maxNorm: " << maxNorm[0]);
+    itkDebugMacro("threadData minNorm: " << minNorm[0] << ", maxNorm: " << maxNorm[0]);
   }
   else
   {
-    itkDebugMacro(<< "no pixels in this region");
+    itkDebugMacro("no pixels in this region");
   }
   return threadData;
 }
@@ -791,7 +777,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ResolveRiemannianMinM
     }
   }
 
-  itkDebugMacro(<< "image min resolved to: " << m_ImageMin << ", image max resolved to: " << m_ImageMax);
+  itkDebugMacro("image min resolved to: " << m_ImageMin << ", image max resolved to: " << m_ImageMax);
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -809,8 +795,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeSignedEuclidea
 {
   for (unsigned int pc = 0; pc < m_NumPixelComponents; ++pc)
   {
-    RealValueType tmpDiff = this->GetComponent(b, pc) - this->GetComponent(a, pc);
-    RealValueType tmpWeight = weight[pc];
+    const RealValueType tmpDiff = this->GetComponent(b, pc) - this->GetComponent(a, pc);
+    const RealValueType tmpWeight = weight[pc];
     this->SetComponent(diff, pc, tmpDiff);
     norm[pc] = tmpWeight * tmpWeight * tmpDiff * tmpDiff;
   }
@@ -860,17 +846,18 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Compute3x3EigenAnalys
   // I3 = det(D) = DxxDyyDzz + 2DxyDxzDyz - (Dzz(Dxy)^2 + Dyy(Dxz)^2 +
   // Dxx(Dyz)^2)
 
-  RealTensorValueT I1, I2, I3, I1div3;
-  I1 = D0 + D3 + D5;
-  I2 = D0 * D3 + D0 * D5 + D3 * D5 - (DSq1 + DSq2 + DSq4);
-  I3 = D0 * D3 * D5 + 2 * D1 * D2 * D4 - (D5 * DSq1 + D3 * DSq2 + D0 * DSq4);
-  I1div3 = I1 / 3;
+  const RealTensorValueT I1 = D0 + D3 + D5;
+  const RealTensorValueT I2 = D0 * D3 + D0 * D5 + D3 * D5 - (DSq1 + DSq2 + DSq4);
+  const RealTensorValueT I3 = D0 * D3 * D5 + 2 * D1 * D2 * D4 - (D5 * DSq1 + D3 * DSq2 + D0 * DSq4);
+  const RealTensorValueT I1div3 = I1 / 3;
 
   // Compute rotationally-invariant variables n and s
   // n = (I1/3)^2 - I2/3
   // s = (I1/3)^3 - I1*I2/6 + I3/2
 
-  RealTensorValueT n, sqrtn, s;
+  RealTensorValueT n;     /*one-line-declaration*/
+  RealTensorValueT sqrtn; /*one-line-declaration*/
+  RealTensorValueT s;     /*one-line-declaration*/
   n = I1div3 * I1div3 - I2 / 3;
   s = I1div3 * I1div3 * I1div3 - I1 * I2 / 6 + I3 / 2;
   sqrtn = std::sqrt(n);
@@ -879,29 +866,22 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Compute3x3EigenAnalys
   // If these occur, default to the standard eigen analysis.
   // These basically enforce that the spdMatrix is in fact
   // symmetric positive definite.
-  if ((I3 < NumericTraits<RealTensorValueT>::epsilon()) || (D0 < NumericTraits<RealTensorValueT>::ZeroValue()) ||
-      (D3 < NumericTraits<RealTensorValueT>::ZeroValue()) || (D5 < NumericTraits<RealTensorValueT>::ZeroValue()) ||
-      (D0 * D3 < DSq1) || (D0 * D5 < DSq2) || (D3 * D5 < DSq4) || (n < NumericTraits<RealTensorValueT>::epsilon()))
+  if ((I3 < NumericTraits<RealTensorValueT>::epsilon()) || (D0 < RealTensorValueT{}) || (D3 < RealTensorValueT{}) ||
+      (D5 < RealTensorValueT{}) || (D0 * D3 < DSq1) || (D0 * D5 < DSq2) || (D3 * D5 < DSq4) ||
+      (n < NumericTraits<RealTensorValueT>::epsilon()))
   {
     spdMatrix.ComputeEigenAnalysis(eigenVals, eigenVecs);
     return;
   }
 
-  // Compute phi = (acos((s/n) * sqrt(1/n)) / 3)
-  RealTensorValueT phi;
-  double           acos_arg = (s / n) * 1 / sqrtn;
+
+  const double acos_arg = (s / n) * 1 / sqrtn;
   // When floating point exceptions are enabled, std::acos generates
   // NaNs (domain errors) if itk::Math::abs(acos_arg) > 1.0
   // We treat those out of domain arguments as 1.0 (the max allowed value
   // of the std::acos domain), in such case phi = acos(1.0) = acos(-1.0) = 0.0
-  if (itk::Math::abs(acos_arg) <= 1.0)
-  {
-    phi = std::acos(acos_arg) / 3;
-  }
-  else
-  {
-    phi = 0.0;
-  }
+  // Compute phi = (acos((s/n) * sqrt(1/n)) / 3)
+  const RealTensorValueT phi = (itk::Math::abs(acos_arg) <= 1.0) ? std::acos(acos_arg) / 3 : 0.0;
 
   // Now compute the eigenvalues
   // lambda1 = I1/3 + 2*sqrt(n)*cos(phi)
@@ -910,10 +890,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Compute3x3EigenAnalys
   // Due to trace invariance,
   // lambda3 also = I1 - lambda1 - lambda2
 
-  RealTensorValueT lambda1, lambda2, lambda3;
-  lambda1 = I1div3 + 2 * sqrtn * std::cos(phi);
-  lambda2 = I1div3 - 2 * sqrtn * std::cos(itk::Math::pi / 3 + phi);
-  lambda3 = I1 - lambda1 - lambda2;
+  const RealTensorValueT lambda1 = I1div3 + 2 * sqrtn * std::cos(phi);
+  const RealTensorValueT lambda2 = I1div3 - 2 * sqrtn * std::cos(itk::Math::pi / 3 + phi);
+  const RealTensorValueT lambda3 = I1 - lambda1 - lambda2;
 
   eigenVals[0] = lambda1;
   eigenVals[1] = lambda2;
@@ -933,10 +912,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Compute3x3EigenAnalys
     // Ai = Dxx - eigenVals[i]
     // Bi = Dyy - eigenVals[i]
     // Ci = Dzz - eigenVals[i]
-    RealTensorValueT A, B, C;
-    A = D0 - eigenVals[i];
-    B = D3 - eigenVals[i];
-    C = D5 - eigenVals[i];
+    const RealTensorValueT A = D0 - eigenVals[i];
+    const RealTensorValueT B = D3 - eigenVals[i];
+    const RealTensorValueT C = D5 - eigenVals[i];
 
     // Compute eigenvec components x, y and z
     // eix = (DxyDyz - BiDxz)(DxzDyz - CiDxy)
@@ -946,21 +924,18 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::Compute3x3EigenAnalys
     // eix = term1 * term2
     // eiy = term2 * term3
     // eiz = term1 * term3
-    RealTensorValueT term1, term2, term3;
-    RealTensorValueT ex, ey, ez;
-    term1 = D1 * D4 - B * D2;
-    term2 = D2 * D4 - C * D1;
-    term3 = D2 * D1 - A * D4;
-    ex = term1 * term2;
-    ey = term2 * term3;
-    ez = term1 * term3;
+    const RealTensorValueT term1 = D1 * D4 - B * D2;
+    const RealTensorValueT term2 = D2 * D4 - C * D1;
+    const RealTensorValueT term3 = D2 * D1 - A * D4;
+    const RealTensorValueT ex = term1 * term2;
+    const RealTensorValueT ey = term2 * term3;
+    const RealTensorValueT ez = term1 * term3;
 
     // Now normalize the vector
     // e = [ex ey ez]
     // eigenVec = e / sqrt(e'e)
-    RealTensorValueT norm, sqrtnorm;
-    norm = ex * ex + ey * ey + ez * ez;
-    sqrtnorm = std::sqrt(norm);
+    const RealTensorValueT norm = ex * ex + ey * ey + ez * ez;
+    const RealTensorValueT sqrtnorm = std::sqrt(norm);
     eigenVecs(i, 0) = ex / sqrtnorm;
     eigenVecs(i, 1) = ey / sqrtnorm;
     eigenVecs(i, 2) = ez / sqrtnorm;
@@ -988,12 +963,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeLogMapAndWeigh
 {
   using RealEigenValuesArrayType = typename RealType::EigenValuesArrayType;
   using RealEigenVectorsMatrixType = typename RealType::EigenVectorsMatrixType;
-  EigenValuesArrayType       eigenVals;
-  EigenVectorsMatrixType     eigenVecs;
-  RealEigenValuesArrayType   YEigenVals;
-  RealEigenVectorsMatrixType YEigenVecs;
-  RealType                   Y;
-
+  EigenValuesArrayType   eigenVals;
+  EigenVectorsMatrixType eigenVecs;
   if (useCachedComputations)
   {
     eigenVals = eigenValsCache[cacheIndex];
@@ -1038,13 +1009,14 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeLogMapAndWeigh
   // Since we are always working with DiffusionTensor3D pixels which are always
   // 3x3, these calculations can be optimized as follows.
 
-  RealValueType factor0;
-  RealValueType factor1;
-  RealValueType factor2;
-  factor0 = spdMatrixB[0] * eigenVecs(0, 0) + spdMatrixB[1] * eigenVecs(0, 1) + spdMatrixB[2] * eigenVecs(0, 2);
-  factor1 = spdMatrixB[1] * eigenVecs(0, 0) + spdMatrixB[3] * eigenVecs(0, 1) + spdMatrixB[4] * eigenVecs(0, 2);
-  factor2 = spdMatrixB[2] * eigenVecs(0, 0) + spdMatrixB[4] * eigenVecs(0, 1) + spdMatrixB[5] * eigenVecs(0, 2);
+  RealValueType factor0 =
+    spdMatrixB[0] * eigenVecs(0, 0) + spdMatrixB[1] * eigenVecs(0, 1) + spdMatrixB[2] * eigenVecs(0, 2);
+  RealValueType factor1 =
+    spdMatrixB[1] * eigenVecs(0, 0) + spdMatrixB[3] * eigenVecs(0, 1) + spdMatrixB[4] * eigenVecs(0, 2);
+  RealValueType factor2 =
+    spdMatrixB[2] * eigenVecs(0, 0) + spdMatrixB[4] * eigenVecs(0, 1) + spdMatrixB[5] * eigenVecs(0, 2);
 
+  RealType Y;
   Y[0] = (eigenVecs(0, 0) * factor0 + eigenVecs(0, 1) * factor1 + eigenVecs(0, 2) * factor2) / eigenVals[0];
   Y[1] = (eigenVecs(1, 0) * factor0 + eigenVecs(1, 1) * factor1 + eigenVecs(1, 2) * factor2) /
          std::sqrt(eigenVals[0] * eigenVals[1]);
@@ -1064,7 +1036,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeLogMapAndWeigh
   factor2 = spdMatrixB[2] * eigenVecs(2, 0) + spdMatrixB[4] * eigenVecs(2, 1) + spdMatrixB[5] * eigenVecs(2, 2);
 
   Y[5] = (eigenVecs(2, 0) * factor0 + eigenVecs(2, 1) * factor1 + eigenVecs(2, 2) * factor2) / eigenVals[2];
-
+  RealEigenValuesArrayType   YEigenVals;
+  RealEigenVectorsMatrixType YEigenVecs;
   if (m_UseFastTensorComputations)
   {
     this->Compute3x3EigenAnalysis(Y, YEigenVals, YEigenVecs);
@@ -1137,7 +1110,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeLogMapAndWeigh
 
   symMatrixLogMap[5] = YEigVal0 * temp20 * temp20 + YEigVal1 * temp21 * temp21 + YEigVal2 * temp22 * temp22;
 
-  RealValueType wt = weight[0];
+  const RealValueType wt = weight[0];
   geodesicDist[0] = wt * wt * (YEigVal0 * YEigVal0 + YEigVal1 * YEigVal1 + YEigVal2 * YEigVal2);
 }
 
@@ -1156,20 +1129,16 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::AddEuclideanUpdate(co
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::RealType
+auto
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::AddExponentialMapUpdate(
   const DiffusionTensor3D<RealValueType> & spdMatrix,
-  const DiffusionTensor3D<RealValueType> & symMatrix)
+  const DiffusionTensor3D<RealValueType> & symMatrix) -> RealType
 {
   using RealEigenValuesArrayType = typename RealType::EigenValuesArrayType;
   using RealEigenVectorsMatrixType = typename RealType::EigenVectorsMatrixType;
+
   RealEigenValuesArrayType   eigenVals;
   RealEigenVectorsMatrixType eigenVecs;
-  RealEigenValuesArrayType   YEigenVals;
-  RealEigenVectorsMatrixType YEigenVecs;
-  RealType                   Y;
-  RealType                   expMap;
-
   if (m_UseFastTensorComputations)
   {
     this->Compute3x3EigenAnalysis(spdMatrix, eigenVals, eigenVecs);
@@ -1198,14 +1167,14 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::AddExponentialMapUpda
   // Since we are always working with DiffusionTensor3D pixels which are always
   // 3x3, these calculations can be optimized as follows.
 
-  RealValueType factor0;
-  RealValueType factor1;
-  RealValueType factor2;
+  RealValueType factor0 =
+    symMatrix[0] * eigenVecs(0, 0) + symMatrix[1] * eigenVecs(0, 1) + symMatrix[2] * eigenVecs(0, 2);
+  RealValueType factor1 =
+    symMatrix[1] * eigenVecs(0, 0) + symMatrix[3] * eigenVecs(0, 1) + symMatrix[4] * eigenVecs(0, 2);
+  RealValueType factor2 =
+    symMatrix[2] * eigenVecs(0, 0) + symMatrix[4] * eigenVecs(0, 1) + symMatrix[5] * eigenVecs(0, 2);
 
-  factor0 = symMatrix[0] * eigenVecs(0, 0) + symMatrix[1] * eigenVecs(0, 1) + symMatrix[2] * eigenVecs(0, 2);
-  factor1 = symMatrix[1] * eigenVecs(0, 0) + symMatrix[3] * eigenVecs(0, 1) + symMatrix[4] * eigenVecs(0, 2);
-  factor2 = symMatrix[2] * eigenVecs(0, 0) + symMatrix[4] * eigenVecs(0, 1) + symMatrix[5] * eigenVecs(0, 2);
-
+  RealType Y;
   Y[0] = (eigenVecs(0, 0) * factor0 + eigenVecs(0, 1) * factor1 + eigenVecs(0, 2) * factor2) / eigenVals[0];
   Y[1] = (eigenVecs(1, 0) * factor0 + eigenVecs(1, 1) * factor1 + eigenVecs(1, 2) * factor2) /
          std::sqrt(eigenVals[0] * eigenVals[1]);
@@ -1237,6 +1206,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::AddExponentialMapUpda
   // Since we are always working with DiffusionTensor3D pixels which are always
   // 3x3, these calculations can be optimized as follows.
 
+  RealEigenValuesArrayType   YEigenVals;
+  RealEigenVectorsMatrixType YEigenVecs;
   if (m_UseFastTensorComputations)
   {
     this->Compute3x3EigenAnalysis(Y, YEigenVals, YEigenVecs);
@@ -1286,6 +1257,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::AddExponentialMapUpda
   const RealValueType temp22 = eigenVecs(0, 2) * YEigenVecs(2, 0) * eigVal0 +
                                eigenVecs(1, 2) * YEigenVecs(2, 1) * eigVal1 +
                                eigenVecs(2, 2) * YEigenVecs(2, 2) * eigVal2;
+  RealType expMap;
   expMap[0] = YEigVal0 * temp00 * temp00 + YEigVal1 * temp01 * temp01 + YEigVal2 * temp02 * temp02;
   expMap[1] = YEigVal0 * temp00 * temp10 + YEigVal1 * temp01 * temp11 + YEigVal2 * temp02 * temp12;
   expMap[2] = YEigVal0 * temp00 * temp20 + YEigVal1 * temp01 * temp21 + YEigVal2 * temp02 * temp22;
@@ -1356,9 +1328,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ApplyUpdate()
   ThreadFilterStruct str;
   str.Filter = this;
   this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
-  this->GetMultiThreader()->SetSingleMethod(this->ApplyUpdateThreaderCallback, &str);
-  // Multithread the execution
-  this->GetMultiThreader()->SingleMethodExecute();
+  this->GetMultiThreader()->SetSingleMethodAndExecute(this->ApplyUpdateThreaderCallback, &str);
 
   // Explicitly call Modified on GetOutput here since ThreadedApplyUpdate
   // changes this buffer through iterators which don't increment the output
@@ -1505,11 +1475,11 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeSigmaUpdateThr
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataStruct
+auto
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaUpdate(
   const InputImageRegionType & regionToProcess,
   const int                    itkNotUsed(threadId),
-  ThreadDataStruct             threadData)
+  ThreadDataStruct             threadData) -> ThreadDataStruct
 {
   // Create two images to list adaptors, one for the iteration over the region
   // the other for querying to find the patches set the region of interest for
@@ -1538,7 +1508,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
   inList->SetImage(output);
   inList->SetRadius(radius);
 
-  BaseSamplerPointer sampler = threadData.sampler;
+  const BaseSamplerPointer sampler = threadData.sampler;
 
   // Break the input into a series of regions. The first region is free
   // of boundary conditions, the rest with boundary conditions. We operate
@@ -1546,9 +1516,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
   // For the sigma estimation, we only want to use pixels from the first
   // region to avoid using boundary conditions (and it's faster).
 
-  FaceCalculatorType              faceCalculator;
-  FaceListType                    faceList = faceCalculator(output, regionToProcess, radius);
-  typename FaceListType::iterator fIt;
+  FaceCalculatorType faceCalculator;
+  FaceListType       faceList = faceCalculator(output, regionToProcess, radius);
 
   const unsigned int lengthPatch = this->GetPatchLengthInVoxels();
   const unsigned int center = (lengthPatch - 1) / 2;
@@ -1563,7 +1532,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
 
   // Only use pixels whose patch is entirely in bounds
   // for the sigma calculation
-  fIt = faceList.begin();
+  const auto fIt = faceList.begin();
   if (!(fIt->GetNumberOfPixels()))
   {
     // Empty region, don't use.
@@ -1579,9 +1548,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
       // Skip this sample
       continue;
     }
-    InputImagePatchIterator currentPatch = sampleIt.GetMeasurementVector()[0];
-    IndexType               nIndex = currentPatch.GetIndex();
-    InstanceIdentifier      currentPatchId = inList->GetImage()->ComputeOffset(nIndex);
+    const InputImagePatchIterator currentPatch = sampleIt.GetMeasurementVector()[0];
+    IndexType                     nIndex = currentPatch.GetIndex();
+    const InstanceIdentifier      currentPatchId = inList->GetImage()->ComputeOffset(nIndex);
 
     // Select a set of patches from the full image, excluding points that have
     // neighbors outside the boundary at locations different than that of the
@@ -1639,7 +1608,6 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
     }
 
     IndexType               lastSelectedIdx;
-    IndexType               currSelectedIdx;
     InputImagePatchIterator selectedPatch;
     if (numPatches > 0)
     {
@@ -1648,14 +1616,13 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
     }
     else
     {
-      InputImagePatchIterator queryIt = sampler->GetSample()->GetMeasurementVector(currentPatchId)[0];
-      itkDebugMacro(<< "unexpected index for current patch, search results are empty."
+      const InputImagePatchIterator queryIt = sampler->GetSample()->GetMeasurementVector(currentPatchId)[0];
+      itkDebugMacro("unexpected index for current patch, search results are empty."
                     << "\ncurrent patch id: " << currentPatchId << "\ncurrent patch index: " << nIndex
                     << "\nindex calculated by searcher: " << queryIt.GetIndex(queryIt.GetCenterNeighborhoodIndex())
                     << "\npatch accessed by searcher: ");
     }
 
-    RealType      centerPatchDifference;
     RealArrayType squaredNorm(m_NumIndependentComponents);
     RealArrayType centerPatchSquaredNorm(m_NumIndependentComponents);
     RealArrayType tmpNorm1(m_NumIndependentComponents);
@@ -1666,7 +1633,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
          selectedIt != selectedPatches->End();
          ++selectedIt)
     {
-      currSelectedIdx = selectedIt.GetMeasurementVector()[0].GetIndex();
+      const IndexType currSelectedIdx = selectedIt.GetMeasurementVector()[0].GetIndex();
       selectedPatch += currSelectedIdx - lastSelectedIdx;
       lastSelectedIdx = currSelectedIdx;
       // Since we make sure that the search query can only take place in a
@@ -1710,6 +1677,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
       }
 
       // Rescale intensities, and differences, to a range of 100
+      RealType centerPatchDifference;
       this->ComputeDifferenceAndWeightedSquaredNorm(currentPatchVec[center],
                                                     selectedPatch.GetPixel(center),
                                                     m_IntensityRescaleInvFactor,
@@ -1753,7 +1721,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
                                     (3.0 * distancePatchEntropySquared / pow(sigmaKernel, 4.0)));
         }
       } // end for each independent pixel component
-    }   // end for each selected patch
+    } // end for each selected patch
 
     for (unsigned int ic = 0; ic < m_NumIndependentComponents; ++ic)
     {
@@ -1788,8 +1756,8 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeSigmaU
                                              itk::Math::sqr(probPatchEntropyFirstDerivative[ic] / probPatchEntropy[ic]);
         }
       } // end if independent component hasn't converged yet
-    }   // end for each independent component
-  }     // end for each pixel in the sample
+    } // end for each independent component
+  } // end for each pixel in the sample
 
   for (unsigned int ic = 0; ic < m_NumIndependentComponents; ++ic)
   {
@@ -1831,7 +1799,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ResolveSigmaUpdate() 
       continue;
     }
 
-    itkDebugMacro(<< "Resolving sigma update for pixel component " << ic);
+    itkDebugMacro("Resolving sigma update for pixel component " << ic);
 
     // Accumulate the first and second derivatives from all the threads
     const RealValueType kernelSigma = m_KernelBandwidthSigma[ic];
@@ -1849,15 +1817,14 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ResolveSigmaUpdate() 
     firstDerivative /= static_cast<RealValueType>(m_TotalNumberPixels);
     secondDerivative /= static_cast<RealValueType>(m_TotalNumberPixels);
 
-    itkDebugMacro(<< "first deriv: " << firstDerivative << ", second deriv: " << secondDerivative
-                  << ", old sigma: " << kernelSigma);
+    itkDebugMacro("first deriv: " << firstDerivative << ", second deriv: " << secondDerivative
+                                  << ", old sigma: " << kernelSigma);
 
     // If second derivative is zero or negative, compute update using gradient
     // descent
-    if ((Math::ExactlyEquals(itk::Math::abs(secondDerivative), NumericTraits<RealValueType>::ZeroValue())) ||
-        (secondDerivative < 0))
+    if ((Math::ExactlyEquals(itk::Math::abs(secondDerivative), RealValueType{})) || (secondDerivative < 0))
     {
-      itkDebugMacro(<< "** Second derivative NOT POSITIVE");
+      itkDebugMacro("** Second derivative NOT POSITIVE");
       sigmaUpdate[ic] = -itk::Math::sgn(firstDerivative) * kernelSigma * 0.3;
     }
     else
@@ -1866,30 +1833,30 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ResolveSigmaUpdate() 
       sigmaUpdate[ic] = -firstDerivative / secondDerivative;
     }
 
-    itkDebugMacro(<< "update: " << sigmaUpdate[ic]);
+    itkDebugMacro("update: " << sigmaUpdate[ic]);
 
     // Avoid very large updates to prevent instabilities in Newton-Raphson
     if (itk::Math::abs(sigmaUpdate[ic]) > kernelSigma * 0.3)
     {
-      itkDebugMacro(<< "** Restricting large updates \n");
+      itkDebugMacro("** Restricting large updates \n");
       sigmaUpdate[ic] = itk::Math::sgn(sigmaUpdate[ic]) * kernelSigma * 0.3;
 
-      itkDebugMacro(<< "update: " << sigmaUpdate[ic]);
+      itkDebugMacro("update: " << sigmaUpdate[ic]);
     }
 
     // keep the updated sigma from being too close to zero
     if (kernelSigma + sigmaUpdate[ic] < m_MinSigma)
     {
-      itkDebugMacro(<< "** TOO SMALL SIGMA: adjusting sigma");
+      itkDebugMacro("** TOO SMALL SIGMA: adjusting sigma");
       m_KernelBandwidthSigma[ic] = (kernelSigma + m_MinSigma) / 2.0;
 
-      itkDebugMacro(<< "new sigma: " << m_KernelBandwidthSigma[ic]);
+      itkDebugMacro("new sigma: " << m_KernelBandwidthSigma[ic]);
     }
     else
     {
       m_KernelBandwidthSigma[ic] = kernelSigma + sigmaUpdate[ic];
 
-      itkDebugMacro(<< "new sigma: " << m_KernelBandwidthSigma[ic]);
+      itkDebugMacro("new sigma: " << m_KernelBandwidthSigma[ic]);
     }
   } // end for each independent pixel component
 
@@ -1908,10 +1875,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeImageUpdate()
   // Compute smoothing updated for intensities at each pixel
   // based on gradient of the joint entropy
   this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
-  this->GetMultiThreader()->SetSingleMethod(this->ComputeImageUpdateThreaderCallback, &str);
-
-  // Multithread the execution
-  this->GetMultiThreader()->SingleMethodExecute();
+  this->GetMultiThreader()->SetSingleMethodAndExecute(this->ComputeImageUpdateThreaderCallback, &str);
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -1941,11 +1905,11 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeImageUpdateThr
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadDataStruct
+auto
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeImageUpdate(
   const InputImageRegionType & regionToProcess,
   const int                    threadId,
-  ThreadDataStruct             threadData)
+  ThreadDataStruct             threadData) -> ThreadDataStruct
 {
   // Create two images to list adaptors, one for the iteration over the region
   // the other for querying to find the patches set the region of interest for
@@ -1985,10 +1949,9 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeImageU
 
   FaceCalculatorType faceCalculator;
 
-  FaceListType                    faceList = faceCalculator(output, regionToProcess, radius);
-  typename FaceListType::iterator fIt;
+  FaceListType faceList = faceCalculator(output, regionToProcess, radius);
 
-  for (fIt = faceList.begin(); fIt != faceList.end(); ++fIt)
+  for (auto fIt = faceList.begin(); fIt != faceList.end(); ++fIt)
   {
 
     if (!(fIt->GetNumberOfPixels()))
@@ -2092,7 +2055,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeImageU
           }
           default:
           {
-            itkExceptionMacro(<< "Unexpected noise model " << this->GetNoiseModel() << " specified.");
+            itkExceptionMacro("Unexpected noise model " << this->GetNoiseModel() << " specified.");
             break;
           }
         }
@@ -2116,17 +2079,17 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ThreadedComputeImageU
 
       progress.CompletedPixel();
     } // end for each pixel in the sample
-  }   // end for each face in the face list
+  } // end for each face in the face list
   return threadData;
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::RealType
+auto
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeGradientJointEntropy(
   InstanceIdentifier                  id,
   typename ListAdaptorType::Pointer & inList,
   BaseSamplerPointer &                sampler,
-  ThreadDataStruct &                  threadData)
+  ThreadDataStruct &                  threadData) -> RealType
 {
   using IndexType = typename OutputImageType::IndexType;
 
@@ -2343,7 +2306,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeGradientJointE
     RealValueType gaussianJointEntropy{};
     for (unsigned int ic = 0; ic < m_NumIndependentComponents; ++ic)
     {
-      RealValueType kernelSigma = m_KernelBandwidthSigma[ic];
+      const RealValueType kernelSigma = m_KernelBandwidthSigma[ic];
 
       distanceJointEntropy += squaredNorm[ic] / itk::Math::sqr(kernelSigma);
 
@@ -2371,11 +2334,6 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::ComputeGradientJointE
 
 template <typename TInputImage, typename TOutputImage>
 void
-PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PostProcessOutput()
-{}
-
-template <typename TInputImage, typename TOutputImage>
-void
 PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
@@ -2394,33 +2352,11 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostrea
     os << "(Cannot be computed: input not set)" << std::endl;
   }
 
-  if (m_UseSmoothDiscPatchWeights)
-  {
-    os << indent << "UseSmoothDiscPatchWeights: On" << std::endl;
-  }
-  else
-  {
-    os << indent << "UseSmoothDiscPatchWeights: Off" << std::endl;
-  }
+  itkPrintSelfBooleanMacro(UseSmoothDiscPatchWeights);
+  itkPrintSelfBooleanMacro(UseFastTensorComputations);
 
-  if (m_UseFastTensorComputations)
-  {
-    os << indent << "UseFastTensorComputations: On" << std::endl;
-  }
-  else
-  {
-    os << indent << "UseFastTensorComputations: Off" << std::endl;
-  }
-
-  os << indent << "Kernel bandwidth sigma: " << m_KernelBandwidthSigma << std::endl;
-  if (m_KernelBandwidthSigmaIsSet)
-  {
-    os << indent << "KernelBandwidthSigmaIsSet: On" << std::endl;
-  }
-  else
-  {
-    os << indent << "KernelBandwidthSigmaIsSet: Off" << std::endl;
-  }
+  os << indent << "KernelBandwidthSigma: " << m_KernelBandwidthSigma << std::endl;
+  itkPrintSelfBooleanMacro(KernelBandwidthSigmaIsSet);
 
   os << indent << "IntensityRescaleInvFactor: " << m_IntensityRescaleInvFactor << std::endl;
 
@@ -2431,17 +2367,10 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostrea
   os << indent << "KernelBandwidthFractionPixelsForEstimation: " << m_KernelBandwidthFractionPixelsForEstimation
      << std::endl;
 
-  if (m_ComputeConditionalDerivatives)
-  {
-    os << indent << "ComputeConditionalDerivatives: On" << std::endl;
-  }
-  else
-  {
-    os << indent << "ComputeConditionalDerivatives: Off" << std::endl;
-  }
+  itkPrintSelfBooleanMacro(ComputeConditionalDerivatives);
 
-  os << indent << "Min sigma: " << m_MinSigma << std::endl;
-  os << indent << "Min probability: " << m_MinProbability << std::endl;
+  os << indent << "MinSigma: " << m_MinSigma << std::endl;
+  os << indent << "MinProbability: " << m_MinProbability << std::endl;
 
   os << indent << "SigmaUpdateDecimationFactor: " << m_SigmaUpdateDecimationFactor << std::endl;
   os << indent << "Sigma update convergence tolerance: " << m_SigmaUpdateConvergenceTolerance << std::endl;
@@ -2450,14 +2379,7 @@ PatchBasedDenoisingImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostrea
 
   os << indent << "NoiseSigma: " << m_NoiseSigma << std::endl;
   os << indent << "NoiseSigmaSquared: " << m_NoiseSigmaSquared << std::endl;
-  if (m_NoiseSigmaIsSet)
-  {
-    os << indent << "NoiseSigmaIsSet: On" << std::endl;
-  }
-  else
-  {
-    os << indent << "NoiseSigmaIsSet: Off" << std::endl;
-  }
+  itkPrintSelfBooleanMacro(NoiseSigmaIsSet);
 
   itkPrintSelfObjectMacro(Sampler);
   itkPrintSelfObjectMacro(UpdateBuffer);

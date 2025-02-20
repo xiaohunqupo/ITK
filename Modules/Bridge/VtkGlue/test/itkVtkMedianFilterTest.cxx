@@ -25,15 +25,16 @@
 #include <sstream>
 
 #include "QuickView.h"
+#include "itkTestingMacros.h"
 
 int
 itkVtkMedianFilterTest(int argc, char * argv[])
 {
-  // Verify command line arguments
   if (argc < 2)
   {
-    std::cerr << "Usage: " << std::endl;
-    std::cerr << argv[0] << " InputImageFile [radius]" << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << " InputImageFile [radius]" << std::endl;
     return EXIT_FAILURE;
   }
   std::string inputFilename = argv[1];
@@ -49,9 +50,8 @@ itkVtkMedianFilterTest(int argc, char * argv[])
   reader->SetFileName(inputFilename);
 
   // Create and setup a median filter
-  auto                      medianFilter = FilterType::New();
-  FilterType::InputSizeType radius;
-  radius.Fill(2);
+  auto medianFilter = FilterType::New();
+  auto radius = FilterType::InputSizeType::Filled(2);
   if (argc > 2)
   {
     radius.Fill(std::stoi(argv[2]));
@@ -78,5 +78,7 @@ itkVtkMedianFilterTest(int argc, char * argv[])
   // For testing, turn off interaction
   viewer.Visualize(false);
 
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

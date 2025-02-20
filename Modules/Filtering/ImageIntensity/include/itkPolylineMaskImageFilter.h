@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PolylineMaskImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PolylineMaskImageFilter);
 
   /** Number of dimensions. */
   static constexpr unsigned int NDimensions = TInputImage::ImageDimension;
@@ -116,11 +116,7 @@ public:
   ProjPlanePointType
   TransformProjectPoint(PointType inputPoint);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(VectorHasNumericTraitsCheck, (Concept::HasNumericTraits<typename VectorType::ValueType>));
-  // End concept checking
-#endif
 
 protected:
   PolylineMaskImageFilter();

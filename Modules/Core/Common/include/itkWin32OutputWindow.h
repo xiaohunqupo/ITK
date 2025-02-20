@@ -64,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Win32OutputWindow, OutputWindow);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Win32OutputWindow);
 
   /** Put the text into the display window.
    * Each new line is converted to a carriage return, new line. */
@@ -73,7 +73,7 @@ public:
   DisplayText(const char *) override;
 
   static LRESULT APIENTRY
-                 WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+  WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 protected:
   Win32OutputWindow() = default;

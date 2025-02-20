@@ -34,8 +34,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * https://hdl.handle.net/1926/555
- * https://www.insight-journal.org/browse/publication/160
+ * https://doi.org/10.54294/igq8fn
  *
  * \author Richard Beare
  * \ingroup ITKReview
@@ -64,8 +63,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(FastApproximateRankImageFilter, MiniPipelineSeparableImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastApproximateRankImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

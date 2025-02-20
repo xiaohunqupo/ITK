@@ -85,8 +85,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(PDEDeformableRegistrationFilter, DenseFiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PDEDeformableRegistrationFilter);
 
   /** FixedImage image type. */
   using FixedImageType = TFixedImage;

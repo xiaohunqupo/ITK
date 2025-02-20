@@ -89,8 +89,8 @@ public:
   const SampleType *
   GetOutput() const;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImageToCooccurrenceListSampleFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarImageToCooccurrenceListSampleFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

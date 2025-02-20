@@ -37,7 +37,7 @@ namespace itk
  * This class was contributed to the Insight Journal by author Gaetan Lehmann.
  * Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas,
  * France. The paper can be found at
- * https://www.insight-journal.org/browse/publication/65
+ * https://doi.org/10.54294/hva3gz
  *
  * \sa ValuedRegionalMaximaImageFilter
  * \sa HConvexImageFilter
@@ -81,8 +81,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(RegionalMaximaImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegionalMaximaImageFilter);
 
   /**
    * Set/Get whether the connected components are defined strictly by
@@ -116,12 +116,8 @@ public:
   itkGetConstMacro(FlatIsMaxima, bool);
   itkBooleanMacro(FlatIsMaxima);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasPixelTraitsCheck, (Concept::HasPixelTraits<InputImagePixelType>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   RegionalMaximaImageFilter();

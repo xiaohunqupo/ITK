@@ -65,8 +65,8 @@ public:
   /** Path dimension. The dimension of a path is fixed at construction. */
   static constexpr unsigned int PathDimension = VDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Path, FunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Path);
 
   /** Input type */
   using InputType = TInput;
@@ -84,7 +84,7 @@ public:
   virtual inline InputType
   StartOfInput() const
   {
-    return NumericTraits<InputType>::ZeroValue();
+    return InputType{};
   }
 
   /** Where does the path end (what is the last valid input value)?  This value

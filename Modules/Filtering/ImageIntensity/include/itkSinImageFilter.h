@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Sin
 {
 public:
-  Sin() = default;
-  ~Sin() = default;
   bool
   operator==(const Sin &) const
   {
@@ -81,15 +79,11 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(SinImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SinImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage::PixelType, double>));
   itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   SinImageFilter()

@@ -22,6 +22,7 @@
 #include "itkImageFileWriter.h"
 
 #include "itkCommand.h"
+#include "itkTestingMacros.h"
 
 namespace
 {
@@ -43,11 +44,11 @@ iterationEventCallback(itk::Object * object, const itk::EventObject & event, voi
 
 
 template <typename TInputImageType>
-void
-itkSLICImageFilter(const std::string & inFileName,
-                   const std::string & outFileName,
-                   const unsigned int  gridSize,
-                   bool                enforceConnectivity)
+int
+itkSLICImageFilterTestHelper(const std::string & inFileName,
+                             const std::string & outFileName,
+                             const unsigned int  gridSize,
+                             bool                enforceConnectivity)
 {
 
   const unsigned int Dimension = TInputImageType::ImageDimension;
@@ -62,13 +63,17 @@ itkSLICImageFilter(const std::string & inFileName,
 
   using FilterType = itk::SLICImageFilter<InputImageType, OutputImageType>;
   auto filter = FilterType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, SLICImageFilter, ImageToImageFilter);
+
+
   filter->SetInput(reader->GetOutput());
   filter->SetSuperGridSize(gridSize);
   filter->SetEnforceConnectivity(enforceConnectivity);
   filter->DebugOn();
 
 
-  itk::CStyleCommand::Pointer command = itk::CStyleCommand::New();
+  const itk::CStyleCommand::Pointer command = itk::CStyleCommand::New();
   command->SetCallback(iterationEventCallback<FilterType>);
 
   filter->AddObserver(itk::IterationEvent(), command);
@@ -79,6 +84,8 @@ itkSLICImageFilter(const std::string & inFileName,
   writer->SetFileName(outFileName);
   writer->SetInput(filter->GetOutput());
   writer->Update();
+
+  return EXIT_SUCCESS;
 }
 } // namespace
 
@@ -87,7 +94,9 @@ itkSLICImageFilterTest(int argc, char * argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Expected FileName [gridSize] [enforceConnectivity]\n";
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << "inputFileName outputFileName [gridSize] [enforceConnectivity]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -97,7 +106,7 @@ itkSLICImageFilterTest(int argc, char * argv[])
   const char *       inFileName = argv[1];
   const char *       outFileName = argv[2];
 
-  const unsigned int VDimension = 2;
+  constexpr unsigned int VDimension = 2;
   using InputImageType = itk::VectorImage<float, VDimension>;
 
   using ReaderType = itk::ImageFileReader<InputImageType>;
@@ -114,21 +123,23 @@ itkSLICImageFilterTest(int argc, char * argv[])
     case 2:
       if (numberOfComponents == 1)
       {
-        itkSLICImageFilter<itk::Image<float, 2>>(inFileName, outFileName, gridSize, enforceConnectivity);
+        itkSLICImageFilterTestHelper<itk::Image<float, 2>>(inFileName, outFileName, gridSize, enforceConnectivity);
       }
       else
       {
-        itkSLICImageFilter<itk::VectorImage<float, 2>>(inFileName, outFileName, gridSize, enforceConnectivity);
+        itkSLICImageFilterTestHelper<itk::VectorImage<float, 2>>(
+          inFileName, outFileName, gridSize, enforceConnectivity);
       }
       break;
     case 3:
       if (numberOfComponents == 1)
       {
-        itkSLICImageFilter<itk::Image<float, 3>>(inFileName, outFileName, gridSize, enforceConnectivity);
+        itkSLICImageFilterTestHelper<itk::Image<float, 3>>(inFileName, outFileName, gridSize, enforceConnectivity);
       }
       else
       {
-        itkSLICImageFilter<itk::VectorImage<float, 3>>(inFileName, outFileName, gridSize, enforceConnectivity);
+        itkSLICImageFilterTestHelper<itk::VectorImage<float, 3>>(
+          inFileName, outFileName, gridSize, enforceConnectivity);
       }
       break;
     default:
@@ -137,5 +148,6 @@ itkSLICImageFilterTest(int argc, char * argv[])
   }
 
 
-  return 0;
+  std::cout << "Test finished." << std::endl;
+  return EXIT_SUCCESS;
 }

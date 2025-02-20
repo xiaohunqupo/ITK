@@ -23,9 +23,9 @@
 namespace itk
 {
 template <typename TFixedImage, typename TMovingImage>
-typename MutualInformationHistogramImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 MutualInformationHistogramImageToImageMetric<TFixedImage, TMovingImage>::EvaluateMeasure(
-  HistogramType & histogram) const
+  HistogramType & histogram) const -> MeasureType
 {
   MeasureType entropyX{};
   MeasureType entropyY{};
@@ -57,8 +57,8 @@ MutualInformationHistogramImageToImageMetric<TFixedImage, TMovingImage>::Evaluat
 
   entropyY = -entropyY / static_cast<MeasureType>(totalFreq) + std::log(totalFreq);
 
-  HistogramIteratorType it = histogram.Begin();
-  HistogramIteratorType end = histogram.End();
+  HistogramIteratorType       it = histogram.Begin();
+  const HistogramIteratorType end = histogram.End();
   while (it != end)
   {
     auto freq = static_cast<HistogramFrequencyRealType>(it.GetFrequency());

@@ -72,8 +72,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CenteredTransformInitializer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CenteredTransformInitializer);
 
   /** Type of the transform to initialize */
   using TransformType = TTransform;

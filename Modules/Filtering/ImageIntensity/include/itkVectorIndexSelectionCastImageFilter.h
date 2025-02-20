@@ -106,8 +106,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(VectorIndexSelectionCastImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorIndexSelectionCastImageFilter);
 
   /** Get/Set methods for the index */
   void
@@ -126,11 +126,7 @@ public:
     return this->GetFunctor().GetIndex();
   }
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<typename TInputImage::PixelType::ValueType>));
-  // End concept checking
-#endif
 
 protected:
   VectorIndexSelectionCastImageFilter() = default;
@@ -161,8 +157,8 @@ protected:
 
     if (index >= numberOfComponents)
     {
-      itkExceptionMacro(<< "Selected index = " << index
-                        << " is greater than the number of components = " << numberOfComponents);
+      itkExceptionMacro("Selected index = " << index
+                                            << " is greater than the number of components = " << numberOfComponents);
     }
   }
 };

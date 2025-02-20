@@ -84,8 +84,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(TernaryOperatorImageFilter, TernaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TernaryOperatorImageFilter);
 
 protected:
   TernaryOperatorImageFilter()

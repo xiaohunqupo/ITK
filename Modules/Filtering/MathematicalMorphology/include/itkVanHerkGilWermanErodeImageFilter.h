@@ -28,8 +28,6 @@ template <typename TPixel>
 class MinFunctor
 {
 public:
-  MinFunctor() = default;
-  ~MinFunctor() = default;
   inline TPixel
   operator()(const TPixel & A, const TPixel & B) const
   {
@@ -48,8 +46,8 @@ public:
   using Self = VanHerkGilWermanErodeImageFilter;
   using Superclass = VanHerkGilWermanErodeDilateImageFilter<TImage, TKernel, MinFunctor<typename TImage::PixelType>>;
 
-  /** Runtime information support. */
-  itkTypeMacro(VanHerkGilWermanErodeImageFilter, VanHerkGilWermanErodeDilateImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VanHerkGilWermanErodeImageFilter);
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;

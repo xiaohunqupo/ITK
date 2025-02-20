@@ -63,8 +63,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformParametersAdaptorBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformParametersAdaptorBase);
 
   /** Typedefs associated with the transform */
   using TransformBaseType = TTransform;

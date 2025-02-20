@@ -42,7 +42,7 @@ public:
 
   static constexpr unsigned int PointDimension = TMesh::PointDimension;
 
-  itkTypeMacro(LevelSetDomainPartitionMesh, LevelSetDomainPartitionBase);
+  itkOverrideGetNameOfClassMacro(LevelSetDomainPartitionMesh);
 
   using MeshType = TMesh;
   using MeshPointer = typename MeshType::Pointer;
@@ -71,7 +71,8 @@ protected:
   /** Allocate a list mesh with each node being a list of overlapping
    *  level set support at that pixel */
   void
-  AllocateListDomain();
+  AllocateListDomain()
+  {}
 
 private:
   MeshPointer  m_Mesh{};

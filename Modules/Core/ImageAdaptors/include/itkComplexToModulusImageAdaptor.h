@@ -93,8 +93,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ComplexToModulusImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToModulusImageAdaptor);
 
 protected:
   ComplexToModulusImageAdaptor() = default;

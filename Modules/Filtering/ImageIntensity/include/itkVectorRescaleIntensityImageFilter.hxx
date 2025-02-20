@@ -37,20 +37,20 @@ template <typename TInputImage, typename TOutputImage>
 VectorRescaleIntensityImageFilter<TInputImage, TOutputImage>::VectorRescaleIntensityImageFilter()
   : m_Scale(1.0)
   , m_Shift(1.0)
-  , m_InputMaximumMagnitude(NumericTraits<InputRealType>::ZeroValue())
-  , m_OutputMaximumMagnitude(NumericTraits<OutputRealType>::ZeroValue())
+  , m_InputMaximumMagnitude(InputRealType{})
+  , m_OutputMaximumMagnitude(OutputRealType{})
 {}
 
 template <typename TInputImage, typename TOutputImage>
 void
 VectorRescaleIntensityImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateData()
 {
-  if (m_OutputMaximumMagnitude < NumericTraits<OutputRealType>::ZeroValue())
+  if (m_OutputMaximumMagnitude < OutputRealType{})
   {
-    itkExceptionMacro(<< "Maximum output value cannot be negative. You are passing " << m_OutputMaximumMagnitude);
+    itkExceptionMacro("Maximum output value cannot be negative. You are passing " << m_OutputMaximumMagnitude);
   }
 
-  InputImagePointer inputImage = this->GetInput();
+  const InputImagePointer inputImage = this->GetInput();
 
   using InputIterator = ImageRegionConstIterator<InputImageType>;
 
@@ -60,7 +60,7 @@ VectorRescaleIntensityImageFilter<TInputImage, TOutputImage>::BeforeThreadedGene
 
   while (!it.IsAtEnd())
   {
-    InputRealType magnitude = it.Get().GetSquaredNorm();
+    const InputRealType magnitude = it.Get().GetSquaredNorm();
     if (magnitude > maximumSquaredMagnitude)
     {
       maximumSquaredMagnitude = magnitude;

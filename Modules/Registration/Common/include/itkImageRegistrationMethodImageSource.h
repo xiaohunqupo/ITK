@@ -50,8 +50,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegistrationMethodImageSource, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageRegistrationMethodImageSource);
 
 
   using MovingImageType = itk::Image<TMovingPixelType, VDimension>;

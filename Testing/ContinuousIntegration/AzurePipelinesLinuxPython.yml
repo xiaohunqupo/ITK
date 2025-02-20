@@ -11,6 +11,8 @@ trigger:
     - LICENSE
     - NOTICE
     - Documentation/*
+    - Utilities/Debugger/*
+    - Utilities/ITKv5Preparation/*
     - Utilities/Maintenance/*
 pr:
   paths:
@@ -19,9 +21,11 @@ pr:
     - LICENSE
     - NOTICE
     - Documentation/*
+    - Utilities/Debugger/*
+    - Utilities/ITKv5Preparation/*
     - Utilities/Maintenance/*
 variables:
-  ExternalDataVersion: 5.3.0
+  ExternalDataVersion: 5.4.0
 jobs:
 - job: Linux
   timeoutInMinutes: 0
@@ -46,8 +50,8 @@ jobs:
 
     - bash: |
         set -x
-        python3 -m pip install ninja numpy>=1.20 typing-extensions
-        python3 -m pip install --upgrade setuptools
+        python3 -m pip install ninja typing-extensions
+        python3 -m pip install --upgrade --pre numpy
         python3 -m pip install lxml scikit-ci-addons dask distributed
       displayName: 'Install dependencies'
 
@@ -58,7 +62,7 @@ jobs:
 
         curl -L https://github.com/InsightSoftwareConsortium/ITK/releases/download/v$(ExternalDataVersion)/InsightData-$(ExternalDataVersion).tar.gz -O
         cmake -E tar xfz InsightData-$(ExternalDataVersion).tar.gz
-        cmake -E rename InsightToolkit-$(ExternalDataVersion)/.ExternalData/MD5 $(Build.SourcesDirectory)/.ExternalData/MD5
+        cmake -E rename InsightToolkit-$(ExternalDataVersion)/.ExternalData/CID $(Build.SourcesDirectory)/.ExternalData/CID
       workingDirectory: $(Agent.BuildDirectory)
       displayName: 'Download dashboard script and testing data'
 

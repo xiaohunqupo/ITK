@@ -96,8 +96,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(LaplacianRecursiveGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LaplacianRecursiveGaussianImageFilter);
 
   /** Set/Get Sigma value. Sigma is measured in the units of image spacing. */
   void

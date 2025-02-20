@@ -44,8 +44,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToMeshFilter, MeshSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToMeshFilter);
 
   /** Create a valid output. */
   using DataObjectPointerArraySizeType = ProcessObject::DataObjectPointerArraySizeType;
@@ -87,9 +87,10 @@ public:
   OutputMeshType *
   GetOutput();
 
-  /** Prepare the output */
+  /** Prepare the output. This is a void implementation to prevent the ProcessObject version to be called. */
   void
-  GenerateOutputInformation() override;
+  GenerateOutputInformation() override
+  {}
 
 protected:
   ImageToMeshFilter();

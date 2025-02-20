@@ -36,7 +36,7 @@ template <typename TInput, unsigned int VDimension, typename TOutput, typename T
 bool
 LevelSetBase<TInput, VDimension, TOutput, TDomain>::IsInside(const InputType & iP) const
 {
-  return (this->Evaluate(iP) <= NumericTraits<OutputType>::ZeroValue());
+  return (this->Evaluate(iP) <= OutputType{});
 }
 
 // ----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ template <typename TInput, unsigned int VDimension, typename TOutput, typename T
 auto
 LevelSetBase<TInput, VDimension, TOutput, TDomain>::EvaluateGradientNorm(const InputType & iP) const -> OutputRealType
 {
-  GradientType grad = this->EvaluateGradient(iP);
+  const GradientType grad = this->EvaluateGradient(iP);
   return grad.GetNorm();
 }
 
@@ -134,7 +134,7 @@ LevelSetBase<TInput, VDimension, TOutput, TDomain>::EvaluateMeanCurvature(const 
     }
 
     ioData.MeanCurvature.m_Computed = true;
-    ioData.MeanCurvature.m_Value = NumericTraits<OutputRealType>::ZeroValue();
+    ioData.MeanCurvature.m_Value = OutputRealType{};
 
     for (unsigned int i = 0; i < Dimension; ++i)
     {
@@ -150,7 +150,7 @@ LevelSetBase<TInput, VDimension, TOutput, TDomain>::EvaluateMeanCurvature(const 
       }
     }
 
-    OutputRealType temp = ioData.GradientNorm.m_Value;
+    const OutputRealType temp = ioData.GradientNorm.m_Value;
 
     if (temp > itk::Math::eps)
     {
@@ -186,7 +186,7 @@ void
 LevelSetBase<TInput, VDimension, TOutput, TDomain>::SetRequestedRegionToLargestPossibleRegion()
 {
   m_RequestedNumberOfRegions = NumericTraits<RegionType>::OneValue();
-  m_RequestedRegion = NumericTraits<RegionType>::ZeroValue();
+  m_RequestedRegion = RegionType{};
 }
 
 // ----------------------------------------------------------------------------
@@ -199,8 +199,8 @@ LevelSetBase<TInput, VDimension, TOutput, TDomain>::CopyInformation(const DataOb
   if (!levelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::LevelSetBase::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(LevelSetBase *).name());
+    itkExceptionMacro("itk::LevelSetBase::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                          << typeid(LevelSetBase *).name());
   }
 
   m_MaximumNumberOfRegions = levelSet->GetMaximumNumberOfRegions();
@@ -224,8 +224,8 @@ LevelSetBase<TInput, VDimension, TOutput, TDomain>::Graft(const DataObject * dat
   if (!levelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::LevelSetBase::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::LevelSetBase::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                          << typeid(Self *).name());
   }
 }
 
@@ -247,19 +247,19 @@ template <typename TInput, unsigned int VDimension, typename TOutput, typename T
 bool
 LevelSetBase<TInput, VDimension, TOutput, TDomain>::VerifyRequestedRegion()
 {
-  bool retval = true;
+  const bool retval = true;
 
   // Are we asking for more regions than we can get?
   if (m_RequestedNumberOfRegions > m_MaximumNumberOfRegions)
   {
-    itkExceptionMacro(<< "Cannot break object into " << m_RequestedNumberOfRegions << ". The limit is "
-                      << m_MaximumNumberOfRegions);
+    itkExceptionMacro("Cannot break object into " << m_RequestedNumberOfRegions << ". The limit is "
+                                                  << m_MaximumNumberOfRegions);
   }
 
   if (m_RequestedRegion >= m_RequestedNumberOfRegions)
   {
-    itkExceptionMacro(<< "Invalid update region " << m_RequestedRegion << ". Must be between 0 and "
-                      << m_RequestedNumberOfRegions - 1);
+    itkExceptionMacro("Invalid update region " << m_RequestedRegion << ". Must be between 0 and "
+                                               << m_RequestedNumberOfRegions - 1);
   }
 
   return retval;

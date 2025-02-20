@@ -41,8 +41,7 @@ itkHausdorffDistanceImageFilterTest(int argc, char * argv[])
   auto image1 = Image1Type::New();
   auto image2 = Image2Type::New();
 
-  Image1Type::SizeType size;
-  size.Fill(50);
+  auto size = Image1Type::SizeType::Filled(50);
 
   image1->SetRegions(size);
   image2->SetRegions(size);
@@ -50,8 +49,8 @@ itkHausdorffDistanceImageFilterTest(int argc, char * argv[])
   image1->Allocate();
   image2->Allocate();
 
-  image1->FillBuffer(itk::NumericTraits<Pixel1Type>::ZeroValue());
-  image2->FillBuffer(itk::NumericTraits<Pixel2Type>::ZeroValue());
+  image1->FillBuffer(Pixel1Type{});
+  image2->FillBuffer(Pixel2Type{});
 
   using RegionType = Image1Type::RegionType;
   RegionType region1;

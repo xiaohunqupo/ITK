@@ -30,19 +30,17 @@ SinRegularizedHeavisideStepFunction<TInput, TOutput>::Evaluate(const InputType &
   {
     return NumericTraits<OutputType>::OneValue();
   }
+
+  if (static_cast<RealType>(input) <= -this->GetEpsilon())
+  {
+    return OutputType{};
+  }
   else
   {
-    if (static_cast<RealType>(input) <= -this->GetEpsilon())
-    {
-      return NumericTraits<OutputType>::ZeroValue();
-    }
-    else
-    {
-      const RealType angleFactor = 0.5 * itk::Math::pi * this->GetOneOverEpsilon();
-      const RealType angle = input * angleFactor;
+    const RealType angleFactor = 0.5 * itk::Math::pi * this->GetOneOverEpsilon();
+    const RealType angle = input * angleFactor;
 
-      return static_cast<OutputType>(0.5 * (1.0 + std::sin(angle)));
-    }
+    return static_cast<OutputType>(0.5 * (1.0 + std::sin(angle)));
   }
 }
 
@@ -52,15 +50,13 @@ SinRegularizedHeavisideStepFunction<TInput, TOutput>::EvaluateDerivative(const I
 {
   if (itk::Math::abs(static_cast<RealType>(input)) >= this->GetEpsilon())
   {
-    return NumericTraits<OutputType>::ZeroValue();
+    return OutputType{};
   }
-  else
-  {
-    const RealType angleFactor = 0.5 * itk::Math::pi * this->GetOneOverEpsilon();
-    const RealType angle = input * angleFactor;
 
-    return static_cast<OutputType>(0.5 * angleFactor * std::cos(angle));
-  }
+  const RealType angleFactor = 0.5 * itk::Math::pi * this->GetOneOverEpsilon();
+  const RealType angle = input * angleFactor;
+
+  return static_cast<OutputType>(0.5 * angleFactor * std::cos(angle));
 }
 
 } // namespace itk

@@ -41,7 +41,7 @@ namespace itk
  *  \brief ImageIO class for reading VTK images
  *
  * This implementation was taken from the Insight Journal:
- * https://www.insight-journal.org/browse/publication/729
+ * https://doi.org/10.54294/ufs19w
  *
  * \ingroup IOFilters
  *
@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VTKImageIO, StreamingImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VTKImageIO);
 
   // see super class for documentation
   //

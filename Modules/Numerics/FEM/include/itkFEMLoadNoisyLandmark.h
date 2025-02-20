@@ -27,7 +27,7 @@ namespace itk
 namespace fem
 {
 /**
- * \class itkFEMLoadNoisyLandmark
+ * \class FEMLoadNoisyLandmark
  * \brief This landmark is derived from the motion of a specific landmark, but
  * allows the existence of noise or outliers
  *
@@ -51,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkSimpleNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LoadNoisyLandmark, LoadLandmark);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LoadNoisyLandmark);
 
   /** Outlier or not */
   void

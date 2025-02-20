@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DOMNodeXMLReader, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DOMNodeXMLReader);
 
   using OutputType = DOMNode;
   using OutputPointer = OutputType::Pointer;
@@ -180,7 +180,7 @@ private:
 inline std::istream &
 operator>>(std::istream & is, itk::DOMNode & object)
 {
-  itk::DOMNodeXMLReader::Pointer reader = itk::DOMNodeXMLReader::New();
+  auto reader = itk::DOMNodeXMLReader::New();
   reader->SetDOMNodeXML(&object);
   reader->Update(is);
   return is;

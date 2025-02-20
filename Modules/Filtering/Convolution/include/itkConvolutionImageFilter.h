@@ -51,7 +51,7 @@ namespace itk
  *
  * "Image Kernel Convolution"
  * by Tustison N., Gee J.
- * https://insight-journal.org/browse/publication/208
+ * https://doi.org/10.54294/e292kx
  *
  * \author Nicholas J. Tustison
  * \author James C. Gee
@@ -76,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(ConvolutionImageFilter, ConvolutionImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConvolutionImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

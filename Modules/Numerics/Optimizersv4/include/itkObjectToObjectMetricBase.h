@@ -59,9 +59,9 @@ public:
 };
 // Define how to print enumeration
 extern ITKOptimizersv4_EXPORT std::ostream &
-                              operator<<(std::ostream & out, const ObjectToObjectMetricBaseTemplateEnums::GradientSource value);
+operator<<(std::ostream & out, const ObjectToObjectMetricBaseTemplateEnums::GradientSource value);
 extern ITKOptimizersv4_EXPORT std::ostream &
-                              operator<<(std::ostream & out, const ObjectToObjectMetricBaseTemplateEnums::MetricCategory value);
+operator<<(std::ostream & out, const ObjectToObjectMetricBaseTemplateEnums::MetricCategory value);
 /**
  * \class ObjectToObjectMetricBaseTemplate
  * \brief Base class for all object-to-object similarity metrics added in ITKv4.
@@ -98,8 +98,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ObjectToObjectMetricBaseTemplate, SingleValuedCostFunctionv4Template);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ObjectToObjectMetricBaseTemplate);
 
   /** Type used for representing object components  */
   using CoordinateRepresentationType = TInternalComputationValueType;

@@ -21,10 +21,13 @@
 #include "itkObject.h"
 #include "itkObjectFactory.h"
 
+#include <type_traits> // For is_void_v.
 #include <utility>
 #include <vector>
 
 namespace itk
+{
+namespace detail
 {
 /** \class VectorContainer
  *  \brief Define a front-end to the STL "vector" container that conforms to the
@@ -63,35 +66,8 @@ public:
 private:
   /** Quick access to the STL vector type that was inherited. */
   using VectorType = std::vector<Element>;
-  using size_type = typename VectorType::size_type;
   using VectorIterator = typename VectorType::iterator;
   using VectorConstIterator = typename VectorType::const_iterator;
-
-protected:
-  /** Provide pass-through constructors corresponding to all the STL
-   * vector constructors.  These are for internal use only since this is also
-   * an Object which must be constructed through the "New()" routine. */
-  VectorContainer()
-    : Object()
-    , VectorType()
-  {}
-  VectorContainer(size_type n)
-    : Object()
-    , VectorType(n)
-  {}
-  VectorContainer(size_type n, const Element & x)
-    : Object()
-    , VectorType(n, x)
-  {}
-  VectorContainer(const Self & r)
-    : Object()
-    , VectorType(r.CastToSTLConstContainer())
-  {}
-  template <typename TInputIterator>
-  VectorContainer(TInputIterator first, TInputIterator last)
-    : Object()
-    , VectorType(first, last)
-  {}
 
 public:
   /** This type is provided to Adapt this container as an STL container */
@@ -100,8 +76,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(VectorContainer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorContainer);
 
   /** Convenient type alias for the iterator and const iterator. */
   class Iterator;
@@ -157,8 +133,7 @@ public:
   using typename STLContainerType::const_reference;
   using typename STLContainerType::iterator;
   using typename STLContainerType::const_iterator;
-  // already declared before
-  // using STLContainerType::size_type;
+  using typename STLContainerType::size_type;
   using typename STLContainerType::difference_type;
   using typename STLContainerType::value_type;
   using typename STLContainerType::allocator_type;
@@ -185,15 +160,21 @@ public:
     using pointer = typename VectorIterator::pointer;
     using reference = typename VectorIterator::reference;
 
-    Iterator()
-      : m_Pos(0)
-    {}
+    Iterator() = default;
     Iterator(size_type d, const VectorIterator & i)
       : m_Pos(d)
       , m_Iter(i)
     {}
-    Iterator & operator*() { return *this; }
-    Iterator * operator->() { return this; }
+    Iterator &
+    operator*()
+    {
+      return *this;
+    }
+    Iterator *
+    operator->()
+    {
+      return this;
+    }
     Iterator &
     operator++()
     {
@@ -274,7 +255,7 @@ public:
       m_Pos += n;
       m_Iter += n;
       return *this;
-    };
+    }
 
     /** Get the index into the VectorContainer associated with this iterator.
      */
@@ -292,8 +273,8 @@ public:
     }
 
   private:
-    size_type      m_Pos;
-    VectorIterator m_Iter;
+    size_type      m_Pos{};
+    VectorIterator m_Iter{};
     friend class ConstIterator;
   };
 
@@ -311,9 +292,7 @@ public:
     using pointer = typename VectorConstIterator::pointer;
     using reference = typename VectorConstIterator::reference;
 
-    ConstIterator()
-      : m_Pos(0)
-    {}
+    ConstIterator() = default;
     ConstIterator(size_type d, const VectorConstIterator & i)
       : m_Pos(d)
       , m_Iter(i)
@@ -322,8 +301,16 @@ public:
       : m_Pos(r.m_Pos)
       , m_Iter(r.m_Iter)
     {}
-    ConstIterator & operator*() { return *this; }
-    ConstIterator * operator->() { return this; }
+    ConstIterator &
+    operator*()
+    {
+      return *this;
+    }
+    ConstIterator *
+    operator->()
+    {
+      return this;
+    }
     ConstIterator &
     operator++()
     {
@@ -367,7 +354,7 @@ public:
       m_Pos += n;
       m_Iter += n;
       return *this;
-    };
+    }
 
     difference_type
     operator-(const ConstIterator & r) const
@@ -428,8 +415,8 @@ public:
     }
 
   private:
-    size_type           m_Pos;
-    VectorConstIterator m_Iter;
+    size_type           m_Pos{};
+    VectorConstIterator m_Iter{};
     friend class Iterator;
   };
 
@@ -505,8 +492,8 @@ public:
 
   /**
    * Delete the element defined by the index identifier.  In practice, it
-   * doesn't make sense to delete a vector index.  Instead, this method just
-   * overwrite the index with the default element.
+   * doesn't make sense to delete a vector index; overwrite the index with
+   * the default element instead.
    */
   void DeleteIndex(ElementIdentifier);
 
@@ -541,6 +528,8 @@ public:
   Size() const;
 
   /**
+   * Allocate memory for at the requested number of elements.
+   *
    * Tell the container to allocate enough memory to allow at least as many
    * elements as the size given to be stored.  In the generic case of ITK
    * containers this is NOT guaranteed to actually allocate any memory, but it
@@ -552,20 +541,74 @@ public:
   void Reserve(ElementIdentifier);
 
   /**
+   * Try to compact the internal representation of the memory.
+   *
    * Tell the container to try to minimize its memory usage for storage of the
    * current number of elements.  This is NOT guaranteed to decrease memory
    * usage. This method is included here mainly for providing a unified API
    * with other containers in the toolkit.
    */
   void
-  Squeeze();
+  Squeeze()
+  {}
 
   /**
    * Clear the elements. The final size will be zero.
    */
   void
   Initialize();
+
+protected:
+  /** Provide pass-through constructors corresponding to all the STL
+   * vector constructors.  These are for internal use only since this is also
+   * an Object which must be constructed through the "New()" routine. */
+  VectorContainer() = default;
+  VectorContainer(size_type n)
+    : Object()
+    , VectorType(n)
+  {}
+  VectorContainer(size_type n, const Element & x)
+    : Object()
+    , VectorType(n, x)
+  {}
+  VectorContainer(const Self & r)
+    : Object()
+    , VectorType(r.CastToSTLConstContainer())
+  {}
+  template <typename TInputIterator>
+  VectorContainer(TInputIterator first, TInputIterator last)
+    : Object()
+    , VectorType(first, last)
+  {}
 };
+} // namespace detail
+
+
+/** Alias template, allowing to use `itk::VectorContainer<TElement>` without having to explicitly specify its
+ * `ElementIdentifier` type.
+ *
+ * The template parameters `T1` and `T2` allow specifying the index type and the element type, as follows:
+ *
+ * \tparam T1 The index type OR (when `T2` is `void`) the element type.
+ *
+ * \tparam T2 The element type OR `void`. When `T2` is `void`, the element type is specified by the first template
+ * argument (T1), and the index type will be `SizeValueType`.
+ */
+template <typename T1, typename T2 = void>
+using VectorContainer = detail::VectorContainer<std::conditional_t<std::is_void_v<T2>, SizeValueType, T1>,
+                                                std::conditional_t<std::is_void_v<T2>, T1, T2>>;
+
+
+/** Makes a VectorContainer that has a copy of the specified `std::vector`. */
+template <typename TElement>
+auto
+MakeVectorContainer(std::vector<TElement> stdVector)
+{
+  auto vectorContainer = VectorContainer<TElement>::New();
+  vectorContainer->CastToSTLContainer() = std::move(stdVector);
+  return vectorContainer;
+}
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

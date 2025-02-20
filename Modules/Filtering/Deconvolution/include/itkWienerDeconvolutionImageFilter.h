@@ -64,7 +64,7 @@ namespace itk
  * and uses the result as the estimate of \f$P_f(\omega)\f$.
  *
  * For further information on the Wiener deconvolution filter, please see
- * "Digital Signal Processing" by Kenneth R. Castleman, Prentice Hall, 1995
+ * \cite castleman1995.
  *
  * \author Gaetan Lehmann, Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France
  * \author Chris Mullins, The University of North Carolina at Chapel Hill
@@ -91,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(WienerDeconvolutionImageFilter, InverseDeconvolutionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WienerDeconvolutionImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

@@ -34,9 +34,7 @@ class ComplexToComplexFFTImageFilterEnums
 {
 public:
   /**
-   * \class TransformDirection
    * \ingroup ITKFFT
-   * \ingroup FourierTransform
    * */
   enum class TransformDirection : uint8_t
   {
@@ -46,7 +44,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKFFT_EXPORT std::ostream &
-                     operator<<(std::ostream & out, const ComplexToComplexFFTImageFilterEnums::TransformDirection value);
+operator<<(std::ostream & out, const ComplexToComplexFFTImageFilterEnums::TransformDirection value);
 
 /**
  * \class ComplexToComplexFFTImageFilter
@@ -64,7 +62,7 @@ extern ITKFFT_EXPORT std::ostream &
  * official view of NCRR or NIH.
  *
  * This class was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/128
+ * https://doi.org/10.54294/h4j7t7
  *
  * \ingroup FourierTransform
  * \ingroup ITKFFT
@@ -90,8 +88,8 @@ public:
 
   static constexpr unsigned int ImageDimension = InputImageType::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ComplexToComplexFFTImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToComplexFFTImageFilter);
 
   /** Customized object creation methods that support configuration-based
    * selection of FFT implementation.
@@ -107,7 +105,7 @@ public:
   static constexpr TransformDirectionEnum INVERSE = TransformDirectionEnum::INVERSE;
 #endif
 
-  /** Image type type alias support */
+  /** Image type alias support */
   using ImageSizeType = typename ImageType::SizeType;
 
   /** Set/Get the direction in which the transform will be applied.

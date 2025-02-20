@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThreadedImageRegionPartitioner, ThreadedDomainPartitioner);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThreadedImageRegionPartitioner);
 
   /** Type of the object being threaded over */
   using typename Superclass::DomainType;

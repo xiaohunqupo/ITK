@@ -32,24 +32,24 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::MatchCardinalityI
 }
 
 template <typename TFixedImage, typename TMovingImage>
-typename MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::GetValue(
-  const TransformParametersType & parameters) const
+  const TransformParametersType & parameters) const -> MeasureType
 {
   return const_cast<Self *>(this)->GetNonconstValue(parameters);
 }
 
 template <typename TFixedImage, typename TMovingImage>
-typename MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::GetNonconstValue(
-  const TransformParametersType & parameters)
+  const TransformParametersType & parameters) -> MeasureType
 {
   itkDebugMacro("GetValue( " << parameters << " ) ");
 
-  FixedImageConstPointer fixedImage = this->m_FixedImage;
+  const FixedImageConstPointer fixedImage = this->m_FixedImage;
   if (!fixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   // Initialize some variables before spawning threads
@@ -63,14 +63,14 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::GetNonconstValue(
   m_ThreadMatches.resize(this->GetNumberOfWorkUnits());
   m_ThreadCounts.resize(this->GetNumberOfWorkUnits());
 
-  typename std::vector<MeasureType>::iterator mIt;
-  std::vector<SizeValueType>::iterator        cIt;
-  for (mIt = m_ThreadMatches.begin(), cIt = m_ThreadCounts.begin(); mIt != m_ThreadMatches.end(); ++mIt, ++cIt)
   {
-    *mIt = NumericTraits<MeasureType>::ZeroValue();
-    *cIt = 0;
+    auto mIt = m_ThreadMatches.begin();
+    for (auto cIt = m_ThreadCounts.begin(); mIt != m_ThreadMatches.end(); ++mIt, ++cIt)
+    {
+      *mIt = MeasureType{};
+      *cIt = 0;
+    }
   }
-
   // store the parameters in the transform so all threads can access them
   this->SetTransformParameters(parameters);
 
@@ -81,25 +81,22 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::GetNonconstValue(
   str.Metric = this;
 
   this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfWorkUnits());
-  this->GetMultiThreader()->SetSingleMethod(this->ThreaderCallback, &str);
-
-  // multithread the execution
-  //
-  //
-  this->GetMultiThreader()->SingleMethodExecute();
+  this->GetMultiThreader()->SetSingleMethodAndExecute(this->ThreaderCallback, &str);
 
   // Collect the contribution to the metric for each thread
   //
   //
-  for (mIt = m_ThreadMatches.begin(), cIt = m_ThreadCounts.begin(); mIt != m_ThreadMatches.end(); ++mIt, ++cIt)
   {
-    measure += *mIt;
-    this->m_NumberOfPixelsCounted += *cIt;
+    auto mIt = m_ThreadMatches.begin();
+    for (auto cIt = m_ThreadCounts.begin(); mIt != m_ThreadMatches.end(); ++mIt, ++cIt)
+    {
+      measure += *mIt;
+      this->m_NumberOfPixelsCounted += *cIt;
+    }
   }
-
   if (!this->m_NumberOfPixelsCounted)
   {
-    itkExceptionMacro(<< "All the points mapped to outside of the moving image");
+    itkExceptionMacro("All the points mapped to outside of the moving image");
   }
   else
   {
@@ -115,23 +112,21 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::ThreadedGetValue(
   const FixedImageRegionType & regionForThread,
   ThreadIdType                 threadId)
 {
-  FixedImageConstPointer fixedImage = this->GetFixedImage();
+  const FixedImageConstPointer fixedImage = this->GetFixedImage();
 
   if (!fixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   using FixedIteratorType = ImageRegionConstIteratorWithIndex<FixedImageType>;
-  typename FixedImageType::IndexType index;
-  FixedIteratorType                  ti(fixedImage, regionForThread);
+  FixedIteratorType ti(fixedImage, regionForThread);
 
   MeasureType   threadMeasure{};
   SizeValueType threadNumberOfPixelsCounted = 0;
-
   while (!ti.IsAtEnd())
   {
-    index = ti.GetIndex();
+    const typename FixedImageType::IndexType index = ti.GetIndex();
 
     typename Superclass::InputPointType inputPoint;
     fixedImage->TransformIndexToPhysicalPoint(index, inputPoint);
@@ -142,7 +137,7 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::ThreadedGetValue(
       continue;
     }
 
-    typename Superclass::OutputPointType transformedPoint = this->GetTransform()->TransformPoint(inputPoint);
+    const typename Superclass::OutputPointType transformedPoint = this->GetTransform()->TransformPoint(inputPoint);
 
     if (this->GetMovingImageMask() && !this->GetMovingImageMask()->IsInsideInWorldSpace(transformedPoint))
     {
@@ -154,10 +149,9 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::ThreadedGetValue(
     {
       const RealType movingValue = this->GetInterpolator()->Evaluate(transformedPoint);
       const RealType fixedValue = ti.Get();
-      RealType       diff;
-
       ++threadNumberOfPixelsCounted;
 
+      RealType diff;
       if (m_MeasureMatches)
       {
         diff = Math::AlmostEquals(movingValue, fixedValue); // count matches
@@ -185,17 +179,13 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::SplitFixedRegion(
   // Get the output pointer
   const typename FixedImageRegionType::SizeType & fixedRegionSize = this->GetFixedImageRegion().GetSize();
 
-  int                                      splitAxis;
-  typename FixedImageRegionType::IndexType splitIndex;
-  typename FixedImageRegionType::SizeType  splitSize;
-
   // Initialize the splitRegion to the output requested region
   splitRegion = this->GetFixedImageRegion();
-  splitIndex = splitRegion.GetIndex();
-  splitSize = splitRegion.GetSize();
+  typename FixedImageRegionType::IndexType splitIndex = splitRegion.GetIndex();
+  typename FixedImageRegionType::SizeType  splitSize = splitRegion.GetSize();
 
   // split on the outermost dimension available
-  splitAxis = this->GetFixedImage()->GetImageDimension() - 1;
+  int splitAxis = this->GetFixedImage()->GetImageDimension() - 1;
   while (fixedRegionSize[splitAxis] == 1)
   {
     --splitAxis;
@@ -207,9 +197,9 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::SplitFixedRegion(
   }
 
   // determine the actual number of pieces that will be generated
-  typename FixedImageRegionType::SizeType::SizeValueType range = fixedRegionSize[splitAxis];
-  auto         valuesPerThread = Math::Ceil<int>(range / static_cast<double>(num));
-  ThreadIdType maxThreadIdUsed = Math::Ceil<int>(range / static_cast<double>(valuesPerThread)) - 1;
+  const typename FixedImageRegionType::SizeType::SizeValueType range = fixedRegionSize[splitAxis];
+  auto               valuesPerThread = Math::Ceil<int>(range / static_cast<double>(num));
+  const ThreadIdType maxThreadIdUsed = Math::Ceil<int>(range / static_cast<double>(valuesPerThread)) - 1;
 
   // Split the region
   if (i < maxThreadIdUsed)
@@ -237,18 +227,15 @@ template <typename TFixedImage, typename TMovingImage>
 ITK_THREAD_RETURN_FUNCTION_CALL_CONVENTION
 MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::ThreaderCallback(void * arg)
 {
-  ThreadStruct * str;
-  ThreadIdType   total, workUnitID, workUnitCount;
+  const ThreadIdType workUnitID = ((MultiThreaderBase::WorkUnitInfo *)(arg))->WorkUnitID;
+  const ThreadIdType workUnitCount = ((MultiThreaderBase::WorkUnitInfo *)(arg))->NumberOfWorkUnits;
 
-  workUnitID = ((MultiThreaderBase::WorkUnitInfo *)(arg))->WorkUnitID;
-  workUnitCount = ((MultiThreaderBase::WorkUnitInfo *)(arg))->NumberOfWorkUnits;
-
-  str = (ThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserData);
+  auto * str = (ThreadStruct *)(((MultiThreaderBase::WorkUnitInfo *)(arg))->UserData);
 
   // execute the actual method with appropriate computation region
   // first find out how many pieces extent can be split into.
   FixedImageRegionType splitRegion;
-  total = str->Metric->SplitFixedRegion(workUnitID, workUnitCount, splitRegion);
+  const ThreadIdType   total = str->Metric->SplitFixedRegion(workUnitID, workUnitCount, splitRegion);
 
   if (workUnitID < total)
   {
@@ -272,7 +259,7 @@ MatchCardinalityImageToImageMetric<TFixedImage, TMovingImage>::PrintSelf(std::os
 
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "MeasureMatches: " << (m_MeasureMatches ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(MeasureMatches);
 
   os << indent << "ThreadMatches: " << m_ThreadMatches << std::endl;
   os << indent << "ThreadCounts: " << m_ThreadCounts << std::endl;

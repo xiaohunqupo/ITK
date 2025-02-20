@@ -50,7 +50,7 @@ namespace itk
  * in the update equation behaves like a doublet and attracts the contour to the boundary.
  * The shape prior term adds robustness by incorporating aprior information about
  * the shape to be segmented.
- * This approach for segmentation follows that of Leventon et al (2000).
+ * This approach for segmentation follows that of \cite leventon2000.
  *
  * \par
  * The second input is the feature image.  For this filter, this is the edge
@@ -94,10 +94,6 @@ namespace itk
  * See SparseFieldLevelSetImageFilter and
  * SegmentationLevelSetImageFilter for more information.
  *
- * \par REFERENCES
- * \par
- * Leventon, M.E. et al. "Statistical Shape Influence in Geodesic Active Contours", CVPR 2000.
- *
  * \sa SegmentationLevelSetImageFilter
  * \sa ShapePriorSegmentationLevelSetImageFilter
  * \sa GeodesicActiveContourShapePriorLevelSetFunction
@@ -132,8 +128,8 @@ public:
     GeodesicActiveContourShapePriorLevelSetFunction<OutputImageType, FeatureImageType>;
   using GeodesicActiveContourFunctionPointer = typename GeodesicActiveContourFunctionType::Pointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GeodesicActiveContourShapePriorLevelSetImageFilter, ShapePriorSegmentationLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GeodesicActiveContourShapePriorLevelSetImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

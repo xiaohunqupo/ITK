@@ -18,29 +18,26 @@
 
 
 #include "itkTransformFileReader.h"
+#include "itkTestingMacros.h"
 
 int
-itkTransformFileReaderTemplateTest(int argc, char * argv[])
+itkTransformFileReaderTemplateTest(int, char *[])
 {
-  if (argc < 1)
-  {
-    std::cerr << "Usage:" << argv[0];
-    std::cerr << std::endl;
-    return EXIT_FAILURE;
-  }
-
   using TransformReaderType = itk::TransformFileReaderTemplate<double>;
 
   auto transformReader = TransformReaderType::New();
 
-  std::cout << "Reader class = " << transformReader->GetNameOfClass() << "Reader base = "
-            << dynamic_cast<TransformReaderType::Superclass *>(transformReader.GetPointer())->GetNameOfClass()
-            << std::endl;
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(transformReader, TransformFileReaderTemplate, LightProcessObject);
+
 
   // trigger empty read exception
   ITK_TRY_EXPECT_EXCEPTION(transformReader->Update());
 
-  transformReader->SetFileName("transform.garbage");
+
+  const char * fileName = "transform.garbage";
+  transformReader->SetFileName(fileName);
+  ITK_TEST_SET_GET_VALUE(fileName, transformReader->GetFileName());
+
   // trigger exception for transformio not found
   ITK_TRY_EXPECT_EXCEPTION(transformReader->Update());
 

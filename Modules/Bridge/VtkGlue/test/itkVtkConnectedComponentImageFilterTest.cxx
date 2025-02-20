@@ -37,15 +37,16 @@
 #include <sstream>
 #include <map>
 #include "QuickView.h"
+#include "itkTestingMacros.h"
 
 int
 itkVtkConnectedComponentImageFilterTest(int argc, char * argv[])
 {
   if (argc < 2)
   {
-    std::cout << "Usage: " << argv[0];
-    std::cout << " inputImageFile";
-    std::cerr << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cout << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cout << " inputImageFile" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -102,8 +103,7 @@ itkVtkConnectedComponentImageFilterTest(int argc, char * argv[])
   filterContainer["Triangle"] = TriangleFilterType::New();
   filterContainer["Yen"] = YenFilterType::New();
 
-  auto it = filterContainer.begin();
-  for (it = filterContainer.begin(); it != filterContainer.end(); ++it)
+  for (auto it = filterContainer.begin(); it != filterContainer.end(); ++it)
   {
     it->second->SetInsideValue(255);
     it->second->SetOutsideValue(0);
@@ -125,5 +125,7 @@ itkVtkConnectedComponentImageFilterTest(int argc, char * argv[])
   // For testing, turn off interaction
   viewer.Visualize(false);
 
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

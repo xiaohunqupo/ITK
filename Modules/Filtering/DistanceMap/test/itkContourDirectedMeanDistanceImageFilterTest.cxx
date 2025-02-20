@@ -35,8 +35,7 @@ itkContourDirectedMeanDistanceImageFilterTest(int, char *[])
   auto image1 = Image1Type::New();
   auto image2 = Image2Type::New();
 
-  Image1Type::SizeType size;
-  size.Fill(50);
+  auto size = Image1Type::SizeType::Filled(50);
 
   image1->SetRegions(size);
   image2->SetRegions(size);
@@ -44,8 +43,8 @@ itkContourDirectedMeanDistanceImageFilterTest(int, char *[])
   image1->Allocate();
   image2->Allocate();
 
-  image1->FillBuffer(itk::NumericTraits<Pixel1Type>::ZeroValue());
-  image2->FillBuffer(itk::NumericTraits<Pixel2Type>::ZeroValue());
+  image1->FillBuffer(Pixel1Type{});
+  image2->FillBuffer(Pixel2Type{});
 
   using RegionType = Image1Type::RegionType;
   RegionType region1;
@@ -88,7 +87,7 @@ itkContourDirectedMeanDistanceImageFilterTest(int, char *[])
 
     ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, ContourDirectedMeanDistanceImageFilter, ImageToImageFilter);
 
-    itk::SimpleFilterWatcher watcher(filter, "filter");
+    const itk::SimpleFilterWatcher watcher(filter, "filter");
 
 
     ITK_TEST_SET_GET_BOOLEAN(filter, UseImageSpacing, useImageSpacing);
@@ -99,8 +98,8 @@ itkContourDirectedMeanDistanceImageFilterTest(int, char *[])
 
     // Check results
 
-    FilterType::RealType trueDistance = 8.37831;
-    FilterType::RealType distance = filter->GetContourDirectedMeanDistance();
+    constexpr FilterType::RealType trueDistance = 8.37831;
+    const FilterType::RealType     distance = filter->GetContourDirectedMeanDistance();
 
     std::cout << " True     distance: " << trueDistance << std::endl;
     std::cout << " Computed distance: " << distance << std::endl;
@@ -128,8 +127,8 @@ itkContourDirectedMeanDistanceImageFilterTest(int, char *[])
 
 
     // Check results
-    FilterType::RealType trueDistance = 4.2053;
-    FilterType::RealType distance = filter->GetContourDirectedMeanDistance();
+    constexpr FilterType::RealType trueDistance = 4.2053;
+    const FilterType::RealType     distance = filter->GetContourDirectedMeanDistance();
 
     std::cout << " True     distance: " << trueDistance << std::endl;
     std::cout << " Computed distance: " << distance << std::endl;

@@ -42,17 +42,18 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Matt McCormick <matt.mccormick@kitware.com>
-itk_fetch_module(PhaseSymmetry
-"Provides multi-scale steerable filters for computing phase symmetry.
+itk_fetch_module(
+  PhaseSymmetry
+  "Provides multi-scale steerable filters for computing phase symmetry.
 
 For more information, see the Insight Journal article:
 
 Hatt C.
 Multi-scale Steerable Phase-Symmetry Filters for ITK
 The Insight Journal. July-December. 2011.
-https://www.insight-journal.org/browse/publication/846
+https://doi.org/10.54294/gcb82u
 "
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/KitwareMedical/ITKPhaseSymmetry.git
-  GIT_TAG 4d9cba2d0529e29500c11fd25ac9c4c808a0279b
+  GIT_REPOSITORY https://github.com/KitwareMedical/ITKPhaseSymmetry.git
+  GIT_TAG eb791a8ae9559469ec24fe4ccb49e8b8bd6c8dd3
   )

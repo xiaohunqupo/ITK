@@ -42,9 +42,7 @@ namespace itk
  * The marker image must be less than or equal to the mask image
  * (on a pixel by pixel basis).
  *
- * Geodesic morphology is described in Chapter 6 of Pierre Soille's
- * book "Morphological Image Analysis: Principles and Applications",
- * Second Edition, Springer, 2003.
+ * Geodesic morphology is described in \cite soille2004.
  *
  * A noniterative version of this algorithm can be found in the
  * ReconstructionByDilationImageFilter. This noniterative solution is
@@ -97,8 +95,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GrayscaleGeodesicDilateImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GrayscaleGeodesicDilateImageFilter);
 
   /** Set/Get the marker image. The marker image must be pixelwise
    * less than or equal to the mask image. The marker image the
@@ -139,13 +137,9 @@ public:
   itkGetConstReferenceMacro(FullyConnected, bool);
   itkBooleanMacro(FullyConnected);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<MarkerImageDimension, OutputImageDimension>));
   itkConceptMacro(InputComparableCheck, (Concept::Comparable<MarkerImagePixelType>));
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<MarkerImagePixelType, OutputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   GrayscaleGeodesicDilateImageFilter();

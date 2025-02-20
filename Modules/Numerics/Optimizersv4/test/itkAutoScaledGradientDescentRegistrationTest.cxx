@@ -35,13 +35,13 @@
 
 template <typename TMovingTransform>
 int
-itkAutoScaledGradientDescentRegistrationTestTemplated(int         numberOfIterations,
-                                                      double      shiftOfStep,
-                                                      std::string scalesOption,
-                                                      bool        usePhysicalSpaceForShift,
-                                                      bool        estimateLearningRateOnce,
-                                                      bool        estimateLearningRateAtEachIteration,
-                                                      bool        estimateScales)
+itkAutoScaledGradientDescentRegistrationTestTemplated(int                 numberOfIterations,
+                                                      double              shiftOfStep,
+                                                      const std::string & scalesOption,
+                                                      bool                usePhysicalSpaceForShift,
+                                                      bool                estimateLearningRateOnce,
+                                                      bool                estimateLearningRateAtEachIteration,
+                                                      bool                estimateScales)
 {
   const unsigned int Dimension = TMovingTransform::SpaceDimension;
   using PixelType = double;
@@ -180,19 +180,8 @@ itkAutoScaledGradientDescentRegistrationTestTemplated(int         numberOfIterat
   std::cout << "GetDoEstimateLearningRateAtEachIteration: " << optimizer->GetDoEstimateLearningRateAtEachIteration()
             << std::endl;
 
-  try
-  {
-    optimizer->StartOptimization();
-  }
-  catch (const itk::ExceptionObject & e)
-  {
-    std::cout << "Exception thrown ! " << std::endl;
-    std::cout << "An error occurred during Optimization:" << std::endl;
-    std::cout << e.GetLocation() << std::endl;
-    std::cout << e.GetDescription() << std::endl;
-    std::cout << e.what() << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(optimizer->StartOptimization());
+
 
   std::cout << "...finished. " << std::endl
             << "StopCondition: " << optimizer->GetStopConditionDescription() << std::endl
@@ -230,8 +219,8 @@ itkAutoScaledGradientDescentRegistrationTestTemplated(int         numberOfIterat
   //
   // results
   //
-  ParametersType finalParameters = movingTransform->GetParameters();
-  ParametersType fixedParameters = movingTransform->GetFixedParameters();
+  ParametersType       finalParameters = movingTransform->GetParameters();
+  const ParametersType fixedParameters = movingTransform->GetFixedParameters();
   std::cout << "Estimated scales = " << optimizer->GetScales() << std::endl;
   std::cout << "finalParameters = " << finalParameters << std::endl;
   std::cout << "fixedParameters = " << fixedParameters << std::endl;
@@ -264,11 +253,9 @@ itkAutoScaledGradientDescentRegistrationTestTemplated(int         numberOfIterat
     std::cout << "Test FAILED." << std::endl;
     return EXIT_FAILURE;
   }
-  else
-  {
-    std::cout << "Test PASSED." << std::endl;
-    return EXIT_SUCCESS;
-  }
+
+  std::cout << "Test PASSED." << std::endl;
+  return EXIT_SUCCESS;
 }
 
 int
@@ -316,8 +303,8 @@ itkAutoScaledGradientDescentRegistrationTest(int argc, char ** const argv)
 
   std::cout << std::endl << "Optimizing translation transform with shift scales" << std::endl;
   using TranslationTransformType = itk::TranslationTransform<double, Dimension>;
-  bool usePhysicalSpaceForShift = false;
-  int  ret1 =
+  constexpr bool usePhysicalSpaceForShift = false;
+  const int      ret1 =
     itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(numberOfIterations,
                                                                                     shiftOfStep,
                                                                                     "shift",
@@ -328,7 +315,7 @@ itkAutoScaledGradientDescentRegistrationTest(int argc, char ** const argv)
 
   std::cout << std::endl << "Optimizing translation transform with Jacobian scales" << std::endl;
   using TranslationTransformType = itk::TranslationTransform<double, Dimension>;
-  int ret2 =
+  const int ret2 =
     itkAutoScaledGradientDescentRegistrationTestTemplated<TranslationTransformType>(numberOfIterations,
                                                                                     0.0,
                                                                                     "jacobian",
@@ -341,8 +328,6 @@ itkAutoScaledGradientDescentRegistrationTest(int argc, char ** const argv)
   {
     return EXIT_SUCCESS;
   }
-  else
-  {
-    return EXIT_FAILURE;
-  }
+
+  return EXIT_FAILURE;
 }

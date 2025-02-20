@@ -92,19 +92,19 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   /* Verify things are connected */
   if (this->m_FixedImage.IsNull())
   {
-    itkExceptionMacro(<< "FixedImage is not present");
+    itkExceptionMacro("FixedImage is not present");
   }
   if (this->m_MovingImage.IsNull())
   {
-    itkExceptionMacro(<< "MovingImage is not present");
+    itkExceptionMacro("MovingImage is not present");
   }
   if (this->m_FixedTransform.IsNull())
   {
-    itkExceptionMacro(<< "FixedTransform is not present");
+    itkExceptionMacro("FixedTransform is not present");
   }
   if (this->m_MovingTransform.IsNull())
   {
-    itkExceptionMacro(<< "MovingTransform is not present");
+    itkExceptionMacro("MovingTransform is not present");
   }
 
   // If the image is provided by a source, update the source.
@@ -123,7 +123,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
      * Note that it will be safer to have a dedicated VirtualImage class
      * that prevents accidental access of data. */
     /* Just copy information from fixed image */
-    VirtualImagePointer image = VirtualImageType::New();
+    const VirtualImagePointer image = VirtualImageType::New();
     image->CopyInformation(this->m_FixedImage);
     /* CopyInformation does not copy buffered region */
     image->SetBufferedRegion(this->m_FixedImage->GetBufferedRegion());
@@ -257,7 +257,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
 {
   if (this->m_UseSampledPointSet) // sparse sampling
   {
-    SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
+    const SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
     if (numberOfPoints < 1)
     {
       itkExceptionMacro("VirtualSampledPointSet must have 1 or more points.");
@@ -292,7 +292,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
       this->m_DerivativeResult->SetSize(globalDerivativeSize);
     }
     /* Clear derivative final result. */
-    this->m_DerivativeResult->Fill(NumericTraits<DerivativeValueType>::ZeroValue());
+    this->m_DerivativeResult->Fill(DerivativeValueType{});
   }
 }
 
@@ -308,7 +308,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
                                  FixedImagePixelType &    mappedFixedPixelValue) const
 {
   bool pointIsValid = true;
-  mappedFixedPixelValue = NumericTraits<FixedImagePixelType>::ZeroValue();
+  mappedFixedPixelValue = FixedImagePixelType{};
 
   // map the point into fixed space
   this->LocalTransformPoint(virtualPoint, mappedFixedPoint);
@@ -349,7 +349,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
                                   MovingImagePixelType &   mappedMovingPixelValue) const
 {
   bool pointIsValid = true;
-  mappedMovingPixelValue = NumericTraits<MovingImagePixelType>::ZeroValue();
+  mappedMovingPixelValue = MovingImagePixelType{};
 
   // map the point into moving space
 
@@ -570,10 +570,8 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   {
     return this->m_SparseGetValueAndDerivativeThreader->GetNumberOfWorkUnitsUsed();
   }
-  else
-  {
-    return this->m_DenseGetValueAndDerivativeThreader->GetNumberOfWorkUnitsUsed();
-  }
+
+  return this->m_DenseGetValueAndDerivativeThreader->GetNumberOfWorkUnitsUsed();
 }
 
 template <typename TFixedImage,
@@ -589,14 +587,14 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   this->m_VirtualSampledPointSet->Initialize();
 
   using PointsContainer = typename FixedSampledPointSetType::PointsContainer;
-  typename PointsContainer::ConstPointer points = this->m_FixedSampledPointSet->GetPoints();
+  const typename PointsContainer::ConstPointer points = this->m_FixedSampledPointSet->GetPoints();
   if (points.IsNull())
   {
     itkExceptionMacro("Fixed Sample point set is empty.");
   }
   typename PointsContainer::ConstIterator fixedIt = points->Begin();
 
-  typename FixedTransformType::InverseTransformBasePointer inverseTransform =
+  const typename FixedTransformType::InverseTransformBasePointer inverseTransform =
     this->m_FixedTransform->GetInverseTransform();
   if (inverseTransform.IsNull())
   {
@@ -608,8 +606,8 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   SizeValueType virtualIndex = 0;
   while (fixedIt != points->End())
   {
-    typename FixedSampledPointSetType::PointType point = inverseTransform->TransformPoint(fixedIt.Value());
-    typename VirtualImageType::IndexType         tempIndex;
+    const typename FixedSampledPointSetType::PointType point = inverseTransform->TransformPoint(fixedIt.Value());
+    typename VirtualImageType::IndexType               tempIndex;
     /* Verify that the point is valid. We may be working with a resized virtual domain,
      * and a fixed sampled point list that was created before the resizing. */
     if (this->TransformPhysicalPointToVirtualIndex(point, tempIndex))
@@ -627,7 +625,7 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
   {
     itkExceptionMacro("The virtual sampled point set has zero points because "
                       "no fixed sampled points were within the virtual "
-                      "domain after mapping. There are no points to evaulate.");
+                      "domain after mapping. There are no points to evaluate.");
   }
 }
 
@@ -646,11 +644,9 @@ ImageToImageMetricv4<TFixedImage, TMovingImage, TVirtualImage, TInternalComputat
     // over which we're evaluating over.
     return this->m_VirtualSampledPointSet->GetNumberOfPoints();
   }
-  else
-  {
-    typename VirtualImageType::RegionType region = this->GetVirtualRegion();
-    return region.GetNumberOfPixels();
-  }
+
+  const typename VirtualImageType::RegionType region = this->GetVirtualRegion();
+  return region.GetNumberOfPixels();
 }
 
 template <typename TFixedImage,

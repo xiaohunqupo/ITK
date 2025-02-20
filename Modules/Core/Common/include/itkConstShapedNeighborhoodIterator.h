@@ -122,7 +122,7 @@ public:
       this->GoToBegin();
     }
 
-    ITK_ITERATOR_VIRTUAL ~ConstIterator() = default;
+    ~ConstIterator() = default;
 
     ConstIterator &
     operator=(const ConstIterator & o)
@@ -179,10 +179,8 @@ public:
       {
         return true;
       }
-      else
-      {
-        return false;
-      }
+
+      return false;
     }
 
     void
@@ -326,13 +324,13 @@ public:
   /** Add/Remove a neighborhood offset (from the center of the neighborhood)
    *  to/from the active list.  Active list offsets are the only locations
    *  updated and accessible through the iterator.  */
-  ITK_ITERATOR_VIRTUAL void
-  ActivateOffset(const OffsetType & off) ITK_ITERATOR_FINAL
+  void
+  ActivateOffset(const OffsetType & off)
   {
     this->ActivateIndex(Superclass::GetNeighborhoodIndex(off));
   }
-  ITK_ITERATOR_VIRTUAL void
-  DeactivateOffset(const OffsetType & off) ITK_ITERATOR_FINAL
+  void
+  DeactivateOffset(const OffsetType & off)
   {
     this->DeactivateIndex(Superclass::GetNeighborhoodIndex(off));
   }
@@ -350,8 +348,8 @@ public:
   }
 
   /** Removes all active pixels from this neighborhood. */
-  ITK_ITERATOR_VIRTUAL void
-  ClearActiveList() ITK_ITERATOR_FINAL
+  void
+  ClearActiveList()
   {
     m_ActiveIndexList.clear();
     m_CenterIsActive = false;
@@ -374,8 +372,15 @@ public:
   /** Add non-zero neighborhood offsets to the active list. The
    * radius of the neighborhood must match the radius of the shaped
    * iterator */
+  template <typename TNeighborPixel>
   void
-  CreateActiveListFromNeighborhood(const NeighborhoodType &);
+  CreateActiveListFromNeighborhood(const Neighborhood<TNeighborPixel, Self::Dimension> &);
+  void
+  CreateActiveListFromNeighborhood(const NeighborhoodType & neighborhood)
+  {
+    // just delegate to the templated version
+    this->CreateActiveListFromNeighborhood<PixelType>(neighborhood);
+  }
 
   /** Reimplements the operator++ method so that only active pixel locations
    * are updated. */
@@ -415,9 +420,9 @@ protected:
       argument is an index location calculated as an offset into a linear
       array which represents the image region defined by the radius of this
       iterator, with the smallest dimension as the fastest increasing index. */
-  ITK_ITERATOR_VIRTUAL void ActivateIndex(NeighborIndexType) ITK_ITERATOR_FINAL;
+  void ActivateIndex(NeighborIndexType);
 
-  ITK_ITERATOR_VIRTUAL void DeactivateIndex(NeighborIndexType) ITK_ITERATOR_FINAL;
+  void DeactivateIndex(NeighborIndexType);
 
 
   bool          m_CenterIsActive{ false };

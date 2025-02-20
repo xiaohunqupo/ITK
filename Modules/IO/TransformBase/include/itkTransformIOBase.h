@@ -63,8 +63,8 @@ public:
   using Superclass = LightProcessObject;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformIOBaseTemplate, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformIOBaseTemplate);
 
   /** Transform types */
   using ScalarType = TParametersValueType; // For backwards compatibility
@@ -145,7 +145,7 @@ public:
   static inline void
   CorrectTransformPrecisionType(std::string & itkNotUsed(inputTransformName))
   {
-    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(ScalarType).name());
+    itkGenericExceptionMacro("Unknown ScalarType" << typeid(ScalarType).name());
   }
 
 protected:
@@ -162,10 +162,10 @@ protected:
 
   /* The following struct returns the string name of computation type */
   /* default implementation */
-  static inline const std::string
+  static inline std::string
   GetTypeNameString()
   {
-    itkGenericExceptionMacro(<< "Unknown ScalarType" << typeid(ScalarType).name());
+    itkGenericExceptionMacro("Unknown ScalarType" << typeid(ScalarType).name());
   }
 
 private:
@@ -203,17 +203,17 @@ TransformIOBaseTemplate<double>::CorrectTransformPrecisionType(std::string & inp
 }
 
 template <>
-inline const std::string
+inline std::string
 TransformIOBaseTemplate<float>::GetTypeNameString()
 {
-  return std::string("float");
+  return { "float" };
 }
 
 template <>
-inline const std::string
+inline std::string
 TransformIOBaseTemplate<double>::GetTypeNameString()
 {
-  return std::string("double");
+  return { "double" };
 }
 
 /** This helps to meet backward compatibility */

@@ -38,7 +38,7 @@ RegistrationParameterScalesFromJacobian<TMetric>::EstimateScales(ScalesType & pa
 
   const auto numSamples = static_cast<const SizeValueType>(this->m_SamplePoints.size());
 
-  norms.Fill(NumericTraits<typename ParametersType::ValueType>::ZeroValue());
+  norms.Fill(typename ParametersType::ValueType{});
   parameterScales.Fill(NumericTraits<typename ScalesType::ValueType>::OneValue());
 
   // checking each sample point
@@ -91,7 +91,7 @@ RegistrationParameterScalesFromJacobian<TMetric>::EstimateLocalStepScales(const 
 {
   if (!this->IsDisplacementFieldTransform())
   {
-    itkExceptionMacro(<< "EstimateLocalStepScales: the transform doesn't have local support.");
+    itkExceptionMacro("EstimateLocalStepScales: the transform doesn't have local support.");
   }
 
   this->CheckAndSetInputs();
@@ -107,13 +107,13 @@ RegistrationParameterScalesFromJacobian<TMetric>::EstimateLocalStepScales(const 
   const SizeValueType numLocals = numAllPara / numPara;
 
   localStepScales.SetSize(numLocals);
-  localStepScales.Fill(NumericTraits<typename ScalesType::ValueType>::ZeroValue());
+  localStepScales.Fill(typename ScalesType::ValueType{});
 
   // checking each sample point
   for (SizeValueType c = 0; c < numSamples; ++c)
   {
-    VirtualPointType & point = this->m_SamplePoints[c];
-    IndexValueType     localId =
+    const VirtualPointType & point = this->m_SamplePoints[c];
+    const IndexValueType     localId =
       this->m_Metric->ComputeParameterOffsetFromVirtualPoint(point, NumericTraits<SizeValueType>::OneValue());
     localStepScales[localId] = sampleScales[c];
   }
@@ -160,7 +160,7 @@ RegistrationParameterScalesFromJacobian<TMetric>::ComputeSampleStepScales(const 
     }
     else
     {
-      SizeValueType offset = this->m_Metric->ComputeParameterOffsetFromVirtualPoint(point, numPara);
+      const SizeValueType offset = this->m_Metric->ComputeParameterOffsetFromVirtualPoint(point, numPara);
 
       ParametersType localStep(numPara);
       for (SizeValueType p = 0; p < numPara; ++p)

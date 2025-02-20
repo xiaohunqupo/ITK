@@ -36,8 +36,8 @@ public:
   /** Has to have empty throw(). */
   ~ImageSeriesWriterException() noexcept override;
 
-  /** Run-time information. */
-  itkTypeMacro(ImageSeriesWriterException, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageSeriesWriterException);
 
   /** Constructor. */
   ImageSeriesWriterException(char * file, unsigned int line, const char * message = "Error in IO")
@@ -95,8 +95,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageSeriesWriter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageSeriesWriter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -185,7 +185,7 @@ public:
   /** Set the first file name to be processed. This deletes previous
    * filenames. */
   void
-  SetFileName(std::string const & name)
+  SetFileName(const std::string & name)
   {
     m_FileNames.clear();
     m_FileNames.push_back(name);
@@ -195,7 +195,7 @@ public:
   /** Add a single filename to the list of files. To add a vector of
    * filenames, use the AddFileNames method. */
   void
-  AddFileName(std::string const & name)
+  AddFileName(const std::string & name)
   {
     m_FileNames.push_back(name);
     this->Modified();

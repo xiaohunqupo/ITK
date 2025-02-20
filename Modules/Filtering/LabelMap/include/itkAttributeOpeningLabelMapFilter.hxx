@@ -27,7 +27,7 @@ namespace itk
 template <typename TImage, typename TAttributeAccessor>
 AttributeOpeningLabelMapFilter<TImage, TAttributeAccessor>::AttributeOpeningLabelMapFilter()
 {
-  m_Lambda = NumericTraits<AttributeValueType>::ZeroValue();
+  m_Lambda = AttributeValueType{};
   m_ReverseOrdering = false;
   // create the output image for the removed objects
   this->SetNumberOfRequiredOutputs(2);
@@ -55,8 +55,8 @@ AttributeOpeningLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
   typename ImageType::Iterator it(output);
   while (!it.IsAtEnd())
   {
-    typename LabelObjectType::LabelType label = it.GetLabel();
-    LabelObjectType *                   labelObject = it.GetLabelObject();
+    const typename LabelObjectType::LabelType label = it.GetLabel();
+    LabelObjectType *                         labelObject = it.GetLabelObject();
 
     if ((!m_ReverseOrdering && accessor(labelObject) < m_Lambda) ||
         (m_ReverseOrdering && accessor(labelObject) > m_Lambda))

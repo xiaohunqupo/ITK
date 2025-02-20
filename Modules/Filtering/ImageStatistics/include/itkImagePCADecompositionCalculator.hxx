@@ -37,7 +37,7 @@ template <typename TInputImage, typename TBasisImage>
 void
 ImagePCADecompositionCalculator<TInputImage, TBasisImage>::SetBasisImages(const BasisImagePointerVector & v)
 {
-  itkDebugMacro(<< "setting BasisImages");
+  itkDebugMacro("setting BasisImages");
   this->m_BasisMatrixCalculated = false;
   // We need this modified setter function so that the calculator
   // can cache the basis set between calculations. Note that computing the
@@ -75,9 +75,7 @@ ImagePCADecompositionCalculator<TInputImage, TBasisImage>::CalculateBasisMatrix(
   m_BasisMatrix = BasisMatrixType(static_cast<unsigned int>(m_BasisImages.size()), m_NumPixels);
 
   int i = 0;
-  for (typename BasisImagePointerVector::const_iterator basis_it = m_BasisImages.begin();
-       basis_it != m_BasisImages.end();
-       ++basis_it)
+  for (auto basis_it = m_BasisImages.begin(); basis_it != m_BasisImages.end(); ++basis_it)
   {
     if ((*basis_it)->GetRequestedRegion().GetSize() != m_Size)
     {
@@ -157,7 +155,7 @@ ImagePCADecompositionCalculator<TInputImage, TBasisImage>::PrintSelf(std::ostrea
   itkPrintSelfObjectMacro(Image);
 
   os << indent << "BasisMatrix: " << m_BasisMatrix << std::endl;
-  os << indent << "BasisMatrixCalculated: " << (m_BasisMatrixCalculated ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(BasisMatrixCalculated);
   os << indent << "NumPixels: " << static_cast<typename NumericTraits<SizeValueType>::PrintType>(m_NumPixels)
      << std::endl;
 }

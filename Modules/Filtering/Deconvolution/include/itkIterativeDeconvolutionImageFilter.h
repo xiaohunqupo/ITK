@@ -44,7 +44,7 @@ namespace itk
  *
  * "Deconvolution: infrastructure and reference algorithms"
  * by Gaetan Lehmann
- * https://www.insight-journal.org/browse/publication/753
+ * https://doi.org/10.54294/tvgfv1
  *
  * \ingroup ITKDeconvolution
  */
@@ -76,8 +76,8 @@ public:
   using typename Superclass::InternalComplexImageType;
   using typename Superclass::InternalComplexImagePointerType;
 
-  /** Runtime information support. */
-  itkTypeMacro(IterativeDeconvolutionImageFilter, ConvolutionImageFilterBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IterativeDeconvolutionImageFilter);
 
   /** Set/get the number of iterations. */
   itkSetMacro(NumberOfIterations, unsigned int);

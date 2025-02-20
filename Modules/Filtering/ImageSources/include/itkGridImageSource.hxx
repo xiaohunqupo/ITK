@@ -22,6 +22,7 @@
 #include "itkImageLinearIteratorWithIndex.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkTotalProgressReporter.h"
+#include <algorithm> // For min.
 
 namespace itk
 {
@@ -50,10 +51,7 @@ GridImageSource<TOutputImage>::BeforeThreadedGenerateData()
 
   for (unsigned int i = 0; i < ImageDimension; ++i)
   {
-    if (this->m_GridOffset[i] > this->m_GridSpacing[i])
-    {
-      this->m_GridOffset[i] = this->m_GridSpacing[i];
-    }
+    this->m_GridOffset[i] = std::min(this->m_GridOffset[i], this->m_GridSpacing[i]);
     PixelArrayType pixels = m_PixelArrays->CreateElementAt(i);
     pixels.set_size(this->GetSize()[i]);
     pixels.fill(1);
@@ -64,7 +62,7 @@ GridImageSource<TOutputImage>::BeforeThreadedGenerateData()
 
       // Add two extra functions in the front and one in the back to ensure
       // coverage.
-      unsigned int numberOfGaussians =
+      const unsigned int numberOfGaussians =
         Math::Ceil<unsigned int>(this->GetSize()[i] * output->GetSpacing()[i] / this->m_GridSpacing[i]) + 4u;
       for (It.GoToBegin(); !It.IsAtEndOfLine(); ++It)
       {
@@ -75,8 +73,8 @@ GridImageSource<TOutputImage>::BeforeThreadedGenerateData()
         RealType val = 0;
         for (unsigned int j = 0; j < numberOfGaussians; ++j)
         {
-          RealType num = point[i] - static_cast<RealType>(j - 2) * this->m_GridSpacing[i] - output->GetOrigin()[i] -
-                         this->m_GridOffset[i];
+          const RealType num = point[i] - static_cast<RealType>(j - 2) * this->m_GridSpacing[i] -
+                               output->GetOrigin()[i] - this->m_GridOffset[i];
           val += this->m_KernelFunction->Evaluate(num / this->m_Sigma[i]);
         }
         pixels[index[i]] = val;

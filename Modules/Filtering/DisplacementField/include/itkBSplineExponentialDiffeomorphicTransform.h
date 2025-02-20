@@ -44,8 +44,7 @@ namespace itk
  * \c ExponentialDisplacementImageFilter to yield both the forward and inverse
  * displacement fields.
  *
- * \li J. Ashburner. A Fast Diffeomorphic Image Registration Algorithm.
- * NeuroImage, 38(1):95-113, 2007.
+ * See \cite ashburner2007 for more details.
  *
  * \author Nick Tustison
  * \author Brian Avants
@@ -65,8 +64,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineExponentialDiffeomorphicTransform, ConstantVelocityFieldTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineExponentialDiffeomorphicTransform);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);

@@ -36,7 +36,7 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 BinaryThresholdImageFilter<TInputImage, TOutputImage>::BinaryThresholdImageFilter()
   : m_InsideValue(NumericTraits<OutputPixelType>::max())
-  , m_OutsideValue(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_OutsideValue(OutputPixelType{})
 {
   // We are going to create the object with a few default inputs to
   // hold the threshold values.
@@ -88,7 +88,7 @@ template <typename TInputImage, typename TOutputImage>
 auto
 BinaryThresholdImageFilter<TInputImage, TOutputImage>::GetLowerThreshold() const -> InputPixelType
 {
-  typename InputPixelObjectType::Pointer lower = const_cast<Self *>(this)->GetLowerThresholdInput();
+  const typename InputPixelObjectType::Pointer lower = const_cast<Self *>(this)->GetLowerThresholdInput();
 
   return lower->Get();
 }
@@ -167,7 +167,7 @@ template <typename TInputImage, typename TOutputImage>
 auto
 BinaryThresholdImageFilter<TInputImage, TOutputImage>::GetUpperThreshold() const -> InputPixelType
 {
-  typename InputPixelObjectType::Pointer upper = const_cast<Self *>(this)->GetUpperThresholdInput();
+  const typename InputPixelObjectType::Pointer upper = const_cast<Self *>(this)->GetUpperThresholdInput();
 
   return upper->Get();
 }
@@ -213,12 +213,12 @@ void
 BinaryThresholdImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateData()
 {
   // Set up the functor values
-  typename InputPixelObjectType::Pointer lowerThreshold = this->GetLowerThresholdInput();
-  typename InputPixelObjectType::Pointer upperThreshold = this->GetUpperThresholdInput();
+  const typename InputPixelObjectType::Pointer lowerThreshold = this->GetLowerThresholdInput();
+  const typename InputPixelObjectType::Pointer upperThreshold = this->GetUpperThresholdInput();
 
   if (lowerThreshold->Get() > upperThreshold->Get())
   {
-    itkExceptionMacro(<< "Lower threshold cannot be greater than upper threshold.");
+    itkExceptionMacro("Lower threshold cannot be greater than upper threshold.");
   }
 
   // Set up the functor

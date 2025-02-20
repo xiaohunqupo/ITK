@@ -26,9 +26,7 @@ namespace itk
 /** \class ParticleSwarmOptimizer
  * \brief Implementation of a Particle Swarm Optimization (PSO) algorithm.
  *
- * The PSO algorithm was originally presented in:<br>
- * J. Kennedy, R. Eberhart, "Particle Swarm Optimization",
- * Proc. IEEE Int. Neural Networks, 1995.<br>
+ * The PSO algorithm was originally presented in \cite kennedy1995.
  *
  * The algorithm uses a stochastic optimization approach. Optimization
  * is performed by maintaining a swarm (flock) of
@@ -71,8 +69,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleSwarmOptimizer, ParticleSwarmOptimizerBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ParticleSwarmOptimizer);
 
   /** The Particle swarm optimizer uses the following update formula:
    * v_i(t+1) = w*v_i(t) +

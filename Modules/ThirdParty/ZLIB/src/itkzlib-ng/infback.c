@@ -34,28 +34,38 @@
 int32_t ZNG_CONDEXPORT PREFIX(inflateBackInit)(PREFIX3(stream) *strm, int32_t windowBits, uint8_t *window) {
     struct inflate_state *state;
 
-    if (strm == NULL || window == NULL || windowBits < 8 || windowBits > 15)
+    if (strm == NULL || window == NULL || windowBits < MIN_WBITS || windowBits > MAX_WBITS)
         return Z_STREAM_ERROR;
     strm->msg = NULL;                   /* in case we return an error */
     if (strm->zalloc == NULL) {
-        strm->zalloc = PREFIX3(calloc);
+        strm->zalloc = PREFIX(zcalloc);
         strm->opaque = NULL;
     }
     if (strm->zfree == NULL)
-        strm->zfree = PREFIX3(cfree);
-    state = ZALLOC_INFLATE_STATE(strm);
-    if (state == NULL)
+        strm->zfree = PREFIX(zcfree);
+
+    inflate_allocs *alloc_bufs = alloc_inflate(strm);
+    if (alloc_bufs == NULL)
         return Z_MEM_ERROR;
+
+    state = alloc_bufs->state;
+    state->alloc_bufs = alloc_bufs;
     Tracev((stderr, "inflate: allocated\n"));
+
     strm->state = (struct internal_state *)state;
-    state->dmax = 32768U;
     state->wbits = (unsigned int)windowBits;
     state->wsize = 1U << windowBits;
+    state->wbufsize = 1U << windowBits;
     state->window = window;
     state->wnext = 0;
     state->whave = 0;
+    state->chunksize = FUNCTABLE_CALL(chunksize)();
+#ifdef INFLATE_STRICT
+    state->dmax = 32768U;
+#endif
+#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
     state->sane = 1;
-    state->chunksize = functable.chunksize();
+#endif
     return Z_OK;
 }
 
@@ -357,7 +367,7 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PREFIX3(stream) *strm, in_func in, void *in
                 RESTORE();
                 if (state->whave < state->wsize)
                     state->whave = state->wsize - left;
-                functable.inflate_fast(strm, state->wsize);
+                FUNCTABLE_CALL(inflate_fast)(strm, state->wsize);
                 LOAD();
                 break;
             }
@@ -408,7 +418,7 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PREFIX3(stream) *strm, in_func in, void *in
             }
 
             /* length code -- get extra bits, if any */
-            state->extra = (here.op & 15);
+            state->extra = (here.op & MAX_BITS);
             if (state->extra) {
                 NEEDBITS(state->extra);
                 state->length += BITS(state->extra);
@@ -439,7 +449,7 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PREFIX3(stream) *strm, in_func in, void *in
                 break;
             }
             state->offset = here.val;
-            state->extra = (here.op & 15);
+            state->extra = (here.op & MAX_BITS);
 
             /* get distance extra bits, if any */
             if (state->extra) {
@@ -504,8 +514,10 @@ int32_t Z_EXPORT PREFIX(inflateBack)(PREFIX3(stream) *strm, in_func in, void *in
 int32_t Z_EXPORT PREFIX(inflateBackEnd)(PREFIX3(stream) *strm) {
     if (strm == NULL || strm->state == NULL || strm->zfree == NULL)
         return Z_STREAM_ERROR;
-    ZFREE_STATE(strm, strm->state);
-    strm->state = NULL;
+
+    /* Free allocated buffers */
+    free_inflate(strm);
+
     Tracev((stderr, "inflate: end\n"));
     return Z_OK;
 }

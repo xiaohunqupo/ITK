@@ -19,23 +19,13 @@
 #ifndef itkConnectedImageNeighborhoodShape_h
 #define itkConnectedImageNeighborhoodShape_h
 
+#include "itkIntTypes.h" // For uintmax_t
 #include "itkMath.h"
 #include "itkOffset.h"
 
 #include <array>
 #include <cassert>
-#include <cstdint> // For uintmax_t
 #include <limits>
-
-// C++11 does not guarantee that assert can be used in constexpr
-// functions. This is a work-around for GCC 4.8, 4.9. Originating
-// from Andrzej's C++ blog:
-//  https://akrzemi1.wordpress.com/2017/05/18/asserts-in-constexpr-functions/
-#if defined NDEBUG
-#  define ITK_X_ASSERT(CHECK) void(0)
-#else
-#  define ITK_X_ASSERT(CHECK) ((CHECK) ? void(0) : [] { assert(!#CHECK); }())
-#endif
 
 namespace itk
 {
@@ -93,6 +83,7 @@ namespace itk
  * \ingroup ImageIterators
  * \ingroup ITKCommon
  */
+
 template <unsigned int VImageDimension>
 class ConnectedImageNeighborhoodShape
 {
@@ -185,7 +176,7 @@ private:
   static constexpr uintmax_t
   CalculateSum(const uintmax_t a, const uintmax_t b) noexcept
   {
-    return ((a + b) >= a) && ((a + b) >= b) ? (a + b) : (ITK_X_ASSERT(!"CalculateSum overflow!"), 0);
+    return ((a + b) >= a) && ((a + b) >= b) ? (a + b) : (assert(!"CalculateSum overflow!"), 0);
   }
 
 
@@ -195,7 +186,7 @@ private:
   CalculatePowerOfTwo(const size_t n) noexcept
   {
     return (n < std::numeric_limits<uintmax_t>::digits) ? (uintmax_t{ 1 } << n)
-                                                        : (ITK_X_ASSERT(!"CalculatePowerOfTwo overflow!"), 0);
+                                                        : (assert(!"CalculatePowerOfTwo overflow!"), 0);
   }
 
 
@@ -206,8 +197,9 @@ private:
   static constexpr uintmax_t
   CalculateBinomialCoefficient(const uintmax_t n, const uintmax_t k) noexcept
   {
-    return (k > n) ? (ITK_X_ASSERT(!"Out of range!"), 0)
-                   : (k == 0) ? 1 : Math::UnsignedProduct(n, CalculateBinomialCoefficient(n - 1, k - 1)) / k;
+    return (k > n)    ? (assert(!"Out of range!"), 0)
+           : (k == 0) ? 1
+                      : Math::UnsignedProduct(n, CalculateBinomialCoefficient(n - 1, k - 1)) / k;
   }
 
 
@@ -232,9 +224,8 @@ private:
   static constexpr size_t
   CalculateSumOfNumberOfHypercubesOnBoundaryOfCube(const size_t i, const size_t m) noexcept
   {
-    return ITK_X_ASSERT(i >= m),
-           CalculateSum(CalculateNumberOfHypercubesOnBoundaryOfCube(i, ImageDimension),
-                        ((i <= m) ? 0 : CalculateSumOfNumberOfHypercubesOnBoundaryOfCube(i - 1, m)));
+    return assert(i >= m), CalculateSum(CalculateNumberOfHypercubesOnBoundaryOfCube(i, ImageDimension),
+                                        ((i <= m) ? 0 : CalculateSumOfNumberOfHypercubesOnBoundaryOfCube(i - 1, m)));
   }
 
 
@@ -259,7 +250,6 @@ private:
   }
 };
 
-
 /** Generates the offsets for a connected image neighborhood shape. */
 template <unsigned int VImageDimension, size_t VMaximumCityblockDistance, bool VIncludeCenterPixel>
 auto
@@ -272,7 +262,5 @@ GenerateConnectedImageNeighborhoodShapeOffsets() noexcept
 }
 
 } // namespace itk
-
-#undef ITK_X_ASSERT
 
 #endif

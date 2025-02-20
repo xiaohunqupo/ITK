@@ -60,7 +60,6 @@ class OpenCVImageBridge
 public:
   ITK_DISALLOW_COPY_AND_MOVE(OpenCVImageBridge);
 
-  /** ITK stype type alias */
   using Self = OpenCVImageBridge;
 
   /** IplImage* -> itk::Image */
@@ -113,7 +112,7 @@ private:
     checkMatchingTypes<TPixel, OutputPixelType>(outChannels);
 
     // We only change current if it no longer points at in, so this is safe
-    IplImage * current = const_cast<IplImage *>(in);
+    auto * current = const_cast<IplImage *>(in);
 
     bool freeCurrent = false;
     if (inChannels == 3 && outChannels == 1)
@@ -249,7 +248,7 @@ private:
     out->SetSpacing(spacing);
     out->Allocate();
     size_t       lineLength = imgWidth * inChannels * sizeof(TPixel);
-    void *       unpaddedBuffer = reinterpret_cast<void *>(new TPixel[imgHeight * lineLength]);
+    auto *       unpaddedBuffer = reinterpret_cast<void *>(new TPixel[imgHeight * lineLength]);
     unsigned int paddedBufPos = 0;
     unsigned int unpaddedBufPos = 0;
 
@@ -302,7 +301,7 @@ private:
 
       for (int r = 0; r < out->height; ++r)
       {
-        ValueType * ptr = reinterpret_cast<ValueType *>(out->imageData + r * out->widthStep);
+        auto * ptr = reinterpret_cast<ValueType *>(out->imageData + r * out->widthStep);
         for (int c = 0; c < out->width; ++c)
         {
           pixelIndex[0] = c;

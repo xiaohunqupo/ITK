@@ -90,7 +90,7 @@ ImageSpatialObject<TDimension, PixelType>::ValueAtInObjectSpace(const PointType 
     if (this->IsEvaluableAtInObjectSpace(point, 0, name))
     {
       ContinuousIndexType cIndex;
-      bool                isInside = m_Image->TransformPhysicalPointToContinuousIndex(point, cIndex);
+      const bool          isInside = m_Image->TransformPhysicalPointToContinuousIndex(point, cIndex);
 
       if (isInside)
       {
@@ -149,6 +149,8 @@ ImageSpatialObject<TDimension, PixelType>::SetImage(const ImageType * image)
     }
 
     m_Image = image;
+    UpdateImageRegions();
+
     if (m_Interpolator)
     {
       m_Interpolator->SetInputImage(m_Image);
@@ -173,10 +175,10 @@ ImageSpatialObject<TDimension, PixelType>::InternalClone() const
   // this to new transform.
   typename LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
+  const typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
   if (rval.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
   rval->SetImage(this->GetImage()->Clone());
   rval->SetSliceNumber(this->GetSliceNumber());
@@ -184,6 +186,32 @@ ImageSpatialObject<TDimension, PixelType>::InternalClone() const
 
   return loPtr;
 }
+
+
+template <unsigned int TDimension, typename PixelType>
+void
+ImageSpatialObject<TDimension, PixelType>::Update()
+{
+  UpdateImageRegions();
+
+  // Call the Superclass Update() after (not before) updating the image regions! The effect of Superclass::Update()
+  // may depend partially on the image regions.
+  Superclass::Update();
+}
+
+
+template <unsigned int TDimension, typename PixelType>
+void
+ImageSpatialObject<TDimension, PixelType>::UpdateImageRegions()
+{
+  if (m_Image)
+  {
+    Superclass::SetLargestPossibleRegion(m_Image->GetLargestPossibleRegion());
+    Superclass::SetBufferedRegion(m_Image->GetBufferedRegion());
+    Superclass::SetRequestedRegion(m_Image->GetRequestedRegion());
+  }
+}
+
 
 template <unsigned int TDimension, typename PixelType>
 void

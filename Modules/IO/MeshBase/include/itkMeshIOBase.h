@@ -96,8 +96,8 @@ public:
   class UnknownType
   {};
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MeshIOBase, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeshIOBase);
 
   /** Set/Get the name of the file to be read. */
   itkSetStringMacro(FileName);
@@ -635,14 +635,14 @@ protected:
 
     if (m_ByteOrder == IOByteOrderEnum::BigEndian)
     {
-      if (itk::ByteSwapper<T>::SystemIsLittleEndian())
+      if constexpr (itk::ByteSwapper<T>::SystemIsLittleEndian())
       {
         itk::ByteSwapper<T>::SwapRangeFromSystemToBigEndian(buffer, numberOfComponents);
       }
     }
     else if (m_ByteOrder == IOByteOrderEnum::LittleEndian)
     {
-      if (itk::ByteSwapper<T>::SystemIsBigEndian())
+      if constexpr (itk::ByteSwapper<T>::SystemIsBigEndian())
       {
         itk::ByteSwapper<T>::SwapRangeFromSystemToLittleEndian(buffer, numberOfComponents);
       }

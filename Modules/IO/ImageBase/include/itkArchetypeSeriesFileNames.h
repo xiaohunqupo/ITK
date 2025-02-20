@@ -78,8 +78,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ArchetypeSeriesFileNames, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ArchetypeSeriesFileNames);
 
   /* -------- Define the API for ArchetypeSeriesFileNames ----------- */
 

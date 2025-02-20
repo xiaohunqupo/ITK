@@ -41,8 +41,8 @@ public:
 
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(MySample, Sample);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MySample);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -159,12 +159,12 @@ itkSampleTest2(int, char *[])
 
   using AbsoluteFrequencyType = SampleType::AbsoluteFrequencyType;
 
-  AbsoluteFrequencyType frequency = 17;
+  constexpr AbsoluteFrequencyType frequency = 17;
 
   sample->AddMeasurementVector(measure, frequency);
 
-  MeasurementVectorType measureBack = sample->GetMeasurementVector(0);
-  AbsoluteFrequencyType frequencyBack = sample->GetFrequency(0);
+  MeasurementVectorType       measureBack = sample->GetMeasurementVector(0);
+  const AbsoluteFrequencyType frequencyBack = sample->GetFrequency(0);
 
   if (frequencyBack != frequency)
   {

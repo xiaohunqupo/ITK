@@ -63,8 +63,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VersorTransformOptimizer, RegularStepGradientDescentBaseOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VersorTransformOptimizer);
 
   /**  Versor Type  */
   using VersorType = Versor<double>;

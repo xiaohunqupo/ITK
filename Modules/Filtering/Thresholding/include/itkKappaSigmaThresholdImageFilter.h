@@ -36,7 +36,7 @@ namespace itk
  * \author Gaetan Lehmann
  *
  * \note This class was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/132
+ * https://doi.org/10.54294/39qekn
  *
  * \sa KappaSigmaThresholdImageCalculator
  * \ingroup IntensityImageFilters
@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(KappaSigmaThresholdImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KappaSigmaThresholdImageFilter);
 
   /** Standard image type within this class. */
   using InputImageType = TInputImage;
@@ -78,7 +78,7 @@ public:
   using MaskImagePointer = typename TMaskImage::Pointer;
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::ZeroValue(). */
+   * OutputPixelType{}. */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -107,12 +107,8 @@ public:
   itkSetMacro(NumberOfIterations, unsigned int);
   itkGetConstMacro(NumberOfIterations, unsigned int);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputComparableCheck, (Concept::Comparable<OutputPixelType>));
   itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputPixelType>));
-  // End concept checking
-#endif
 
   /** Set the mask image */
   void

@@ -395,10 +395,7 @@ public:
    *  installPrefix is a possibly null pointer to the install directory.
    */
   static bool FindProgramPath(const char* argv0, std::string& pathOut,
-                              std::string& errorMsg,
-                              const char* exeName = nullptr,
-                              const char* buildDir = nullptr,
-                              const char* installPrefix = nullptr);
+                              std::string& errorMsg);
 
   /**
    * Given a path to a file or directory, convert it to a full path.
@@ -618,6 +615,52 @@ public:
    */
   static CopyStatus CloneFileContent(std::string const& source,
                                      std::string const& destination);
+
+  /**
+   * Object encapsulating a unique identifier for a file
+   * or directory
+   */
+#ifdef _WIN32
+  class WindowsFileId
+  {
+  public:
+    WindowsFileId() = default;
+    WindowsFileId(unsigned long volumeSerialNumber,
+                  unsigned long fileIndexHigh, unsigned long fileIndexLow);
+
+    bool operator==(const WindowsFileId& o) const;
+    bool operator!=(const WindowsFileId& o) const;
+
+  private:
+    unsigned long m_volumeSerialNumber;
+    unsigned long m_fileIndexHigh;
+    unsigned long m_fileIndexLow;
+  };
+  using FileId = WindowsFileId;
+#else
+  class UnixFileId
+  {
+  public:
+    UnixFileId() = default;
+    UnixFileId(dev_t volumeSerialNumber, ino_t fileSerialNumber,
+               off_t fileSize);
+
+    bool operator==(const UnixFileId& o) const;
+    bool operator!=(const UnixFileId& o) const;
+
+  private:
+    dev_t m_volumeSerialNumber;
+    ino_t m_fileSerialNumber;
+    off_t m_fileSize;
+  };
+  using FileId = UnixFileId;
+#endif
+
+  /**
+   * Outputs a FileId for the given file or directory.
+   * Returns true on success, false on failure
+   */
+  static bool GetFileId(const std::string& file, FileId& id);
 
   /**
    * Return true if the two files are the same file
@@ -941,25 +984,6 @@ public:
    */
   static int GetTerminalWidth();
 
-#if @KWSYS_NAMESPACE@_SYSTEMTOOLS_USE_TRANSLATION_MAP
-  /**
-   * Add an entry in the path translation table.
-   */
-  static void AddTranslationPath(const std::string& dir,
-                                 const std::string& refdir);
-
-  /**
-   * If dir is different after CollapseFullPath is called,
-   * Then insert it into the path translation table
-   */
-  static void AddKeepPath(const std::string& dir);
-
-  /**
-   * Update path by going through the Path Translation table;
-   */
-  static void CheckTranslationPath(std::string& path);
-#endif
-
   /**
    * Delay the execution for a specified amount of time specified
    * in milliseconds
@@ -1009,14 +1033,7 @@ public:
   static std::string DecodeURL(const std::string& url);
 
 private:
-  /**
-   * Allocate the stl map that serve as the Path Translation table.
-   */
   static void ClassInitialize();
-
-  /**
-   * Deallocate the stl map that serve as the Path Translation table.
-   */
   static void ClassFinalize();
 
   /**

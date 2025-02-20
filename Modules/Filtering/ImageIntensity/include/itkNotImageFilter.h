@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(NotImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NotImageFilter);
 
   /** Set/Get the value used to mark the false pixels of the result of
    * the operator. Defaults to 0 */
@@ -116,13 +116,9 @@ public:
   }
 
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<typename TInputImage::PixelType, bool>));
   itkConceptMacro(OutputConvertibleToOutputCheck, (Concept::Convertible<bool, typename TOutputImage::PixelType>));
   itkConceptMacro(InputNotOperatorCheck, (Concept::NotOperator<typename TInputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   NotImageFilter()

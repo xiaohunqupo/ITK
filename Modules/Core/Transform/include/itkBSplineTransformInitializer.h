@@ -52,8 +52,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineTransformInitializer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineTransformInitializer);
 
   /** Type of the transform to initialize. */
   using TransformType = TTransform;
@@ -63,7 +63,12 @@ public:
   using ImagePointer = typename ImageType::ConstPointer;
   using IndexType = typename ImageType::IndexType;
   using ImagePointType = typename ImageType::PointType;
-  using ImagePointCoordRepType = typename ImagePointType::CoordRepType;
+  using ImagePointCoordinateType = typename ImagePointType::CoordinateType;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using ImagePointCoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `ImagePointCoordRepType`. Please use `ImagePointCoordinateType` instead!") =
+    ImagePointCoordinateType;
+#endif
 
   /** Types defined from transform traits. */
   using TransformPointer = typename TransformType::Pointer;

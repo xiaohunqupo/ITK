@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(UnaryFrequencyDomainFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(UnaryFrequencyDomainFilter);
 
   /** Typedef to images */
   using ImageType = TImageType;
@@ -87,9 +87,7 @@ public:
 
   static constexpr unsigned int ImageDimension = TImageType::ImageDimension;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
   itkConceptMacro(ImageTypeHasNumericTraitsCheck, (Concept::HasNumericTraits<typename TImageType::PixelType>));
-#endif
 
   /** Frequency Iterator types */
   using FrequencyIteratorType = TFrequencyIterator;

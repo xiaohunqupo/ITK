@@ -25,11 +25,10 @@
 #ifndef itkSingletonMacro_h
 #define itkSingletonMacro_h
 
-#define itkInitGlobalsMacro(VarName)                       \
-  {                                                        \
-    static auto * staticGlobals = Get##VarName##Pointer(); \
-    (void)staticGlobals;                                   \
-  }                                                        \
+#define itkInitGlobalsMacro(VarName)                                        \
+  {                                                                         \
+    [[maybe_unused]] static auto * staticGlobals = Get##VarName##Pointer(); \
+  }                                                                         \
   ITK_MACROEND_NOOP_STATEMENT
 
 #define itkGetGlobalDeclarationMacro(Type, VarName) static Type * Get##VarName##Pointer()
@@ -44,16 +43,12 @@
   {                                                                                                 \
     if (m_##VarName == nullptr)                                                                     \
     {                                                                                               \
-      const auto setLambda = [](void * a) {                                                         \
-        delete m_##VarName;                                                                         \
-        m_##VarName = static_cast<Type *>(a);                                                       \
-      };                                                                                            \
       const auto deleteLambda = []() {                                                              \
         delete m_##VarName;                                                                         \
         m_##VarName = nullptr;                                                                      \
       };                                                                                            \
       auto * old_instance = SingletonIndex::GetInstance()->GetGlobalInstance<Type>(#SingletonName); \
-      m_##VarName = Singleton<Type>(#SingletonName, setLambda, deleteLambda);                       \
+      m_##VarName = Singleton<Type>(#SingletonName, deleteLambda);                                  \
       if (old_instance == nullptr)                                                                  \
       {                                                                                             \
         Init;                                                                                       \

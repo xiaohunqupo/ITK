@@ -26,8 +26,7 @@ template <typename TFixedImage, typename TMovingImage, typename TDisplacementFie
 FastSymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::
   FastSymmetricForcesDemonsRegistrationFilter()
 {
-  typename DemonsRegistrationFunctionType::Pointer drfp;
-  drfp = DemonsRegistrationFunctionType::New();
+  auto drfp = DemonsRegistrationFunctionType::New();
 
   this->SetDifferenceFunction(drfp);
 
@@ -139,7 +138,7 @@ typename FastSymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, 
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to SymmetricDemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to SymmetricDemonsRegistrationFunction");
   }
 
   return drfp;
@@ -155,7 +154,7 @@ const typename FastSymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingI
 
   if (!drfp)
   {
-    itkExceptionMacro(<< "Could not cast difference function to SymmetricDemonsRegistrationFunction");
+    itkExceptionMacro("Could not cast difference function to SymmetricDemonsRegistrationFunction");
   }
 
   return drfp;
@@ -166,8 +165,8 @@ void
 FastSymmetricForcesDemonsRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::AllocateUpdateBuffer()
 {
   // The update buffer looks just like the output.
-  DisplacementFieldPointer output = this->GetOutput();
-  DisplacementFieldPointer upbuf = this->GetUpdateBuffer();
+  const DisplacementFieldPointer output = this->GetOutput();
+  const DisplacementFieldPointer upbuf = this->GetUpdateBuffer();
 
   upbuf->SetLargestPossibleRegion(output->GetLargestPossibleRegion());
   upbuf->SetRequestedRegion(output->GetRequestedRegion());

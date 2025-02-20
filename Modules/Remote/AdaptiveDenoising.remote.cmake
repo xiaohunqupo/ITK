@@ -41,20 +41,21 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(AdaptiveDenoising
+itk_fetch_module(
+  AdaptiveDenoising
   "A spatially adaptive denoising image filter using non-local means.
   A patch-based framework for new ITK functionality: Joint fusion, denoising,
   and non-local super-resolution.
   Tustison N., Avants B., Wang H., Xie L., Coupe P., Yushkevich P., Manjon J.
   Insight Journal.
-  https://insight-journal.org/browse/publication/982.
+  https://doi.org/10.54294/ywuouh.
   Two Luis Miguel fans walk into a bar in Nagoya ---> (yada, yada, yada)
   ---> an ITK-implementation of a popular patch-based denoising filter.
   Tustison N., Manjon J.V.
   Insight Journal.
-  https://insight-journal.org/browse/publication/979.
+  https://doi.org/10.54294/9f5wt3.
   "
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/ntustison/ITKAdaptiveDenoising.git
-  GIT_TAG 24825c8d246e941334f47968553f0ae388851f0c
-)
+  GIT_REPOSITORY https://github.com/ntustison/ITKAdaptiveDenoising.git
+  GIT_TAG 9a7adca1a822589c66a176a9e093d8a9f1c222c2
+  )

@@ -57,9 +57,7 @@ namespace itk
  *
  * Else the output information is copied from the input speed image.
  *
- * Implementation of this class is based on Chapter 8 of
- * "Level Set Methods and Fast Marching Methods", J.A. Sethian,
- * Cambridge Press, Second edition, 1999.
+ * Implementation of this class is based on \cite sethian1999a.
  *
  * For an alternative implementation, see itk::FastMarchingImageFilter.
  *
@@ -86,8 +84,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingImageFilterBase, FastMarchingBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingImageFilterBase);
 
 
   using InputImageType = typename Superclass::InputDomainType;

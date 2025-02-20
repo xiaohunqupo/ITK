@@ -57,8 +57,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(InteriorExteriorSpatialFunction, SpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InteriorExteriorSpatialFunction);
 
   /** Input type for the function */
   using typename Superclass::InputType;

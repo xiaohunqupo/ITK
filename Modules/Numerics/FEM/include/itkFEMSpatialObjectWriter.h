@@ -25,7 +25,7 @@ namespace itk
 {
 /** \class FEMSpatialObjectWriter
  *
- * \brief Read any SpatialObject file with conversion for FEM Objects
+ * \brief Write FEM SpatialObjects to a file
  *
  * \ingroup ITKFEM
  */
@@ -41,8 +41,8 @@ public:
   using Superclass = SpatialObjectWriter<VDimension, PixelType, TMeshTraits>;
   using Pointer = SmartPointer<Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Superclass, Self);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FEMSpatialObjectWriter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);

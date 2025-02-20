@@ -34,30 +34,11 @@ LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::LevelSetEquation
 
 template <typename TInput, typename TLevelSetContainer>
 void
-LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::Update()
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::UpdatePixel(
-  const LevelSetInputIndexType & itkNotUsed(index),
-  const LevelSetOutputRealType & itkNotUsed(oldValue),
-  const LevelSetOutputRealType & itkNotUsed(newValue))
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
 LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::InitializeParameters()
 {
   this->SetUp();
 }
 
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::Initialize(
-  const LevelSetInputIndexType & itkNotUsed(index))
-{}
 
 template <typename TInput, typename TLevelSetContainer>
 auto
@@ -70,9 +51,10 @@ LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::Value(const Leve
 }
 
 template <typename TInput, typename TLevelSetContainer>
-typename LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationOverlapPenaltyTerm<TInput, TLevelSetContainer>::Value(const LevelSetInputIndexType & index,
                                                                       const LevelSetDataType &       itkNotUsed(data))
+  -> LevelSetOutputRealType
 {
   LevelSetOutputRealType value{};
   this->ComputeSumTerm(index, value);

@@ -66,8 +66,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToNeighborhoodSampleAdaptor, ListSample);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToNeighborhoodSampleAdaptor);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -275,7 +275,7 @@ public:
   {
     NeighborhoodIteratorType nIterator(m_Radius, m_Image, m_Region);
     nIterator.GoToBegin();
-    Iterator iter(nIterator, 0);
+    const Iterator iter(nIterator, 0);
     return iter;
   }
 
@@ -285,7 +285,7 @@ public:
   {
     NeighborhoodIteratorType nIterator(m_Radius, m_Image, m_Region);
     nIterator.GoToEnd();
-    Iterator iter(nIterator, m_Region.GetNumberOfPixels());
+    const Iterator iter(nIterator, m_Region.GetNumberOfPixels());
     return iter;
   }
 

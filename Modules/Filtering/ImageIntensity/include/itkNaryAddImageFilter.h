@@ -35,12 +35,10 @@ class Add1
 {
 public:
   using AccumulatorType = typename NumericTraits<TInput>::AccumulateType;
-  Add1() = default;
-  ~Add1() = default;
   inline TOutput
   operator()(const std::vector<TInput> & B) const
   {
-    AccumulatorType sum = NumericTraits<TOutput>::ZeroValue();
+    AccumulatorType sum = TOutput{};
 
     for (unsigned int i = 0; i < B.size(); ++i)
     {
@@ -115,16 +113,12 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(NaryAddImageFilter, NaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NaryAddImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToOutputCheck,
                   (Concept::Convertible<typename TInputImage::PixelType, typename TOutputImage::PixelType>));
   itkConceptMacro(InputHasZeroCheck, (Concept::HasZero<typename TInputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   NaryAddImageFilter() = default;

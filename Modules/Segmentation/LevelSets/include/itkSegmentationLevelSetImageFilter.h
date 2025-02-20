@@ -152,7 +152,7 @@ public:
 
   // static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
 
-  /** Output image type type alias */
+  /** Output image type alias */
   using OutputImageType = Image<TOutputPixelType, Self::InputImageDimension>;
 
   /** Standard class type aliases */
@@ -176,8 +176,8 @@ public:
   using VectorImageType = typename SegmentationFunctionType::VectorImageType;
   using SpeedImageType = typename SegmentationFunctionType::ImageType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SegmentationLevelSetImageFilter, SparseFieldLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SegmentationLevelSetImageFilter);
 
   /** Set/Get the maximum number of iterations allowed for the solver.  This
    *  prevents infinite loops if a solution "bounces". */
@@ -280,8 +280,8 @@ public:
   void
   SetUseNegativeFeatures(bool u)
   {
-    itkWarningMacro(<< "SetUseNegativeFeatures has been deprecated.  Please use SetReverseExpansionDirection instead");
-    if (u == true)
+    itkWarningMacro("SetUseNegativeFeatures has been deprecated.  Please use SetReverseExpansionDirection instead");
+    if (u)
     {
       this->SetReverseExpansionDirection(false);
     }
@@ -300,10 +300,8 @@ public:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
   /** Turn On/Off the flag which determines whether Positive or Negative speed
@@ -439,8 +437,7 @@ public:
   {
     m_SegmentationFunction = s;
 
-    typename SegmentationFunctionType::RadiusType r;
-    r.Fill(1);
+    constexpr auto r = MakeFilled<typename SegmentationFunctionType::RadiusType>(1);
 
     m_SegmentationFunction->Initialize(r);
     this->SetDifferenceFunction(m_SegmentationFunction);
@@ -505,11 +502,7 @@ public:
   void
   GenerateAdvectionImage();
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<TOutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ~SegmentationLevelSetImageFilter() override = default;

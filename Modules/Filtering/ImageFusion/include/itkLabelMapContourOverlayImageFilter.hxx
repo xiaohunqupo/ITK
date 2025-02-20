@@ -42,8 +42,7 @@ LabelMapContourOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::Label
   m_Opacity = 0.5;
   m_Type = CONTOUR;
   m_Priority = HIGH_LABEL_ON_TOP;
-  SizeType s;
-  s.Fill(1);
+  auto s = SizeType::Filled(1);
   m_ContourThickness = SizeType(s);
   s.Fill(0);
   m_DilationRadius = SizeType(s);
@@ -59,7 +58,7 @@ LabelMapContourOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::Gener
   Superclass::GenerateInputRequestedRegion();
 
   // We need all the input.
-  LabelMapPointer input = const_cast<LabelMapType *>(this->GetInput());
+  const LabelMapPointer input = const_cast<LabelMapType *>(this->GetInput());
   if (!input)
   {
     return;
@@ -153,11 +152,10 @@ LabelMapContourOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::Befor
   using SliceErodeType = BinaryErodeImageFilter<SliceInternalImageType, SliceInternalImageType, SliceKernelType>;
   auto serode = SliceErodeType::New();
   using RadiusType = typename SliceKernelType::RadiusType;
-  RadiusType srad;
-  srad.Fill(NumericTraits<typename RadiusType::SizeValueType>::ZeroValue());
+  RadiusType srad{};
   for (unsigned int i = 0, j = 0; i < ImageDimension; ++i)
   {
-    if (j != static_cast<unsigned int>(m_SliceDimension))
+    if (j != static_cast<unsigned int>(m_SliceDimension) && (j < (ImageDimension - 1)))
     {
       srad[j] = m_ContourThickness[i];
       ++j;
@@ -199,7 +197,7 @@ LabelMapContourOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::Befor
   }
   else
   {
-    itkExceptionMacro(<< "Unsupported Type: " << m_Type);
+    itkExceptionMacro("Unsupported Type: " << m_Type);
   }
 
   // choose which labels will be on top of the others
@@ -229,8 +227,8 @@ LabelMapContourOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::Dynam
   function.SetBackgroundValue(input->GetBackgroundValue());
   function.SetOpacity(m_Opacity);
 
-  ImageScanlineConstIterator<FeatureImageType> featureIt(input2, outputRegionForThread);
-  ImageScanlineIterator<OutputImageType>       outputIt(output, outputRegionForThread);
+  ImageScanlineConstIterator featureIt(input2, outputRegionForThread);
+  ImageScanlineIterator      outputIt(output, outputRegionForThread);
 
   while (!featureIt.IsAtEnd())
   {

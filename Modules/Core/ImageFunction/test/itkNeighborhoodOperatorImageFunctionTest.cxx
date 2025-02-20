@@ -20,6 +20,7 @@
 #include "itkNeighborhoodOperatorImageFunction.h"
 
 #include "itkGaussianOperator.h"
+#include "itkTestingMacros.h"
 
 int
 itkNeighborhoodOperatorImageFunctionTest(int, char *[])
@@ -28,7 +29,7 @@ itkNeighborhoodOperatorImageFunctionTest(int, char *[])
   constexpr unsigned int Dimension = 3;
   using PixelType = float;
   using ImageType = itk::Image<PixelType, Dimension>;
-  using NeighborhoodOperatorType = itk::GaussianOperator<PixelType, 3>;
+  using NeighborhoodOperatorType = itk::GaussianOperator<PixelType, Dimension>;
   using FunctionType = itk::NeighborhoodOperatorImageFunction<ImageType, PixelType>;
 
   // Create and allocate the image
@@ -49,26 +50,26 @@ itkNeighborhoodOperatorImageFunctionTest(int, char *[])
   image->SetRegions(region);
   image->Allocate();
 
-  ImageType::PixelType initialValue = 27;
+  constexpr ImageType::PixelType initialValue = 27;
   image->FillBuffer(initialValue);
 
 
   auto function = FunctionType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(function, NeighborhoodOperatorImageFunction, ImageFunction);
+
+
   function->SetInputImage(image);
 
-  auto * oper = new NeighborhoodOperatorType;
-  oper->CreateToRadius(3);
+  NeighborhoodOperatorType oper;
+  oper.CreateToRadius(3);
 
-  function->SetOperator(*oper);
-  delete oper;
+  function->SetOperator(oper);
 
-  itk::Index<3> index;
-  index.Fill(25);
-
-  FunctionType::OutputType Blur;
+  auto index = itk::Index<3>::Filled(25);
 
   std::cout << "EvaluateAtIndex: ";
-  Blur = function->EvaluateAtIndex(index);
+  const FunctionType::OutputType Blur = function->EvaluateAtIndex(index);
 
   // since the input image is constant
   // the should be equal to the initial value
@@ -81,8 +82,7 @@ itkNeighborhoodOperatorImageFunctionTest(int, char *[])
 
   std::cout << "EvaluateAtContinuousIndex: ";
 
-  FunctionType::ContinuousIndexType continuousIndex;
-  continuousIndex.Fill(25);
+  auto continuousIndex = itk::MakeFilled<FunctionType::ContinuousIndexType>(25);
 
   function->EvaluateAtContinuousIndex(continuousIndex);
 
@@ -102,6 +102,6 @@ itkNeighborhoodOperatorImageFunctionTest(int, char *[])
 
   std::cout << function << std::endl;
 
-  std::cout << "[TEST DONE] " << std::endl;
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

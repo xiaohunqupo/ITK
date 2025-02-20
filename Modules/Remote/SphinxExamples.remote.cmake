@@ -46,9 +46,10 @@
 #
 #
 # Contact: Matt McCormick <matt.mccormick@kitware.com>
-itk_fetch_module(SphinxExamples
+itk_fetch_module(
+  SphinxExamples
   "This module builds the examples found at https://itk.org/ITKExamples/"
   MODULE_COMPLIANCE_LEVEL 5
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKSphinxExamples.git
-  GIT_TAG 788c0dab1380c33fca0f99768d4e64f982d69863
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKSphinxExamples.git
+  GIT_TAG a63e366aaf3be3f10a1badf47c3180eefcec5edf
   )

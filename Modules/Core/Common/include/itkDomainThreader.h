@@ -79,8 +79,8 @@ public:
 
   using AssociateType = TAssociate;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DomainThreader, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DomainThreader);
 
   /** Run the multi-threaded operation on the given domain.
    *

@@ -151,8 +151,8 @@ public:
 
   using ScalarValueType = typename CannyFunctionType::ScalarValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CannySegmentationLevelSetImageFilter, SegmentationLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CannySegmentationLevelSetImageFilter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);
@@ -191,11 +191,7 @@ public:
     return this->m_CannyFunction->GetCannyImage();
   }
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<TOutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ~CannySegmentationLevelSetImageFilter() override = default;

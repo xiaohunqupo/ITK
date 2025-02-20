@@ -55,8 +55,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(CurvatureFlowFunction, FiniteDifferenceFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CurvatureFlowFunction);
 
   /** Inherit some parameters from the superclass type. */
   using typename Superclass::ImageType;
@@ -95,7 +95,7 @@ public:
   {
     auto * ans = new GlobalDataStruct();
 
-    ans->m_MaxChange = NumericTraits<ScalarValueType>::ZeroValue();
+    ans->m_MaxChange = ScalarValueType{};
     return ans;
   }
 
@@ -136,7 +136,7 @@ protected:
    * values that are needed in calculating the time step. */
   struct GlobalDataStruct
   {
-    GlobalDataStruct() { m_MaxChange = NumericTraits<ScalarValueType>::ZeroValue(); }
+    GlobalDataStruct() { m_MaxChange = ScalarValueType{}; }
 
     ~GlobalDataStruct() = default;
 

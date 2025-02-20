@@ -47,8 +47,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NonLinearOptimizer, Optimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NonLinearOptimizer);
 
   /**  Types inherited from the superclass */
   using ParametersType = Superclass::ParametersType;

@@ -57,7 +57,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKRegistrationMethodsv4_EXPORT std::ostream &
-                                       operator<<(std::ostream & out, const ImageRegistrationMethodv4Enums::MetricSamplingStrategy value);
+operator<<(std::ostream & out, const ImageRegistrationMethodv4Enums::MetricSamplingStrategy value);
 
 /** \class ImageRegistrationMethodv4
  * \brief Interface method for the current registration framework.
@@ -131,8 +131,8 @@ public:
   /** ImageDimension constants */
   static constexpr unsigned int ImageDimension = TFixedImage::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageRegistrationMethodv4, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageRegistrationMethodv4);
 
   /** Input type alias for the images and transforms. */
   using FixedImageType = TFixedImage;
@@ -384,8 +384,7 @@ public:
   {
     for (unsigned int level = 0; level < factors.Size(); ++level)
     {
-      ShrinkFactorsPerDimensionContainerType shrinkFactors;
-      shrinkFactors.Fill(factors[level]);
+      auto shrinkFactors = MakeFilled<ShrinkFactorsPerDimensionContainerType>(factors[level]);
       this->SetShrinkFactorsPerDimension(level, shrinkFactors);
     }
   }

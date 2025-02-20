@@ -38,9 +38,9 @@ MetaDTITubeConverter<VDimension>::MetaObjectToSpatialObject(const MetaObjectType
   const auto * tube = dynamic_cast<const MetaDTITube *>(mo);
   if (tube == nullptr)
   {
-    itkExceptionMacro(<< "Can't downcast MetaObject to MetaDTITube");
+    itkExceptionMacro("Can't downcast MetaObject to MetaDTITube");
   }
-  DTITubeSpatialObjectPointer tubeSO = DTITubeSpatialObjectType::New();
+  const DTITubeSpatialObjectPointer tubeSO = DTITubeSpatialObjectType::New();
 
   tubeSO->SetTypeName("DTITubeSpatialObject");
   tubeSO->GetProperty().SetName(tube->Name());
@@ -56,10 +56,8 @@ MetaDTITubeConverter<VDimension>::MetaObjectToSpatialObject(const MetaObjectType
 
   auto it2 = tube->GetPoints().begin();
 
-  itk::CovariantVector<double, VDimension> v;
-  v.Fill(0.0);
-  itk::Vector<double, VDimension> t;
-  t.Fill(0.0);
+  itk::CovariantVector<double, VDimension> v{};
+  itk::Vector<double, VDimension>          t{};
 
   for (unsigned int identifier = 0; identifier < tube->GetPoints().size(); ++identifier)
   {
@@ -180,10 +178,10 @@ template <unsigned int VDimension>
 auto
 MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectType * spatialObject) -> MetaObjectType *
 {
-  DTITubeSpatialObjectConstPointer DTITubeSO = dynamic_cast<const DTITubeSpatialObjectType *>(spatialObject);
+  const DTITubeSpatialObjectConstPointer DTITubeSO = dynamic_cast<const DTITubeSpatialObjectType *>(spatialObject);
   if (DTITubeSO.IsNull())
   {
-    itkExceptionMacro(<< "Can't downcast SpatialObject to DTITubeSpatialObject");
+    itkExceptionMacro("Can't downcast SpatialObject to DTITubeSpatialObject");
   }
 
   auto * tube = new MetaDTITube(VDimension);
@@ -197,8 +195,10 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
   bool writeAlpha = false;
   bool writeID = false;
 
-  typename DTITubeSpatialObjectType::DTITubePointListType::const_iterator it;
-  for (it = DTITubeSO->GetPoints().begin(); it != DTITubeSO->GetPoints().end(); ++it)
+
+  for (typename DTITubeSpatialObjectType::DTITubePointListType::const_iterator it = DTITubeSO->GetPoints().begin();
+       it != DTITubeSO->GetPoints().end();
+       ++it)
   {
     // Optional fields (written only if not default values)
     if (it->GetId() != -1)
@@ -211,8 +211,7 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
       writeRadius = true;
     }
 
-    unsigned int d;
-    for (d = 0; d < VDimension; ++d)
+    for (unsigned int d = 0; d < VDimension; ++d)
     {
       if (Math::NotExactlyEquals(it->GetNormal1InObjectSpace()[d], 0))
       {
@@ -241,7 +240,9 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
   }
 
   // fill in the tube information
-  for (it = DTITubeSO->GetPoints().begin(); it != DTITubeSO->GetPoints().end(); ++it)
+  for (typename DTITubeSpatialObjectType::DTITubePointListType::const_iterator it = DTITubeSO->GetPoints().begin();
+       it != DTITubeSO->GetPoints().end();
+       ++it)
   {
     auto * pnt = new DTITubePnt(VDimension);
 
@@ -278,7 +279,7 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
     {
       pnt->AddField("v1x", it->GetNormal1InObjectSpace()[0]);
       pnt->AddField("v1y", it->GetNormal1InObjectSpace()[1]);
-      if (VDimension == 3)
+      if constexpr (VDimension == 3)
       {
         pnt->AddField("v1z", it->GetNormal1InObjectSpace()[2]);
       }
@@ -288,7 +289,7 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
     {
       pnt->AddField("v2x", it->GetNormal2InObjectSpace()[0]);
       pnt->AddField("v2y", it->GetNormal2InObjectSpace()[1]);
-      if (VDimension == 3)
+      if constexpr (VDimension == 3)
       {
         pnt->AddField("v2z", it->GetNormal2InObjectSpace()[2]);
       }
@@ -298,7 +299,7 @@ MetaDTITubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObjectT
     {
       pnt->AddField("tx", it->GetTangentInObjectSpace()[0]);
       pnt->AddField("ty", it->GetTangentInObjectSpace()[1]);
-      if (VDimension == 3)
+      if constexpr (VDimension == 3)
       {
         pnt->AddField("tz", it->GetTangentInObjectSpace()[2]);
       }

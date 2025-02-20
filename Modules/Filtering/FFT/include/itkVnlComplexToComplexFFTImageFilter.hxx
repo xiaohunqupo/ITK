@@ -48,7 +48,8 @@ VnlComplexToComplexFFTImageFilter<TInputImage, TOutputImage>::BeforeThreadedGene
   {
     if (!VnlFFTCommon::IsDimensionSizeLegal(imageSize[ii]))
     {
-      itkExceptionMacro(<< "Cannot compute FFT of image with size " << imageSize
+      itkExceptionMacro("Cannot compute FFT of image with size "
+                        << imageSize
                         << ". VnlComplexToComplexFFTImageFilter operates only on images whose size in each dimension "
                            "has only a combination of 2,3, and 5 as prime factors.");
     }
@@ -82,8 +83,8 @@ VnlComplexToComplexFFTImageFilter<TInputImage, TOutputImage>::DynamicThreadedGen
   if (this->GetTransformDirection() == Superclass::TransformDirectionEnum::INVERSE)
   {
     using IteratorType = ImageRegionIterator<OutputImageType>;
-    SizeValueType totalOutputSize = this->GetOutput()->GetRequestedRegion().GetNumberOfPixels();
-    IteratorType  it(this->GetOutput(), outputRegionForThread);
+    const SizeValueType totalOutputSize = this->GetOutput()->GetRequestedRegion().GetNumberOfPixels();
+    IteratorType        it(this->GetOutput(), outputRegionForThread);
     while (!it.IsAtEnd())
     {
       PixelType val = it.Value();

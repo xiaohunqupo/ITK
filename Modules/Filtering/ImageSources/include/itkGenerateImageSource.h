@@ -67,8 +67,8 @@ public:
   /** Dimensionality of the output image */
   static constexpr unsigned int NDimensions = TOutputImage::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GenerateImageSource, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GenerateImageSource);
 
   itkSetMacro(UseReferenceImage, bool);
   itkBooleanMacro(UseReferenceImage);

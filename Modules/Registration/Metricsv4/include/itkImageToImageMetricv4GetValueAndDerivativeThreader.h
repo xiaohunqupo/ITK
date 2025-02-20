@@ -41,8 +41,7 @@ namespace itk
  * \ingroup ITKMetricsv4
  * */
 template <typename TDomainPartitioner, typename TImageToImageMetricv4>
-class ITK_TEMPLATE_EXPORT ImageToImageMetricv4GetValueAndDerivativeThreader
-{};
+class ITK_TEMPLATE_EXPORT ImageToImageMetricv4GetValueAndDerivativeThreader{};
 
 /** \class ImageToImageMetricv4GetValueAndDerivativeThreader
  * \brief Specialization for ThreadedImageRegionPartitioner.
@@ -67,8 +66,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(ImageToImageMetricv4GetValueAndDerivativeThreader,
-               ImageToImageMetricv4GetValueAndDerivativeThreaderBase);
+  itkOverrideGetNameOfClassMacro(ImageToImageMetricv4GetValueAndDerivativeThreader);
 
   /** Superclass types. */
   using typename Superclass::DomainType;
@@ -144,8 +142,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(ImageToImageMetricv4GetValueAndDerivativeThreader,
-               ImageToImageMetricv4GetValueAndDerivativeThreaderBase);
+  itkOverrideGetNameOfClassMacro(ImageToImageMetricv4GetValueAndDerivativeThreader);
 
   /** Superclass types. */
   using typename Superclass::DomainType;

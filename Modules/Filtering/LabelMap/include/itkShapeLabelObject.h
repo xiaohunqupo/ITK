@@ -34,7 +34,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/176
+ * https://doi.org/10.54294/q6auw4
  *
  * \ingroup DataRepresentation
  * \ingroup ITKLabelMap
@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapeLabelObject, LabelObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapeLabelObject);
 
   using LabelMapType = LabelMap<Self>;
 
@@ -167,7 +167,7 @@ public:
     {
       return NUMBER_OF_PIXELS;
     }
-    else if (s == "PhysicalSize")
+    if (s == "PhysicalSize")
     {
       return PHYSICAL_SIZE;
     }
@@ -669,7 +669,7 @@ public:
       }
     }
 
-    AffineTransformPointer result = AffineTransformType::New();
+    const AffineTransformPointer result = AffineTransformType::New();
     result->SetMatrix(matrix);
     result->SetOffset(offset);
 

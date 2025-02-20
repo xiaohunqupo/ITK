@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MeanSquaresImageToImageMetricv4, ImageToImageMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeanSquaresImageToImageMetricv4);
 
   using typename Superclass::DerivativeType;
 

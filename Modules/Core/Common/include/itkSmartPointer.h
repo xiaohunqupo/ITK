@@ -103,11 +103,23 @@ public:
   ~SmartPointer() { this->UnRegister(); }
 
   /** Overload operator ->  */
-  ObjectType * operator->() const noexcept { return m_Pointer; }
+  ObjectType *
+  operator->() const noexcept
+  {
+    return m_Pointer;
+  }
 
-  ObjectType & operator*() const noexcept { return *m_Pointer; }
+  ObjectType &
+  operator*() const noexcept
+  {
+    return *m_Pointer;
+  }
 
-  explicit operator bool() const noexcept { return m_Pointer != nullptr; }
+  explicit
+  operator bool() const noexcept
+  {
+    return m_Pointer != nullptr;
+  }
 
   /** Return pointer to object.  */
   operator ObjectType *() const noexcept { return m_Pointer; }
@@ -134,6 +146,15 @@ public:
     return m_Pointer;
   }
 
+  /** Returns the stored (raw) pointer. Equivalent to `GetPointer()`, but then following the Standard C++ Library naming
+   * conversion (like `std::shared_ptr::get()`). */
+  ObjectType *
+  get() const noexcept
+  {
+    return m_Pointer;
+  }
+
+
   /** Overload operator assignment.
    *
    * This method is also implicitly used for move semantics.
@@ -151,7 +172,8 @@ public:
     return *this;
   }
 
-  SmartPointer & operator=(std::nullptr_t) noexcept
+  SmartPointer &
+  operator=(std::nullptr_t) noexcept
   {
     this->UnRegister();
     this->m_Pointer = nullptr;

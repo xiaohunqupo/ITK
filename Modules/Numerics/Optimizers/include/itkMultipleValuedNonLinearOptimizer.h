@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MultipleValuedNonLinearOptimizer, NonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultipleValuedNonLinearOptimizer);
 
   /**  Parameters type.
    *  It defines a position in the optimization search space. */

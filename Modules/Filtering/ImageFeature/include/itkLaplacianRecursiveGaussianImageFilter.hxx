@@ -112,7 +112,7 @@ template <typename TInputImage, typename TOutputImage>
 void
 LaplacianRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  itkDebugMacro(<< "LaplacianRecursiveGaussianImageFilter generating data ");
+  itkDebugMacro("LaplacianRecursiveGaussianImageFilter generating data ");
 
   // Set the number of threads on all the filters
   for (unsigned int i = 0; i < ImageDimension - 1; ++i)
@@ -143,7 +143,7 @@ LaplacianRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
   // because the cast image filter will either run inplace, or allocate
   // the output there. The requested region has already been set in
   // ImageToImageFilter::GenerateInputImageFilter.
-  typename TOutputImage::Pointer outputImage(this->GetOutput());
+  const typename TOutputImage::Pointer outputImage(this->GetOutput());
   // outputImage->Allocate(); let the CasterImageFilter allocate the image
 
   //  Auxiliary image for accumulating the second-order derivatives
@@ -167,8 +167,7 @@ LaplacianRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
   CumulativeImagePointer cumulativeImage = CumulativeImageType::New();
   cumulativeImage->SetRegions(outputImage->GetRequestedRegion());
   cumulativeImage->CopyInformation(inputImage);
-  cumulativeImage->Allocate();
-  cumulativeImage->FillBuffer(NumericTraits<InternalRealType>::ZeroValue());
+  cumulativeImage->AllocateInitialized();
 
   m_DerivativeFilter->SetInput(inputImage);
 
@@ -198,7 +197,7 @@ LaplacianRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
     }
     m_DerivativeFilter->SetDirection(dim);
 
-    GaussianFilterPointer lastFilter = m_SmoothingFilters[ImageDimension - 2];
+    const GaussianFilterPointer lastFilter = m_SmoothingFilters[ImageDimension - 2];
 
     // scale the new value by the inverse of the spacing squared
     const RealType spacing2 = itk::Math::sqr(inputImage->GetSpacing()[dim]);
@@ -218,7 +217,7 @@ LaplacianRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
 
   // Because the output of last filter in the mini-pipeline is not
   // pipelined the data must be manually released
-  if (ImageDimension > 1)
+  if constexpr (ImageDimension > 1)
   {
     m_SmoothingFilters[ImageDimension - 2]->GetOutput()->ReleaseData();
   }

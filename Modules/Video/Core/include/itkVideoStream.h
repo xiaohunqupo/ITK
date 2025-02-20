@@ -72,7 +72,7 @@ public:
   using SpacingMapType = typename std::map<SizeValueType, SpacingType>;
   using NumberOfComponentsPerPixelMapType = typename std::map<SizeValueType, NumberOfComponentsPerPixelType>;
 
-  /** Access the spacial dimensionality of the frames */
+  /** Access the spatial dimensionality of the frames */
   static constexpr unsigned int FrameDimension = FrameType::ImageDimension;
   static unsigned int
   GetFrameDimension()
@@ -82,8 +82,8 @@ public:
 
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VideoStream, TemporalDataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VideoStream);
 
   /** Safely expand the internal ring buffer. */
   void

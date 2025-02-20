@@ -95,9 +95,7 @@ namespace itk
  * is a table containing all cluster centers.  The GLA produces results
  * that are equivalent to the K-means clustering algorithm.
  *
- * For more information about the algorithms, see A. Gersho and R. M. Gray,
- * {\em Vector Quantization and Signal Compression},
- * Kluwer Academic Publishers, Boston, MA, 1992.
+ * For more information about the algorithms, see \cite gersho1992.
  *
  * This object supports data handling of multiband images. The object
  * accepts the input image in vector format only, where each pixel is a
@@ -143,8 +141,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageKmeansModelEstimator, ImageModelEstimatorBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageKmeansModelEstimator);
 
   /** Type definition for the input image. */
   using InputImageType = TInputImage;

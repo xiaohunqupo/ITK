@@ -23,19 +23,6 @@ namespace itk
 namespace fem
 {
 
-/* Add definition for static constexpr members
-
-Reason: You have to provide the definition of the static member as well as the
-declaration. The declaration and the initializer go inside the class,
-but the member definition has to be in a single separate compilation unit.
-*/
-
-constexpr double GaussIntegrate::zero;
-constexpr double GaussIntegrate::one;
-constexpr double GaussIntegrate::two;
-constexpr double GaussIntegrate::z[110];
-constexpr double GaussIntegrate::w[110];
-
 /**
  * Numerical integration (Gauss-Legendre formula).
  * Integrates function f(x) from x=a to x=b in n points.
@@ -57,12 +44,13 @@ GaussIntegrate::Integrate(double (*f)(double), double a, double b, int n)
    * nodes for the interval [-1,1].
    */
 
-  double scale, t, tl, tu, sum;
-  int    i, m, ibase;
 
   /*  Begin integration  */
 
-  scale = (b - a) / two;
+  double scale = (b - a) / two;
+  double sum;
+  int    m;
+  int    ibase;
   if ((n & 1) == 0)
   {
     m = n / 2;
@@ -75,11 +63,11 @@ GaussIntegrate::Integrate(double (*f)(double), double a, double b, int n)
     ibase = (n * n - 1) / 4;
     sum = w[ibase + m] * (*f)((a + b) / two);
   }
-  for (i = 1; i <= m; ++i)
+  for (int i = 1; i <= m; ++i)
   {
-    t = z[ibase + i - 1];
-    tl = (a * (one + t) + (one - t) * b) / two;
-    tu = (a * (one - t) + (one + t) * b) / two;
+    double t = z[ibase + i - 1];
+    double tl = (a * (one + t) + (one - t) * b) / two;
+    double tu = (a * (one - t) + (one + t) * b) / two;
     sum = sum + w[ibase + i - 1] * ((*f)(tl) + (*f)(tu));
   }
 

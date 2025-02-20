@@ -51,7 +51,7 @@ namespace itk
  * \author Tom Vercauteren, INRIA & Mauna Kea Technologies
  *
  * This implementation was taken from the Insight Journal paper:
- * https://hdl.handle.net/1926/510
+ * https://doi.org/10.54294/ux2obj
  *
  * \ingroup ITKReview
  */
@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(GridForwardWarpImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GridForwardWarpImageFilter);
 
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
@@ -105,13 +105,9 @@ public:
   /** Get the foreground value */
   itkGetConstMacro(ForegroundValue, PixelType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, DisplacementFieldDimension>));
   itkConceptMacro(DisplacementFieldHasNumericTraitsCheck,
                   (Concept::HasNumericTraits<typename TDisplacementField::PixelType::ValueType>));
-  // End concept checking
-#endif
 
 protected:
   GridForwardWarpImageFilter();

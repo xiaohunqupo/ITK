@@ -47,8 +47,7 @@ GPUNeighborhoodOperatorImageFilter< TInputImage, TOutputImage, TOperatorValueTyp
 
   // get a copy of the input requested region (should equal the output
   // requested region)
-  typename TInputImage::RegionType inputRequestedRegion;
-  inputRequestedRegion = inputPtr->GetRequestedRegion();
+  typename TInputImage::RegionType inputRequestedRegion = inputPtr->GetRequestedRegion();
 
   // pad the input requested region by the operator radius
   inputRequestedRegion.PadByRadius( m_Operator.GetRadius() );
@@ -225,7 +224,7 @@ GPUNeighborhoodOperatorImageFilter<TInputImage, TOutputImage, TOperatorValueType
   // This filter can only operate on data types that are signed.
    if ( !NumericTraits< typename NumericTraits< OutputPixelType  >::ValueType >::is_signed )
     {
-    itkExceptionMacro(<< "This filter can only create images of signed data type.");
+    itkExceptionMacro("This filter can only create images of signed data type.");
     }
 
   // Allocate output

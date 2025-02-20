@@ -48,8 +48,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FFTWFFTImageFilterInitFactory, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FFTWFFTImageFilterInitFactory);
 
   /** Register one factory of this type.
    * The purpose of an InitFactory is to simply load other factories

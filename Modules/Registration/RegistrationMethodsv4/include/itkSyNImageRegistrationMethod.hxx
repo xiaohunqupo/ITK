@@ -70,21 +70,17 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
       this->m_FixedToMiddleTransform = OutputTransformType::New();
       this->m_MovingToMiddleTransform = OutputTransformType::New();
 
-      VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
-
-      constexpr DisplacementVectorType zeroVector{};
+      const VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
 
       auto fixedDisplacementField = DisplacementFieldType::New();
       fixedDisplacementField->CopyInformation(virtualDomainImage);
       fixedDisplacementField->SetRegions(virtualDomainImage->GetBufferedRegion());
-      fixedDisplacementField->Allocate();
-      fixedDisplacementField->FillBuffer(zeroVector);
+      fixedDisplacementField->AllocateInitialized();
 
       auto fixedInverseDisplacementField = DisplacementFieldType::New();
       fixedInverseDisplacementField->CopyInformation(virtualDomainImage);
       fixedInverseDisplacementField->SetRegions(virtualDomainImage->GetBufferedRegion());
-      fixedInverseDisplacementField->Allocate();
-      fixedInverseDisplacementField->FillBuffer(zeroVector);
+      fixedInverseDisplacementField->AllocateInitialized();
 
       this->m_FixedToMiddleTransform->SetDisplacementField(fixedDisplacementField);
       this->m_FixedToMiddleTransform->SetInverseDisplacementField(fixedInverseDisplacementField);
@@ -92,14 +88,12 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
       auto movingDisplacementField = DisplacementFieldType::New();
       movingDisplacementField->CopyInformation(virtualDomainImage);
       movingDisplacementField->SetRegions(virtualDomainImage->GetBufferedRegion());
-      movingDisplacementField->Allocate();
-      movingDisplacementField->FillBuffer(zeroVector);
+      movingDisplacementField->AllocateInitialized();
 
       auto movingInverseDisplacementField = DisplacementFieldType::New();
       movingInverseDisplacementField->CopyInformation(virtualDomainImage);
       movingInverseDisplacementField->SetRegions(virtualDomainImage->GetBufferedRegion());
-      movingInverseDisplacementField->Allocate();
-      movingInverseDisplacementField->FillBuffer(zeroVector);
+      movingInverseDisplacementField->AllocateInitialized();
 
       this->m_MovingToMiddleTransform->SetDisplacementField(movingDisplacementField);
       this->m_MovingToMiddleTransform->SetInverseDisplacementField(movingInverseDisplacementField);
@@ -138,7 +132,7 @@ template <typename TFixedImage,
 void
 SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtualImage, TPointSet>::StartOptimization()
 {
-  VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
+  const VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
 
   if (virtualDomainImage.IsNull())
   {
@@ -176,25 +170,26 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
     MeasureType fixedMetricValue = 0.0;
     MeasureType movingMetricValue = 0.0;
 
-    DisplacementFieldPointer fixedToMiddleSmoothUpdateField = this->ComputeUpdateField(this->m_FixedSmoothImages,
-                                                                                       this->m_FixedPointSets,
-                                                                                       fixedComposite,
-                                                                                       this->m_MovingSmoothImages,
-                                                                                       this->m_MovingPointSets,
-                                                                                       movingComposite,
-                                                                                       this->m_FixedImageMasks,
-                                                                                       this->m_MovingImageMasks,
-                                                                                       movingMetricValue);
+    const DisplacementFieldPointer fixedToMiddleSmoothUpdateField = this->ComputeUpdateField(this->m_FixedSmoothImages,
+                                                                                             this->m_FixedPointSets,
+                                                                                             fixedComposite,
+                                                                                             this->m_MovingSmoothImages,
+                                                                                             this->m_MovingPointSets,
+                                                                                             movingComposite,
+                                                                                             this->m_FixedImageMasks,
+                                                                                             this->m_MovingImageMasks,
+                                                                                             movingMetricValue);
 
-    DisplacementFieldPointer movingToMiddleSmoothUpdateField = this->ComputeUpdateField(this->m_MovingSmoothImages,
-                                                                                        this->m_MovingPointSets,
-                                                                                        movingComposite,
-                                                                                        this->m_FixedSmoothImages,
-                                                                                        this->m_FixedPointSets,
-                                                                                        fixedComposite,
-                                                                                        this->m_MovingImageMasks,
-                                                                                        this->m_FixedImageMasks,
-                                                                                        fixedMetricValue);
+    const DisplacementFieldPointer movingToMiddleSmoothUpdateField =
+      this->ComputeUpdateField(this->m_MovingSmoothImages,
+                               this->m_MovingPointSets,
+                               movingComposite,
+                               this->m_FixedSmoothImages,
+                               this->m_FixedPointSets,
+                               fixedComposite,
+                               this->m_MovingImageMasks,
+                               this->m_FixedImageMasks,
+                               fixedMetricValue);
 
     if (this->m_AverageMidPointGradients)
     {
@@ -216,7 +211,7 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
     fixedComposer->SetWarpingField(this->m_FixedToMiddleTransform->GetDisplacementField());
     fixedComposer->Update();
 
-    DisplacementFieldPointer fixedToMiddleSmoothTotalFieldTmp = this->GaussianSmoothDisplacementField(
+    const DisplacementFieldPointer fixedToMiddleSmoothTotalFieldTmp = this->GaussianSmoothDisplacementField(
       fixedComposer->GetOutput(), this->m_GaussianSmoothingVarianceForTheTotalField);
 
     auto movingComposer = ComposerType::New();
@@ -224,19 +219,19 @@ SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform, TVirtual
     movingComposer->SetWarpingField(this->m_MovingToMiddleTransform->GetDisplacementField());
     movingComposer->Update();
 
-    DisplacementFieldPointer movingToMiddleSmoothTotalFieldTmp = this->GaussianSmoothDisplacementField(
+    const DisplacementFieldPointer movingToMiddleSmoothTotalFieldTmp = this->GaussianSmoothDisplacementField(
       movingComposer->GetOutput(), this->m_GaussianSmoothingVarianceForTheTotalField);
 
     // Iteratively estimate the inverse fields.
 
-    DisplacementFieldPointer fixedToMiddleSmoothTotalFieldInverse = this->InvertDisplacementField(
+    const DisplacementFieldPointer fixedToMiddleSmoothTotalFieldInverse = this->InvertDisplacementField(
       fixedToMiddleSmoothTotalFieldTmp, this->m_FixedToMiddleTransform->GetInverseDisplacementField());
-    DisplacementFieldPointer fixedToMiddleSmoothTotalField =
+    const DisplacementFieldPointer fixedToMiddleSmoothTotalField =
       this->InvertDisplacementField(fixedToMiddleSmoothTotalFieldInverse, fixedToMiddleSmoothTotalFieldTmp);
 
-    DisplacementFieldPointer movingToMiddleSmoothTotalFieldInverse = this->InvertDisplacementField(
+    const DisplacementFieldPointer movingToMiddleSmoothTotalFieldInverse = this->InvertDisplacementField(
       movingToMiddleSmoothTotalFieldTmp, this->m_MovingToMiddleTransform->GetInverseDisplacementField());
-    DisplacementFieldPointer movingToMiddleSmoothTotalField =
+    const DisplacementFieldPointer movingToMiddleSmoothTotalField =
       this->InvertDisplacementField(movingToMiddleSmoothTotalFieldInverse, movingToMiddleSmoothTotalFieldTmp);
 
     // Assign the displacement fields and their inverses to the proper transforms.
@@ -277,17 +272,17 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
     const MovingImageMasksContainerType movingImageMasks,
     MeasureType &                       value)
 {
-  DisplacementFieldPointer metricGradientField = this->ComputeMetricGradientField(fixedImages,
-                                                                                  fixedPointSets,
-                                                                                  fixedTransform,
-                                                                                  movingImages,
-                                                                                  movingPointSets,
-                                                                                  movingTransform,
-                                                                                  fixedImageMasks,
-                                                                                  movingImageMasks,
-                                                                                  value);
+  const DisplacementFieldPointer metricGradientField = this->ComputeMetricGradientField(fixedImages,
+                                                                                        fixedPointSets,
+                                                                                        fixedTransform,
+                                                                                        movingImages,
+                                                                                        movingPointSets,
+                                                                                        movingTransform,
+                                                                                        fixedImageMasks,
+                                                                                        movingImageMasks,
+                                                                                        value);
 
-  DisplacementFieldPointer updateField =
+  const DisplacementFieldPointer updateField =
     this->GaussianSmoothDisplacementField(metricGradientField, this->m_GaussianSmoothingVarianceForTheUpdateField);
 
   DisplacementFieldPointer scaledUpdateField = this->ScaleUpdateField(updateField);
@@ -313,9 +308,9 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
                                const MovingImageMasksContainerType movingImageMasks,
                                MeasureType &                       value)
 {
-  typename MultiMetricType::Pointer multiMetric = dynamic_cast<MultiMetricType *>(this->m_Metric.GetPointer());
+  const typename MultiMetricType::Pointer multiMetric = dynamic_cast<MultiMetricType *>(this->m_Metric.GetPointer());
 
-  VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
+  const VirtualImageBaseConstPointer virtualDomainImage = this->GetCurrentLevelVirtualDomainImage();
 
   if (multiMetric)
   {
@@ -375,8 +370,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
           {
             using NearestNeighborInterpolatorType =
               NearestNeighborInterpolateImageFunction<FixedMaskImageType, RealType>;
-            typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator =
-              NearestNeighborInterpolatorType::New();
+            auto nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
             nearestNeighborInterpolator->SetInputImage(
               dynamic_cast<ImageMaskSpatialObjectType *>(
                 const_cast<FixedImageMaskType *>(fixedImageMasks[n].GetPointer()))
@@ -405,8 +399,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
           {
             using NearestNeighborInterpolatorType =
               NearestNeighborInterpolateImageFunction<MovingMaskImageType, RealType>;
-            typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator =
-              NearestNeighborInterpolatorType::New();
+            auto nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
             nearestNeighborInterpolator->SetInputImage(
               dynamic_cast<ImageMaskSpatialObjectType *>(
                 const_cast<MovingImageMaskType *>(movingImageMasks[n].GetPointer()))
@@ -508,8 +501,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
         if (fixedImageMasks[0])
         {
           using NearestNeighborInterpolatorType = NearestNeighborInterpolateImageFunction<FixedMaskImageType, RealType>;
-          typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator =
-            NearestNeighborInterpolatorType::New();
+          auto nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
           nearestNeighborInterpolator->SetInputImage(
             dynamic_cast<ImageMaskSpatialObjectType *>(
               const_cast<FixedImageMaskType *>(fixedImageMasks[0].GetPointer()))
@@ -537,8 +529,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
         {
           using NearestNeighborInterpolatorType =
             NearestNeighborInterpolateImageFunction<MovingMaskImageType, RealType>;
-          typename NearestNeighborInterpolatorType::Pointer nearestNeighborInterpolator =
-            NearestNeighborInterpolatorType::New();
+          auto nearestNeighborInterpolator = NearestNeighborInterpolatorType::New();
           nearestNeighborInterpolator->SetInputImage(
             dynamic_cast<ImageMaskSpatialObjectType *>(
               const_cast<MovingImageMaskType *>(movingImageMasks[0].GetPointer()))
@@ -572,15 +563,12 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
   if (this->m_DownsampleImagesForMetricDerivatives &&
       this->m_Metric->GetMetricCategory() != ObjectToObjectMetricBaseTemplateEnums::MetricCategory::POINT_SET_METRIC)
   {
-    const DisplacementVectorType zeroVector{};
-
     auto identityField = DisplacementFieldType::New();
     identityField->CopyInformation(virtualDomainImage);
     identityField->SetRegions(virtualDomainImage->GetLargestPossibleRegion());
-    identityField->Allocate();
-    identityField->FillBuffer(zeroVector);
+    identityField->AllocateInitialized();
 
-    DisplacementFieldTransformPointer identityDisplacementFieldTransform = DisplacementFieldTransformType::New();
+    const DisplacementFieldTransformPointer identityDisplacementFieldTransform = DisplacementFieldTransformType::New();
     identityDisplacementFieldTransform->SetDisplacementField(identityField);
     identityDisplacementFieldTransform->SetInverseDisplacementField(identityField);
 
@@ -605,7 +593,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
     virtualDomainImage->GetLargestPossibleRegion().GetNumberOfPixels() * ImageDimension;
   MetricDerivativeType metricDerivative(metricDerivativeSize);
 
-  metricDerivative.Fill(NumericTraits<typename MetricDerivativeType::ValueType>::ZeroValue());
+  metricDerivative.Fill(typename MetricDerivativeType::ValueType{});
   this->m_Metric->GetValueAndDerivative(value, metricDerivative);
 
   // Ensure that the size of the optimizer weights is the same as the
@@ -680,7 +668,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
   }
 
   RealType scale = this->m_LearningRate;
-  if (maxNorm > NumericTraits<RealType>::ZeroValue())
+  if (maxNorm > RealType{})
   {
     scale /= maxNorm;
   }
@@ -781,7 +769,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
     smoothField->DisconnectPipeline();
   }
 
-  const DisplacementVectorType zeroVector{};
+  constexpr DisplacementVectorType zeroVector{};
 
   // make sure boundary does not move
   RealType weight1 = 1.0;
@@ -789,7 +777,7 @@ typename SyNImageRegistrationMethod<TFixedImage, TMovingImage, TOutputTransform,
   {
     weight1 = 1.0 - 1.0 * (variance / 0.5);
   }
-  RealType weight2 = 1.0 - weight1;
+  const RealType weight2 = 1.0 - weight1;
 
   const typename DisplacementFieldType::RegionType region = field->GetLargestPossibleRegion();
   const typename DisplacementFieldType::SizeType   size = region.GetSize();

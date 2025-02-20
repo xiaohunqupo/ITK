@@ -55,7 +55,7 @@ FiniteCylinderSpatialFunction<VDimension, TInput>::SetOrientation(const InputTyp
     norm = std::sqrt(norm);
     if (norm == 0.0) // avoid divide by zero
     {
-      itkExceptionMacro(<< "Degenerate orientation vector " << this->m_Orientation);
+      itkExceptionMacro("Degenerate orientation vector " << this->m_Orientation);
     }
     for (unsigned int i = 0; i < VDimension; ++i)
     {
@@ -102,35 +102,31 @@ FiniteCylinderSpatialFunction<VDimension, TInput>::Evaluate(const InputType & po
   }
 
   if (itk::Math::abs(distanceFromCenter) <= (halfAxisLength) &&
-      m_Radius >= std::sqrt(std::pow(pointVector.GetVnlVector().magnitude(), 2.0) - std::pow(distanceFromCenter, 2.0)))
+      m_Radius >= std::sqrt(std::pow(pointVector.GetNorm(), 2.0) - std::pow(distanceFromCenter, 2.0)))
   {
     return 1;
   }
-  else
-  {
-    return 0;
-  }
+
+  return 0;
 }
 
 template <unsigned int VDimension, typename TInput>
 void
 FiniteCylinderSpatialFunction<VDimension, TInput>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  unsigned int i;
-
   Superclass::PrintSelf(os, indent);
 
   os << indent << "Lengths of Axis: " << m_AxisLength << std::endl;
   os << indent << "Radius: " << m_Radius << std::endl;
   os << indent << "Origin of Cylinder: " << m_Center << std::endl;
   os << indent << "Orientation: " << std::endl;
-  for (i = 0; i < VDimension; ++i)
+  for (unsigned int i = 0; i < VDimension; ++i)
   {
     os << indent << indent << m_Orientation[i] << ' ';
   }
   os << std::endl;
   os << indent << "Normalized Orientation: " << std::endl;
-  for (i = 0; i < VDimension; ++i)
+  for (unsigned int i = 0; i < VDimension; ++i)
   {
     os << indent << indent << m_NormalizedOrientation[i] << ' ';
   }

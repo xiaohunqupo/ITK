@@ -35,19 +35,19 @@ namespace itk
  * It can be modeled as:
  *
  * \par
- * \f$ I = I_0 \ast G \f$
+ * \f$ I = I_0 \ast G \f$
  *
  * \par
  * where \f$ G \f$ is a is a gamma distributed random variable of mean 1 and
  * variance proportional to the noise level:
  *
  * \par
- * \f$ G \sim \Gamma(\frac{1}{\sigma^2}, \sigma^2) \f$
+ * \f$ G \sim \Gamma(\frac{1}{\sigma^2}, \sigma^2) \f$
  *
  * \author Gaetan Lehmann
  *
  * This code was contributed in the Insight Journal paper "Noise
- * Simulation". https://www.insight-journal.org/browse/publication/721
+ * Simulation". https://doi.org/10.54294/vh6vbw
  *
  * \ingroup ITKImageNoise
  */
@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SpeckleNoiseImageFilter, NoiseBaseImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SpeckleNoiseImageFilter);
 
   /** Superclass type alias. */
   using typename Superclass::OutputImageType;
@@ -87,12 +87,8 @@ public:
   itkGetConstMacro(StandardDeviation, double);
   itkSetMacro(StandardDeviation, double);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  /** Begin concept checking */
   itkConceptMacro(InputConvertibleToOutputCheck,
                   (Concept::Convertible<typename TInputImage::PixelType, typename TOutputImage::PixelType>));
-  /** End concept checking */
-#endif
 
 protected:
   SpeckleNoiseImageFilter();

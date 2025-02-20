@@ -42,8 +42,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(CenteredAffineTransform, AffineTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CenteredAffineTransform);
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);

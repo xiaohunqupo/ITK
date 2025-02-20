@@ -58,8 +58,6 @@ template <typename TInput1, typename TInput2, typename TOutput>
 class ConstrainedValueDifference
 {
 public:
-  ConstrainedValueDifference() = default;
-  ~ConstrainedValueDifference() = default;
   bool
   operator==(const ConstrainedValueDifference &) const
   {
@@ -102,18 +100,14 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ConstrainedValueDifferenceImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConstrainedValueDifferenceImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(Input1ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage1::PixelType, double>));
   itkConceptMacro(Input2ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage2::PixelType, double>));
   itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
   itkConceptMacro(DoubleGreaterThanOutputCheck,
                   (Concept::GreaterThanComparable<double, typename TOutputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   ConstrainedValueDifferenceImageFilter()

@@ -25,20 +25,18 @@ template <unsigned int VDimension, typename TInput>
 auto
 TorusInteriorExteriorSpatialFunction<VDimension, TInput>::Evaluate(const InputType & position) const -> OutputType
 {
-  double x = position[0] - m_Origin[0];
-  double y = position[1] - m_Origin[1];
-  double z = position[2] - m_Origin[2];
+  const double x = position[0] - m_Origin[0];
+  const double y = position[1] - m_Origin[1];
+  const double z = position[2] - m_Origin[2];
 
-  double k = std::pow(m_MajorRadius - std::sqrt(x * x + y * y), 2.0) + z * z;
+  const double k = std::pow(m_MajorRadius - std::sqrt(x * x + y * y), 2.0) + z * z;
 
   if (k <= (m_MinorRadius * m_MinorRadius))
   {
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
 template <unsigned int VDimension, typename TInput>
@@ -47,10 +45,8 @@ TorusInteriorExteriorSpatialFunction<VDimension, TInput>::PrintSelf(std::ostream
 {
   Superclass::PrintSelf(os, indent);
 
-  unsigned int i;
-
   os << indent << "Origin: [";
-  for (i = 0; i < VDimension - 1; ++i)
+  for (unsigned int i = 0; i < VDimension - 1; ++i)
   {
     os << m_Origin[i] << ", ";
   }

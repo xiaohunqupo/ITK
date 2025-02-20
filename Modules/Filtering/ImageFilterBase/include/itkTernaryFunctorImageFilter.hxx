@@ -102,10 +102,9 @@ TernaryFunctorImageFilter<TInputImage1, TInputImage2, TInputImage3, TOutputImage
 
   if (inputPtr1.IsNull() || inputPtr2.IsNull() || inputPtr3.IsNull())
   {
-    itkExceptionMacro(<< "At least one input is missing."
-                      << " Input1 is " << inputPtr1.GetPointer() << ", "
-                      << " Input2 is " << inputPtr2.GetPointer() << ", "
-                      << " Input3 is " << inputPtr3.GetPointer());
+    itkExceptionMacro("At least one input is missing. Input1 is " << inputPtr1.GetPointer() << ", "
+                                                                  << " Input2 is " << inputPtr2.GetPointer() << ", "
+                                                                  << " Input3 is " << inputPtr3.GetPointer());
   }
 }
 
@@ -131,10 +130,10 @@ TernaryFunctorImageFilter<TInputImage1, TInputImage2, TInputImage3, TOutputImage
 
   TotalProgressReporter progress(this, outputPtr->GetRequestedRegion().GetNumberOfPixels());
 
-  ImageScanlineConstIterator<TInputImage1> inputIt1(inputPtr1, outputRegionForThread);
-  ImageScanlineConstIterator<TInputImage2> inputIt2(inputPtr2, outputRegionForThread);
-  ImageScanlineConstIterator<TInputImage3> inputIt3(inputPtr3, outputRegionForThread);
-  ImageScanlineIterator<TOutputImage>      outputIt(outputPtr, outputRegionForThread);
+  ImageScanlineConstIterator inputIt1(inputPtr1, outputRegionForThread);
+  ImageScanlineConstIterator inputIt2(inputPtr2, outputRegionForThread);
+  ImageScanlineConstIterator inputIt3(inputPtr3, outputRegionForThread);
+  ImageScanlineIterator      outputIt(outputPtr, outputRegionForThread);
 
   while (!inputIt1.IsAtEnd())
   {

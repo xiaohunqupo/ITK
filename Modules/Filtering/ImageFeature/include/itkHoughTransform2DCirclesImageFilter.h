@@ -99,15 +99,15 @@ public:
 
   using CirclesListSizeType = typename CirclesListType::size_type;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HoughTransform2DCirclesImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HoughTransform2DCirclesImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Verifies the preconditions of this filter. */
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   /** Method for evaluating the implicit function over the image. */
   void
@@ -175,15 +175,10 @@ public:
   itkSetMacro(UseImageSpacing, bool);
   itkGetConstMacro(UseImageSpacing, bool);
 
-
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(IntConvertibleToOutputCheck, (Concept::Convertible<int, TOutputPixelType>));
   itkConceptMacro(InputGreaterThanDoubleCheck, (Concept::GreaterThanComparable<PixelType, double>));
   itkConceptMacro(OutputPlusIntCheck, (Concept::AdditiveOperators<TOutputPixelType, int>));
   itkConceptMacro(OutputDividedByIntCheck, (Concept::DivisionOperators<TOutputPixelType, int>));
-  // End concept checking
-#endif
 
 protected:
   HoughTransform2DCirclesImageFilter();

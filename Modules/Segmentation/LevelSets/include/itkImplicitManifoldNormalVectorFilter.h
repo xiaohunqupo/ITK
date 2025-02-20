@@ -83,8 +83,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(ImplicitManifoldNormalVectorFilter, FiniteDifferenceSparseImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImplicitManifoldNormalVectorFilter);
 
   /** Standard New macro. */
   itkNewMacro(Self);
@@ -164,10 +164,8 @@ protected:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
 protected:

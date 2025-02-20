@@ -111,8 +111,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(InvertIntensityImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InvertIntensityImageFilter);
 
   /** Set/Get the maximum intensity value for the inversion. */
   itkSetMacro(Maximum, InputPixelType);
@@ -125,11 +125,7 @@ public:
   void
   BeforeThreadedGenerateData() override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   InvertIntensityImageFilter();

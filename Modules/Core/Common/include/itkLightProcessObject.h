@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LightProcessObject, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LightProcessObject);
 
   /** Set the AbortGenerateData flag for the process object. Process objects
    *  may handle premature termination of execution in different ways.  */

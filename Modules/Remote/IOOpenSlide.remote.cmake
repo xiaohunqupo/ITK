@@ -41,9 +41,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(IOOpenSlide
+itk_fetch_module(
+  IOOpenSlide
   "ITK ImageIO for OpenSlide library supported file formats. These are generally TIFF-based microscopy formats."
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKIOOpenSlide.git
-  GIT_TAG fb654552e240e50bd4121d431d88536d2c84e937
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKIOOpenSlide.git
+  GIT_TAG 2d7af237f872dd6f8171d2d09b843bc3cbe694a2
   )

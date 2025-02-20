@@ -34,8 +34,8 @@ StatisticsImageFilter<TInputImage>::StatisticsImageFilter()
   Self::SetMean(NumericTraits<RealType>::max());
   Self::SetSigma(NumericTraits<RealType>::max());
   Self::SetVariance(NumericTraits<RealType>::max());
-  Self::SetSum(NumericTraits<RealType>::ZeroValue());
-  Self::SetSumOfSquares(NumericTraits<RealType>::ZeroValue());
+  Self::SetSum(RealType{});
+  Self::SetSumOfSquares(RealType{});
 }
 
 template <typename TInputImage>
@@ -60,9 +60,9 @@ StatisticsImageFilter<TInputImage>::BeforeStreamedGenerateData()
   Superclass::BeforeStreamedGenerateData();
 
   // Resize the thread temporaries
-  m_Count = NumericTraits<SizeValueType>::ZeroValue();
-  m_SumOfSquares = NumericTraits<RealType>::ZeroValue();
-  m_ThreadSum = NumericTraits<RealType>::ZeroValue();
+  m_Count = SizeValueType{};
+  m_SumOfSquares = RealType{};
+  m_ThreadSum = RealType{};
   m_ThreadMin = NumericTraits<PixelType>::max();
   m_ThreadMax = NumericTraits<PixelType>::NonpositiveMin();
 }
@@ -99,13 +99,13 @@ void
 StatisticsImageFilter<TInputImage>::ThreadedStreamedGenerateData(const RegionType & regionForThread)
 {
 
-  CompensatedSummation<RealType> sum = NumericTraits<RealType>::ZeroValue();
-  CompensatedSummation<RealType> sumOfSquares = NumericTraits<RealType>::ZeroValue();
+  CompensatedSummation<RealType> sum = RealType{};
+  CompensatedSummation<RealType> sumOfSquares = RealType{};
   SizeValueType                  count{};
   PixelType                      min = NumericTraits<PixelType>::max();
   PixelType                      max = NumericTraits<PixelType>::NonpositiveMin();
 
-  ImageScanlineConstIterator<TInputImage> it(this->GetInput(), regionForThread);
+  ImageScanlineConstIterator it(this->GetInput(), regionForThread);
 
   // do the work
   while (!it.IsAtEnd())
@@ -125,7 +125,7 @@ StatisticsImageFilter<TInputImage>::ThreadedStreamedGenerateData(const RegionTyp
     it.NextLine();
   }
 
-  const std::lock_guard mutexHolder(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   m_ThreadSum += sum;
   m_SumOfSquares += sumOfSquares;
   m_Count += count;

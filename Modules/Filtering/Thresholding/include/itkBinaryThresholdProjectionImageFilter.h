@@ -30,7 +30,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * the original paper can be found at
- * https://www.insight-journal.org/browse/publication/71
+ * https://doi.org/10.54294/0pjyho
  *
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -78,10 +78,8 @@ public:
     {
       return m_ForegroundValue;
     }
-    else
-    {
-      return m_BackgroundValue;
-    }
+
+    return m_BackgroundValue;
   }
 
   bool m_IsForeground;
@@ -111,8 +109,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Runtime information support. */
-  itkTypeMacro(BinaryThresholdProjectionImageFilter, ProjectionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryThresholdProjectionImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -142,19 +140,15 @@ public:
   itkSetMacro(ThresholdValue, InputPixelType);
   itkGetConstMacro(ThresholdValue, InputPixelType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputPixelTypeGreaterThanComparable, (Concept::GreaterThanComparable<InputPixelType>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   BinaryThresholdProjectionImageFilter()
   {
     m_ForegroundValue = NumericTraits<OutputPixelType>::max();
     m_BackgroundValue = NumericTraits<OutputPixelType>::NonpositiveMin();
-    m_ThresholdValue = NumericTraits<InputPixelType>::ZeroValue();
+    m_ThresholdValue = InputPixelType{};
   }
 
   ~BinaryThresholdProjectionImageFilter() override = default;

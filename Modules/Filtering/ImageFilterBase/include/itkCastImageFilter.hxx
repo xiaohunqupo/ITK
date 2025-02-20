@@ -42,7 +42,7 @@ CastImageFilter<TInputImage, TOutputImage>::GenerateData()
     // nothing to do, so avoid iterating over all the pixels
     // for nothing! Allocate the output, generate a fake progress and exit
     this->AllocateOutputs();
-    ProgressReporter progress(this, 0, 1);
+    const ProgressReporter progress(this, 0, 1);
     return;
   }
   // else do normal Before+Threaded+After
@@ -72,7 +72,8 @@ CastImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   this->CallCopyInputRegionToOutputRegion(outputLargestPossibleRegion, inputPtr->GetLargestPossibleRegion());
   outputPtr->SetLargestPossibleRegion(outputLargestPossibleRegion);
 
-  ImageToImageFilterDetail::ImageInformationCopier<Superclass::OutputImageDimension, Superclass::InputImageDimension>
+  const ImageToImageFilterDetail::ImageInformationCopier<Superclass::OutputImageDimension,
+                                                         Superclass::InputImageDimension>
     informationCopier;
   informationCopier(outputPtr, inputPtr);
 }
@@ -141,8 +142,8 @@ CastImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateDataDispatche
   const unsigned int componentsPerPixel = outputPtr->GetNumberOfComponentsPerPixel();
 
   // Define the iterators
-  ImageScanlineConstIterator<TInputImage> inputIt(inputPtr, inputRegionForThread);
-  ImageScanlineIterator<TOutputImage>     outputIt(outputPtr, outputRegionForThread);
+  ImageScanlineConstIterator inputIt(inputPtr, inputRegionForThread);
+  ImageScanlineIterator      outputIt(outputPtr, outputRegionForThread);
 
   OutputPixelType value{ outputIt.Get() };
   while (!inputIt.IsAtEnd())

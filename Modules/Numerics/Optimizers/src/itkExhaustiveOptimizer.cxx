@@ -36,11 +36,11 @@ ExhaustiveOptimizer::StartWalking()
   m_StopConditionDescription.str("");
   m_StopConditionDescription << this->GetNameOfClass() << ": Running";
 
-  ParametersType initialPos = this->GetInitialPosition();
+  const ParametersType initialPos = this->GetInitialPosition();
   m_MinimumMetricValuePosition = initialPos;
   m_MaximumMetricValuePosition = initialPos;
 
-  MeasureType initialValue = this->GetValue(this->GetInitialPosition());
+  const MeasureType initialValue = this->GetValue(this->GetInitialPosition());
   m_MaximumMetricValue = initialValue;
   m_MinimumMetricValue = initialValue;
 
@@ -61,8 +61,8 @@ ExhaustiveOptimizer::StartWalking()
   // Make sure the scales have been set properly
   if (scales.size() != spaceDimension)
   {
-    itkExceptionMacro(<< "The size of Scales is " << scales.size() << ", but the NumberOfParameters is "
-                      << spaceDimension << '.');
+    itkExceptionMacro("The size of Scales is " << scales.size() << ", but the NumberOfParameters is " << spaceDimension
+                                               << '.');
   }
 
   // Setup first grid position.
@@ -86,7 +86,7 @@ ExhaustiveOptimizer::ResumeWalking()
 
   while (!m_Stop)
   {
-    ParametersType currentPosition = this->GetCurrentPosition();
+    const ParametersType currentPosition = this->GetCurrentPosition();
 
     if (m_Stop)
     {
@@ -142,7 +142,7 @@ ExhaustiveOptimizer::AdvanceOneStep()
   ParametersType newPosition(spaceDimension);
   IncrementIndex(newPosition);
 
-  itkDebugMacro(<< "new position = " << newPosition);
+  itkDebugMacro("new position = " << newPosition);
 
   this->SetCurrentPosition(newPosition);
 }
@@ -184,7 +184,7 @@ ExhaustiveOptimizer::IncrementIndex(ParametersType & newPosition)
   }
 }
 
-const std::string
+std::string
 ExhaustiveOptimizer::GetStopConditionDescription() const
 {
   return m_StopConditionDescription.str();
@@ -202,7 +202,7 @@ ExhaustiveOptimizer::PrintSelf(std::ostream & os, Indent indent) const
   os << indent
      << "CurrentIteration: " << static_cast<typename NumericTraits<SizeValueType>::PrintType>(m_CurrentIteration)
      << std::endl;
-  os << indent << "Stop: " << (m_Stop ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(Stop);
   os << indent << "CurrentParameter: " << m_CurrentParameter << std::endl;
   os << indent << "StepLength: " << m_StepLength << std::endl;
   os << indent << "CurrentIndex: " << m_CurrentIndex << std::endl;

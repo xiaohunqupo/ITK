@@ -71,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HistogramToImageFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HistogramToImageFilter);
 
   /** Superclass type alias. */
   using typename Superclass::OutputImageRegionType;

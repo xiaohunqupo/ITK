@@ -32,7 +32,7 @@ this list of conditions and the following disclaimer.
    * Redistributions in binary form must reproduce the above copyright notice,
      this list of conditions and the following disclaimer in the documentation
      and/or other materials provided with the distribution.
-   * Neither the name of Virgina Tech nor the names of its contributors may
+   * Neither the name of Virginia Tech nor the names of its contributors may
      be used to endorse or promote products derived from this software without
      specific prior written permission.
 
@@ -101,9 +101,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "itkResampleImageFilter.h"
 #include "itkDisplacementFieldTransform.h"
 
-
+namespace
+{
 unsigned int RmsCounter = 0;
 double       MaxRmsE[4] = { 0.8, 0.75, 0.4, 0.2 };
+} // namespace
 
 //  The following section of code implements a Command observer
 //  that will monitor the evolution of the registration process.
@@ -317,7 +319,7 @@ main(int argc, char * argv[])
 
   auto interpolator = InterpolatorType::New();
 
-  ImageType::Pointer targetImage = targetReader->GetOutput();
+  const ImageType::Pointer targetImage = targetReader->GetOutput();
   warper->SetInput(sourceReader->GetOutput());
   warper->SetInterpolator(interpolator);
   warper->SetOutputSpacing(targetImage->GetSpacing());

@@ -52,8 +52,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BMPImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BMPImageIO);
 
   /** Getter for the FileLowerLeft attribute. */
   itkGetConstMacro(FileLowerLeft, bool);

@@ -64,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DOMNode, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DOMNode);
 
   /** Container to return all or a subset of the children of a DOM node. */
   using ChildrenListType = std::vector<DOMNode *>;
@@ -93,11 +93,11 @@ public:
   GetParent() const;
 
   /** Retrieve the tag name of this node. */
-  itkSetMacro(Name, std::string &);
+  itkSetMacro(Name, const std::string &);
   itkGetConstReferenceMacro(Name, std::string);
 
   /** Retrieve the special attribute "id" of this node. */
-  itkSetMacro(ID, std::string &);
+  itkSetMacro(ID, const std::string &);
   itkGetConstReferenceMacro(ID, std::string);
 
   /** Retrieve an attribute by key (return an empty string if not found). */

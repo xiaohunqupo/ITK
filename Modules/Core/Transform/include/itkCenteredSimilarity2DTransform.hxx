@@ -39,7 +39,7 @@ template <typename TParametersValueType>
 void
 CenteredSimilarity2DTransform<TParametersValueType>::SetParameters(const ParametersType & parameters)
 {
-  itkDebugMacro(<< "Setting parameters " << parameters);
+  itkDebugMacro("Setting parameters " << parameters);
 
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if (&parameters != &(this->m_Parameters))
@@ -78,7 +78,7 @@ CenteredSimilarity2DTransform<TParametersValueType>::SetParameters(const Paramet
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<< "After setting parameters ");
+  itkDebugMacro("After setting parameters ");
 }
 
 
@@ -86,7 +86,7 @@ template <typename TParametersValueType>
 auto
 CenteredSimilarity2DTransform<TParametersValueType>::GetParameters() const -> const ParametersType &
 {
-  itkDebugMacro(<< "Getting parameters ");
+  itkDebugMacro("Getting parameters ");
 
   this->m_Parameters[0] = this->GetScale();
   this->m_Parameters[1] = this->GetAngle();
@@ -103,7 +103,7 @@ CenteredSimilarity2DTransform<TParametersValueType>::GetParameters() const -> co
     this->m_Parameters[i + 4] = translation[i];
   }
 
-  itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
+  itkDebugMacro("After getting parameters " << this->m_Parameters);
 
   return this->m_Parameters;
 }
@@ -197,7 +197,7 @@ CenteredSimilarity2DTransform<TParametersValueType>::GetInverse(Self * inverse) 
   }
 
   inverse->SetFixedParameters(this->GetFixedParameters());
-  this->GetInverseMatrix();
+  const auto & inverseMatrix = this->GetInverseMatrix();
   if (this->GetSingular())
   {
     return false;
@@ -205,7 +205,7 @@ CenteredSimilarity2DTransform<TParametersValueType>::GetInverse(Self * inverse) 
   inverse->SetCenter(this->GetCenter()); // inverse have the same center
   inverse->SetScale(1.0 / this->GetScale());
   inverse->SetAngle(-this->GetAngle());
-  inverse->SetTranslation(-(this->GetInverseMatrix() * this->GetTranslation()));
+  inverse->SetTranslation(-(inverseMatrix * this->GetTranslation()));
   return true;
 }
 
@@ -214,13 +214,7 @@ template <typename TParametersValueType>
 auto
 CenteredSimilarity2DTransform<TParametersValueType>::GetInverseTransform() const -> InverseTransformBasePointer
 {
-  Pointer inv = New();
-
-  if (this->GetInverse(inv))
-  {
-    return inv.GetPointer();
-  }
-  return nullptr;
+  return Superclass::InvertTransform(*this);
 }
 
 

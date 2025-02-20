@@ -77,8 +77,8 @@ public:
   /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShiftScaleImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShiftScaleImageFilter);
 
   /** Set/Get the amount to Shift each Pixel. The shift is followed by a Scale.
    */
@@ -94,13 +94,9 @@ public:
   itkGetConstMacro(UnderflowCount, SizeValueType);
   itkGetConstMacro(OverflowCount, SizeValueType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputImagePixelType>));
   itkConceptMacro(InputPlusRealTypeCheck, (Concept::AdditiveOperators<InputImagePixelType, RealType, RealType>));
   itkConceptMacro(RealTypeMultiplyOperatorCheck, (Concept::MultiplyOperator<RealType>));
-  // End concept checking
-#endif
 
 protected:
   ShiftScaleImageFilter() = default;
@@ -117,7 +113,7 @@ protected:
   DynamicThreadedGenerateData(const OutputImageRegionType &) override;
 
 private:
-  RealType m_Shift{ NumericTraits<RealType>::ZeroValue() };
+  RealType m_Shift{};
   RealType m_Scale{ NumericTraits<RealType>::OneValue() };
 
   SizeValueType m_UnderflowCount{ 0 };

@@ -41,9 +41,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(LesionSizingToolkit
+itk_fetch_module(
+  LesionSizingToolkit
   "Framework for determining the sizes of lesions in medical images."
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/LesionSizingToolkit.git
-  GIT_TAG 58b95e8f54e8f270b2b221c519f7a49c2086bb11
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/LesionSizingToolkit.git
+  GIT_TAG 67a91c0cba44b35a443f6fd6e2d46695c4f7ff9c
   )

@@ -40,7 +40,7 @@ namespace itk
  *  This code was contributed in the Insight Journal paper:
  *  "A Streaming IO Base Class and Support for Streaming the MRC and VTK File Format"
  *  by Lowekamp B., Chen D.
- *  https://www.insight-journal.org/browse/publication/729
+ *  https://doi.org/10.54294/ufs19w
  *
  * \sa MetaDataDictionary
  * \ingroup ITKIOMRC
@@ -164,8 +164,8 @@ public:
     float zorg;
 
     char cmap[4];  /**< Contains "MAP "  */
-    char stamp[4]; /**< First byte has 17 for big- or 68 for
-                     little-endian  */
+    char stamp[4]; /**< First two bytes have 17 and 17 for big-endian or
+                        68 and 68 for little-endian */
     float rms;
 
     // ALL HEADERS:
@@ -217,8 +217,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MRCHeaderObject, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MRCHeaderObject);
 
   void
   DeepCopy(ConstPointer h);

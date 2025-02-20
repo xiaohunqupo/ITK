@@ -43,8 +43,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LevelSetEvolutionNumberOfIterationsStoppingCriterion, LevelSetEvolutionStoppingCriterion);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEvolutionNumberOfIterationsStoppingCriterion);
 
   using LevelSetContainerType = TLevelSetContainer;
   using LevelSetContainerPointer = typename LevelSetContainerType::Pointer;

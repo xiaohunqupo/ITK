@@ -40,7 +40,7 @@ PointSetToImageMetric<TFixedPointSet, TMovingImage>::SetTransformParameters(cons
 {
   if (!m_Transform)
   {
-    itkExceptionMacro(<< "Transform has not been assigned");
+    itkExceptionMacro("Transform has not been assigned");
   }
   m_Transform->SetParameters(parameters);
 }
@@ -51,22 +51,22 @@ PointSetToImageMetric<TFixedPointSet, TMovingImage>::Initialize()
 {
   if (!m_Transform)
   {
-    itkExceptionMacro(<< "Transform is not present");
+    itkExceptionMacro("Transform is not present");
   }
 
   if (!m_Interpolator)
   {
-    itkExceptionMacro(<< "Interpolator is not present");
+    itkExceptionMacro("Interpolator is not present");
   }
 
   if (!m_MovingImage)
   {
-    itkExceptionMacro(<< "MovingImage is not present");
+    itkExceptionMacro("MovingImage is not present");
   }
 
   if (!m_FixedPointSet)
   {
-    itkExceptionMacro(<< "FixedPointSet is not present");
+    itkExceptionMacro("FixedPointSet is not present");
   }
 
   // If the image is provided by a source, update the source.
@@ -79,7 +79,7 @@ PointSetToImageMetric<TFixedPointSet, TMovingImage>::Initialize()
 
   if (m_ComputeGradient)
   {
-    GradientImageFilterPointer gradientFilter = GradientImageFilterType::New();
+    const GradientImageFilterPointer gradientFilter = GradientImageFilterType::New();
 
     gradientFilter->SetInput(m_MovingImage);
 
@@ -115,7 +115,7 @@ PointSetToImageMetric<TFixedPointSet, TMovingImage>::PrintSelf(std::ostream & os
   itkPrintSelfObjectMacro(Transform);
   itkPrintSelfObjectMacro(Interpolator);
 
-  os << indent << "ComputeGradient: " << (m_ComputeGradient ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(ComputeGradient);
 
   itkPrintSelfObjectMacro(GradientImage);
 }

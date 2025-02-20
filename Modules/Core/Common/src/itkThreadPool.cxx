@@ -111,7 +111,7 @@ ThreadPool::ThreadPool()
 
   m_PimplGlobals->m_ThreadPoolInstance = this;        // threads need this
   m_PimplGlobals->m_ThreadPoolInstance->UnRegister(); // Remove extra reference
-  ThreadIdType threadCount = MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
+  const ThreadIdType threadCount = MultiThreaderBase::GetGlobalDefaultNumberOfThreads();
   m_Threads.reserve(threadCount);
   for (ThreadIdType i = 0; i < threadCount; ++i)
   {
@@ -122,7 +122,7 @@ ThreadPool::ThreadPool()
 void
 ThreadPool::AddThreads(ThreadIdType count)
 {
-  std::unique_lock<std::mutex> mutexHolder(m_PimplGlobals->m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_PimplGlobals->m_Mutex);
   m_Threads.reserve(m_Threads.size() + count);
   for (ThreadIdType i = 0; i < count; ++i)
   {
@@ -139,7 +139,7 @@ ThreadPool::GetMutex() const
 int
 ThreadPool::GetNumberOfCurrentlyIdleThreads() const
 {
-  std::unique_lock<std::mutex> mutexHolder(m_PimplGlobals->m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_PimplGlobals->m_Mutex);
   return static_cast<int>(m_Threads.size()) - static_cast<int>(m_WorkQueue.size()); // lousy approximation
 }
 
@@ -148,7 +148,7 @@ ThreadPool::CleanUp()
 {
   bool shouldNotify;
   {
-    std::unique_lock<std::mutex> mutexHolder(m_PimplGlobals->m_Mutex);
+    const std::lock_guard<std::mutex> lockGuard(m_PimplGlobals->m_Mutex);
 
     this->m_Stopping = true;
 
@@ -179,8 +179,8 @@ ThreadPool::PrepareForFork()
 void
 ThreadPool::ResumeFromFork()
 {
-  ThreadPool * instance = m_PimplGlobals->m_ThreadPoolInstance.GetPointer();
-  ThreadIdType threadCount = instance->m_Threads.size();
+  ThreadPool *       instance = m_PimplGlobals->m_ThreadPoolInstance.GetPointer();
+  const ThreadIdType threadCount = instance->m_Threads.size();
   instance->m_Threads.clear();
   instance->m_Stopping = false;
   instance->AddThreads(threadCount);

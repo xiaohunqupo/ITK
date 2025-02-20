@@ -37,7 +37,7 @@ MetaVesselTubeConverter<VDimension>::MetaObjectToSpatialObject(const MetaObjectT
   const auto * vesselTubeMO = dynamic_cast<const VesselTubeMetaObjectType *>(mo);
   if (vesselTubeMO == nullptr)
   {
-    itkExceptionMacro(<< "Can't convert MetaObject to MetaVesselTube");
+    itkExceptionMacro("Can't convert MetaObject to MetaVesselTube");
   }
 
   auto vesselTubeSO = VesselTubeSpatialObjectType::New();
@@ -141,14 +141,13 @@ MetaVesselTubeConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObje
 
   if (vesselTubeSO.IsNull())
   {
-    itkExceptionMacro(<< "Can't downcast SpatialObject to VesselTubeSpatialObject");
+    itkExceptionMacro("Can't downcast SpatialObject to VesselTubeSpatialObject");
   }
   auto * vesselTubeMO = new MetaVesselTube(VDimension);
 
   // fill in the tube information
 
-  typename VesselTubeSpatialObjectType::TubePointListType::const_iterator i;
-  for (i = vesselTubeSO->GetPoints().begin(); i != vesselTubeSO->GetPoints().end(); ++i)
+  for (auto i = vesselTubeSO->GetPoints().begin(); i != vesselTubeSO->GetPoints().end(); ++i)
   {
     auto * pnt = new VesselTubePnt(VDimension);
 

@@ -37,10 +37,10 @@ SpatialNeighborSubsampler<TSample, TRegion>::InternalClone() const
 {
   typename LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
+  const typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
   if (rval.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
 
   if (this->GetRadiusInitialized())
@@ -71,8 +71,7 @@ template <typename TSample, typename TRegion>
 void
 SpatialNeighborSubsampler<TSample, TRegion>::SetRadius(unsigned int radius)
 {
-  RadiusType radiusND;
-  radiusND.Fill(radius);
+  auto radiusND = MakeFilled<RadiusType>(radius);
   this->SetRadius(radiusND);
 }
 
@@ -82,11 +81,11 @@ SpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceIdentifier & q
 {
   if (!m_RadiusInitialized)
   {
-    itkExceptionMacro(<< "Radius not set.");
+    itkExceptionMacro("Radius not set.");
   }
   if (!this->m_SampleRegionInitialized)
   {
-    itkExceptionMacro(<< "Sample region not set.");
+    itkExceptionMacro("Sample region not set.");
   }
   if (!this->GetRegionConstraintInitialized())
   {
@@ -113,7 +112,7 @@ SpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceIdentifier & q
   {
     if (queryIndex[dim] < static_cast<IndexValueType>(m_Radius[dim]))
     {
-      searchIndex[dim] = std::max(NumericTraits<IndexValueType>::ZeroValue(), constraintIndex[dim]);
+      searchIndex[dim] = std::max(IndexValueType{}, constraintIndex[dim]);
     }
     else
     {
@@ -174,11 +173,9 @@ SpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceIdentifier & q
         someRemaining = true;
         break;
       }
-      else
-      {
-        offset -= offsetTable[dim] * (static_cast<typename RegionType::OffsetValueType>(searchSize[dim]) - 1);
-        positionIndex[dim] = searchIndex[dim];
-      }
+
+      offset -= offsetTable[dim] * (static_cast<typename RegionType::OffsetValueType>(searchSize[dim]) - 1);
+      positionIndex[dim] = searchIndex[dim];
     }
   }
 } // end Search method

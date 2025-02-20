@@ -33,8 +33,6 @@ template <typename TInput1, typename TInput2 = TInput1, typename TOutput = TInpu
 class Maximum
 {
 public:
-  Maximum() = default;
-  ~Maximum() = default;
   bool
   operator==(const Maximum &) const
   {
@@ -50,10 +48,8 @@ public:
     {
       return static_cast<TOutput>(A);
     }
-    else
-    {
-      return static_cast<TOutput>(B);
-    }
+
+    return static_cast<TOutput>(B);
   }
 };
 } // namespace Functor
@@ -96,19 +92,15 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(MaximumImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaximumImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(Input1ConvertibleToOutputCheck,
                   (Concept::Convertible<typename TInputImage1::PixelType, typename TOutputImage::PixelType>));
   itkConceptMacro(Input2ConvertibleToOutputCheck,
                   (Concept::Convertible<typename TInputImage2::PixelType, typename TOutputImage::PixelType>));
   itkConceptMacro(Input1GreaterThanInput2Check,
                   (Concept::GreaterThanComparable<typename TInputImage1::PixelType, typename TInputImage2::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   MaximumImageFilter()

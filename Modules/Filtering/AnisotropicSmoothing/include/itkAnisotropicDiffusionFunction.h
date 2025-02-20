@@ -119,10 +119,7 @@ namespace itk
  * application is wholly dependent on the results you want from a specific data
  * set and the number or iterations you perform.
  *
- * \par References
- * Pietro Perona and Jitendra Malik, ``Scale-space and edge detection using
- * anisotropic diffusion,'' IEEE Transactions on Pattern Analysis Machine
- * Intelligence, vol. 12, pp. 629-639, 1990.
+ * For additional details see \cite perona1990.
  *
  * \sa VectorAnisotropicDiffusionFunction
  * \sa ScalarAnisotropicDiffusionFunction
@@ -147,8 +144,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(AnisotropicDiffusionFunction, FiniteDifferenceFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnisotropicDiffusionFunction);
 
   /** Inherit some parameters from the superclass type */
   using typename Superclass::ImageType;

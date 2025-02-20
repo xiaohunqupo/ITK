@@ -39,7 +39,7 @@ namespace itk
  * The output image may be of any dimension.
  *
  * This implementation was contributed as a paper to the Insight Journal
- * https://www.insight-journal.org/browse/publication/150
+ * https://doi.org/10.54294/dhogdz
  *
  * \ingroup DataSources
  * \ingroup ITKImageSources
@@ -66,8 +66,8 @@ public:
 
   using SizeType = typename RegionType::SizeType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaborImageSource, GenerateImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaborImageSource);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -78,7 +78,7 @@ public:
   /** Type used to store gabor parameters. */
   using ArrayType = FixedArray<double, Self::ImageDimension>;
 
-  /** Set/Get the the standard deviation in each direction. */
+  /** Set/Get the standard deviation in each direction. */
   itkSetMacro(Sigma, ArrayType);
   itkGetConstReferenceMacro(Sigma, ArrayType);
 

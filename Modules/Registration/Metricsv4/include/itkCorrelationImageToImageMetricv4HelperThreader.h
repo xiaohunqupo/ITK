@@ -29,8 +29,8 @@ namespace itk
  * \brief Helper class for CorrelationImageToImageMetricv4 \c
  * To compute the average pixel intensities of the fixed image and the moving image
  * on the sampled points or inside the virtual image region:
- * \f$ \bar f (CorrelationImageToImageMetricv4::m_AverageFix ) \f$
- * \f$ \bar m (CorrelationImageToImageMetricv4::m_AverageMov ) \f$
+ * \f$ \bar f (CorrelationImageToImageMetricv4::m\_AverageFix ) \f$
+ * \f$ \bar m (CorrelationImageToImageMetricv4::m\_AverageMov ) \f$
  *
  * \ingroup ITKMetricsv4
  */
@@ -47,7 +47,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(CorrelationImageToImageMetricv4HelperThreader, ImageToImageMetricv4GetValueAndDerivativeThreader);
+  itkOverrideGetNameOfClassMacro(CorrelationImageToImageMetricv4HelperThreader);
 
   itkNewMacro(Self);
 

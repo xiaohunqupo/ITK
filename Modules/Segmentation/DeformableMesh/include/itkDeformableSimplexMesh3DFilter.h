@@ -61,7 +61,7 @@ namespace itk
  * produce more regular mesh. Higher values ( 0.3 < gamma < 0.2) will allow to move the vertices to
  * regions of higher curvature.
  *
- * This approach for segmentation follows that of Delingette et al. (1997).
+ * This approach for segmentation follows that of \cite delingette1999.
  *
  * This filter currently assumes that the spacing of the input image is 1.
  *
@@ -92,8 +92,8 @@ public:
   /** Method of creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DeformableSimplexMesh3DFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DeformableSimplexMesh3DFilter);
 
   /** Some type alias. */
   using InputMeshType = TInputMesh;

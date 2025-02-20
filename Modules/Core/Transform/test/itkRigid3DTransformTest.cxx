@@ -19,6 +19,7 @@
 #include <iostream>
 
 #include "itkRigid3DTransform.h"
+#include "itkTestingMacros.h"
 
 namespace itk
 {
@@ -42,7 +43,7 @@ public:
   InverseTransformBasePointer
   GetInverseTransform() const override
   {
-    itkExceptionMacro(<< "This is never called.");
+    itkExceptionMacro("This is never called.");
   }
 
 private:
@@ -58,7 +59,7 @@ TestSettingTranslation()
 
   itk::Matrix<double, 3, 3> R;
   R.SetIdentity();
-  const double alpha = itk::Math::pi / 180.0;
+  constexpr double alpha = itk::Math::pi / 180.0;
   R[0][0] = std::cos(alpha);
   R[0][1] = std::sin(alpha);
   R[1][0] = -1.0 * std::sin(alpha);
@@ -106,15 +107,14 @@ TestSettingTranslation()
   {
     return true;
   }
-  else
-  {
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    std::cout << "r1\n" << r1 << std::endl;
-    std::cout << "r2\n" << r2 << std::endl;
-    std::cout << "r3\n" << r3 << std::endl;
-    std::cout << p1 << '\n' << p2 << '\n' << p3 << std::endl;
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-  }
+
+  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+  std::cout << "r1\n" << r1 << std::endl;
+  std::cout << "r2\n" << r2 << std::endl;
+  std::cout << "r3\n" << r3 << std::endl;
+  std::cout << p1 << '\n' << p2 << '\n' << p3 << std::endl;
+  std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+
 
   return false;
 }
@@ -126,7 +126,7 @@ itkRigid3DTransformTest(int, char *[])
   using TransformType = itk::Rigid3DTransformSurrogate<double>;
   using ParametersType = TransformType::ParametersType;
 
-  const double           epsilon = 1e-10;
+  constexpr double       epsilon = 1e-10;
   constexpr unsigned int N = 3;
 
   bool Ok = true;
@@ -181,9 +181,9 @@ itkRigid3DTransformTest(int, char *[])
 
     {
       // Translate an itk::Point
-      TransformType::InputPointType::ValueType pInit[3] = { 10, 10, 10 };
-      TransformType::InputPointType            p = pInit;
-      TransformType::InputPointType            q;
+      constexpr TransformType::InputPointType::ValueType pInit[3] = { 10, 10, 10 };
+      const TransformType::InputPointType                p = pInit;
+      TransformType::InputPointType                      q;
       q = p + ioffset;
       TransformType::OutputPointType r;
       r = translation->TransformPoint(p);
@@ -202,10 +202,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is     : " << r << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an itk::Point " << std::endl;
-      }
+
+      std::cout << "Ok translating an itk::Point " << std::endl;
     }
 
     {
@@ -228,10 +226,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is      : " << q << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an itk::Vector " << std::endl;
-      }
+
+      std::cout << "Ok translating an itk::Vector " << std::endl;
     }
 
     {
@@ -254,10 +250,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is      : " << q << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an itk::CovariantVector " << std::endl;
-      }
+
+      std::cout << "Ok translating an itk::CovariantVector " << std::endl;
     }
 
     {
@@ -282,10 +276,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is      : " << q << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an vnl_Vector " << std::endl;
-      }
+
+      std::cout << "Ok translating an vnl_Vector " << std::endl;
     }
   }
 
@@ -309,8 +301,7 @@ itkRigid3DTransformTest(int, char *[])
 
     rotation->SetMatrix(mrotation);
 
-    TransformType::OffsetType ioffset;
-    ioffset.Fill(0.0f);
+    TransformType::OffsetType ioffset{};
 
     rotation->SetOffset(ioffset);
 
@@ -358,9 +349,9 @@ itkRigid3DTransformTest(int, char *[])
 
     {
       // Rotate an itk::Point
-      TransformType::InputPointType::ValueType pInit[3] = { 10, 10, 10 };
-      TransformType::InputPointType            p = pInit;
-      TransformType::InputPointType            q;
+      constexpr TransformType::InputPointType::ValueType pInit[3] = { 10, 10, 10 };
+      TransformType::InputPointType                      p = pInit;
+      TransformType::InputPointType                      q;
 
       q[0] = p[0] * costh + p[1] * sinth;
       q[1] = -p[0] * sinth + p[1] * costh;
@@ -383,10 +374,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is     : " << r << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an itk::Point " << std::endl;
-      }
+
+      std::cout << "Ok translating an itk::Point " << std::endl;
     }
 
     {
@@ -416,10 +405,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is     : " << r << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok rotating an itk::Vector " << std::endl;
-      }
+
+      std::cout << "Ok rotating an itk::Vector " << std::endl;
     }
 
     {
@@ -450,10 +437,8 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is             : " << r << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an itk::CovariantVector " << std::endl;
-      }
+
+      std::cout << "Ok translating an itk::CovariantVector " << std::endl;
     }
 
     {
@@ -486,22 +471,19 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Reported Result is           : " << r << std::endl;
         return EXIT_FAILURE;
       }
-      else
-      {
-        std::cout << "Ok translating an vnl_Vector " << std::endl;
-      }
+
+      std::cout << "Ok translating an vnl_Vector " << std::endl;
     }
 
     {
       // Testing SetParameters()
       std::cout << "Testing SetParameters() ... ";
-      unsigned int j;
 
       auto           t = TransformType::New();
       ParametersType p(t->GetNumberOfParameters());
 
       // attempt to set an non-orthogonal matrix
-      for (j = 0; j < t->GetNumberOfParameters(); ++j)
+      for (unsigned int j = 0; j < t->GetNumberOfParameters(); ++j)
       {
         p[j] = static_cast<double>(j + 1);
         p[j] = itk::Math::sqr(p[j]);
@@ -534,7 +516,7 @@ itkRigid3DTransformTest(int, char *[])
       MatrixType matrix;
       matrix.GetVnlMatrix().set_identity();
 
-      double a = 1.0 / 180.0 * itk::Math::pi;
+      constexpr double a = 1.0 / 180.0 * itk::Math::pi;
       matrix[0][0] = std::cos(a);
       matrix[0][1] = std::sin(a);
       matrix[1][0] = -1.0 * std::sin(a);
@@ -681,7 +663,7 @@ itkRigid3DTransformTest(int, char *[])
       // attempt to set an orthogonal matrix
       matrix.GetVnlMatrix().set_identity();
 
-      double a = 1.0 / 180.0 * itk::Math::pi;
+      constexpr double a = 1.0 / 180.0 * itk::Math::pi;
       matrix[0][0] = std::cos(a);
       matrix[0][1] = std::sin(a);
       matrix[1][0] = -1.0 * std::sin(a);
@@ -708,7 +690,7 @@ itkRigid3DTransformTest(int, char *[])
         std::cerr << "Error: caught unexpected exception" << std::endl;
         return EXIT_FAILURE;
       }
-      bool TranslationSettingOK = TestSettingTranslation();
+      const bool TranslationSettingOK = TestSettingTranslation();
       if (!TranslationSettingOK)
       {
         std::cerr << "Error:  SetTranslation() did not result in consistent internal state for Rigid3DTransform."
@@ -719,5 +701,63 @@ itkRigid3DTransformTest(int, char *[])
       std::cout << "done." << std::endl;
     }
   }
+
+  // Test inverse of transform
+  {
+    auto transform = TransformType::New();
+
+    // An identity transform should have an inverse
+    transform->SetIdentity();
+    auto inverse = TransformType::New();
+    auto hasInverse = transform->GetInverse(inverse);
+    if (!hasInverse)
+    {
+      std::cerr << "Transform does not have an inverse when expected:" << std::endl;
+      std::cerr << "Transform:" << std::endl << transform;
+      std::cerr << "Inverse:" << std::endl << inverse;
+      return EXIT_FAILURE;
+    }
+    TransformType::MatrixType expectedInverse{};
+    expectedInverse.SetIdentity();
+    ITK_TEST_EXPECT_EQUAL(inverse->GetMatrix(), expectedInverse);
+
+    // An orthogonal transform should have an inverse: use a rotation matrix
+    transform->SetIdentity();
+    // 15 degrees in radians
+    const double angle = 15.0 * std::atan(1.0f) / 45.0;
+    const double sinth = std::sin(angle);
+    const double costh = std::cos(angle);
+
+    // Around the positive Z axis
+    TransformType::MatrixType mrotation;
+    mrotation.SetIdentity();
+    mrotation[0][0] = costh;
+    mrotation[0][1] = sinth;
+    mrotation[1][0] = -sinth;
+    mrotation[1][1] = costh;
+    transform->SetMatrix(mrotation);
+
+    constexpr TransformType::OffsetType ioffset{};
+    transform->SetOffset(ioffset);
+
+    hasInverse = transform->GetInverse(inverse);
+    if (!hasInverse)
+    {
+      std::cerr << "Transform does not have an inverse when expected:" << std::endl;
+      std::cerr << "Transform:" << std::endl << transform;
+      std::cerr << "Inverse:" << std::endl << inverse;
+      return EXIT_FAILURE;
+    }
+    expectedInverse.SetIdentity();
+    expectedInverse[0][0] = costh;
+    expectedInverse[0][1] = -sinth;
+    expectedInverse[1][0] = sinth;
+    expectedInverse[1][1] = costh;
+    ITK_TEST_EXPECT_EQUAL(inverse->GetMatrix(), expectedInverse);
+
+    // Cannot test a singular matrix (i.e. not having an inverse) since ITK does not allow to set a
+    // non-orthogonal rotation matrix to the transform
+  }
+
   return EXIT_SUCCESS;
 }

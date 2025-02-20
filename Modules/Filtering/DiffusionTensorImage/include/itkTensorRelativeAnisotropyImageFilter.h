@@ -32,8 +32,6 @@ class TensorRelativeAnisotropyFunction
 {
 public:
   using RealValueType = typename TInput::RealValueType;
-  TensorRelativeAnisotropyFunction() = default;
-  ~TensorRelativeAnisotropyFunction() = default;
   bool
   operator==(const TensorRelativeAnisotropyFunction &) const
   {
@@ -91,8 +89,8 @@ public:
   using InputPixelType = typename TInputImage::PixelType;
   using InputValueType = typename InputPixelType::ValueType;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(TensorRelativeAnisotropyImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TensorRelativeAnisotropyImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -104,11 +102,7 @@ public:
     this->Superclass::PrintSelf(os, indent);
   }
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputValueType>));
-  // End concept checking
-#endif
 
 protected:
   TensorRelativeAnisotropyImageFilter() = default;

@@ -49,18 +49,22 @@ namespace itk
  * \sphinxexample{Core/Common/DistanceBetweenIndices,Distance between two indices}
  * \endsphinx
  */
-template <typename TCoordRep, unsigned int VPointDimension = 3>
-class ITK_TEMPLATE_EXPORT Point : public FixedArray<TCoordRep, VPointDimension>
+template <typename TCoordinate, unsigned int VPointDimension = 3>
+class ITK_TEMPLATE_EXPORT Point : public FixedArray<TCoordinate, VPointDimension>
 {
 public:
   /** Standard class type aliases. */
   using Self = Point;
-  using Superclass = FixedArray<TCoordRep, VPointDimension>;
+  using Superclass = FixedArray<TCoordinate, VPointDimension>;
 
   /** ValueType can be used to declare a variable that is the same type
    * as a data element held in an Point.   */
-  using ValueType = TCoordRep;
-  using CoordRepType = TCoordRep;
+  using ValueType = TCoordinate;
+  using CoordinateType = TCoordinate;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
 
   using RealType = typename NumericTraits<ValueType>::RealType;
 
@@ -68,7 +72,7 @@ public:
   static constexpr unsigned int PointDimension = VPointDimension;
 
   /** The Array type from which this Vector is derived. */
-  using BaseArray = FixedArray<TCoordRep, VPointDimension>;
+  using BaseArray = FixedArray<TCoordinate, VPointDimension>;
   using Iterator = typename BaseArray::Iterator;
   using ConstIterator = typename BaseArray::ConstIterator;
 
@@ -119,6 +123,7 @@ public:
   Point(const TPointValueType & v)
     : BaseArray(v)
   {}
+
   Point(const ValueType & v)
     : BaseArray(v)
   {}
@@ -137,13 +142,7 @@ public:
   bool
   operator==(const Self & pt) const
   {
-    bool same = true;
-
-    for (unsigned int i = 0; i < VPointDimension && same; ++i)
-    {
-      same = (Math::ExactlyEquals((*this)[i], pt[i]));
-    }
-    return same;
+    return this->BaseArray::operator==(pt);
   }
 
   ITK_UNEQUAL_OPERATOR_MEMBER_FUNCTION(Self);
@@ -173,11 +172,11 @@ public:
   GetVectorFromOrigin() const;
 
   /** Get a vnl_vector_ref referencing the same memory block */
-  vnl_vector_ref<TCoordRep>
+  vnl_vector_ref<TCoordinate>
   GetVnlVector();
 
   /** Get a vnl_vector with a copy of the internal memory block. */
-  vnl_vector<TCoordRep>
+  vnl_vector<TCoordinate>
   GetVnlVector() const;
 
   /** Set to median point between the two points
@@ -258,13 +257,13 @@ public:
 
   /** Copy from another Point with a different representation type.
    *  Casting is done with C-Like rules  */
-  template <typename TCoordRepB>
+  template <typename TCoordinateB>
   void
-  CastFrom(const Point<TCoordRepB, VPointDimension> & pa)
+  CastFrom(const Point<TCoordinateB, VPointDimension> & pa)
   {
     for (unsigned int i = 0; i < VPointDimension; ++i)
     {
-      (*this)[i] = static_cast<TCoordRep>(pa[i]);
+      (*this)[i] = static_cast<TCoordinate>(pa[i]);
     }
   }
 
@@ -272,9 +271,9 @@ public:
    * with a different representation type.  Casting is done with
    * C-Like rules */
 
-  template <typename TCoordRepB>
+  template <typename TCoordinateB>
   RealType
-  SquaredEuclideanDistanceTo(const Point<TCoordRepB, VPointDimension> & pa) const
+  SquaredEuclideanDistanceTo(const Point<TCoordinateB, VPointDimension> & pa) const
   {
     RealType sum{};
 
@@ -290,9 +289,9 @@ public:
   /** Compute the Euclidean Distance from this point to another point
    * with a different representation type.  Casting is done with
    * C-Like rules */
-  template <typename TCoordRepB>
+  template <typename TCoordinateB>
   RealType
-  EuclideanDistanceTo(const Point<TCoordRepB, VPointDimension> & pa) const
+  EuclideanDistanceTo(const Point<TCoordinateB, VPointDimension> & pa) const
   {
     const double distance = std::sqrt(static_cast<double>(this->SquaredEuclideanDistanceTo(pa)));
 
@@ -344,17 +343,14 @@ public:
   using PointType = typename PointContainerType::Element;
   using WeightContainerType = TWeightContainer;
 
-  BarycentricCombination() = default;
-  ~BarycentricCombination() = default;
-
   static PointType
   Evaluate(const PointContainerPointer & points, const WeightContainerType & weights);
 };
 
 
-template <typename TCoordRep, unsigned int VPointDimension>
+template <typename TCoordinate, unsigned int VPointDimension>
 inline void
-swap(Point<TCoordRep, VPointDimension> & a, Point<TCoordRep, VPointDimension> & b)
+swap(Point<TCoordinate, VPointDimension> & a, Point<TCoordinate, VPointDimension> & b) noexcept
 {
   a.swap(b);
 }
@@ -365,14 +361,8 @@ template <typename TValue, typename... TVariadic>
 auto
 MakePoint(const TValue firstValue, const TVariadic... otherValues)
 {
-  // Assert that the other values have the same type as the first value.
-  const auto assertSameType = [](const auto value) {
-    static_assert(std::is_same_v<decltype(value), const TValue>, "Each value must have the same type!");
-    return true;
-  };
-  const bool assertions[] = { true, assertSameType(otherValues)... };
-  (void)assertions;
-  (void)assertSameType;
+  static_assert(std::conjunction_v<std::is_same<TVariadic, TValue>...>,
+                "The other values should have the same type as the first value.");
 
   constexpr unsigned int              dimension{ 1 + sizeof...(TVariadic) };
   const std::array<TValue, dimension> stdArray{ { firstValue, otherValues... } };

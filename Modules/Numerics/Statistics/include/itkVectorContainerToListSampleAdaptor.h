@@ -54,8 +54,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorContainerToListSampleAdaptor, ListSample);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorContainerToListSampleAdaptor);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -237,7 +237,7 @@ public:
   ConstIterator
   Begin() const
   {
-    ConstIterator iter(this->m_VectorContainer->Begin(), 0);
+    const ConstIterator iter(this->m_VectorContainer->Begin(), 0);
 
     return iter;
   }
@@ -246,7 +246,7 @@ public:
   ConstIterator
   End() const
   {
-    ConstIterator iter(this->m_VectorContainer->End(), this->m_VectorContainer->Size());
+    const ConstIterator iter(this->m_VectorContainer->End(), this->m_VectorContainer->Size());
     return iter;
   }
 

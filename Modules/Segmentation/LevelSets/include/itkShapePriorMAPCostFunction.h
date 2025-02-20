@@ -38,10 +38,7 @@ namespace itk
  *
  * \sa ShapePriorSegmentationLevelSetImageFilter
  *
- * \par REFERENCES
- * \par
- * [1] Leventon, M.E. et al. "Statistical Shape Influence in Geodesic Active Contours", CVPR 2000.
- *
+ * For algorithmic details see \cite leventon2000.
  *
  * \ingroup Numerics Optimizers
  * \ingroup ITKLevelSets
@@ -61,8 +58,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapePriorMAPCostFunction, ShapePriorMAPCostFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapePriorMAPCostFunction);
 
   /**  ParametersType type alias.
    *  It defines a position in the optimization search space. */

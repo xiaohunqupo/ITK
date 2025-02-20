@@ -82,15 +82,14 @@ public:
   /** Radius type alias support */
   using typename Superclass::RadiusType;
 
-  /** External slice iterator type type alias support */
+  /** External slice iterator type alias support */
   using SliceIteratorType = SliceIterator<TPixel, Self>;
 
   /** Default constructor. */
   BinaryCrossStructuringElement()
   {
     // Default structuring element is defined to be 3x3x3...
-    RadiusType radius;
-    radius.Fill(1);
+    constexpr auto radius = MakeFilled<RadiusType>(1);
     Self::SetRadius(radius);
     Self::CreateStructuringElement();
   }

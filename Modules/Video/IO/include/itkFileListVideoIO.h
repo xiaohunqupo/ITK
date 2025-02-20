@@ -51,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FileListVideoIO, VideoIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FileListVideoIO);
 
   /** Get the internal ImageIOBase object. */
   itkGetConstObjectMacro(ImageIO, ImageIOBase);

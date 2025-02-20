@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TernaryGeneratorImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TernaryGeneratorImageFilter);
 
   /** Some type alias. */
   using Input1ImageType = TInputImage1;
@@ -231,13 +231,9 @@ public:
   static constexpr unsigned int Input3ImageDimension = TInputImage3::ImageDimension;
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(SameDimensionCheck1, (Concept::SameDimension<Input1ImageDimension, Input2ImageDimension>));
   itkConceptMacro(SameDimensionCheck2, (Concept::SameDimension<Input1ImageDimension, Input3ImageDimension>));
   itkConceptMacro(SameDimensionCheck3, (Concept::SameDimension<Input1ImageDimension, OutputImageDimension>));
-  // End concept checking
-#endif
 
 protected:
   TernaryGeneratorImageFilter();

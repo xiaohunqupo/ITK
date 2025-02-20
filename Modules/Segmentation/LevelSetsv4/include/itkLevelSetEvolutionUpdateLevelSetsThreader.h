@@ -35,8 +35,7 @@ namespace itk
  * \ingroup ITKLevelSetsv4
  */
 template <typename TLevelSet, typename TDomainPartitioner, typename TLevelSetEvolution>
-class ITK_TEMPLATE_EXPORT LevelSetEvolutionUpdateLevelSetsThreader
-{};
+class ITK_TEMPLATE_EXPORT LevelSetEvolutionUpdateLevelSetsThreader{};
 
 // For dense image level set.
 template <typename TImage, typename TLevelSetEvolution>
@@ -55,8 +54,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run time type information. */
-  itkTypeMacro(LevelSetEvolutionUpdateLevelSetsThreader, DomainThreader);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetEvolutionUpdateLevelSetsThreader);
 
   /** Standard New macro. */
   itkNewMacro(Self);

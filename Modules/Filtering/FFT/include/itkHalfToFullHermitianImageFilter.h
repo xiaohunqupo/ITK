@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HalfToFullHermitianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HalfToFullHermitianImageFilter);
 
   /** Extract the dimensionality of the input and output images. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

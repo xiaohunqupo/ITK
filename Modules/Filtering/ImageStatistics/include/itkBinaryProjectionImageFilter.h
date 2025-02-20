@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- * https://www.insight-journal.org/browse/publication/71
+ * https://doi.org/10.54294/0pjyho
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  *  INRA de Jouy-en-Josas, France.
@@ -75,10 +75,8 @@ public:
     {
       return (TOutputPixel)m_ForegroundValue;
     }
-    else
-    {
-      return m_BackgroundValue;
-    }
+
+    return m_BackgroundValue;
   }
 
   bool m_IsForeground;
@@ -108,8 +106,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Runtime information support. */
-  itkTypeMacro(BinaryProjectionImageFilter, ProjectionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryProjectionImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -145,12 +143,8 @@ public:
    * NumericTraits<PixelType>::NonpositiveMin(). */
   itkGetConstMacro(BackgroundValue, OutputPixelType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputPixelTypeGreaterThanComparable, (Concept::EqualityComparable<InputPixelType>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   BinaryProjectionImageFilter()

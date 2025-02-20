@@ -43,15 +43,15 @@ MeanReciprocalSquareDifferenceImageToImageMetric<TFixedImage, TMovingImage>::Pri
 }
 
 template <typename TFixedImage, typename TMovingImage>
-typename MeanReciprocalSquareDifferenceImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 MeanReciprocalSquareDifferenceImageToImageMetric<TFixedImage, TMovingImage>::GetValue(
-  const TransformParametersType & parameters) const
+  const TransformParametersType & parameters) const -> MeasureType
 {
-  FixedImageConstPointer fixedImage = this->m_FixedImage;
+  const FixedImageConstPointer fixedImage = this->m_FixedImage;
 
   if (!fixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   double MovingValue;
@@ -82,8 +82,8 @@ MeanReciprocalSquareDifferenceImageToImageMetric<TFixedImage, TMovingImage>::Get
       continue;
     }
 
-    TransformType const * transform = this->m_Transform;
-    OutputPointType       transformedPoint = transform->TransformPoint(inputPoint);
+    const TransformType * transform = this->m_Transform;
+    const OutputPointType transformedPoint = transform->TransformPoint(inputPoint);
 
     if (this->m_MovingImageMask && !this->m_MovingImageMask->IsInsideInWorldSpace(transformedPoint))
     {
@@ -112,9 +112,7 @@ MeanReciprocalSquareDifferenceImageToImageMetric<TFixedImage, TMovingImage>::Get
   const TransformParametersType & parameters,
   DerivativeType &                derivative) const
 {
-  TransformParametersType testPoint;
-
-  testPoint = parameters;
+  TransformParametersType testPoint = parameters;
 
   const unsigned int numberOfParameters = this->GetNumberOfParameters();
   derivative = DerivativeType(numberOfParameters);

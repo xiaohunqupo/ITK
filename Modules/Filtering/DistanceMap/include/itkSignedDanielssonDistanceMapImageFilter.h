@@ -27,22 +27,14 @@ namespace itk
 namespace Functor
 {
 template <typename InputPixelType>
-class ITK_TEMPLATE_EXPORT InvertIntensityFunctor
-{
-public:
-  InputPixelType
-  operator()(InputPixelType input) const
-  {
-    if (input)
-    {
-      return NumericTraits<InputPixelType>::ZeroValue();
-    }
-    else
-    {
-      return NumericTraits<InputPixelType>::OneValue();
-    }
-  }
-};
+class ITK_TEMPLATE_EXPORT InvertIntensityFunctor{ public: InputPixelType operator()(InputPixelType input)
+                                                    const { if (input){ return InputPixelType {};
+}
+
+return NumericTraits<InputPixelType>::OneValue();
+} // namespace itk
+}
+;
 } // namespace Functor
 } // namespace itk
 
@@ -105,8 +97,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SignedDanielssonDistanceMapImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SignedDanielssonDistanceMapImageFilter);
 
   /** Type for input image. */
   using InputImageType = TInputImage;
@@ -212,14 +204,10 @@ public:
   DataObjectPointer
   MakeOutput(DataObjectPointerArraySizeType idx) override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(IntConvertibleToInputCheck, (Concept::Convertible<int, PixelType>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<PixelType>));
   itkConceptMacro(OutputImagePixelTypeIsFloatingPointCheck,
                   (Concept::IsFloatingPoint<typename OutputImageType::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   SignedDanielssonDistanceMapImageFilter();
@@ -233,10 +221,10 @@ protected:
 
 private:
   bool m_SquaredDistance{};
-  bool m_UseImageSpacing{};
+  bool m_UseImageSpacing{ true };
   bool m_InsideIsPositive{}; // ON is treated as inside pixels
-};                           // end of SignedDanielssonDistanceMapImageFilter
-                             // class
+}; // end of SignedDanielssonDistanceMapImageFilter
+   // class
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

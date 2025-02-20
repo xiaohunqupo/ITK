@@ -39,8 +39,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInput, TOutput>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(DecimationQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DecimationQuadEdgeMeshFilter);
 
   using InputMeshType = TInput;
   using InputMeshPointer = typename InputMeshType::Pointer;

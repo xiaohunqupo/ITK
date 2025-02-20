@@ -28,7 +28,7 @@ namespace itk
  *
  * This class was contributed to the Insight Journal by Gaetan Lehmann.
  * The original paper can be found at
- * https://www.insight-journal.org/browse/publication/71
+ * https://doi.org/10.54294/0pjyho
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
  * INRA de Jouy-en-Josas, France.
@@ -53,12 +53,12 @@ public:
 
   MeanAccumulator(SizeValueType size) { m_Size = size; }
 
-  ~MeanAccumulator() { m_Size = NumericTraits<SizeValueType>::ZeroValue(); }
+  ~MeanAccumulator() { m_Size = SizeValueType{}; }
 
   inline void
   Initialize()
   {
-    m_Sum = NumericTraits<TAccumulate>::ZeroValue();
+    m_Sum = TAccumulate{};
   }
 
   inline void
@@ -103,20 +103,16 @@ public:
   using OutputImageType = TOutputImage;
   using OutputPixelType = typename OutputImageType::PixelType;
 
-  /** Runtime information support. */
-  itkTypeMacro(MeanProjectionImageFilter, ProjectionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeanProjectionImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputPixelToOutputPixelTypeGreaterAdditiveOperatorCheck,
                   (Concept::AdditiveOperators<OutputPixelType, InputPixelType, OutputPixelType>));
 
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   MeanProjectionImageFilter() = default;

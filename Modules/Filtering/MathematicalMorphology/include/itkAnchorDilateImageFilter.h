@@ -34,8 +34,8 @@ public:
   using Self = AnchorDilateImageFilter;
   using Superclass = AnchorErodeDilateImageFilter<TImage, TKernel, std::less<typename TImage::PixelType>>;
 
-  /** Runtime information support. */
-  itkTypeMacro(AnchorDilateImageFilter, AnchorErodeDilateImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnchorDilateImageFilter);
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;

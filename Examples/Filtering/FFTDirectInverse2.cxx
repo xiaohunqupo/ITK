@@ -43,9 +43,9 @@
 #include "itkFlipImageFilter.h"
 
 #if !defined(ITK_USE_FFTWF)
-//#error "This example only works when single precision FFTW is used
-// Changing WorkPixeltype to double and changing this conditional to
-// ITK_USE_FFTWD will also work.
+// #error "This example only works when single precision FFTW is used
+//  Changing WorkPixeltype to double and changing this conditional to
+//  ITK_USE_FFTWD will also work.
 #endif
 
 int
@@ -128,7 +128,7 @@ main(int argc, char * argv[])
   // <<fftinput->GetOutput()->GetLargestPossibleRegion().GetSize() <<
   // std::endl; DEBUG: std::cout << "fftoutput "
   // <<fftoutput->GetOutput()->GetLargestPossibleRegion().GetSize() <<
-  // std::endl; DEBUG: std::cout << "intensityrescaller "
+  // std::endl; DEBUG: std::cout << "intensityrescaler "
   // <<intensityrescaler->GetOutput()->GetLargestPossibleRegion().GetSize() <<
   // std::endl;
   return EXIT_SUCCESS;

@@ -37,7 +37,7 @@ public:
   using typename Superclass::ParametersType;
   using typename Superclass::ParametersValueType;
 
-  itkTypeMacro(GradientDescentOptimizerBasev4TestMetric, ObjectToObjectMetricBase);
+  itkOverrideGetNameOfClassMacro(GradientDescentOptimizerBasev4TestMetric);
 
   itkNewMacro(Self);
 
@@ -57,14 +57,14 @@ public:
   void
   GetDerivative(DerivativeType & derivative) const override
   {
-    derivative.Fill(itk::NumericTraits<ParametersValueType>::ZeroValue());
+    derivative.Fill(ParametersValueType{});
   }
 
   void
   GetValueAndDerivative(MeasureType & value, DerivativeType & derivative) const override
   {
     value = itk::NumericTraits<MeasureType>::OneValue();
-    derivative.Fill(itk::NumericTraits<ParametersValueType>::ZeroValue());
+    derivative.Fill(ParametersValueType{});
   }
 
   unsigned int
@@ -127,8 +127,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDescentOptimizerBasev4TestOptimizer, GradientDescentOptimizerBasev4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientDescentOptimizerBasev4TestOptimizer);
 
   /* Provide an override for the pure virtual StartOptimization */
   void
@@ -173,15 +173,13 @@ itkGradientDescentOptimizerBasev4Test(int, char *[])
   auto metric = MetricType::New();
   auto optimizer = GradientDescentOptimizerBasev4TestOptimizer::New();
 
-  /* exercise some methods */
-  optimizer->SetMetric(metric);
-  if (optimizer->GetMetric() != metric)
-  {
-    std::cerr << "Set/GetMetric failed." << std::endl;
-    return EXIT_FAILURE;
-  }
+  constexpr bool doEstimateScales = true;
+  ITK_TEST_SET_GET_BOOLEAN(optimizer, DoEstimateScales, doEstimateScales);
 
-  std::cout << "value: " << optimizer->GetCurrentMetricValue() << std::endl;
+  optimizer->SetMetric(metric);
+  ITK_TEST_SET_GET_VALUE(metric, optimizer->GetMetric());
+
+  ITK_TEST_SET_GET_VALUE(0.0, optimizer->GetCurrentMetricValue());
 
   optimizer->SetNumberOfWorkUnits(2);
 

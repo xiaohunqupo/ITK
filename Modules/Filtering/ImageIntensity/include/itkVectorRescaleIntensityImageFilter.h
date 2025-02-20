@@ -122,8 +122,8 @@ public:
   using typename Superclass::InputImageType;
   using typename Superclass::InputImagePointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorRescaleIntensityImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorRescaleIntensityImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -148,12 +148,8 @@ public:
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputValueType>));
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputValueType>));
-  // End concept checking
-#endif
 
 protected:
   VectorRescaleIntensityImageFilter();

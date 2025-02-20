@@ -124,8 +124,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThreadedIteratorRangePartitioner, ThreadedDomainPartitioner);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThreadedIteratorRangePartitioner);
 
   /** Type for convenience of base class methods */
   using typename Superclass::DomainType;

@@ -26,26 +26,8 @@ template <typename TImage>
 ImageRandomConstIteratorWithOnlyIndex<TImage>::ImageRandomConstIteratorWithOnlyIndex(const ImageType *  ptr,
                                                                                      const RegionType & region)
   : ImageConstIteratorWithOnlyIndex<TImage>(ptr, region)
-{
-  m_NumberOfPixelsInRegion = region.GetNumberOfPixels();
-  m_NumberOfSamplesRequested = 0L;
-  m_NumberOfSamplesDone = 0L;
-  m_Generator = Statistics::MersenneTwisterRandomVariateGenerator::New();
-}
-
-template <typename TImage>
-void
-ImageRandomConstIteratorWithOnlyIndex<TImage>::SetNumberOfSamples(SizeValueType number)
-{
-  m_NumberOfSamplesRequested = number;
-}
-
-template <typename TImage>
-auto
-ImageRandomConstIteratorWithOnlyIndex<TImage>::GetNumberOfSamples() const -> SizeValueType
-{
-  return m_NumberOfSamplesRequested;
-}
+  , m_NumberOfPixelsInRegion{ region.GetNumberOfPixels() }
+{}
 
 template <typename TImage>
 void
@@ -67,15 +49,15 @@ ImageRandomConstIteratorWithOnlyIndex<TImage>::RandomJump()
 {
   using PositionValueType = IndexValueType;
 
-  const PositionValueType randomPosition = static_cast<PositionValueType>(
+  auto position = static_cast<PositionValueType>(
     m_Generator->GetVariateWithOpenRange(static_cast<double>(m_NumberOfPixelsInRegion) - 0.5));
-  PositionValueType position = randomPosition;
-  PositionValueType residual;
+
+  const SizeType regionSize = this->m_Region.GetSize();
 
   for (unsigned int dim = 0; dim < TImage::ImageDimension; ++dim)
   {
-    const SizeValueType sizeInThisDimension = this->m_Region.GetSize()[dim];
-    residual = position % sizeInThisDimension;
+    const SizeValueType     sizeInThisDimension = regionSize[dim];
+    const PositionValueType residual = position % sizeInThisDimension;
     this->m_PositionIndex[dim] = residual + this->m_BeginIndex[dim];
     position -= residual;
     position /= sizeInThisDimension;

@@ -45,14 +45,26 @@ doDenoising(const std::string & inputFileName, const std::string & outputFileNam
 
   // Create filter and initialize
   auto filter = FilterType::New();
-  filter->SetInput(reader->GetOutput());
+
+  ITK_TEST_SET_GET_BOOLEAN(filter, UseSmoothDiscPatchWeights, true);
+  auto kernelBandwidthSigma = typename FilterType::RealArrayType{};
+  ITK_TEST_SET_GET_VALUE(kernelBandwidthSigma, filter->GetKernelBandwidthSigma());
+  ITK_TEST_SET_GET_VALUE(0.20, filter->GetKernelBandwidthFractionPixelsForEstimation());
+  ITK_TEST_SET_GET_BOOLEAN(filter, ComputeConditionalDerivatives, false);
+  ITK_TEST_SET_GET_BOOLEAN(filter, UseFastTensorComputations, true);
+  ITK_TEST_SET_GET_VALUE(1.0, filter->GetKernelBandwidthMultiplicationFactor());
+  ITK_TEST_SET_GET_VALUE(0, filter->GetNoiseSigma());
 
   // Use 2 threads for consistency
   filter->SetNumberOfWorkUnits(2);
 
+  filter->SetInput(reader->GetOutput());
+
   // Denoise the image
   ITK_TRY_EXPECT_NO_EXCEPTION(filter->Update());
 
+
+  std::cout << "NumIndependentComponents: " << filter->GetNumIndependentComponents() << std::endl;
 
   // Write the denoised image to file
   auto writer = WriterType::New();
@@ -69,7 +81,7 @@ itkPatchBasedDenoisingImageFilterDefaultTest(int argc, char * argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Missing command line arguments" << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " inputImageFileName outputImageFileName"
               << " numDimensions" << std::endl;
     return EXIT_FAILURE;
@@ -104,7 +116,7 @@ itkPatchBasedDenoisingImageFilterDefaultTest(int argc, char * argv[])
   {
     return doDenoising<OneComponent2DImage>(inFileName, outFileName);
   }
-  else if (numDimensions == 3)
+  if (numDimensions == 3)
   {
     return doDenoising<OneComponent3DImage>(inFileName, outFileName);
   }

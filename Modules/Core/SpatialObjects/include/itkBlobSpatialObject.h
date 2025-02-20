@@ -64,14 +64,14 @@ public:
   using typename Superclass::SpatialObjectPointType;
   using typename Superclass::TransformType;
   using typename Superclass::BoundingBoxType;
-  using PointContainerType = VectorContainer<IdentifierType, PointType>;
+  using PointContainerType = VectorContainer<PointType>;
   using PointContainerPointer = SmartPointer<PointContainerType>;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Method for creation through the object factory. */
-  itkTypeMacro(BlobSpatialObject, SpatialObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BlobSpatialObject);
 
 protected:
   BlobSpatialObject();

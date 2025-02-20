@@ -30,9 +30,9 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 SimpleContourExtractorImageFilter<TInputImage, TOutputImage>::SimpleContourExtractorImageFilter()
   : m_InputForegroundValue(NumericTraits<InputPixelType>::max())
-  , m_InputBackgroundValue(NumericTraits<InputPixelType>::ZeroValue())
+  , m_InputBackgroundValue(InputPixelType{})
   , m_OutputForegroundValue(NumericTraits<OutputPixelType>::max())
-  , m_OutputBackgroundValue(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_OutputBackgroundValue(OutputPixelType{})
 {
   this->DynamicMultiThreadingOn();
   this->ThreaderUpdateProgressOff();
@@ -51,12 +51,12 @@ SimpleContourExtractorImageFilter<TInputImage, TOutputImage>::DynamicThreadedGen
   ImageRegionIterator<OutputImageType>      it;
 
   // Allocate output
-  typename OutputImageType::Pointer     output = this->GetOutput();
-  typename InputImageType::ConstPointer input = this->GetInput();
+  const typename OutputImageType::Pointer     output = this->GetOutput();
+  const typename InputImageType::ConstPointer input = this->GetInput();
 
   // Find the data-set boundary "faces"
-  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>                        bC;
-  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType faceList =
+  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>                              bC;
+  const typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType faceList =
     bC(input, outputRegionForThread, this->GetRadius());
 
   TotalProgressReporter progress(this, output->GetRequestedRegion().GetNumberOfPixels());
@@ -66,7 +66,7 @@ SimpleContourExtractorImageFilter<TInputImage, TOutputImage>::DynamicThreadedGen
   for (const auto & face : faceList)
   {
     bit = ConstNeighborhoodIterator<InputImageType>(this->GetRadius(), input, face);
-    unsigned int neighborhoodSize = bit.Size();
+    const unsigned int neighborhoodSize = bit.Size();
     it = ImageRegionIterator<OutputImageType>(output, face);
 
     bit.OverrideBoundaryCondition(&nbc);

@@ -80,8 +80,8 @@ public:
   /** Instantiation through object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information. */
-  itkTypeMacro(VectorCurvatureAnisotropicDiffusionImageFilter, AnisotropicDiffusionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorCurvatureAnisotropicDiffusionImageFilter);
 
   /** Convenient type alias. */
   using typename Superclass::UpdateBufferType;
@@ -89,19 +89,14 @@ public:
   /** Determine the image dimension. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<typename TInputImage::PixelType::ValueType>));
   itkConceptMacro(OutputHasNumericTraitsCheck,
                   (Concept::HasNumericTraits<typename TOutputImage::PixelType::ValueType>));
-  // End concept checking
-#endif
 
 protected:
   VectorCurvatureAnisotropicDiffusionImageFilter()
   {
-    typename VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::Pointer q =
-      VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
+    auto q = VectorCurvatureNDAnisotropicDiffusionFunction<UpdateBufferType>::New();
     this->SetDifferenceFunction(q);
   }
 

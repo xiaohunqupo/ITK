@@ -33,8 +33,6 @@ template <typename TInput, typename TOutput>
 class Abs
 {
 public:
-  Abs() = default;
-  ~Abs() = default;
   bool
   operator==(const Abs &) const
   {
@@ -80,19 +78,15 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(AbsImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AbsImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;
 
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(ConvertibleCheck, (Concept::Convertible<InputPixelType, OutputPixelType>));
   itkConceptMacro(InputGreaterThanIntCheck, (Concept::GreaterThanComparable<InputPixelType, InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   AbsImageFilter()

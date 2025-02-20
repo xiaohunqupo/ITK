@@ -36,8 +36,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Conformal Flattening ITK Filter"
  * by Gao Y., Melonakos J., Tannenbaum A.
- * https://hdl.handle.net/1926/225
- * https://www.insight-journal.org/browse/publication/112
+ * https://doi.org/10.54294/msr7a5
  *
  * \ingroup MeshFilters
  * \sa TransformMeshFilter
@@ -67,14 +66,18 @@ public:
   using OutputPointType = typename OutputMeshType::PointType;
 
   /** Type for representing coordinates. */
-  // using CoordRepType = typename TInputMesh::CoordRepType;
-  using CoordRepType = double;
+  // using CoordinateType = typename TInputMesh::CoordinateType;
+  using CoordinateType = double;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ConformalFlatteningMeshFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConformalFlatteningMeshFilter);
 
   /** Convenient constants obtained from TMeshTraits template parameter. */
   static constexpr unsigned int InputPointDimension = TInputMesh::PointDimension;
@@ -90,11 +93,11 @@ public:
   using PointIdIterator = typename CellType::PointIdIterator;
   using CellAutoPointer = typename CellType::CellAutoPointer;
 
-  /** Select the cell that will be used as reference for the flattening.
-   * This value must be the identifier of a cell existing in the input Mesh.
-   * A point of this cell will be mapped to infinity on the plane, or it
-   * will be mapped to the north-pole on the sphere. It is recommended to
-   * select a cell whose curvature is relatively flat. */
+  /** Select the cell that will be used to define the boundary/used as reference for the flattening.
+   * This value must be the identifier of a cell existing in the input Mesh. A point of this cell will be mapped to
+   * infinity on the plane, or it will be mapped to the north-pole on the sphere. It is recommended to select a cell
+   * whose curvature is relatively flat.
+   */
   void
   SetPolarCellIdentifier(CellIdentifier cellId);
 
@@ -123,8 +126,8 @@ protected:
   GenerateData() override;
 
 private:
-  using VectorCoordType = vnl_vector<CoordRepType>;
-  using SparseMatrixCoordType = vnl_sparse_matrix<CoordRepType>;
+  using VectorCoordType = vnl_vector<CoordinateType>;
+  using SparseMatrixCoordType = vnl_sparse_matrix<CoordinateType>;
 
   /** Cell Id  in which the point P, which is used
    * to define the mapping, lies in. */

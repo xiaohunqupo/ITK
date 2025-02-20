@@ -34,15 +34,8 @@ namespace itk
  *
  * BinaryMorphologyImageFilter is a base class for fast binary
  * morphological operations. The implementation of this class and its
- * subclasses are based on the papers:
- *
- * L.Vincent "Morphological transformations of binary images with
- * arbitrary structuring elements", and
- *
- * N.Nikopoulos et al. "An efficient algorithm for 3d binary
- * morphological transformations with 3d structuring elements
- * for arbitrary size and shape". IEEE Transactions on Image
- * Processing. Vol. 9. No. 3. 2000. pp. 283-286.
+ * subclasses are based on the papers \cite vincent1991 and
+ * \cite nikopoulos1997.
  *
  * Grayscale images can be processed as binary images by selecting a
  * "ForegroundValued" (which subclasses may alias as "DilateValue" or
@@ -125,8 +118,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BinaryMorphologyImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryMorphologyImageFilter);
 
   /** Kernel type alias. */
   using KernelType = TKernel;

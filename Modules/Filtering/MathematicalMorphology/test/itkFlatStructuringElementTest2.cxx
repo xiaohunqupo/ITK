@@ -62,7 +62,7 @@ GetImage(const itk::FlatStructuringElement<VDimension> & flatElement)
     }
     else
     {
-      img_it.Set(NumericTraits<PixelType>::ZeroValue());
+      img_it.Set(PixelType{});
     }
   }
   return image;
@@ -92,7 +92,7 @@ itkFlatStructuringElementTest2(int argc, char * argv[])
   ITK_TRY_EXPECT_NO_EXCEPTION(reader->UpdateLargestPossibleRegion());
 
 
-  ImageUCType::Pointer testImg = reader->GetOutput();
+  const ImageUCType::Pointer testImg = reader->GetOutput();
   using FSEType = itk::FlatStructuringElement<Dimension>;
 
 
@@ -103,17 +103,17 @@ itkFlatStructuringElementTest2(int argc, char * argv[])
   using RescaleType = itk::RescaleIntensityImageFilter<ImageUCType, ImageUCType>;
   auto rescale = RescaleType::New();
   rescale->SetInput(testImg);
-  rescale->SetOutputMinimum(itk::NumericTraits<bool>::ZeroValue());
+  rescale->SetOutputMinimum(bool{});
   rescale->SetOutputMaximum(itk::NumericTraits<bool>::OneValue());
 
   using castFilterType = itk::CastImageFilter<ImageUCType, ImageBoolType>;
   auto cast = castFilterType::New();
   cast->SetInput(rescale->GetOutput());
   cast->Update();
-  ImageBoolType::Pointer testImgBool = cast->GetOutput();
+  const ImageBoolType::Pointer testImgBool = cast->GetOutput();
 
-  FSEType              flatStructure = FSEType::FromImage(testImgBool);
-  ImageUCType::Pointer imgFromStructure = GetImage(flatStructure);
+  const FSEType              flatStructure = FSEType::FromImage(testImgBool);
+  const ImageUCType::Pointer imgFromStructure = GetImage(flatStructure);
 
   // Write result from GetImage for comparison with input image
 
@@ -135,13 +135,13 @@ itkFlatStructuringElementTest2(int argc, char * argv[])
   lowerExtendRegion[0] = 1;
   lowerExtendRegion[1] = 1;
   padFilter->SetPadLowerBound(lowerExtendRegion);
-  ImageBoolType::PixelType constPixel = true;
+  constexpr ImageBoolType::PixelType constPixel = true;
   padFilter->SetConstant(constPixel);
 
   ITK_TRY_EXPECT_NO_EXCEPTION(padFilter->Update());
 
 
-  ImageBoolType::Pointer evenBoolImg = padFilter->GetOutput();
+  const ImageBoolType::Pointer evenBoolImg = padFilter->GetOutput();
 
   ITK_TRY_EXPECT_EXCEPTION(FSEType::FromImage(evenBoolImg));
 

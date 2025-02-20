@@ -85,8 +85,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageIOBase, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageIOBase);
 
   /** Set/Get the name of the file to be read. */
   itkSetStringMacro(FileName);
@@ -489,8 +489,8 @@ public:
    * LargestPossibleRegion (unless it was dimensionally clipped) and
    * greater or equal to the RequestedRegion
    *
-   * the resulting IORegion may be a greater dimensions the the
-   * requested IORegion, if the the derived class is unable to read
+   * the resulting IORegion may be a greater dimensions the
+   * requested IORegion, if the derived class is unable to read
    * the requested region. For example if the file has a size of [ 10,
    * 10, 10] but the requested region is [10, 10] the return may be 3 dimensions.
    */
@@ -595,13 +595,13 @@ public:
     this->SetPixelType(IOPixelEnum::VECTOR);
     this->SetComponentType(MapPixelType<TPixel>::CType);
   }
-  template <typename TCoordRep, unsigned int VPointDimension>
+  template <typename TCoordinate, unsigned int VPointDimension>
   void
-  SetPixelTypeInfo(const Point<TCoordRep, VPointDimension> *)
+  SetPixelTypeInfo(const Point<TCoordinate, VPointDimension> *)
   {
     this->SetNumberOfComponents(VPointDimension);
     this->SetPixelType(IOPixelEnum::POINT);
-    this->SetComponentType(MapPixelType<TCoordRep>::CType);
+    this->SetComponentType(MapPixelType<TCoordinate>::CType);
   }
   template <typename TPixel, unsigned int VLength>
   void

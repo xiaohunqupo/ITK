@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AccumulateImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AccumulateImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -85,11 +85,7 @@ public:
 
   /** Input and output images must be the same dimension, or the output's
       dimension must be one less than that of the input. */
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(ImageDimensionCheck, (Concept::SameDimension<Self::InputImageDimension, Self::OutputImageDimension>));
-  // End concept checking
-#endif
 
   /** Set the direction in which to accumulate the data.  It must be
    * set before the update of the filter. Defaults to the last

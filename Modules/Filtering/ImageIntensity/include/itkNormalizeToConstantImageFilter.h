@@ -37,7 +37,7 @@ namespace itk
  *
  * This code was contributed in the Insight Journal paper: "FFT based
  * convolution" by Lehmann G.
- * https://insight-journal.org/browse/publication/717
+ * https://doi.org/10.54294/0iky0u
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
@@ -89,19 +89,15 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(NormalizeToConstantImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NormalizeToConstantImageFilter);
 
   /** Set/get the normalization constant. */
   itkSetMacro(Constant, RealType);
   itkGetConstMacro(Constant, RealType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasPixelTraitsCheck, (Concept::HasPixelTraits<InputImagePixelType>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   NormalizeToConstantImageFilter();

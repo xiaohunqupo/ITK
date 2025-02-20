@@ -64,11 +64,11 @@ CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::GenerateBSplineSha
 }
 
 template <unsigned int VSplineOrder, typename TRealValueType>
-typename CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::PolynomialType
+auto
 CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::CoxDeBoor(const unsigned short order,
                                                                         const VectorType     knots,
                                                                         const unsigned int   whichBasisFunction,
-                                                                        const unsigned int   whichPiece)
+                                                                        const unsigned int whichPiece) -> PolynomialType
 {
   VectorType           tmp(2);
   PolynomialType       poly1(TRealValueType{ 0.0 });
@@ -87,7 +87,7 @@ CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::CoxDeBoor(const un
 
   if (itk::Math::AlmostEquals(den, TRealValueType{ 0.0 }))
   {
-    PolynomialType poly(TRealValueType{ 0.0 });
+    const PolynomialType poly(TRealValueType{ 0.0 });
     poly1 = poly;
   }
   else
@@ -102,7 +102,7 @@ CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::CoxDeBoor(const un
   den = knots(i + p + 1) - knots(i + 1);
   if (itk::Math::AlmostEquals(den, TRealValueType{ 0.0 }))
   {
-    PolynomialType poly(TRealValueType{ 0.0 });
+    const PolynomialType poly(TRealValueType{ 0.0 });
     poly2 = poly;
   }
   else
@@ -166,10 +166,8 @@ CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::Evaluate(const TRe
   {
     return PolynomialType(this->m_BSplineShapeFunctions.get_row(which)).evaluate(absValue);
   }
-  else
-  {
-    return TRealValueType{ 0.0 };
-  }
+
+  return TRealValueType{ 0.0 };
 }
 
 template <unsigned int VSplineOrder, typename TRealValueType>
@@ -208,10 +206,8 @@ CoxDeBoorBSplineKernelFunction<VSplineOrder, TRealValueType>::EvaluateNthDerivat
     {
       return -der;
     }
-    else
-    {
-      return der;
-    }
+
+    return der;
   }
   else
   {

@@ -53,8 +53,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(MahalanobisDistanceMetric, DistanceMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MahalanobisDistanceMetric);
   itkNewMacro(Self);
 
   /** Typedef to represent the measurement vector type */

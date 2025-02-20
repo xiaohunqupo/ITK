@@ -62,8 +62,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ChainCodePath, Path);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ChainCodePath);
 
   /** OutputType type alias support */
   using typename Superclass::OutputType;

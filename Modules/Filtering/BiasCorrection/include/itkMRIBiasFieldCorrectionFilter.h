@@ -29,6 +29,9 @@
 #include "itkOnePlusOneEvolutionaryOptimizer.h"
 #include "itkImageRegionIterator.h"
 
+#include <memory> // For unique_ptr.
+
+
 namespace itk
 {
 /**
@@ -56,8 +59,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MRIBiasEnergyFunction, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MRIBiasEnergyFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -154,7 +157,7 @@ protected:
   MRIBiasEnergyFunction();
 
   /** Destructor. */
-  ~MRIBiasEnergyFunction() override;
+  ~MRIBiasEnergyFunction() override = default;
 
 private:
   /** Bias field object pointer. */
@@ -170,7 +173,7 @@ private:
   ImageRegionType m_Region{};
 
   /** Internal energy function object pointer. */
-  InternalEnergyFunction * m_InternalEnergyFunction{};
+  std::unique_ptr<InternalEnergyFunction> m_InternalEnergyFunction;
 
   /** Sampling factors */
   SamplingFactorType m_SamplingFactor{};
@@ -216,15 +219,7 @@ private:
  * The multiresolution pyramid implementation is based on
  * itkMultiResolutionPyramidImageFilter (without Gaussian smoothing)
  *
- * For more details. refer to the following articles.
- * "Parametric estimate of intensity inhomogeneities applied to MRI"
- * Martin Styner, Guido Gerig, Christian Brechbuehler, Gabor Szekely,
- * IEEE TRANSACTIONS ON MEDICAL IMAGING; 19(3), pp. 153-165, 2000,
- * (https://www.cs.unc.edu/~styner/docs/tmi00.pdf)
- *
- * "Evaluation of 2D/3D bias correction with 1+1ES-optimization"
- * Martin Styner, Prof. Dr. G. Gerig (IKT, BIWI, ETH Zuerich), TR-197
- * (https://www.cs.unc.edu/~styner/docs/StynerTR97.pdf)
+ * For more details refer to \cite styner2000 and \cite styner1997.
  * \ingroup ITKBiasCorrection
  */
 template <typename TInputImage, typename TOutputImage, typename TMaskImage>
@@ -242,8 +237,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MRIBiasFieldCorrectionFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MRIBiasFieldCorrectionFilter);
 
   /** The dimension of the image. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

@@ -51,7 +51,7 @@ PadImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent i
 
   os << indent << "Output Pad Lower Bounds: [";
 
-  if (ImageDimension >= 1)
+  if constexpr (ImageDimension >= 1)
   {
     os << m_PadLowerBound[0];
   }
@@ -62,7 +62,7 @@ PadImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent i
   os << ']' << std::endl;
 
   os << indent << "Output Pad Upper Bounds: [";
-  if (ImageDimension >= 1)
+  if constexpr (ImageDimension >= 1)
   {
     os << m_PadUpperBound[0];
   }
@@ -90,8 +90,8 @@ PadImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   Superclass::GenerateOutputInformation();
 
   // get pointers to the input and output
-  typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
-  typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
+  const typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
+  const typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
 
   if (!outputPtr || !inputPtr)
   {

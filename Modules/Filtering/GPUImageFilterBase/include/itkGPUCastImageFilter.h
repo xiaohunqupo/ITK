@@ -41,7 +41,7 @@ itkGPUKernelClassMacro(GPUCastImageFilterKernel);
  * Scientific Research (NWO NRG-2010.02 and NWO 639.021.124).
  *
  * \note Imported from elastix. More information can be found in the Insight Journal
- * article: https://www.insight-journal.org/browse/publication/884
+ * article: https://doi.org/10.54294/j5h811
  *
  * \ingroup ITKGPUImageFilterBase
  */
@@ -93,8 +93,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GPUCastImageFilter, GPUUnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUCastImageFilter);
 
   /** Pixel types. */
   using InputPixelType = typename TInputImage::PixelType;

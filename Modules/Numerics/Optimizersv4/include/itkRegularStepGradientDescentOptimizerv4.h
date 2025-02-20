@@ -56,8 +56,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RegularStepGradientDescentOptimizerv4, GradientDescentOptimizerv4Template);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegularStepGradientDescentOptimizerv4);
 
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);

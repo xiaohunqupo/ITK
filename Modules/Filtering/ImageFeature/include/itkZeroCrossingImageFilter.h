@@ -42,7 +42,7 @@ namespace itk
  *  By default, zero-crossing pixels are labeled with a default "foreground"
  *  value of itk::NumericTraits<OutputDataType>::OneValue(), where OutputDataType is
  *  the data type of the output image.  All other pixels are labeled with a
- *  default "background" value of itk::NumericTraits<OutputDataType>::ZeroValue().
+ *  default "background" value of OutputDataType{}.
  *
  *  \par Parameters
  *  There are two parameters for this filter.  ForegroundValue is the value
@@ -88,8 +88,8 @@ public:
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ZeroCrossingImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ZeroCrossingImageFilter);
 
   /** ImageDimension enumeration   */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -114,14 +114,10 @@ public:
   itkSetMacro(BackgroundValue, OutputImagePixelType);
   itkGetConstMacro(BackgroundValue, OutputImagePixelType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputEqualityComparableCheck, (Concept::EqualityComparable<OutputImagePixelType>));
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, OutputImageDimension>));
   itkConceptMacro(InputComparableCheck, (Concept::Comparable<InputImagePixelType>));
   itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   ZeroCrossingImageFilter();

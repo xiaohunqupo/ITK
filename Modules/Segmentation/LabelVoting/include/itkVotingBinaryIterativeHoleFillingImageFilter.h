@@ -71,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VotingBinaryIterativeHoleFillingImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VotingBinaryIterativeHoleFillingImageFilter);
 
   /** Type of the internal Voting filter that is going to be executed
     iteratively */
@@ -127,12 +127,8 @@ public:
   /** Returns the number of pixels that changed when the filter was executed. */
   itkGetConstReferenceMacro(NumberOfPixelsChanged, unsigned int);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputEqualityComparableCheck, (Concept::EqualityComparable<InputPixelType>));
   itkConceptMacro(InputOStreamWritableeCheck, (Concept::OStreamWritable<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   VotingBinaryIterativeHoleFillingImageFilter();

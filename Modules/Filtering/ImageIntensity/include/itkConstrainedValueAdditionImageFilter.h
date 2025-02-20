@@ -34,8 +34,6 @@ template <typename TInput1, typename TInput2, typename TOutput>
 class ConstrainedValueAddition
 {
 public:
-  ConstrainedValueAddition() = default;
-  ~ConstrainedValueAddition() = default;
   bool
   operator==(const ConstrainedValueAddition &) const
   {
@@ -108,17 +106,13 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ConstrainedValueAdditionImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ConstrainedValueAdditionImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(Input1ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage1::PixelType, double>));
   itkConceptMacro(Input2ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage2::PixelType, double>));
   itkConceptMacro(DoubleConvertibleToOutputCastCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
   itkConceptMacro(DoubleLessThanOutputCheck, (Concept::LessThanComparable<double, typename TOutputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   ConstrainedValueAdditionImageFilter()

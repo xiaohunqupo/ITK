@@ -33,7 +33,7 @@ namespace itk
  *        to pixels.
  *
  * Contributed as a paper to the Insight Journal:
- * https://www.insight-journal.org/browse/publication/204
+ * https://doi.org/10.54294/iei8xt
  *
  * \ingroup ImageIterators
  *
@@ -194,7 +194,7 @@ public:
 
     this->m_IsAtEnd = true;
     // Initialize the temporary image
-    m_TempPtr->FillBuffer(NumericTraits<typename TTempImage::PixelType>::ZeroValue());
+    m_TempPtr->FillBuffer(typename TTempImage::PixelType{});
 
     for (unsigned int i = 0; i < m_Seeds.size(); ++i)
     {

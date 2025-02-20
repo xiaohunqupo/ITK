@@ -289,26 +289,26 @@ LBFGSBOptimizer::StartOptimization()
 {
   // Check if all the bounds parameters are the same size as the initial
   // parameters.
-  unsigned int numberOfParameters = m_CostFunction->GetNumberOfParameters();
+  const unsigned int numberOfParameters = m_CostFunction->GetNumberOfParameters();
 
   if (this->GetInitialPosition().Size() < numberOfParameters)
   {
-    itkExceptionMacro(<< "InitialPosition array does not have sufficient number of elements");
+    itkExceptionMacro("InitialPosition array does not have sufficient number of elements");
   }
 
   if (m_LowerBound.size() < numberOfParameters)
   {
-    itkExceptionMacro(<< "LowerBound array does not have sufficient number of elements");
+    itkExceptionMacro("LowerBound array does not have sufficient number of elements");
   }
 
   if (m_UpperBound.size() < numberOfParameters)
   {
-    itkExceptionMacro(<< "UppperBound array does not have sufficient number of elements");
+    itkExceptionMacro("UppperBound array does not have sufficient number of elements");
   }
 
   if (m_BoundSelection.size() < numberOfParameters)
   {
-    itkExceptionMacro(<< "BoundSelection array does not have sufficient number of elements");
+    itkExceptionMacro("BoundSelection array does not have sufficient number of elements");
   }
 
   if (this->GetMaximize())
@@ -334,7 +334,7 @@ LBFGSBOptimizer::StartOptimization()
   {
     // set current position to initial position and throw an exception
     this->SetCurrentPosition(this->GetInitialPosition());
-    itkExceptionMacro(<< "Error occurred in optimization");
+    itkExceptionMacro("Error occurred in optimization");
   }
 
   this->SetCurrentPosition(parameters);
@@ -368,13 +368,11 @@ LBFGSBOptimizerHelper::report_iter()
   {
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
-const std::string
+std::string
 LBFGSBOptimizer::GetStopConditionDescription() const
 {
   std::ostringstream stopConditionDescription;
@@ -431,7 +429,7 @@ LBFGSBOptimizer::GetStopConditionDescription() const
         stopConditionDescription << "Gradient tolerance too small";
         break;
       case vnl_nonlinear_minimizer::FAILED_USER_REQUEST:
-        stopConditionDescription << "Failed user requeset";
+        stopConditionDescription << "Failed user request";
         break;
     }
   }

@@ -46,7 +46,7 @@ namespace itk
  *  \f$ U \f$ and lower threshold \f$ L \f$ according to the following formula.
  *
  * \par
- *  \f$  f(x) = \left\{ \begin{array}{ll} g(x) - L & \mbox{if $(g)x < (U-L)/2 + L$} \\ U - g(x) & \mbox{otherwise}
+ *  \f$  f(x) = \left\{ \begin{array}{ll} g(x) - L & \mbox{if g(x) < (U-L)/2 + L} \\ U - g(x) & \mbox{otherwise}
  * \end{array} \right. \f$
  *
  * \sa SegmentationLevelSetImageFunction
@@ -70,8 +70,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(ThresholdSegmentationLevelSetFunction, SegmentationLevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThresholdSegmentationLevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   using typename Superclass::ImageType;
@@ -112,7 +112,7 @@ public:
   {
     Superclass::Initialize(r);
 
-    this->SetAdvectionWeight(NumericTraits<ScalarValueType>::ZeroValue());
+    this->SetAdvectionWeight(ScalarValueType{});
     this->SetPropagationWeight(-1.0 * NumericTraits<ScalarValueType>::OneValue());
     this->SetCurvatureWeight(NumericTraits<ScalarValueType>::OneValue());
   }

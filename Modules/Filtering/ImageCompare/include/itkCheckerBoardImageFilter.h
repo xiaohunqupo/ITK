@@ -63,8 +63,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CheckerBoardImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CheckerBoardImageFilter);
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;

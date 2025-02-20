@@ -93,8 +93,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(AnisotropicFourthOrderLevelSetImageFilter, SparseFieldFourthOrderLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnisotropicFourthOrderLevelSetImageFilter);
 
   /** Standard new macro */
   itkNewMacro(Self);
@@ -126,10 +126,8 @@ protected:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 
 private:

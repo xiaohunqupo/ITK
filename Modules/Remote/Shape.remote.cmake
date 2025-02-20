@@ -42,11 +42,12 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Matthew McCormick <matt.mccormick@kitware.com>
-itk_fetch_module(Shape
+itk_fetch_module(
+  Shape
   "Shape analysis filters, e.g. Procrustes alignment for meshes.
 
   ITK external module for libraries originally developed in SPHARM-PDM 3D Slicer extension (https://github.com/NIRALUser/SPHARM-PDM)."
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/SlicerSALT/ITKShape.git
-  GIT_TAG 67373b34a20116698b4d3617dc5c2edf9be6e2cc
-)
+  GIT_REPOSITORY https://github.com/SlicerSALT/ITKShape.git
+  GIT_TAG b5311e41f644aede86367f883e2d115d92b08e62
+  )

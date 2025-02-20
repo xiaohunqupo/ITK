@@ -27,13 +27,13 @@ namespace itk
 {
 
 /** \class LabelOverlapMeasuresImageFilter
- * \brief Computes overlap measures between the set same set of labels of
+ * \brief Computes overlap measures between the same set of labels of
  * pixels of two images. Background is assumed to be 0.
  *
  * This code was contributed in the Insight Journal paper:
  * "Introducing Dice, Jaccard, and Other Label Overlap Measures To ITK"
  * by Nicholas J. Tustison, James C. Gee
- * https://www.insight-journal.org/browse/publication/707
+ * https://doi.org/10.54294/1vixgg
  *
  * \author Nicholas J. Tustison
  * \sa LabelOverlapMeasuresImageFilter
@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(LabelOverlapMeasuresImageFilter, ImageSink);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LabelOverlapMeasuresImageFilter);
 
   /** Image related type alias. */
   using LabelImageType = TLabelImage;
@@ -187,21 +187,20 @@ public:
   /** Get the false discovery rate for the specified individual label. */
   RealType GetFalseDiscoveryRate(LabelType) const;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(Input1HasNumericTraitsCheck, (Concept::HasNumericTraits<LabelType>));
-  // End concept checking
-#endif
 
 protected:
   LabelOverlapMeasuresImageFilter();
   ~LabelOverlapMeasuresImageFilter() override = default;
+
+  /** Type to use for printing label values (e.g. in warnings). */
+  using PrintType = typename NumericTraits<LabelType>::PrintType;
+
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   BeforeStreamedGenerateData() override;
-
 
   void
   ThreadedStreamedGenerateData(const RegionType &) override;

@@ -79,8 +79,8 @@ public:
 
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToVideoFilter, VideoSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToVideoFilter);
 
   /** Set the input Image for this process object */
   using Superclass::SetInput;
@@ -88,7 +88,7 @@ public:
   SetInput(const InputImageType * image);
 
   virtual void
-  SetInput(unsigned int idx, const InputImageType * videoStream);
+  SetInput(unsigned int idx, const InputImageType * image);
 
   /** Get the input Image for this process object */
   const InputImageType *

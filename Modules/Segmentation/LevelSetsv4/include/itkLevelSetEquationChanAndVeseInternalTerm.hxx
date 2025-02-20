@@ -25,9 +25,9 @@ namespace itk
 
 template <typename TInput, typename TLevelSetContainer>
 LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::LevelSetEquationChanAndVeseInternalTerm()
-  : m_Mean(NumericTraits<InputPixelRealType>::ZeroValue())
-  , m_TotalValue(NumericTraits<InputPixelRealType>::ZeroValue())
-  , m_TotalH(NumericTraits<LevelSetOutputRealType>::ZeroValue())
+  : m_Mean(InputPixelRealType{})
+  , m_TotalValue(InputPixelRealType{})
+  , m_TotalH(LevelSetOutputRealType{})
 {
   this->m_TermName = "Internal Chan And Vese term";
   this->m_RequiredData.insert("Value");
@@ -47,7 +47,7 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Update()
   }
   else
   {
-    this->m_Mean = NumericTraits<InputPixelRealType>::ZeroValue();
+    this->m_Mean = InputPixelRealType{};
   }
 }
 
@@ -55,8 +55,8 @@ template <typename TInput, typename TLevelSetContainer>
 void
 LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::InitializeParameters()
 {
-  this->m_TotalValue = NumericTraits<InputPixelRealType>::ZeroValue();
-  this->m_TotalH = NumericTraits<LevelSetOutputRealType>::ZeroValue();
+  this->m_TotalValue = InputPixelRealType{};
+  this->m_TotalH = LevelSetOutputRealType{};
   this->SetUp();
 }
 
@@ -68,7 +68,7 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Initialize(
 {
   if (this->m_Heaviside.IsNotNull())
   {
-    InputPixelType pixel = this->m_Input->GetPixel(inputIndex);
+    const InputPixelType pixel = this->m_Input->GetPixel(inputIndex);
 
     LevelSetOutputRealType prod;
     this->ComputeProduct(inputIndex, prod);
@@ -76,7 +76,7 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Initialize(
   }
   else
   {
-    itkWarningMacro(<< "m_Heaviside is nullptr");
+    itkWarningMacro("m_Heaviside is nullptr");
   }
 }
 
@@ -87,7 +87,7 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::ComputeProd
   const LevelSetInputIndexType & inputIndex,
   LevelSetOutputRealType &       prod)
 {
-  LevelSetOutputRealType value = this->m_CurrentLevelSetPointer->Evaluate(inputIndex);
+  const LevelSetOutputRealType value = this->m_CurrentLevelSetPointer->Evaluate(inputIndex);
   prod = this->m_Heaviside->Evaluate(-value);
 }
 
@@ -100,7 +100,7 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::UpdatePixel
   const LevelSetOutputRealType & newValue)
 {
   // For each affected h val: h val = new hval (this will dirty some cvals)
-  InputPixelType input = this->m_Input->GetPixel(inputIndex);
+  const InputPixelType input = this->m_Input->GetPixel(inputIndex);
 
   const LevelSetOutputRealType oldH = this->m_Heaviside->Evaluate(-oldValue);
   const LevelSetOutputRealType newH = this->m_Heaviside->Evaluate(-newValue);
@@ -134,15 +134,16 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Value(const
   }
   else
   {
-    itkWarningMacro(<< "m_Heaviside is nullptr");
+    itkWarningMacro("m_Heaviside is nullptr");
   }
-  return NumericTraits<LevelSetOutputPixelType>::ZeroValue();
+  return LevelSetOutputPixelType{};
 }
 
 template <typename TInput, typename TLevelSetContainer>
-typename LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Value(const LevelSetInputIndexType & inputIndex,
                                                                            const LevelSetDataType &       data)
+  -> LevelSetOutputRealType
 {
   if (this->m_Heaviside.IsNotNull())
   {
@@ -163,9 +164,9 @@ LevelSetEquationChanAndVeseInternalTerm<TInput, TLevelSetContainer>::Value(const
   }
   else
   {
-    itkWarningMacro(<< "m_Heaviside is nullptr");
+    itkWarningMacro("m_Heaviside is nullptr");
   }
-  return NumericTraits<LevelSetOutputPixelType>::ZeroValue();
+  return LevelSetOutputPixelType{};
 }
 
 template <typename TInput, typename TLevelSetContainer>

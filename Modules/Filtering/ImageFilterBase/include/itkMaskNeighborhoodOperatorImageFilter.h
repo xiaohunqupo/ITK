@@ -67,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaskNeighborhoodOperatorImageFilter, NeighborhoodOperatorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaskNeighborhoodOperatorImageFilter);
 
   /** Extract some information from the image types.  Dimensionality
    * of the two images is assumed to be the same. */
@@ -134,20 +134,16 @@ public:
   /** Turn on and off the UseDefaultValue flag. */
   itkBooleanMacro(UseDefaultValue);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputEqualityComparableCheck, (Concept::EqualityComparable<OutputPixelType>));
   itkConceptMacro(SameDimensionCheck1, (Concept::SameDimension<InputImageDimension, ImageDimension>));
   itkConceptMacro(SameDimensionCheck2, (Concept::SameDimension<InputImageDimension, MaskImageDimension>));
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputPixelType, OutputPixelType>));
   itkConceptMacro(OperatorConvertibleToOutputCheck, (Concept::Convertible<OperatorValueType, OutputPixelType>));
   itkConceptMacro(OutputOStreamWritable, (Concept::OStreamWritable<OutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   MaskNeighborhoodOperatorImageFilter()
-    : m_DefaultValue(NumericTraits<OutputPixelType>::ZeroValue())
+    : m_DefaultValue(OutputPixelType{})
   {}
   ~MaskNeighborhoodOperatorImageFilter() override = default;
   void

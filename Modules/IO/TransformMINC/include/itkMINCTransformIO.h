@@ -32,7 +32,7 @@ namespace itk
 
 /** \class MINCTransformIOTemplate
  *
- * \brief Read and write transforms in Minc XFM Format
+ * \brief Read and write transforms in MINC format (.xfm).
  *
  * \author Vladimir S. FONOV
  *         Brain Imaging Center, Montreal Neurological Institute, McGill University, Montreal Canada 2012
@@ -59,8 +59,8 @@ public:
   using MatrixType = typename MatrixOffsetTransformBaseType::MatrixType;
   using OffsetType = typename MatrixOffsetTransformBaseType::OffsetType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MINCTransformIOTemplate, TransformIOBaseTemplate);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MINCTransformIOTemplate);
   itkNewMacro(Self);
 
   /** Determine the file type. Returns true if this ImageIO can read the

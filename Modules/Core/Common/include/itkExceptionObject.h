@@ -16,14 +16,15 @@
  *
  *=========================================================================*/
 #ifndef itkExceptionObject_h
+#define itkExceptionObject_h
+
+// NOTE: This itkExceptionObject.h file is included by itkMacro.h, and should never be included directly.
+#ifndef allow_inclusion_of_itkExceptionObject_h
 #  error "Do not include itkExceptionObject.h directly,  include itkMacro.h instead."
-#else // itkExceptionObject_h
+#endif
 
-#  include "itkMacro.h"
-
-#  include <memory> // For shared_ptr.
-#  include <string>
-#  include <stdexcept>
+#include <memory> // For shared_ptr.
+#include <string>
 
 namespace itk
 {
@@ -86,8 +87,8 @@ public:
   virtual bool
   operator==(const ExceptionObject & orig) const;
 
-  /** Runtime information support. */
-  itkTypeMacroNoParent(ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkVirtualGetNameOfClassMacro(ExceptionObject);
 
   /** Print exception information.  This method can be overridden by
    * specific exception subtypes.  The default is to print out the
@@ -158,8 +159,8 @@ public:
   // Inherit the constructors from its base class.
   using ExceptionObject::ExceptionObject;
 
-  /** Runtime information support. */
-  itkTypeMacro(MemoryAllocationError, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MemoryAllocationError);
 };
 
 /** \class RangeError
@@ -173,8 +174,8 @@ public:
   // Inherit the constructors from its base class.
   using ExceptionObject::ExceptionObject;
 
-  /** Runtime information support. */
-  itkTypeMacro(RangeError, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RangeError);
 };
 
 /** \class InvalidArgumentError
@@ -189,8 +190,8 @@ public:
   // Inherit the constructors from its base class.
   using ExceptionObject::ExceptionObject;
 
-  /** Runtime information support. */
-  itkTypeMacro(InvalidArgumentError, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InvalidArgumentError);
 };
 
 /** \class IncompatibleOperandsError
@@ -204,8 +205,8 @@ public:
   // Inherit the constructors from its base class.
   using ExceptionObject::ExceptionObject;
 
-  /** Runtime information support. */
-  itkTypeMacro(IncompatibleOperandsError, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IncompatibleOperandsError);
 };
 
 /** \class ProcessAborted
@@ -238,9 +239,31 @@ public:
     this->SetDescription("Filter execution was aborted by an external request");
   }
 
-  /** Runtime information support. */
-  itkTypeMacro(ProcessAborted, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ProcessAborted);
 };
-} // end namespace itk
 
+// Forward declaration in Macro.h, implementation here to avoid circular dependency
+template <typename TTarget, typename TSource>
+TTarget
+itkDynamicCastInDebugMode(TSource x)
+{
+#ifndef NDEBUG
+  if (x == nullptr)
+  {
+    return nullptr;
+  }
+  TTarget rval = dynamic_cast<TTarget>(x);
+  if (rval == nullptr)
+  {
+    itkGenericExceptionMacro("Failed dynamic cast to " << typeid(TTarget).name()
+                                                       << " object type = " << x->GetNameOfClass());
+  }
+  return rval;
+#else
+  return static_cast<TTarget>(x);
+#endif
+}
+
+} // end namespace itk
 #endif // itkExceptionObject_h

@@ -118,8 +118,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToImageFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToImageFilter);
 
   /** Superclass type alias. */
   using typename Superclass::OutputImageRegionType;
@@ -244,7 +244,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override;
+  VerifyInputInformation() const override;
 
   /** What is the input requested region that is required to produce
    * the output requested region? The base assumption for image
@@ -362,16 +362,8 @@ protected:
    * the versions from ProcessObject to avoid warnings about hiding
    * methods from the superclass.
    */
-  void
-  PushBackInput(const DataObject * input) override
-  {
-    Superclass::PushBackInput(input);
-  }
-  void
-  PushFrontInput(const DataObject * input) override
-  {
-    Superclass::PushFrontInput(input);
-  }
+  using Superclass::PushBackInput;
+  using Superclass::PushFrontInput;
 
 private:
   /**

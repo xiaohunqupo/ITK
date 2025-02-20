@@ -41,20 +41,16 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
 {
   this->AllocateOutputs();
 
-  unsigned int i, j;
-
   // Retrieve input and output pointers
-  typename OutputImageType::Pointer     output = this->GetOutput();
-  typename InputImageType::ConstPointer input = this->GetInput();
+  const typename OutputImageType::Pointer     output = this->GetOutput();
+  const typename InputImageType::ConstPointer input = this->GetInput();
 
   // Get values from superclass
-  InputPixelType foregroundValue = this->GetForegroundValue();
-  InputPixelType backgroundValue = this->GetBackgroundValue();
-  KernelType     kernel = this->GetKernel();
-  InputSizeType  radius;
-  radius.Fill(1);
-  typename TInputImage::RegionType  inputRegion = input->GetBufferedRegion();
-  typename TOutputImage::RegionType outputRegion = output->GetBufferedRegion();
+  const InputPixelType                    foregroundValue = this->GetForegroundValue();
+  const InputPixelType                    backgroundValue = this->GetBackgroundValue();
+  const KernelType                        kernel = this->GetKernel();
+  auto                                    radius = InputSizeType::Filled(1);
+  const typename TOutputImage::RegionType outputRegion = output->GetBufferedRegion();
 
   // compute the size of the temp image. It is needed to create the progress
   // reporter.
@@ -65,7 +61,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
   typename TInputImage::RegionType paddedInputRegion = input->GetBufferedRegion();
   paddedInputRegion.PadByRadius(radius); // to support boundary values
   InputSizeType padBy = radius;
-  for (i = 0; i < KernelDimension; ++i)
+  for (unsigned int i = 0; i < KernelDimension; ++i)
   {
     padBy[i] = (padBy[i] > kernel.GetRadius(i) ? padBy[i] : kernel.GetRadius(i));
   }
@@ -92,7 +88,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
 
   for (inIt.GoToBegin(), outIt.GoToBegin(); !outIt.IsAtEnd(); ++outIt, ++inIt)
   {
-    InputPixelType value = inIt.Get();
+    const InputPixelType value = inIt.Get();
     // replace foreground pixels with the default background
     if (Math::ExactlyEquals(value, foregroundValue))
     {
@@ -150,7 +146,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
 
   for (iRegIt.GoToBegin(), tmpRegIt.GoToBegin(); !tmpRegIt.IsAtEnd(); ++iRegIt, ++tmpRegIt)
   {
-    OutputPixelType pxl = iRegIt.Get();
+    const OutputPixelType pxl = iRegIt.Get();
     if (Math::ExactlyEquals(pxl, foregroundValue))
     {
       tmpRegIt.Set(onTag);
@@ -182,8 +178,8 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
   cbc.SetConstant(backgroundTag);
   oNeighbIt.OverrideBoundaryCondition(&cbc);
 
-  unsigned int neighborhoodSize = oNeighbIt.Size();
-  unsigned int centerPixelCode = neighborhoodSize / 2;
+  const unsigned int neighborhoodSize = oNeighbIt.Size();
+  const unsigned int centerPixelCode = neighborhoodSize / 2;
 
   std::queue<IndexType> propagQueue;
 
@@ -216,7 +212,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
       // Test current pixel: it is a border pixel or an inner pixel?
       bool bIsOnContour = false;
 
-      for (i = 0; i < neighborhoodSize; ++i)
+      for (unsigned int i = 0; i < neighborhoodSize; ++i)
       {
         // If at least one neighbour pixel is off the center pixel
         // belongs to contour
@@ -245,7 +241,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
         NeighborIndexContainer &                        idxDifferenceSet = this->GetDifferenceSet(centerPixelCode);
         for (itIdx = idxDifferenceSet.begin(); itIdx != idxDifferenceSet.end(); ++itIdx)
         {
-          IndexType idx = tmpRegIndexIt.GetIndex() + *itIdx;
+          const IndexType idx = tmpRegIndexIt.GetIndex() + *itIdx;
           if (outputRegion.IsInside(idx))
           {
             output->SetPixel(idx, static_cast<OutputPixelType>(foregroundValue));
@@ -259,12 +255,12 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
         while (!propagQueue.empty())
         {
           // Extract pixel index from queue
-          IndexType currentIndex = propagQueue.front();
+          const IndexType currentIndex = propagQueue.front();
           propagQueue.pop();
 
           nit += currentIndex - nit.GetIndex();
 
-          for (i = 0; i < neighborhoodSize; ++i)
+          for (unsigned int i = 0; i < neighborhoodSize; ++i)
           {
             // If pixel has not been already treated and it is a pixel
             // on, test if it is an inner pixel or a border pixel
@@ -284,7 +280,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
 
               bool bIsOnBorder = false;
 
-              for (j = 0; j < neighborhoodSize; ++j)
+              for (unsigned int j = 0; j < neighborhoodSize; ++j)
               {
                 // If at least one neighbour pixel is off the center
                 // pixel belongs to border
@@ -311,10 +307,8 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
                   // paint the structuring element
                   NeighborIndexContainer & indexDifferenceSet = this->GetDifferenceSet(i);
 
-                  const typename NeighborIndexContainer::const_iterator staticEndIt = indexDifferenceSet.end();
-                  for (typename NeighborIndexContainer::const_iterator itIndex = indexDifferenceSet.begin();
-                       itIndex != staticEndIt;
-                       ++itIndex)
+                  const auto staticEndIt = indexDifferenceSet.end();
+                  for (auto itIndex = indexDifferenceSet.begin(); itIndex != staticEndIt; ++itIndex)
                   {
                     const IndexType idx(neighbIndex + *itIndex);
                     if (outputRegion.IsInside(idx))
@@ -333,9 +327,9 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
 
               progress.CompletedPixel();
             } // if( nit.GetPixel( i ) == onTag )
-          }   // for (i = 0; i < neighborhoodSize; ++i)
-        }     // while ( !propagQueue.empty() )
-      }       // if( bIsOnContour )
+          } // for (i = 0; i < neighborhoodSize; ++i)
+        } // while ( !propagQueue.empty() )
+      } // if( bIsOnContour )
       else
       {
         tmpRegIndexIt.Set(innerTag);
@@ -356,7 +350,7 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
   // Third Stage
   // traverse structure of border and SE CCs, and paint output image
 
-  // Let's consider the the set of the ON elements of the input image as X.
+  // Let's consider the set of the ON elements of the input image as X.
   //
   // Let's consider the structuring element as B = {B0, B1, ..., Bn},
   // where Bi denotes a connected component of B.
@@ -410,11 +404,11 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
     while (!ouRegIndexIt.IsAtEnd())
     {
       // Retrieve index of current output pixel
-      IndexType currentIndex = ouRegIndexIt.GetIndex();
+      const IndexType currentIndex = ouRegIndexIt.GetIndex();
       for (vecIt = vecBeginIt; vecIt != vecEndIt; ++vecIt)
       {
         // Translate
-        IndexType translatedIndex = currentIndex - *vecIt;
+        const IndexType translatedIndex = currentIndex - *vecIt;
 
         // translated index now is an index in input image in the
         // output requested region padded. Theoretically, this translated
@@ -439,10 +433,10 @@ BinaryDilateImageFilter<TInputImage, TOutputImage, TKernel>::GenerateData()
   {
     while (!ouRegIndexIt.IsAtEnd())
     {
-      IndexType currentIndex = ouRegIndexIt.GetIndex();
+      const IndexType currentIndex = ouRegIndexIt.GetIndex();
       for (vecIt = vecBeginIt; vecIt != vecEndIt; ++vecIt)
       {
-        IndexType translatedIndex = currentIndex - *vecIt;
+        const IndexType translatedIndex = currentIndex - *vecIt;
 
         if (inputRegionForThread.IsInside(translatedIndex) &&
             Math::ExactlyEquals(input->GetPixel(translatedIndex), foregroundValue))

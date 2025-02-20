@@ -47,8 +47,8 @@ public:
   /** Method for creation through the object factory. */
   itkSimpleNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MaterialLinearElasticity, Material);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaterialLinearElasticity);
 
   /** CreateAnother method will clone the existing instance of this type,
    * including its internal member variables. */

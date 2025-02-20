@@ -63,8 +63,8 @@ public:
   /** External support for dimensionality. */
   static constexpr unsigned int NeighborhoodDimension = VDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacroNoParent(Neighborhood);
+  /** \see LightObject::GetNameOfClass() */
+  itkVirtualGetNameOfClassMacro(Neighborhood);
 
   /** External support for pixel type. */
   using PixelType = TPixel;
@@ -85,7 +85,7 @@ public:
   /** Offset type used to reference neighbor locations */
   using OffsetType = Offset<VDimension>;
 
-  /** External slice iterator type type alias support */
+  /** External slice iterator type alias support */
   using SliceIteratorType = SliceIterator<TPixel, Self>;
 
   /** Type used to refer to space dimensions */
@@ -136,7 +136,7 @@ public:
   SizeValueType
   GetRadius(DimensionValueType n) const
   {
-    return m_Radius[n];
+    return m_Radius.at(n);
   }
 
   /** Returns the size (total length) of the neighborhood along
@@ -144,7 +144,7 @@ public:
   SizeValueType
   GetSize(DimensionValueType n) const
   {
-    return m_Size[n];
+    return m_Size.at(n);
   }
 
   /** Returns the size (total length of sides) of the neighborhood. */
@@ -193,8 +193,16 @@ public:
   }
 
   /** Pass-through data access methods to the buffer. */
-  TPixel &       operator[](NeighborIndexType i) { return m_DataBuffer[i]; }
-  const TPixel & operator[](NeighborIndexType i) const { return m_DataBuffer[i]; }
+  TPixel &
+  operator[](NeighborIndexType i)
+  {
+    return m_DataBuffer[i];
+  }
+  const TPixel &
+  operator[](NeighborIndexType i) const
+  {
+    return m_DataBuffer[i];
+  }
   TPixel &
   GetElement(NeighborIndexType i)
   {
@@ -249,8 +257,16 @@ public:
   }
 
   /** Get pixel value by offset */
-  TPixel &       operator[](const OffsetType & o) { return this->operator[](this->GetNeighborhoodIndex(o)); }
-  const TPixel & operator[](const OffsetType & o) const { return this->operator[](this->GetNeighborhoodIndex(o)); }
+  TPixel &
+  operator[](const OffsetType & o)
+  {
+    return this->operator[](this->GetNeighborhoodIndex(o));
+  }
+  const TPixel &
+  operator[](const OffsetType & o) const
+  {
+    return this->operator[](this->GetNeighborhoodIndex(o));
+  }
 
   /** Returns the itk::Offset from the center of the Neighborhood to
       the requested neighbor index. */

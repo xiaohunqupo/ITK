@@ -47,8 +47,8 @@ BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::SetParamet
   // expected number of parameters
   if (parameters.Size() != this->GetNumberOfParameters())
   {
-    itkExceptionMacro(<< "Mismatch between parameters size " << parameters.Size()
-                      << " and expected number of parameters " << this->GetNumberOfParameters()
+    itkExceptionMacro("Mismatch between parameters size "
+                      << parameters.Size() << " and expected number of parameters " << this->GetNumberOfParameters()
                       << (this->m_CoefficientImages[0]->GetLargestPossibleRegion().GetNumberOfPixels() == 0
                             ? ". \nSince the size of the grid region is 0, perhaps you forgot to "
                               "SetGridRegion or SetFixedParameters before setting the Parameters."
@@ -80,8 +80,8 @@ BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::SetParamet
   // expected number of parameters
   if (parameters.Size() != this->GetNumberOfParameters())
   {
-    itkExceptionMacro(<< "Mismatched between parameters size " << parameters.size() << " and region size "
-                      << this->GetNumberOfParameters());
+    itkExceptionMacro("Mismatched between parameters size " << parameters.size() << " and region size "
+                                                            << this->GetNumberOfParameters());
   }
 
   // copy parameters to this->m_InternalParametersBuffer
@@ -121,7 +121,7 @@ BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::UpdateTran
   const DerivativeType & update,
   TParametersValueType   factor)
 {
-  NumberOfParametersType numberOfParameters = this->GetNumberOfParameters();
+  const NumberOfParametersType numberOfParameters = this->GetNumberOfParameters();
 
   if (update.Size() != numberOfParameters)
   {
@@ -293,8 +293,9 @@ BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::ArrayOfIma
 
 // Transform a point
 template <typename TParametersValueType, unsigned int VDimension, unsigned int VSplineOrder>
-typename BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::OutputPointType
+auto
 BSplineBaseTransform<TParametersValueType, VDimension, VSplineOrder>::TransformPoint(const InputPointType & point) const
+  -> OutputPointType
 {
   WeightsType             weights;
   ParameterIndexArrayType indices;

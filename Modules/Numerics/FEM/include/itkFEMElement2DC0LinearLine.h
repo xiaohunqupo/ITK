@@ -42,8 +42,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Element2DC0LinearLine, TemplatedParentClass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Element2DC0LinearLine);
 
   // ////////////////////////////////////////////////////////////////////////
   /**

@@ -47,8 +47,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MaximumDecisionRule, DecisionRule);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaximumDecisionRule);
 
   /** Standard New() method support */
   itkNewMacro(Self);

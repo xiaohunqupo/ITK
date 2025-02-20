@@ -57,8 +57,8 @@ public:
 
   using SizeType = typename RegionType::SizeType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PhysicalPointImageSource, GenerateImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PhysicalPointImageSource);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -68,7 +68,7 @@ protected:
   {
     this->DynamicMultiThreadingOn();
     this->ThreaderUpdateProgressOff();
-  };
+  }
   ~PhysicalPointImageSource() override = default;
 
   void

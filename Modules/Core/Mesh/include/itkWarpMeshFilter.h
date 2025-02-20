@@ -57,7 +57,11 @@ public:
   using OutputMeshPointer = typename OutputMeshType::Pointer;
 
   /** Type for representing coordinates. */
-  using CoordRepType = typename TInputMesh::CoordRepType;
+  using CoordinateType = typename TInputMesh::CoordinateType;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using CoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `CoordRepType`. Please use `CoordinateType` instead!") = CoordinateType;
+#endif
 
   /** Deformation field type alias support */
   using DisplacementFieldType = TDisplacementField;
@@ -67,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(WarpMeshFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WarpMeshFilter);
 
   /** Set the deformation field. */
   void

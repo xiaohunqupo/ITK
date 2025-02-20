@@ -21,6 +21,7 @@
 
 #include <vxl_version.h>
 #include "vnl/vnl_vector_fixed.h"
+#include "itkTestingMacros.h"
 
 int
 itkPhilipsRECImageIOPrintTest(int argc, char * argv[])
@@ -28,7 +29,7 @@ itkPhilipsRECImageIOPrintTest(int argc, char * argv[])
 
   if (argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " InputImage" << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv) << " InputImage" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -43,15 +44,8 @@ itkPhilipsRECImageIOPrintTest(int argc, char * argv[])
   }
   imageIO->SetFileName(argv[1]);
 
-  try
-  {
-    imageIO->ReadImageInformation();
-  }
-  catch (const itk::ExceptionObject & excp)
-  {
-    std::cerr << excp << std::endl;
-    return EXIT_FAILURE;
-  }
+  ITK_TRY_EXPECT_NO_EXCEPTION(imageIO->ReadImageInformation());
+
 
   // Print all of the PAR parameters.
   // Return EXIT_FAILURE if the value cannot be read.
@@ -495,7 +489,7 @@ itkPhilipsRECImageIOPrintTest(int argc, char * argv[])
        iter++)
   {
     std::cout << "Scanning Sequence " << iter << " =";
-    PhilipsRECImageIOType::ImageTypeRescaleValuesContainerType::Pointer rescaleValueVector =
+    const PhilipsRECImageIOType::ImageTypeRescaleValuesContainerType::Pointer rescaleValueVector =
       ptrToRescaleValues->ElementAt(iter);
     for (PhilipsRECImageIOType::ImageTypeRescaleValuesContainerType::ElementIdentifier iter1 = 0;
          iter1 < rescaleValueVector->Size();
@@ -533,5 +527,7 @@ itkPhilipsRECImageIOPrintTest(int argc, char * argv[])
   }
   std::cout << std::endl;
 
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

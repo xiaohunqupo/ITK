@@ -42,12 +42,13 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Dženan Zukić <dzenan.zukic@kitware.com>
-itk_fetch_module(Ultrasound
-"This module contains filters for use with the Insight Toolkit (ITK) that image formation and analysis of ultrasound images.
+itk_fetch_module(
+  Ultrasound
+  "This module contains filters for use with the Insight Toolkit (ITK) that image formation and analysis of ultrasound images.
 
 McCormick, M.
 An Open Source, Fast Ultrasound B-Mode Implementation for Commodity Hardware.
-Insight Journal. 2010 January-June. URL: https://hdl.handle.net/10380/3159
+Insight Journal. 2010 January-June. URL: https://doi.org/10.54294/yjowe4
 
 McCormick, M, Rubert, N and Varghese, T.
 Bayesian Regularization Applied to Ultrasound Strain Imaging.
@@ -61,6 +62,6 @@ Prague, Czech Republic. 1013-1016. 2016.
 https://dx.doi.org/10.1109/ISBI.2016.7493437
 https://pdfs.semanticscholar.org/6bcd/1e7adbc24e15c928a7ad5af77bbd5da29c30.pdf"
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/KitwareMedical/ITKUltrasound.git
-  GIT_TAG 13d57e224ab8bde50dfb4020af3f8d248f6491bc
+  GIT_REPOSITORY https://github.com/KitwareMedical/ITKUltrasound.git
+  GIT_TAG 6d44d94896b3cf39f484ac38718579ed2d007e14
   )

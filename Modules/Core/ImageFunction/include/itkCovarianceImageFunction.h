@@ -41,11 +41,11 @@ namespace itk
  * \ingroup ImageFunctions
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = float>
+template <typename TInputImage, typename TCoordinate = float>
 class ITK_TEMPLATE_EXPORT CovarianceImageFunction
   : public ImageFunction<TInputImage,
                          vnl_matrix<typename NumericTraits<typename TInputImage::PixelType::ValueType>::RealType>,
-                         TCoordRep>
+                         TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(CovarianceImageFunction);
@@ -55,13 +55,13 @@ public:
   using Superclass =
     ImageFunction<TInputImage,
                   vnl_matrix<typename NumericTraits<typename TInputImage::PixelType::ValueType>::RealType>,
-                  TCoordRep>;
+                  TCoordinate>;
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CovarianceImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CovarianceImageFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -69,7 +69,7 @@ public:
   /** InputImageType type alias support */
   using InputImageType = TInputImage;
 
-  /** OutputType typdef support. */
+  /** OutputType typedef support. */
   using typename Superclass::OutputType;
 
   /** Index type alias support */

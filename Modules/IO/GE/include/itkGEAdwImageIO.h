@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GEAdwImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GEAdwImageIO);
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 

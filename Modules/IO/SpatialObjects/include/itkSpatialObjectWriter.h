@@ -58,7 +58,7 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  itkTypeMacro(SpatialObjectWriter, Object);
+  itkOverrideGetNameOfClassMacro(SpatialObjectWriter);
 
   /** Load a tube file. */
   void
@@ -80,6 +80,16 @@ public:
   itkSetMacro(BinaryPoints, bool);
   itkGetConstMacro(BinaryPoints, bool);
   itkBooleanMacro(BinaryPoints);
+
+  /** Set the version of MetaIO to use.
+   *    Version 0 cannot accurately represented ImageSpatialObjects.
+   *    Version 1 fixes bugs in Version 0, but introduces new tag-value
+   *      pairs that might throw warnings on older readers. */
+
+  void
+  SetMetaIOVersion(unsigned int ver);
+  unsigned int
+  GetMetaIOVersion() const;
 
   void
   SetTransformPrecision(unsigned int precision);

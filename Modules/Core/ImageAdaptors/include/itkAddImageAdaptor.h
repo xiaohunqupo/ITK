@@ -49,8 +49,8 @@ public:
 
   using PixelType = typename TImage::PixelType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AddImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AddImageAdaptor);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

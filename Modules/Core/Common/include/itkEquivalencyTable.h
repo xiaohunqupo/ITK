@@ -52,7 +52,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(EquivalencyTable, DataObject);
+  itkOverrideGetNameOfClassMacro(EquivalencyTable);
 
   /** Define the container type for the table. */
   using HashTableType = std::unordered_map<unsigned long, unsigned long, std::hash<unsigned long>>;
@@ -98,10 +98,8 @@ public:
     {
       return a;
     }
-    else
-    {
-      return result->second;
-    }
+
+    return result->second;
   }
 
   /** Lookup an equivalency in the table by recursing through all
@@ -120,10 +118,8 @@ public:
     {
       return false;
     }
-    else
-    {
-      return true;
-    }
+
+    return true;
   }
 
   /** Erases the entry with key a.  */

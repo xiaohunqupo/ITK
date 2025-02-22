@@ -39,8 +39,8 @@ public:
 
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(MyMembershipFunctionBase, MembershipFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MyMembershipFunctionBase);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -49,8 +49,7 @@ public:
   double
   Evaluate(const TMeasurementVector &) const override
   {
-    double score;
-    score = 1;
+    constexpr double score = 1;
     return score;
   }
 };

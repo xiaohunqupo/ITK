@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(XMLFileOutputWindow, FileOutputWindow);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(XMLFileOutputWindow);
 
   /** Send a string to the XML file. */
   void

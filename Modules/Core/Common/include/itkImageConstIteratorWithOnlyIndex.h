@@ -95,6 +95,8 @@ template <typename TImage>
 class ITK_TEMPLATE_EXPORT ImageConstIteratorWithOnlyIndex
 {
 public:
+  ITK_DEFAULT_COPY_AND_MOVE(ImageConstIteratorWithOnlyIndex);
+
   /** Standard class type aliases. */
   using Self = ImageConstIteratorWithOnlyIndex;
 
@@ -126,24 +128,15 @@ public:
    * provide a copy constructor. */
   ImageConstIteratorWithOnlyIndex() = default;
 
-  /** Copy Constructor. The copy constructor is provided to make sure the
-   * handle to the image is properly reference counted. */
-  ImageConstIteratorWithOnlyIndex(const Self & it);
-
-  /** Constructor establishes an iterator to walk a particular image and a
-   * particular region of that image. */
+  /** Constructor establishes an iterator to walk a particular image and a particular region of that image. Initializes
+   * the iterator at the begin of the region. */
   ImageConstIteratorWithOnlyIndex(const TImage * ptr, const RegionType & region);
 
   /** Default Destructor. */
   virtual ~ImageConstIteratorWithOnlyIndex() = default;
 
-  /** operator= is provided to make sure the handle to the image is properly
-   * reference counted. */
-  Self &
-  operator=(const Self & it);
-
   /** Get the dimension (size) of the index. */
-  static unsigned int
+  static constexpr unsigned int
   GetImageDimension()
   {
     return ImageDimension;

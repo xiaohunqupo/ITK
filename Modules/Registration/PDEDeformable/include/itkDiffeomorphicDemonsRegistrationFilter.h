@@ -30,12 +30,8 @@ namespace itk
  * \brief Deformably register two images using a diffeomorphic demons algorithm.
  *
  * This class was contributed by Tom Vercauteren, INRIA & Mauna Kea Technologies,
- * based on a variation of the DemonsRegistrationFilter. The basic modification
- * is to use diffeomorphism exponentials.
- *
- * See T. Vercauteren, X. Pennec, A. Perchant and N. Ayache,
- * "Non-parametric Diffeomorphic Image Registration with the Demons Algorithm",
- * Proc. of MICCAI 2007.
+ * based on a variation of the DemonsRegistrationFilter
+ * \cite vercauteren2007. The basic modification is to use diffeomorphism exponentials.
  *
  * DiffeomorphicDemonsRegistrationFilter implements the demons deformable algorithm that
  * register two images by computing the deformation field which will map a
@@ -67,7 +63,7 @@ namespace itk
  * and deformation field type all have the same number of dimensions.
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/154
+ * https://doi.org/10.54294/ux2obj
  *
  * \sa DemonsRegistrationFilter
  * \sa DemonsRegistrationFunction
@@ -90,8 +86,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DiffeomorphicDemonsRegistrationFilter, PDEDeformableRegistrationFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiffeomorphicDemonsRegistrationFilter);
 
   /** FixedImage image type. */
   using typename Superclass::FixedImageType;
@@ -120,7 +116,7 @@ public:
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
-   * computed over the the overlapping region between the two images.
+   * computed over the overlapping region between the two images.
    * This value is calculated for the current iteration */
   virtual double
   GetMetric() const;

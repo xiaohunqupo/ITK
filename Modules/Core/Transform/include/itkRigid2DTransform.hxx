@@ -27,7 +27,7 @@ template <typename TParametersValueType>
 Rigid2DTransform<TParametersValueType>::Rigid2DTransform()
   : Superclass(ParametersDimension)
 {
-  m_Angle = NumericTraits<TParametersValueType>::ZeroValue();
+  m_Angle = TParametersValueType{};
 }
 
 
@@ -35,7 +35,7 @@ template <typename TParametersValueType>
 Rigid2DTransform<TParametersValueType>::Rigid2DTransform(unsigned int parametersDimension)
   : Superclass(parametersDimension)
 {
-  m_Angle = NumericTraits<TParametersValueType>::ZeroValue();
+  m_Angle = TParametersValueType{};
 }
 
 
@@ -43,7 +43,7 @@ template <typename TParametersValueType>
 Rigid2DTransform<TParametersValueType>::Rigid2DTransform(unsigned int, unsigned int parametersDimension)
   : Superclass(parametersDimension)
 {
-  m_Angle = NumericTraits<TParametersValueType>::ZeroValue();
+  m_Angle = TParametersValueType{};
 }
 
 template <typename TParametersValueType>
@@ -73,7 +73,7 @@ Rigid2DTransform<TParametersValueType>::SetMatrix(const MatrixType & matrix, con
   itkDebugMacro("setting  m_Matrix  to " << matrix);
   // The matrix must be orthogonal otherwise it is not
   // representing a valid rotation in 2D space
-  typename MatrixType::InternalMatrixType test = matrix.GetVnlMatrix() * matrix.GetTranspose();
+  const typename MatrixType::InternalMatrixType test = matrix.GetVnlMatrix() * matrix.GetTranspose();
 
   if (!test.is_identity(tolerance))
   {
@@ -154,9 +154,7 @@ template <typename TParametersValueType>
 auto
 Rigid2DTransform<TParametersValueType>::GetInverseTransform() const -> InverseTransformBasePointer
 {
-  Pointer inv = New();
-
-  return GetInverse(inv) ? inv.GetPointer() : nullptr;
+  return Superclass::InvertTransform(*this);
 }
 
 
@@ -176,7 +174,7 @@ void
 Rigid2DTransform<TParametersValueType>::SetIdentity()
 {
   this->Superclass::SetIdentity();
-  m_Angle = NumericTraits<TParametersValueType>::ZeroValue();
+  m_Angle = TParametersValueType{};
 }
 
 
@@ -223,7 +221,7 @@ template <typename TParametersValueType>
 void
 Rigid2DTransform<TParametersValueType>::SetParameters(const ParametersType & parameters)
 {
-  itkDebugMacro(<< "Setting parameters " << parameters);
+  itkDebugMacro("Setting parameters " << parameters);
 
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if (&parameters != &(this->m_Parameters))
@@ -251,7 +249,7 @@ Rigid2DTransform<TParametersValueType>::SetParameters(const ParametersType & par
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<< "After setting parameters ");
+  itkDebugMacro("After setting parameters ");
 }
 
 
@@ -259,7 +257,7 @@ template <typename TParametersValueType>
 auto
 Rigid2DTransform<TParametersValueType>::GetParameters() const -> const ParametersType &
 {
-  itkDebugMacro(<< "Getting parameters ");
+  itkDebugMacro("Getting parameters ");
 
   // Get the angle
   this->m_Parameters[0] = this->GetAngle();
@@ -269,7 +267,7 @@ Rigid2DTransform<TParametersValueType>::GetParameters() const -> const Parameter
     this->m_Parameters[i + 1] = this->GetTranslation()[i];
   }
 
-  itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
+  itkDebugMacro("After getting parameters " << this->m_Parameters);
 
   return this->m_Parameters;
 }
@@ -294,7 +292,7 @@ Rigid2DTransform<TParametersValueType>::ComputeJacobianWithRespectToParameters(c
   j[1][0] = ca * (p[0] - cx) - sa * (p[1] - cy);
 
   // compute derivatives for the translation part
-  unsigned int blockOffset = 1;
+  constexpr unsigned int blockOffset = 1;
   for (unsigned int dim = 0; dim < OutputSpaceDimension; ++dim)
   {
     j[dim][blockOffset + dim] = 1.0;

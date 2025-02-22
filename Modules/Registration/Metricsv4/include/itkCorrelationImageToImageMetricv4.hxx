@@ -78,8 +78,8 @@ CorrelationImageToImageMetricv4<TFixedImage,
 
   Superclass::InitializeForIteration();
 
-  this->m_AverageFix = NumericTraits<MeasureType>::ZeroValue();
-  this->m_AverageMov = NumericTraits<MeasureType>::ZeroValue();
+  this->m_AverageFix = MeasureType{};
+  this->m_AverageMov = MeasureType{};
 
   // compute the average intensity of the sampled pixels
   // Invoke the pipeline in the helper threader
@@ -87,7 +87,7 @@ CorrelationImageToImageMetricv4<TFixedImage,
 
   if (this->m_UseSampledPointSet) // sparse sampling
   {
-    SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
+    const SizeValueType numberOfPoints = this->GetNumberOfDomainPoints();
     if (numberOfPoints < 1)
     {
       itkExceptionMacro("FixedSampledPointSet must have 1 or more points.");

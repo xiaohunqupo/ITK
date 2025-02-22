@@ -61,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingImageToNodePairContainerAdaptor, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingImageToNodePairContainerAdaptor);
 
   using Traits = FastMarchingTraits<TInput, TOutput>;
   using NodePairType = typename Traits::NodePairType;

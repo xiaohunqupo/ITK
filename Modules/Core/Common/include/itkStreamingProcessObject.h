@@ -48,8 +48,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(StreamingProcessObject, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(StreamingProcessObject);
 
   /** Override PropagateRequestedRegion from ProcessObject
    *  Since inside UpdateOutputData we iterate over streaming pieces

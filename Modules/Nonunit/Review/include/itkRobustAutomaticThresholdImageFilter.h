@@ -37,8 +37,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * https://hdl.handle.net/1926/370
- * https://www.insight-journal.org/browse/publication/134
+ * https://doi.org/10.54294/7w23qz
  *
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
@@ -62,8 +61,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(RobustAutomaticThresholdImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RobustAutomaticThresholdImageFilter);
 
   /** Standard image type within this class. */
   using InputImageType = TInputImage;
@@ -93,7 +92,7 @@ public:
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::ZeroValue(). */
+   * OutputPixelType{}. */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -112,12 +111,8 @@ public:
   itkSetMacro(Pow, double);
   itkGetConstMacro(Pow, double);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputComparableCheck, (Concept::Comparable<OutputPixelType>));
   itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputPixelType>));
-  // End concept checking
-#endif
 
   /** Set the gradient image */
   void

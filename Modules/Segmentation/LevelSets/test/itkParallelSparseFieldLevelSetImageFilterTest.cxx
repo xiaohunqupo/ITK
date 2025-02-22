@@ -38,20 +38,19 @@
 namespace PSFLSIFT
 { // local namespace for helper functions
 
-const unsigned int HEIGHT = (64);
-const unsigned int WIDTH = (64);
-const unsigned int DEPTH = (64);
+constexpr unsigned int HEIGHT = (64);
+constexpr unsigned int WIDTH = (64);
+constexpr unsigned int DEPTH = (64);
 
-const int RADIUS = (std::min(std::min(HEIGHT, WIDTH), DEPTH) / 4);
+constexpr int RADIUS = (std::min(std::min(HEIGHT, WIDTH), DEPTH) / 4);
 
 // Distance transform function for a sphere
 float
 sphere(unsigned int x, unsigned int y, unsigned int z)
 {
-  float dis;
-  dis = (x - static_cast<float>(WIDTH) / 2.0) * (x - static_cast<float>(WIDTH) / 2.0) +
-        (y - static_cast<float>(HEIGHT) / 2.0) * (y - static_cast<float>(HEIGHT) / 2.0) +
-        (z - static_cast<float>(DEPTH) / 2.0) * (z - static_cast<float>(DEPTH) / 2.0);
+  float dis = (x - static_cast<float>(WIDTH) / 2.0) * (x - static_cast<float>(WIDTH) / 2.0) +
+              (y - static_cast<float>(HEIGHT) / 2.0) * (y - static_cast<float>(HEIGHT) / 2.0) +
+              (z - static_cast<float>(DEPTH) / 2.0) * (z - static_cast<float>(DEPTH) / 2.0);
   dis = RADIUS - std::sqrt(dis);
   return (-dis);
 }
@@ -60,11 +59,10 @@ sphere(unsigned int x, unsigned int y, unsigned int z)
 float
 cube(unsigned int x, unsigned int y, unsigned int z)
 {
-  float X, Y, Z;
-  X = itk::Math::abs(x - static_cast<float>(WIDTH) / 2.0);
-  Y = itk::Math::abs(y - static_cast<float>(HEIGHT) / 2.0);
-  Z = itk::Math::abs(z - static_cast<float>(DEPTH) / 2.0);
-  float dis;
+  const float X = itk::Math::abs(x - static_cast<float>(WIDTH) / 2.0);
+  const float Y = itk::Math::abs(y - static_cast<float>(HEIGHT) / 2.0);
+  const float Z = itk::Math::abs(z - static_cast<float>(DEPTH) / 2.0);
+  float       dis;
   if (!((X > RADIUS) && (Y > RADIUS) && (Z > RADIUS)))
   {
     dis = RADIUS - (std::max(std::max(X, Y), Z));
@@ -126,7 +124,7 @@ public:
   /**
    * Run-time type information (and related methods)
    */
-  itkTypeMacro(MorphFunction, LevelSetFunction);
+  itkOverrideGetNameOfClassMacro(MorphFunction);
 
   /**
    * Method for creation through the object factory.
@@ -148,7 +146,7 @@ private:
   ScalarValueType
   PropagationSpeed(const NeighborhoodType & neighborhood, const FloatOffsetType &, GlobalDataStruct *) const override
   {
-    itk::Index<3> idx = neighborhood.GetIndex();
+    const itk::Index<3> idx = neighborhood.GetIndex();
     return m_DistanceTransform->GetPixel(idx);
   }
 };
@@ -169,7 +167,7 @@ public:
   /**
    * Run-time type information (and related methods)
    */
-  itkTypeMacro(MorphFilter, ParallelSparseFieldLevelSetImageFilter);
+  itkOverrideGetNameOfClassMacro(MorphFilter);
 
   /**
    * Method for creation through the object factory.
@@ -211,10 +209,8 @@ private:
     {
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
 };
 
@@ -230,7 +226,10 @@ itkParallelSparseFieldLevelSetImageFilterTest(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  using ImageType = itk::Image<float, 3>;
+  constexpr unsigned int Dimension = 3;
+
+  using PixelType = float;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   constexpr int n = 100;                // Number of iterations
   constexpr int numberOfWorkUnits = 11; // Number of work units to be used
@@ -238,9 +237,9 @@ itkParallelSparseFieldLevelSetImageFilterTest(int argc, char * argv[])
   auto im_init = ImageType::New();
   auto im_target = ImageType::New();
 
-  ImageType::RegionType r;
-  ImageType::SizeType   sz = { { PSFLSIFT::HEIGHT, PSFLSIFT::WIDTH, PSFLSIFT::DEPTH } };
-  ImageType::IndexType  idx = { { 0, 0, 0 } };
+  ImageType::RegionType          r;
+  constexpr ImageType::SizeType  sz = { { PSFLSIFT::HEIGHT, PSFLSIFT::WIDTH, PSFLSIFT::DEPTH } };
+  constexpr ImageType::IndexType idx = { { 0, 0, 0 } };
   r.SetSize(sz);
   r.SetIndex(idx);
 
@@ -296,15 +295,19 @@ itkParallelSparseFieldLevelSetImageFilterTest(int argc, char * argv[])
     itr.Value() = itr.Value() / std::sqrt((5.0f + itk::Math::sqr(itr.Value())));
   }
 
-  PSFLSIFT::MorphFilter::Pointer mf = PSFLSIFT::MorphFilter::New();
+  const PSFLSIFT::MorphFilter::Pointer mf = PSFLSIFT::MorphFilter::New();
   mf->SetDistanceTransform(im_target);
   mf->SetIterations(n);
   mf->SetInput(im_init);
   mf->SetNumberOfWorkUnits(numberOfWorkUnits);
 
-  typename PSFLSIFT::MorphFilter::StatusType numberOfLayers = 3;
+  constexpr typename PSFLSIFT::MorphFilter::StatusType numberOfLayers = 3;
   mf->SetNumberOfLayers(numberOfLayers);
   ITK_TEST_SET_GET_VALUE(numberOfLayers, mf->GetNumberOfLayers());
+
+  constexpr typename PSFLSIFT::MorphFilter::ValueType isoSurfaceValue = 0.0;
+  mf->SetIsoSurfaceValue(isoSurfaceValue);
+  ITK_TEST_SET_GET_VALUE(isoSurfaceValue, mf->GetIsoSurfaceValue());
 
   ITK_TRY_EXPECT_NO_EXCEPTION(mf->Update());
 

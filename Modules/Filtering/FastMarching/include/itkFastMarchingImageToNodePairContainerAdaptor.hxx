@@ -33,8 +33,8 @@ FastMarchingImageToNodePairContainerAdaptor<TInput, TOutput, TImage>::FastMarchi
   , m_AlivePoints(nullptr)
   , m_TrialPoints(nullptr)
   , m_ForbiddenPoints(nullptr)
-  , m_AliveValue(NumericTraits<OutputPixelType>::ZeroValue())
-  , m_TrialValue(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_AliveValue(OutputPixelType{})
+  , m_TrialValue(OutputPixelType{})
 
 {}
 
@@ -107,13 +107,13 @@ FastMarchingImageToNodePairContainerAdaptor<TInput, TOutput, TImage>::GenerateDa
 
   if (m_ForbiddenImage.IsNotNull())
   {
-    SetPointsFromImage(m_ForbiddenImage, Traits::Forbidden, NumericTraits<OutputPixelType>::ZeroValue());
+    SetPointsFromImage(m_ForbiddenImage, Traits::Forbidden, OutputPixelType{});
     is_ok = true;
   }
 
   if (!is_ok)
   {
-    itkWarningMacro(<< "no input image provided");
+    itkWarningMacro("no input image provided");
   }
 }
 
@@ -125,8 +125,7 @@ FastMarchingImageToNodePairContainerAdaptor<TInput, TOutput, TImage>::SetPointsF
 {
   if (iLabel == Traits::Alive || iLabel == Traits::InitialTrial || iLabel == Traits::Forbidden)
   {
-    NodePairContainerPointer nodes = NodePairContainerType::New();
-    nodes->Initialize();
+    const NodePairContainerPointer nodes = NodePairContainerType::New();
 
     using IteratorType = ImageRegionConstIteratorWithIndex<ImageType>;
     IteratorType it(image, image->GetBufferedRegion());
@@ -138,22 +137,22 @@ FastMarchingImageToNodePairContainerAdaptor<TInput, TOutput, TImage>::SetPointsF
       for (it.GoToBegin(); !it.IsAtEnd(); ++it)
       {
         // Test if index value is greater than zero, if so add the node
-        if (Math::NotAlmostEquals(it.Get(), NumericTraits<ImagePixelType>::ZeroValue()))
+        if (Math::NotAlmostEquals(it.Get(), ImagePixelType{}))
         {
           nodes->push_back(NodePairType(it.GetIndex(), iValue));
         } // end if image iterator > zero
-      }   // end for each pixel
+      } // end for each pixel
     }
     else
     {
       for (it.GoToBegin(); !it.IsAtEnd(); ++it)
       {
         // Test if index value is greater than zero, if so add the node
-        if (Math::AlmostEquals(it.Get(), NumericTraits<ImagePixelType>::ZeroValue()))
+        if (Math::AlmostEquals(it.Get(), ImagePixelType{}))
         {
           nodes->push_back(NodePairType(it.GetIndex(), iValue));
         } // end if image iterator > zero
-      }   // end for each pixel
+      } // end for each pixel
     }
 
     switch (iLabel)

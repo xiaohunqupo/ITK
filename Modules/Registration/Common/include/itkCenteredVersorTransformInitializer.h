@@ -53,8 +53,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CenteredVersorTransformInitializer, CenteredTransformInitializer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CenteredVersorTransformInitializer);
 
   /** Type of the transform to initialize */
   using typename Superclass::TransformType;

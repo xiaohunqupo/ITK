@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VnlComplexToComplex1DFFTImageFilter, ComplexToComplex1DFFTImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VnlComplexToComplex1DFFTImageFilter);
 
 protected:
   VnlComplexToComplex1DFFTImageFilter() = default;

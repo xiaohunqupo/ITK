@@ -24,7 +24,6 @@
 #include "itkIterationReporter.h"
 #include "itkMath.h"
 #include "itkNumericTraits.h"
-#include "itkMath.h"
 #include "itkPrintHelper.h"
 
 namespace itk
@@ -38,7 +37,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::IsolatedConnectedImageF
   m_Seeds1.clear();
   m_Seeds2.clear();
   m_ReplaceValue = NumericTraits<OutputImagePixelType>::OneValue();
-  m_IsolatedValue = NumericTraits<InputImagePixelType>::ZeroValue();
+  m_IsolatedValue = InputImagePixelType{};
   m_IsolatedValueTolerance = NumericTraits<InputImagePixelType>::OneValue();
   m_FindUpperThreshold = true;
   m_ThresholdingFailed = false;
@@ -70,8 +69,8 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream 
   os << indent << "IsolatedValueTolerance: "
      << static_cast<typename NumericTraits<InputImagePixelType>::PrintType>(m_IsolatedValueTolerance) << std::endl;
 
-  os << indent << "FindUpperThreshold: " << (m_FindUpperThreshold ? "On" : "Off") << std::endl;
-  os << indent << "ThresholdingFailed: " << (m_ThresholdingFailed ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(FindUpperThreshold);
+  itkPrintSelfBooleanMacro(ThresholdingFailed);
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -81,7 +80,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedR
   Superclass::GenerateInputRequestedRegion();
   if (this->GetInput())
   {
-    InputImagePointer image = const_cast<TInputImage *>(this->GetInput());
+    const InputImagePointer image = const_cast<TInputImage *>(this->GetInput());
     image->SetRequestedRegionToLargestPossibleRegion();
   }
 }
@@ -168,8 +167,8 @@ template <typename TInputImage, typename TOutputImage>
 void
 IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  InputImageConstPointer inputImage = this->GetInput();
-  OutputImagePointer     outputImage = this->GetOutput();
+  const InputImageConstPointer inputImage = this->GetInput();
+  const OutputImagePointer     outputImage = this->GetOutput();
 
   using AccumulateType = typename NumericTraits<InputImagePixelType>::AccumulateType;
 
@@ -184,10 +183,9 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
   }
 
   // Zero the output
-  OutputImageRegionType region = outputImage->GetRequestedRegion();
+  const OutputImageRegionType region = outputImage->GetRequestedRegion();
   outputImage->SetBufferedRegion(region);
-  outputImage->Allocate();
-  outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+  outputImage->AllocateInitialized();
 
   using FunctionType = BinaryThresholdImageFunction<InputImageType>;
   using IteratorType = FloodFilledImageFunctionConditionalIterator<OutputImageType, FunctionType>;
@@ -220,7 +218,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
     {
       ProgressReporter progress(this, 0, region.GetNumberOfPixels(), 100, cumulatedProgress, progressWeight);
       cumulatedProgress += progressWeight;
-      outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+      outputImage->FillBuffer(OutputImagePixelType{});
       function->ThresholdBetween(m_Lower, static_cast<InputImagePixelType>(guess));
       it.GoToBegin();
       while (!it.IsAtEnd())
@@ -237,9 +235,9 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
       // Find the sum of the intensities in m_Seeds2.  If the second
       // seeds are not included, the sum should be zero.  Otherwise,
       // it will be other than zero.
-      InputRealType                               seedIntensitySum{};
-      typename SeedsContainerType::const_iterator si = m_Seeds2.begin();
-      typename SeedsContainerType::const_iterator li = m_Seeds2.end();
+      InputRealType seedIntensitySum{};
+      auto          si = m_Seeds2.begin();
+      const auto    li = m_Seeds2.end();
       while (si != li)
       {
         const auto value = static_cast<InputRealType>(outputImage->GetPixel(*si));
@@ -247,7 +245,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
         ++si;
       }
 
-      if (Math::NotExactlyEquals(seedIntensitySum, NumericTraits<InputRealType>::ZeroValue()))
+      if (Math::NotExactlyEquals(seedIntensitySum, InputRealType{}))
       {
         upper = guess;
       }
@@ -285,7 +283,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
     {
       ProgressReporter progress(this, 0, region.GetNumberOfPixels(), 100, cumulatedProgress, progressWeight);
       cumulatedProgress += progressWeight;
-      outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+      outputImage->FillBuffer(OutputImagePixelType{});
       function->ThresholdBetween(static_cast<InputImagePixelType>(guess), m_Upper);
       it.GoToBegin();
       while (!it.IsAtEnd())
@@ -302,9 +300,9 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
       // Find the sum of the intensities in m_Seeds2.  If the second
       // seeds are not included, the sum should be zero.  Otherwise,
       // it will be other than zero.
-      InputRealType                               seedIntensitySum{};
-      typename SeedsContainerType::const_iterator si = m_Seeds2.begin();
-      typename SeedsContainerType::const_iterator li = m_Seeds2.end();
+      InputRealType seedIntensitySum{};
+      auto          si = m_Seeds2.begin();
+      const auto    li = m_Seeds2.end();
       while (si != li)
       {
         const auto value = static_cast<InputRealType>(outputImage->GetPixel(*si));
@@ -312,7 +310,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
         ++si;
       }
 
-      if (Math::NotExactlyEquals(seedIntensitySum, NumericTraits<InputRealType>::ZeroValue()))
+      if (Math::NotExactlyEquals(seedIntensitySum, InputRealType{}))
       {
         lower = guess;
       }
@@ -335,12 +333,12 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
   // now rerun the algorithm with the thresholds that separate the seeds.
   ProgressReporter progress(this, 0, region.GetNumberOfPixels(), 100, cumulatedProgress, progressWeight);
 
-  outputImage->FillBuffer(NumericTraits<OutputImagePixelType>::ZeroValue());
+  outputImage->FillBuffer(OutputImagePixelType{});
   if (m_FindUpperThreshold)
   {
     function->ThresholdBetween(m_Lower, m_IsolatedValue);
   }
-  else if (!m_FindUpperThreshold)
+  else
   {
     function->ThresholdBetween(m_IsolatedValue, m_Upper);
   }
@@ -360,18 +358,18 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
   // Find the sum of the intensities in m_Seeds2.  If the second
   // seeds are not included, the sum should be zero.  Otherwise,
   // it will be other than zero.
-  InputRealType                               seed1IntensitySum{};
-  InputRealType                               seed2IntensitySum{};
-  typename SeedsContainerType::const_iterator si1 = m_Seeds1.begin();
-  typename SeedsContainerType::const_iterator li1 = m_Seeds1.end();
+  InputRealType seed1IntensitySum{};
+  InputRealType seed2IntensitySum{};
+  auto          si1 = m_Seeds1.begin();
+  const auto    li1 = m_Seeds1.end();
   while (si1 != li1)
   {
     const auto value = static_cast<InputRealType>(outputImage->GetPixel(*si1));
     seed1IntensitySum += value;
     ++si1;
   }
-  typename SeedsContainerType::const_iterator si2 = m_Seeds2.begin();
-  typename SeedsContainerType::const_iterator li2 = m_Seeds2.end();
+  auto       si2 = m_Seeds2.begin();
+  const auto li2 = m_Seeds2.end();
   while (si2 != li2)
   {
     const auto value = static_cast<InputRealType>(outputImage->GetPixel(*si2));
@@ -379,7 +377,7 @@ IsolatedConnectedImageFilter<TInputImage, TOutputImage>::GenerateData()
     ++si2;
   }
   if (Math::NotAlmostEquals(seed1IntensitySum, m_ReplaceValue * m_Seeds1.size()) ||
-      Math::NotExactlyEquals(seed2IntensitySum, NumericTraits<InputRealType>::ZeroValue()))
+      Math::NotExactlyEquals(seed2IntensitySum, InputRealType{}))
   {
     m_ThresholdingFailed = true;
   }

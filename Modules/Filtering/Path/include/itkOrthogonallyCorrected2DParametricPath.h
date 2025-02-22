@@ -53,8 +53,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(OrthogonallyCorrected2DParametricPath, ParametricPath);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(OrthogonallyCorrected2DParametricPath);
 
   /** Input type */
   using InputType = Superclass::InputType;

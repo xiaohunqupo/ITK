@@ -25,7 +25,7 @@ namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 OtsuMultipleThresholdsImageFilter<TInputImage, TOutputImage>::OtsuMultipleThresholdsImageFilter()
-  : m_LabelOffset(NumericTraits<OutputPixelType>::ZeroValue())
+  : m_LabelOffset(OutputPixelType{})
 
 {
   m_Thresholds.clear();
@@ -54,8 +54,7 @@ OtsuMultipleThresholdsImageFilter<TInputImage, TOutputImage>::GenerateData()
 
   m_Thresholds = otsuHistogramThresholdCalculator->GetOutput();
 
-  typename ThresholdLabelerImageFilter<TInputImage, TOutputImage>::Pointer threshold =
-    ThresholdLabelerImageFilter<TInputImage, TOutputImage>::New();
+  auto threshold = ThresholdLabelerImageFilter<TInputImage, TOutputImage>::New();
 
   progress->RegisterInternalFilter(threshold, 1.0f);
   threshold->GraftOutput(this->GetOutput());

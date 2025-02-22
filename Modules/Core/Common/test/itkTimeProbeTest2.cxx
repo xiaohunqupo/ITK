@@ -59,10 +59,10 @@ itkTimeProbeTest2(int, char *[])
   std::cout << "InstantValue:      " << localTimer.GetInstantValue() << std::endl;
   std::cout << "Minimum:           " << localTimer.GetMinimum() << std::endl;
   std::cout << "Mean:              " << localTimer.GetMean() << std::endl;
-  std::cout << "Maximu:            " << localTimer.GetMaximum() << std::endl;
-  std::cout << "Standard deviation:" << localTimer.GetStandardDeviation() << std::endl;
+  std::cout << "Maximum:           " << localTimer.GetMaximum() << std::endl;
+  std::cout << "StandardDeviation: " << localTimer.GetStandardDeviation() << std::endl;
 
-  unsigned int iteration(100);
+  constexpr unsigned int iteration(100);
 
   for (unsigned int it = 0; it < iteration; ++it)
   {
@@ -109,33 +109,33 @@ itkTimeProbeTest2(int, char *[])
     std::cerr << "Reset() failure" << std::endl;
     return EXIT_FAILURE;
   }
-  if (localTimer.GetNumberOfStops() != itk::NumericTraits<itk::TimeProbe::CountType>::ZeroValue())
+  if (localTimer.GetNumberOfStops() != itk::TimeProbe::CountType{})
   {
     std::cerr << "Reset() failure" << std::endl;
     return EXIT_FAILURE;
   }
-  if (itk::Math::NotExactlyEquals(localTimer.GetTotal(),
-                                  itk::NumericTraits<itk::TimeProbe::TimeStampType>::ZeroValue()))
+  if (itk::Math::NotExactlyEquals(localTimer.GetTotal(), itk::TimeProbe::TimeStampType{}))
   {
     std::cerr << "Reset() failure" << std::endl;
     return EXIT_FAILURE;
   }
-  if (itk::Math::NotExactlyEquals(localTimer.GetMean(), itk::NumericTraits<itk::TimeProbe::TimeStampType>::ZeroValue()))
+  if (itk::Math::NotExactlyEquals(localTimer.GetMean(), itk::TimeProbe::TimeStampType{}))
   {
     std::cerr << "Reset() failure" << std::endl;
     return EXIT_FAILURE;
   }
 
   /** Invoke GetRealTimeClock. */
-  itk::RealTimeStamp timeStamp = localTimer.GetRealTimeClock()->GetRealTimeStamp();
+  const itk::RealTimeStamp timeStamp = localTimer.GetRealTimeClock()->GetRealTimeStamp();
   std::cout << std::endl << "Check RealTimeStamp" << std::endl;
-  std::cout << "day  " << timeStamp.GetTimeInDays() << std::endl;
-  std::cout << "hour " << timeStamp.GetTimeInHours() << std::endl;
-  std::cout << "min  " << timeStamp.GetTimeInMinutes() << std::endl;
-  std::cout << "sec  " << timeStamp.GetTimeInSeconds() << std::endl;
-  std::cout << "msec " << timeStamp.GetTimeInMilliSeconds() << std::endl;
-  std::cout << "usec " << timeStamp.GetTimeInMicroSeconds() << std::endl;
+  std::cout << "TimeInDays:         " << timeStamp.GetTimeInDays() << std::endl;
+  std::cout << "TimeInHours:        " << timeStamp.GetTimeInHours() << std::endl;
+  std::cout << "TimeInMinutes:      " << timeStamp.GetTimeInMinutes() << std::endl;
+  std::cout << "TimeInSeconds:      " << timeStamp.GetTimeInSeconds() << std::endl;
+  std::cout << "TimeInMilliSeconds: " << timeStamp.GetTimeInMilliSeconds() << std::endl;
+  std::cout << "TimeInMicroSeconds: " << timeStamp.GetTimeInMicroSeconds() << std::endl;
 
-  std::cout << "[PASSED]" << std::endl;
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

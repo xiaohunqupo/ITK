@@ -22,10 +22,8 @@
 #include "itkKLMSegmentationRegion.h"
 #include "itkMacro.h"
 #include "ITKKLMRegionGrowingExport.h"
-
 #include "itkMath.h"
 #include "vnl/vnl_vector.h"
-#include "itkMath.h"
 
 namespace itk
 {
@@ -61,22 +59,20 @@ public:
       {
         return (m_Pointer > rhs.m_Pointer);
       }
-      else
-      {
-        // The purpose of this comparison is to not let any one region
-        // get more borders than another region.  In the degenerate
-        // case of an image where the Lambdas are always equal to some
-        // constant C, allowing a single region to be repeatedly
-        // merged so that it gains many borders will result in
-        // pathologically slow behavior.
-        double v1 = std::max(static_cast<double>(m_Pointer->GetRegion1()->GetRegionBorderSize()),
-                             static_cast<double>(m_Pointer->GetRegion2()->GetRegionBorderSize()));
 
-        double v2 = std::max(static_cast<double>(rhs.m_Pointer->GetRegion1()->GetRegionBorderSize()),
-                             static_cast<double>(rhs.m_Pointer->GetRegion2()->GetRegionBorderSize()));
+      // The purpose of this comparison is to not let any one region
+      // get more borders than another region.  In the degenerate
+      // case of an image where the Lambdas are always equal to some
+      // constant C, allowing a single region to be repeatedly
+      // merged so that it gains many borders will result in
+      // pathologically slow behavior.
+      const double v1 = std::max(static_cast<double>(m_Pointer->GetRegion1()->GetRegionBorderSize()),
+                                 static_cast<double>(m_Pointer->GetRegion2()->GetRegionBorderSize()));
 
-        return (v1 > v2);
-      }
+      const double v2 = std::max(static_cast<double>(rhs.m_Pointer->GetRegion1()->GetRegionBorderSize()),
+                                 static_cast<double>(rhs.m_Pointer->GetRegion2()->GetRegionBorderSize()));
+
+      return (v1 > v2);
     }
     return (m_Pointer->GetLambda() > rhs.m_Pointer->GetLambda());
   }
@@ -90,22 +86,20 @@ public:
       {
         return (m_Pointer > rhs->m_Pointer);
       }
-      else
-      {
-        // The purpose of this comparison is to not let any one region
-        // get more borders than another region.  In the degenerate
-        // case of an image where the Lambdas are always equal to some
-        // constant C, allowing a single region to be repeatedly
-        // merged so that it gains many borders will result in
-        // pathologically slow behavior.
-        double v1 = std::max(static_cast<double>(m_Pointer->GetRegion1()->GetRegionBorderSize()),
-                             static_cast<double>(m_Pointer->GetRegion2()->GetRegionBorderSize()));
 
-        double v2 = std::max(static_cast<double>(rhs->m_Pointer->GetRegion1()->GetRegionBorderSize()),
-                             static_cast<double>(rhs->m_Pointer->GetRegion2()->GetRegionBorderSize()));
+      // The purpose of this comparison is to not let any one region
+      // get more borders than another region.  In the degenerate
+      // case of an image where the Lambdas are always equal to some
+      // constant C, allowing a single region to be repeatedly
+      // merged so that it gains many borders will result in
+      // pathologically slow behavior.
+      double v1 = std::max(static_cast<double>(m_Pointer->GetRegion1()->GetRegionBorderSize()),
+                           static_cast<double>(m_Pointer->GetRegion2()->GetRegionBorderSize()));
 
-        return (v1 > v2);
-      }
+      double v2 = std::max(static_cast<double>(rhs->m_Pointer->GetRegion1()->GetRegionBorderSize()),
+                           static_cast<double>(rhs->m_Pointer->GetRegion2()->GetRegionBorderSize()));
+
+      return (v1 > v2);
     }
     return (m_Pointer->GetLambda() > rhs->m_Pointer->GetLambda());
   }
@@ -150,8 +144,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KLMSegmentationBorder, SegmentationBorder);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KLMSegmentationBorder);
 
   /** Set the region 1 associated with the border */
   void

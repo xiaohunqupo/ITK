@@ -2,14 +2,13 @@
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
 
-#ifdef ARM_NEON_CHUNKSET
+#ifdef ARM_NEON
 #include "neon_intrins.h"
-#include "../../zbuild.h"
-#include "../generic/chunk_permute_table.h"
+#include "zbuild.h"
+#include "zmemory.h"
+#include "arch/generic/chunk_permute_table.h"
 
 typedef uint8x16_t chunk_t;
-
-#define CHUNK_SIZE 16
 
 #define HAVE_CHUNKMEMSET_2
 #define HAVE_CHUNKMEMSET_4
@@ -33,21 +32,15 @@ static const lut_rem_pair perm_idx_lut[13] = {
 };
 
 static inline void chunkmemset_2(uint8_t *from, chunk_t *chunk) {
-    uint16_t tmp;
-    memcpy(&tmp, from, sizeof(tmp));
-    *chunk = vreinterpretq_u8_u16(vdupq_n_u16(tmp));
+    *chunk = vreinterpretq_u8_u16(vdupq_n_u16(zng_memread_2(from)));
 }
 
 static inline void chunkmemset_4(uint8_t *from, chunk_t *chunk) {
-    uint32_t tmp;
-    memcpy(&tmp, from, sizeof(tmp));
-    *chunk = vreinterpretq_u8_u32(vdupq_n_u32(tmp));
+    *chunk = vreinterpretq_u8_u32(vdupq_n_u32(zng_memread_4(from)));
 }
 
 static inline void chunkmemset_8(uint8_t *from, chunk_t *chunk) {
-    uint64_t tmp;
-    memcpy(&tmp, from, sizeof(tmp));
-    *chunk = vreinterpretq_u8_u64(vdupq_n_u64(tmp));
+    *chunk = vreinterpretq_u8_u64(vdupq_n_u64(zng_memread_8(from)));
 }
 
 #define CHUNKSIZE        chunksize_neon
@@ -68,13 +61,11 @@ static inline chunk_t GET_CHUNK_MAG(uint8_t *buf, uint32_t *chunk_rem, uint32_t 
     lut_rem_pair lut_rem = perm_idx_lut[dist - 3];
     *chunk_rem = lut_rem.remval;
 
-#ifdef Z_MEMORY_SANITIZER
-    /* See note in chunkset_sse41.c for why this is ok */
+    /* See note in chunkset_ssse3.c for why this is ok */
     __msan_unpoison(buf + dist, 16 - dist);
-#endif
 
     /* This version of table is only available on aarch64 */
-#if defined(_M_ARM64) || defined(__aarch64__)
+#if defined(_M_ARM64) || defined(_M_ARM64EC) || defined(__aarch64__)
     uint8x16_t ret_vec = vld1q_u8(buf);
 
     uint8x16_t perm_vec = vld1q_u8(permute_table + lut_rem.idx);
@@ -86,7 +77,9 @@ static inline chunk_t GET_CHUNK_MAG(uint8_t *buf, uint32_t *chunk_rem, uint32_t 
     a = vld1_u8(buf);
     b = vld1_u8(buf + 8);
     ret0 = vtbl1_u8(a, perm_vec0);
-    uint8x8x2_t ab = {{a, b}};
+    uint8x8x2_t ab;
+    ab.val[0] = a;
+    ab.val[1] = b;
     ret1 = vtbl2_u8(ab, perm_vec1);
     return vcombine_u8(ret0, ret1);
 #endif

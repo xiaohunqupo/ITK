@@ -73,8 +73,7 @@ protected:
     {
       auto image = InputImageType::New();
 
-      typename InputImageType::SizeType imageSize;
-      imageSize.Fill(size);
+      auto imageSize = InputImageType::SizeType::Filled(size);
       image->SetRegions(typename InputImageType::RegionType(imageSize));
       image->Allocate();
       image->FillBuffer(0);
@@ -86,20 +85,16 @@ protected:
 } // namespace
 
 
-TEST_F(SLICFixture, SetGetPrint)
+TEST_F(SLICFixture, SetGet)
 {
   using namespace itk::GTest::TypedefsAndConstructors::Dimension3;
   using Utils = FixtureUtilities<3>;
 
   auto filter = Utils::FilterType::New();
-  filter->Print(std::cout);
 
-  typename Utils::FilterType::ConstPointer constfilter = (const Utils::FilterType *)(filter.GetPointer());
+  const typename Utils::FilterType::ConstPointer constfilter = (const Utils::FilterType *)(filter.GetPointer());
 
-  EXPECT_STREQ("SLICImageFilter", filter->GetNameOfClass());
-  EXPECT_STREQ("ImageToImageFilter", filter->Superclass::GetNameOfClass());
-
-  Utils::FilterType::SuperGridSizeType gridSize3(3);
+  const Utils::FilterType::SuperGridSizeType gridSize3(3);
   EXPECT_NO_THROW(filter->SetSuperGridSize(gridSize3));
   ITK_EXPECT_VECTOR_NEAR(gridSize3, filter->GetSuperGridSize(), 0);
 

@@ -58,8 +58,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MeanReciprocalSquareDifferencePointSetToImageMetric, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeanReciprocalSquareDifferencePointSetToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

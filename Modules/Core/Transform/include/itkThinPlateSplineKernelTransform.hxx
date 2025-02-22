@@ -27,7 +27,7 @@ ThinPlateSplineKernelTransform<TParametersValueType, VDimension>::ComputeG(const
 {
   const TParametersValueType r = x.GetNorm();
 
-  gmatrix.fill(NumericTraits<TParametersValueType>::ZeroValue());
+  gmatrix.fill(TParametersValueType{});
   for (unsigned int i = 0; i < VDimension; ++i)
   {
     gmatrix[i][i] = r;
@@ -40,13 +40,13 @@ ThinPlateSplineKernelTransform<TParametersValueType, VDimension>::ComputeDeforma
   const InputPointType & thisPoint,
   OutputPointType &      result) const
 {
-  unsigned long numberOfLandmarks = this->m_SourceLandmarks->GetNumberOfPoints();
+  const unsigned long numberOfLandmarks = this->m_SourceLandmarks->GetNumberOfPoints();
 
   PointsIterator sp = this->m_SourceLandmarks->GetPoints()->Begin();
 
   for (unsigned int lnd = 0; lnd < numberOfLandmarks; ++lnd)
   {
-    InputVectorType            position = thisPoint - sp->Value();
+    const InputVectorType      position = thisPoint - sp->Value();
     const TParametersValueType r = position.GetNorm();
 
     for (unsigned int odim = 0; odim < VDimension; ++odim)

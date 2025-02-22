@@ -61,8 +61,7 @@ namespace itk
  *  FiniteDifferenceFunction to use for calculations.  This is set using the
  *  method SetDifferenceFunction in the parent class.
  *
- * \par REFERENCES
- * Sethian, J.A. Level Set Methods. Cambridge University Press. 1996.
+ * For algorithmic details see \cite sethian1996.
  *
  * \ingroup ITKNarrowBand
  */
@@ -78,8 +77,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(NarrowBandImageFilterBase, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NarrowBandImageFilterBase);
 
   /**Typedefs from the superclass */
   using typename Superclass::InputImageType;
@@ -271,7 +270,8 @@ protected:
   /** This method allows deallocation of data and further post processing
    */
   void
-  PostProcessOutput() override;
+  PostProcessOutput() override
+  {}
 
   /* This function clears all pixels from the narrow band */
   void

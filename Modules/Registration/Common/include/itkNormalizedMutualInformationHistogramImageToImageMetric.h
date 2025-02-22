@@ -64,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NormalizedMutualInformationHistogramImageToImageMetric, HistogramImageToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NormalizedMutualInformationHistogramImageToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

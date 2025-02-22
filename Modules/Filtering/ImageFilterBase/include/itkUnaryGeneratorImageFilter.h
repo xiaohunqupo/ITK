@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(UnaryGeneratorImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(UnaryGeneratorImageFilter);
 
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::ConstPointer;

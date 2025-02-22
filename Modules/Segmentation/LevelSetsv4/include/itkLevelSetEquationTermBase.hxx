@@ -31,7 +31,7 @@ LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::LevelSetEquationTermB
   this->m_CurrentLevelSetId = LevelSetIdentifierType();
 
   this->m_Coefficient = NumericTraits<LevelSetOutputRealType>::OneValue();
-  this->m_CFLContribution = NumericTraits<LevelSetOutputRealType>::ZeroValue();
+  this->m_CFLContribution = LevelSetOutputRealType{};
   this->m_TermName = "";
 }
 
@@ -56,7 +56,7 @@ LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::SetLevelSetContainer(
   }
   else
   {
-    itkGenericExceptionMacro(<< "iContainer is nullptr");
+    itkGenericExceptionMacro("iContainer is nullptr");
   }
 }
 
@@ -70,27 +70,24 @@ LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::Evaluate(const LevelS
   {
     return this->m_Coefficient * this->Value(iP);
   }
-  else
-  {
-    return NumericTraits<LevelSetOutputRealType>::ZeroValue();
-  }
+
+  return LevelSetOutputRealType{};
 }
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 template <typename TInputImage, typename TLevelSetContainer>
-typename LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::Evaluate(const LevelSetInputIndexType & iP,
                                                                     const LevelSetDataType &       iData)
+  -> LevelSetOutputRealType
 {
   if (itk::Math::abs(this->m_Coefficient) > NumericTraits<LevelSetOutputRealType>::epsilon())
   {
     return this->m_Coefficient * this->Value(iP, iData);
   }
-  else
-  {
-    return NumericTraits<LevelSetOutputRealType>::ZeroValue();
-  }
+
+  return LevelSetOutputRealType{};
 }
 // ----------------------------------------------------------------------------
 
@@ -99,25 +96,25 @@ template <typename TInputImage, typename TLevelSetContainer>
 void
 LevelSetEquationTermBase<TInputImage, TLevelSetContainer>::SetUp()
 {
-  this->m_CFLContribution = NumericTraits<LevelSetOutputRealType>::ZeroValue();
+  this->m_CFLContribution = LevelSetOutputRealType{};
 
   if (this->m_CurrentLevelSetPointer.IsNull())
   {
     if (this->m_LevelSetContainer.IsNull())
     {
-      itkGenericExceptionMacro(<< "m_LevelSetContainer is nullptr");
+      itkGenericExceptionMacro("m_LevelSetContainer is nullptr");
     }
     this->m_CurrentLevelSetPointer = this->m_LevelSetContainer->GetLevelSet(this->m_CurrentLevelSetId);
 
     if (this->m_CurrentLevelSetPointer.IsNull())
     {
-      itkWarningMacro(<< "m_CurrentLevelSetId does not exist in the level set container");
+      itkWarningMacro("m_CurrentLevelSetId does not exist in the level set container");
     }
   }
 
   if (!this->m_Heaviside.IsNotNull())
   {
-    itkWarningMacro(<< "m_Heaviside is nullptr");
+    itkWarningMacro("m_Heaviside is nullptr");
   }
 }
 // ----------------------------------------------------------------------------

@@ -31,7 +31,7 @@ PeakSignalToNoiseRatioCalculator<TInputImage>::PeakSignalToNoiseRatioCalculator(
   m_Valid = false;
   m_Image = nullptr;
   m_NoisyImage = nullptr;
-  m_Output = NumericTraits<InputPixelType>::ZeroValue();
+  m_Output = InputPixelType{};
 }
 
 template <class TInputImage>
@@ -81,7 +81,7 @@ PeakSignalToNoiseRatioCalculator<TInputImage>::GetOutput() const
 {
   if (!m_Valid)
   {
-    itkExceptionMacro(<< "GetOutput() invoked, but the output have not been computed. Call Compute() first.");
+    itkExceptionMacro("GetOutput() invoked, but the output have not been computed. Call Compute() first.");
   }
   return m_Output;
 }

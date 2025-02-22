@@ -58,8 +58,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToVTKImageFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToVTKImageFilter);
 
   /** Some type alias. */
   using InputImageType = TInputImage;

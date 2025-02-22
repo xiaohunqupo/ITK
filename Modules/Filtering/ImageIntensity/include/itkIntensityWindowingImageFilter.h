@@ -165,8 +165,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(IntensityWindowingImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IntensityWindowingImageFilter);
 
   /** Set/Get the values of the maximum and minimum
    *  intensities of the output image. */
@@ -208,11 +208,7 @@ public:
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   IntensityWindowingImageFilter();

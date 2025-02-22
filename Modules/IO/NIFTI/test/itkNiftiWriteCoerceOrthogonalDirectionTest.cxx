@@ -35,17 +35,15 @@ itkNiftiWriteCoerceOrthogonalDirectionTest(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  const unsigned int dim = 2;
+  constexpr unsigned int dim = 2;
   using ImageType = itk::Image<unsigned char, dim>;
 
-  ImageType::IndexType  startIndex = { { 0, 0 } };
-  ImageType::SizeType   imageSize = { { 2, 2 } };
-  ImageType::RegionType region;
-  region.SetSize(imageSize);
-  region.SetIndex(startIndex);
-  auto image1 = ImageType::New();
+  constexpr ImageType::IndexType startIndex = { { 0, 0 } };
+  constexpr ImageType::SizeType  imageSize = { { 2, 2 } };
+  const ImageType::RegionType    region{ startIndex, imageSize };
+  auto                           image1 = ImageType::New();
   image1->SetRegions(region);
-  image1->Allocate(true);
+  image1->AllocateInitialized();
 
   ImageType::DirectionType mat1;
   mat1.SetIdentity();

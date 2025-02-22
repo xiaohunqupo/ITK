@@ -39,8 +39,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DOMTestObject, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DOMTestObject);
 
   /** Functions to set/get foo value. */
   itkSetMacro(FooValue, std::string);

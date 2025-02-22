@@ -25,7 +25,7 @@
 #include <iterator>    // For bidirectional_iterator_tag.
 #include <functional>  // For multiplies.
 #include <numeric>     // For accumulate.
-#include <type_traits> // For conditional and is_const.
+#include <type_traits> // For conditional, enable_if, and is_const.
 
 #include "itkImageHelper.h"
 #include "itkImageRegion.h"
@@ -146,52 +146,50 @@ private:
     {}
 
     template <size_t VIndex>
-    void Increment(std::true_type) noexcept
+    void
+    Increment() noexcept
     {
-      static_assert(VIndex < (ImageDimension - 1), "For a larger index value, the other overload should be picked");
-
       m_BufferIterator += m_OffsetTable[VIndex];
 
-      if (static_cast<SizeValueType>(++m_IterationOffset[VIndex]) >= m_IterationRegionSize[VIndex])
+      if constexpr (VIndex < (ImageDimension - 1))
       {
-        m_IterationOffset[VIndex] = 0;
-        m_BufferIterator -= m_OffsetTable[VIndex] * m_IterationRegionSize[VIndex];
-        this->Increment<VIndex + 1>(std::integral_constant<bool, (VIndex + 1) < (ImageDimension - 1)>{});
+        if (static_cast<SizeValueType>(++m_IterationOffset[VIndex]) >= m_IterationRegionSize[VIndex])
+        {
+          m_IterationOffset[VIndex] = 0;
+          m_BufferIterator -= m_OffsetTable[VIndex] * m_IterationRegionSize[VIndex];
+          this->Increment<VIndex + 1>();
+        }
+      }
+      else
+      {
+        static_assert(VIndex == (ImageDimension - 1));
+
+        ++m_IterationOffset[VIndex];
       }
     }
 
-    template <size_t VIndex>
-    void Increment(std::false_type) noexcept
-    {
-      static_assert(VIndex == (ImageDimension - 1), "For a smaller index value, the other overload should be picked");
-
-      ++m_IterationOffset[VIndex];
-      m_BufferIterator += m_OffsetTable[VIndex];
-    }
-
 
     template <size_t VIndex>
-    void Decrement(std::true_type) noexcept
+    void
+    Decrement() noexcept
     {
-      static_assert(VIndex < (ImageDimension - 1), "For a larger index value, the other overload should be picked");
-
       m_BufferIterator -= m_OffsetTable[VIndex];
 
-      if (--m_IterationOffset[VIndex] < 0)
+      if constexpr (VIndex < (ImageDimension - 1))
       {
-        m_IterationOffset[VIndex] = m_IterationRegionSize[VIndex] - 1;
-        m_BufferIterator += m_OffsetTable[VIndex] * m_IterationRegionSize[VIndex];
-        this->Decrement<VIndex + 1>(std::integral_constant<bool, (VIndex + 1) < (ImageDimension - 1)>{});
+        if (--m_IterationOffset[VIndex] < 0)
+        {
+          m_IterationOffset[VIndex] = m_IterationRegionSize[VIndex] - 1;
+          m_BufferIterator += m_OffsetTable[VIndex] * m_IterationRegionSize[VIndex];
+          this->Decrement<VIndex + 1>();
+        }
       }
-    }
+      else
+      {
+        static_assert(VIndex == (ImageDimension - 1));
 
-    template <size_t VIndex>
-    void Decrement(std::false_type) noexcept
-    {
-      static_assert(VIndex == (ImageDimension - 1), "For a smaller index value, the other overload should be picked");
-
-      --m_IterationOffset[VIndex];
-      m_BufferIterator -= m_OffsetTable[VIndex];
+        --m_IterationOffset[VIndex];
+      }
     }
 
 
@@ -207,12 +205,15 @@ private:
      * the guarantee added to the C++14 Standard: "value-initialized iterators
      * may be compared and shall compare equal to other value-initialized
      * iterators of the same type."
+     *
+     * \note The other five "special member functions" are defaulted implicitly,
+     * following the C++ "Rule of Zero".
      */
     QualifiedIterator() = default;
 
-    /** Constructor that allows implicit conversion from non-const to const
-     * iterator. Also serves as copy-constructor of a non-const iterator.  */
-    QualifiedIterator(const QualifiedIterator<false> & arg) noexcept
+    /** Constructor for implicit conversion from non-const to const iterator.  */
+    template <bool VIsArgumentConst, typename = std::enable_if_t<VIsConst && !VIsArgumentConst>>
+    QualifiedIterator(const QualifiedIterator<VIsArgumentConst> & arg) noexcept
       : m_BufferIterator(arg.m_BufferIterator)
       ,
       // Note: Use parentheses instead of curly braces to initialize data members,
@@ -224,13 +225,17 @@ private:
 
 
     /**  Returns a reference to the current pixel. */
-    reference operator*() const noexcept { return *m_BufferIterator; }
+    reference
+    operator*() const noexcept
+    {
+      return *m_BufferIterator;
+    }
 
     /** Prefix increment ('++it'). */
     QualifiedIterator &
     operator++() noexcept
     {
-      this->Increment<0>(std::integral_constant<bool, (ImageDimension > 1)>{});
+      this->Increment<0>();
       return *this;
     }
 
@@ -250,7 +255,7 @@ private:
     QualifiedIterator &
     operator--() noexcept
     {
-      this->Decrement<0>(std::integral_constant<bool, (ImageDimension > 1)>{});
+      this->Decrement<0>();
       return *this;
     }
 
@@ -283,15 +288,6 @@ private:
       // Implemented just like the corresponding std::rel_ops operator.
       return !(lhs == rhs);
     }
-
-
-    /** Explicitly-defaulted assignment operator. */
-    QualifiedIterator &
-    operator=(const QualifiedIterator &) noexcept = default;
-
-
-    /** Explicitly-defaulted destructor. */
-    ~QualifiedIterator() = default;
   };
 
   // Inspired by, and originally copied from ImageBase::FastComputeOffset(ind)).
@@ -331,6 +327,7 @@ public:
 
   /** Constructs an object, representing the range of pixels of the specified
    * region, within the specified image.
+   * \note This constructor supports class template argument deduction (CTAD).
    */
   explicit ImageRegionRange(TImage & image, const RegionType & iterationRegion)
     : m_BufferBegin{ std::begin(ImageBufferRange{ image }) }
@@ -362,6 +359,7 @@ public:
 
 
   /** Constructs a range of the pixels of the requested region of an image.
+   * \note This constructor supports class template argument deduction (CTAD).
    */
   explicit ImageRegionRange(TImage & image)
     : ImageRegionRange(image, image.GetRequestedRegion())
@@ -460,6 +458,11 @@ public:
   /** Explicitly-defaulted destructor. */
   ~ImageRegionRange() = default;
 };
+
+
+// Deduction guide to avoid compiler warnings (-wctad-maybe-unsupported) when using class template argument deduction.
+template <typename TImage>
+ImageRegionRange(TImage &) -> ImageRegionRange<TImage>;
 
 } // namespace itk
 

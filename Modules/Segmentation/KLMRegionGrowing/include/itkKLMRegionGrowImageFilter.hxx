@@ -48,7 +48,7 @@ void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion()
 {
   // This filter requires all of the input image to be in the buffer
-  InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput());
+  const InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput());
 
   if (inputPtr)
   {
@@ -61,9 +61,7 @@ void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::EnlargeOutputRequestedRegion(DataObject * output)
 {
   // This filter requires all of the output image to be in the buffer
-  TOutputImage * imgData;
-
-  imgData = dynamic_cast<TOutputImage *>(output);
+  auto * imgData = dynamic_cast<TOutputImage *>(output);
   imgData->SetRequestedRegionToLargestPossibleRegion();
 }
 
@@ -75,7 +73,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateData()
   this->ApplyRegionGrowImageFilter();
 
   // Set the output labelled and allocate the memory
-  OutputImagePointer outputPtr = this->GetOutput();
+  const OutputImagePointer outputPtr = this->GetOutput();
 
   // Allocate the output buffer memory
   outputPtr->SetBufferedRegion(outputPtr->GetRequestedRegion());
@@ -88,8 +86,8 @@ template <typename TInputImage, typename TOutputImage>
 void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateOutputImage()
 {
-  InputImageConstPointer inputImage = this->GetInput();
-  InputImageSizeType     inputImageSize = inputImage->GetBufferedRegion().GetSize();
+  const InputImageConstPointer inputImage = this->GetInput();
+  InputImageSizeType           inputImageSize = inputImage->GetBufferedRegion().GetSize();
 
   GridSizeType gridSize = this->GetGridSize();
 
@@ -107,13 +105,12 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateOutputImage()
   // region intensity. After the updated region intensity is found,
   // each pixel is updated with the mean approximation value.
 
-  OutputImagePointer outputImage = this->GetOutput();
+  const OutputImagePointer outputImage = this->GetOutput();
   using OutputRegionType = typename TOutputImage::RegionType;
   OutputRegionType region;
   region.SetSize(gridSize); // Constant grid size
 
-  OutputImageIndexType tmpIndex;
-  tmpIndex.Fill(0);
+  OutputImageIndexType tmpIndex{};
 
   for (unsigned int iregion = 0; iregion < m_InitialNumberOfRegions; ++iregion)
   {
@@ -181,8 +178,8 @@ auto
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateLabelledImage(LabelImageType * labelImagePtr)
   -> LabelImagePointer
 {
-  InputImageConstPointer inputImage = this->GetInput();
-  InputImageSizeType     inputImageSize = inputImage->GetBufferedRegion().GetSize();
+  const InputImageConstPointer inputImage = this->GetInput();
+  InputImageSizeType           inputImageSize = inputImage->GetBufferedRegion().GetSize();
 
   GridSizeType gridSize = this->GetGridSize();
 
@@ -201,8 +198,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateLabelledImage(Label
   InputRegionType region;
   region.SetSize(gridSize); // Constant grid size
 
-  InputImageIndexType tmpIndex;
-  tmpIndex.Fill(0);
+  InputImageIndexType tmpIndex{};
 
   for (unsigned int iregion = 0; iregion < m_InitialNumberOfRegions; ++iregion)
   {
@@ -210,7 +206,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::GenerateLabelledImage(Label
 
     // Fill the region with the label
 
-    RegionLabelType newRegionLabel = m_RegionsPointer[iregion]->GetRegionLabel();
+    const RegionLabelType newRegionLabel = m_RegionsPointer[iregion]->GetRegionLabel();
 
     LabelImageIterator labelIt(labelImagePtr, region);
     while (!labelIt.IsAtEnd())
@@ -272,13 +268,13 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
   // Maximum number of regions requested must be greater than 0
   if (this->GetMaximumNumberOfRegions() <= 1)
   {
-    itkExceptionMacro(<< "Number of requested regions must be 2 or more");
+    itkExceptionMacro("Number of requested regions must be 2 or more");
   }
 
   // This implementation requires the image dimensions to be
   // multiples of the user specified grid sizes.
 
-  InputImageConstPointer            inputImage = this->GetInput();
+  const InputImageConstPointer      inputImage = this->GetInput();
   InputImageSizeType                inputImageSize = inputImage->GetBufferedRegion().GetSize();
   GridSizeType                      gridSize = this->GetGridSize();
   typename TInputImage::SpacingType spacing = inputImage->GetSpacing();
@@ -287,7 +283,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
   {
     if (gridSize[idim] == 0 || inputImageSize[idim] % gridSize[idim] != 0)
     {
-      itkExceptionMacro(<< "Invalid grid size");
+      itkExceptionMacro("Invalid grid size");
     }
   }
 
@@ -309,7 +305,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
 
   if (m_InitialNumberOfRegions < this->GetMaximumNumberOfRegions())
   {
-    itkWarningMacro(<< "Number of initial image regions is less than requested: reduce granularity of the grid");
+    itkWarningMacro("Number of initial image regions is less than requested: reduce granularity of the grid");
   }
 
   // Set current number of regions
@@ -329,8 +325,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
   InputRegionType region;
   region.SetSize(gridSize); // Constant grid size
 
-  InputImageIndexType tmpIndex;
-  tmpIndex.Fill(0);
+  InputImageIndexType tmpIndex{};
 
   for (RegionLabelType iregion = 0; iregion < m_InitialNumberOfRegions; ++iregion)
   {
@@ -373,7 +368,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
   // exception otherwise.
   if (numberOfBorders == 0)
   {
-    itkExceptionMacro(<< "Number of initial regions must be 2 or more: reduce granularity of the grid");
+    itkExceptionMacro("Number of initial regions must be 2 or more: reduce granularity of the grid");
   }
 
   m_BordersPointer.resize(numberOfBorders);
@@ -422,11 +417,11 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
     {
       if (borderCounter >= numberOfBorders)
       {
-        itkExceptionMacro(<< "KLM initialization is incorrect");
+        itkExceptionMacro("KLM initialization is incorrect");
       }
 
       // Load the border of interest
-      KLMSegmentationBorderPtr pcurrentBorder = m_BordersPointer[borderCounter];
+      const KLMSegmentationBorderPtr pcurrentBorder = m_BordersPointer[borderCounter];
 
       // Set the length of the border
       pcurrentBorder->SetBorderLength(borderLengthTmp);
@@ -446,8 +441,8 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
         tmpVal *= numRegionsAlongDim[jdim];
       }
 
-      KLMSegmentationRegionPtr pRegion1 = m_RegionsPointer[intRegion1Index];
-      KLMSegmentationRegionPtr pRegion2 = m_RegionsPointer[intRegion2Index];
+      const KLMSegmentationRegionPtr pRegion1 = m_RegionsPointer[intRegion1Index];
+      const KLMSegmentationRegionPtr pRegion2 = m_RegionsPointer[intRegion2Index];
 
       // Attach the region border off lesser label value to region1
       // Attach the region border of the greater label value to region2
@@ -504,11 +499,11 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
 
   if (Math::NotAlmostEquals(m_TotalBorderLength, actualBorderLength))
   {
-    itkExceptionMacro(<< "KLM initialization is incorrect");
+    itkExceptionMacro("KLM initialization is incorrect");
   }
   else
   {
-    itkDebugMacro(<< "Passed initialization");
+    itkDebugMacro("Passed initialization");
   }
 
   // Allocate memory to store the array of pointers that point to the
@@ -538,7 +533,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeKLM()
 
   if (m_InternalLambda < 0.0)
   {
-    itkExceptionMacro(<< "KLM initialization is incorrect");
+    itkExceptionMacro("KLM initialization is incorrect");
   }
 }
 
@@ -547,7 +542,7 @@ void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::InitializeRegionParameters(InputRegionType region)
 {
   // Get a pointer to the image
-  InputImageConstPointer inputImage = this->GetInput();
+  const InputImageConstPointer inputImage = this->GetInput();
 
   // Set the iterators and the pixel type definition for the input image
   InputImageConstIterator inputIt(inputImage, region);
@@ -587,14 +582,14 @@ template <typename TInputImage, typename TOutputImage>
 void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::MergeRegions()
 {
-  itkDebugMacro(<< "--------------------");
-  itkDebugMacro(<< "   Merging Regions  ");
+  itkDebugMacro("--------------------");
+  itkDebugMacro("   Merging Regions  ");
 
   // Subtract border length before removing it
   m_TotalBorderLength -= m_BorderCandidate->m_Pointer->GetBorderLength();
   if (m_TotalBorderLength <= 0)
   {
-    itkExceptionMacro(<< "KLM algorithm error");
+    itkExceptionMacro("KLM algorithm error");
   }
 
   // Two regions are associated with the candidate border
@@ -608,7 +603,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::MergeRegions()
   // GenerateOutputImage and GenerateLabelledImage
   if (pRegion1->GetRegionLabel() >= pRegion2->GetRegionLabel())
   {
-    itkExceptionMacro(<< "Invalid region labelling");
+    itkExceptionMacro("Invalid region labelling");
   }
 
   // Add the new region's parameter data to the old.
@@ -640,15 +635,15 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::MergeRegions()
   --m_NumberOfRegions;
   if (m_BordersDynamicPointer.empty())
   {
-    itkExceptionMacro(<< "KLM algorithm error");
+    itkExceptionMacro("KLM algorithm error");
   }
 
   // For DEBUG purposes
   if (this->GetDebug())
   {
-    itkDebugMacro(<< "First Region ");
+    itkDebugMacro("First Region ");
     pRegion1->PrintRegionInfo();
-    itkDebugMacro(<< "Second Region ");
+    itkDebugMacro("Second Region ");
     pRegion2->PrintRegionInfo();
   }
 
@@ -676,7 +671,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::MergeRegions()
     // Decrement for the one deleted border
     if (m_BordersDynamicPointer.empty())
     {
-      itkExceptionMacro(<< "KLM algorithm error");
+      itkExceptionMacro("KLM algorithm error");
     }
 
     m_BorderCandidate = &(m_BordersDynamicPointer.back());
@@ -688,7 +683,7 @@ template <typename TInputImage, typename TOutputImage>
 void
 KLMRegionGrowImageFilter<TInputImage, TOutputImage>::ResolveRegions()
 {
-  InputImageConstPointer inputImage = this->GetInput();
+  const InputImageConstPointer inputImage = this->GetInput();
 
   // Scan through the region labels to establish the correspondence
   // between the final region (and label) and the initial regions.
@@ -745,8 +740,7 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::ResolveRegions()
 
   UnsignedIntVectorType remapLabelsVec(m_InitialNumberOfRegions, 0);
 
-  UnsignedIntVectorType::iterator uniqueLabelsVecIterator;
-  uniqueLabelsVecIterator = uniqueLabelsVec.begin();
+  auto uniqueLabelsVecIterator = uniqueLabelsVec.begin();
 
   RegionLabelType newLabelValue = 1;
 
@@ -760,11 +754,11 @@ KLMRegionGrowImageFilter<TInputImage, TOutputImage>::ResolveRegions()
   // Assign new consecutive labels
   for (iregion = 0; iregion < m_InitialNumberOfRegions; ++iregion)
   {
-    RegionLabelType labelValue = m_RegionsPointer[iregion]->GetRegionLabel();
+    const RegionLabelType labelValue = m_RegionsPointer[iregion]->GetRegionLabel();
 
     newLabelValue = remapLabelsVec[labelValue - 1];
-    double                  newAreaValue = m_RegionsPointer[labelValue - 1]->GetRegionArea();
-    MeanRegionIntensityType newMeanValue = m_RegionsPointer[labelValue - 1]->GetMeanRegionIntensity();
+    const double                  newAreaValue = m_RegionsPointer[labelValue - 1]->GetRegionArea();
+    const MeanRegionIntensityType newMeanValue = m_RegionsPointer[labelValue - 1]->GetMeanRegionIntensity();
 
     m_RegionsPointer[iregion]->SetRegionParameters(newMeanValue, newAreaValue, newLabelValue);
   }

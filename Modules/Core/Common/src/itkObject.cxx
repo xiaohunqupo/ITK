@@ -154,7 +154,7 @@ Object::SubjectImplementation::InvokeEvent(const EventObject & event, Object * s
   // m_ListModified flag. The modified flag is save to the stack and
   // marked false before recursively saving the current list.
 
-  SaveRestoreListModified save(this);
+  const SaveRestoreListModified save(this);
 
   auto i = m_Observers.crbegin();
   InvokeEventRecursion(event, self, i);
@@ -163,7 +163,7 @@ Object::SubjectImplementation::InvokeEvent(const EventObject & event, Object * s
 void
 Object::SubjectImplementation::InvokeEvent(const EventObject & event, const Object * self)
 {
-  SaveRestoreListModified save(this);
+  const SaveRestoreListModified save(this);
 
   auto i = m_Observers.crbegin();
   InvokeEventRecursion(event, self, i);
@@ -265,14 +265,13 @@ Object::SubjectImplementation::PrintObservers(std::ostream & os, Indent indent) 
 Object::Pointer
 Object::New()
 {
-  Pointer  smartPtr;
   Object * rawPtr = itk::ObjectFactory<Object>::Create();
 
   if (rawPtr == nullptr)
   {
     rawPtr = new Object;
   }
-  smartPtr = rawPtr;
+  Pointer smartPtr = rawPtr;
   rawPtr->UnRegister();
   return smartPtr;
 }
@@ -361,8 +360,7 @@ Object::Modified() const
 void
 Object::Register() const
 {
-  itkDebugMacro(<< "Registered, "
-                << "ReferenceCount = " << (m_ReferenceCount + 1));
+  itkDebugMacro("Registered, ReferenceCount = " << (m_ReferenceCount + 1));
 
   // call the parent
   Superclass::Register();
@@ -375,8 +373,7 @@ void
 Object::UnRegister() const noexcept
 {
   // call the parent
-  itkDebugMacro(<< "UnRegistered, "
-                << "ReferenceCount = " << (m_ReferenceCount - 1));
+  itkDebugMacro("UnRegistered, ReferenceCount = " << (m_ReferenceCount - 1));
 
   if ((m_ReferenceCount - 1) <= 0)
   {
@@ -415,7 +412,7 @@ Object::UnRegister() const noexcept
 void
 Object::SetReferenceCount(int ref)
 {
-  itkDebugMacro(<< "Reference Count set to " << ref);
+  itkDebugMacro("Reference Count set to " << ref);
 
   // ReferenceCount in now unlocked.  We may have a race condition to
   // to delete the object.
@@ -457,13 +454,6 @@ Object::GetGlobalWarningDisplay()
 }
 
 unsigned long
-Object::AddObserver(const EventObject & event, Command * cmd)
-{
-  const auto & thisAsConst = *this;
-  return thisAsConst.AddObserver(event, cmd);
-}
-
-unsigned long
 Object::AddObserver(const EventObject & event, Command * cmd) const
 {
   if (!this->m_SubjectImplementation)
@@ -493,7 +483,7 @@ Object::GetCommand(unsigned long tag)
 }
 
 void
-Object::RemoveObserver(unsigned long tag)
+Object::RemoveObserver(unsigned long tag) const
 {
   if (this->m_SubjectImplementation)
   {
@@ -559,10 +549,7 @@ Object::Object()
   this->Modified();
 }
 
-Object::~Object()
-{
-  itkDebugMacro(<< "Destructing!");
-}
+Object::~Object() { itkDebugMacro("Destructing!"); }
 
 /**
  * Chaining method to print an object's instance variables, as well as

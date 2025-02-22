@@ -54,8 +54,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(SampleToSubsampleFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SampleToSubsampleFilter);
 
   /** Typedefs for Measurement vector, measurement, Instance Identifier,
    * frequency, size, size element value from the template argument TSample */
@@ -96,6 +96,7 @@ protected:
   using Superclass::MakeOutput;
   DataObjectPointer
   MakeOutput(DataObjectPointerArraySizeType idx) override;
+
 }; // end of class
 } // end of namespace Statistics
 } // end of namespace itk

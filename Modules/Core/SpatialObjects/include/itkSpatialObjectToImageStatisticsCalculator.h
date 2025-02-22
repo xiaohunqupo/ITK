@@ -48,8 +48,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SpatialObjectToImageStatisticsCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SpatialObjectToImageStatisticsCalculator);
 
   /** Type definitions for the input image. */
   using ImageType = TInputImage;

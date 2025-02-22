@@ -46,10 +46,7 @@ namespace itk
  * on it. Values at these non-grid position of the Fixed image are
  * interpolated using a user-selected Interpolator.
  *
- * Implementation of this class is based on:
- * Hipwell, J. H., et. al. (2003), "Intensity-Based 2-D-3D Registration of
- * Cerebral Angiograms,", IEEE Transactions on Medical Imaging,
- * 22(11):1417-1426.
+ * Implementation of this class is based on \cite hipwell2003.
  *
  * \ingroup RegistrationMetrics
  * \ingroup ITKRegistrationCommon
@@ -70,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDifferenceImageToImageMetric, ImageToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientDifferenceImageToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

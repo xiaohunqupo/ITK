@@ -116,7 +116,7 @@ public:
   static const Self
   ZeroValue()
   {
-    return MakeFilled<Self>(NumericTraits<T>::ZeroValue());
+    return Self{};
   }
 
   static const Self
@@ -156,11 +156,11 @@ public:
   {
     if (s != D * (D + 1) / 2)
     {
-      itkGenericExceptionMacro(<< "Cannot set the size of a SymmetricSecondRankTensor "
-                                  "of dimension "
+      itkGenericExceptionMacro("Cannot set the size of a SymmetricSecondRankTensor "
+                               "of dimension "
                                << D << " ( = size of " << D * (D + 1) / 2 << ") to " << s);
     }
-    m.Fill(NumericTraits<T>::ZeroValue());
+    m.Fill(T{});
   }
 
   /** Return the size of the underlying FixedArray. */

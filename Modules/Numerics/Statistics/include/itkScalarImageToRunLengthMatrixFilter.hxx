@@ -34,7 +34,7 @@ ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::Sc
   : m_NumberOfBinsPerAxis(Self::DefaultBinsPerAxis)
   , m_Min(NumericTraits<PixelType>::NonpositiveMin())
   , m_Max(NumericTraits<PixelType>::max())
-  , m_MinDistance(NumericTraits<RealType>::ZeroValue())
+  , m_MinDistance(RealType{})
   , m_MaxDistance(NumericTraits<RealType>::max())
   , m_InsidePixelValue(NumericTraits<PixelType>::OneValue())
 {
@@ -60,7 +60,7 @@ template <typename TImageType, typename THistogramFrequencyContainer>
 void
 ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::SetOffset(const OffsetType offset)
 {
-  OffsetVectorPointer offsetVector = OffsetVector::New();
+  const OffsetVectorPointer offsetVector = OffsetVector::New();
   offsetVector->push_back(offset);
   this->SetOffsets(offsetVector);
 }
@@ -112,9 +112,9 @@ ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::Ge
 }
 
 template <typename TImageType, typename THistogramFrequencyContainer>
-typename ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::DataObjectPointer
+auto
 ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::MakeOutput(
-  DataObjectPointerArraySizeType itkNotUsed(idx))
+  DataObjectPointerArraySizeType itkNotUsed(idx)) -> DataObjectPointer
 {
   return HistogramType::New().GetPointer();
 }
@@ -146,8 +146,7 @@ ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::Ge
   // distance/intensity pair to the histogram
 
   using NeighborhoodIteratorType = ConstNeighborhoodIterator<ImageType>;
-  typename NeighborhoodIteratorType::RadiusType radius;
-  radius.Fill(1);
+  auto                     radius = MakeFilled<typename NeighborhoodIteratorType::RadiusType>(1);
   NeighborhoodIteratorType neighborIt(radius, inputImage, inputImage->GetRequestedRegion());
 
 
@@ -175,7 +174,7 @@ ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::Ge
     for (neighborIt.GoToBegin(); !neighborIt.IsAtEnd(); ++neighborIt)
     {
       const PixelType centerPixelIntensity = neighborIt.GetCenterPixel();
-      IndexType       centerIndex = neighborIt.GetIndex();
+      const IndexType centerIndex = neighborIt.GetIndex();
       if (centerPixelIntensity < this->m_Min || centerPixelIntensity > this->m_Max ||
           alreadyVisitedImage->GetPixel(centerIndex) ||
           (this->GetMaskImage() && this->GetMaskImage()->GetPixel(centerIndex) != this->m_InsidePixelValue))
@@ -186,14 +185,12 @@ ScalarImageToRunLengthMatrixFilter<TImageType, THistogramFrequencyContainer>::Ge
 
       itkDebugMacro("===> offset = " << offset << std::endl);
 
-      MeasurementType centerBinMin = this->GetOutput()->GetBinMinFromValue(0, centerPixelIntensity);
-      MeasurementType centerBinMax = this->GetOutput()->GetBinMaxFromValue(0, centerPixelIntensity);
-      MeasurementType lastBinMax = this->GetOutput()->GetDimensionMaxs(0)[this->GetOutput()->GetSize(0) - 1];
+      const MeasurementType centerBinMin = this->GetOutput()->GetBinMinFromValue(0, centerPixelIntensity);
+      const MeasurementType centerBinMax = this->GetOutput()->GetBinMaxFromValue(0, centerPixelIntensity);
+      const MeasurementType lastBinMax = this->GetOutput()->GetDimensionMaxs(0)[this->GetOutput()->GetSize(0) - 1];
 
-      PixelType pixelIntensity(NumericTraits<PixelType>::ZeroValue());
-      IndexType index;
-
-      index = centerIndex + offset;
+      auto      pixelIntensity(PixelType{});
+      IndexType index = centerIndex + offset;
       IndexType lastGoodIndex = centerIndex;
       bool      runLengthSegmentAlreadyVisited = false;
 

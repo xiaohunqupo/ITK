@@ -35,8 +35,6 @@ template <typename TInput, typename TOutput>
 class ComplexToModulus
 {
 public:
-  ComplexToModulus() = default;
-  ~ComplexToModulus() = default;
   bool
   operator==(const ComplexToModulus &) const
   {
@@ -69,18 +67,14 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ComplexToModulusImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToModulusImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;
   using InputPixelValueType = typename NumericTraits<InputPixelType>::ValueType;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputMultiplyOperatorCheck, (Concept::MultiplyOperator<InputPixelValueType>));
-  // End concept checking
-#endif
 
 protected:
   ComplexToModulusImageFilter()

@@ -68,8 +68,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PasteImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PasteImageFilter);
 
   /** Typedefs from Superclass */
   using typename Superclass::InputImagePointer;
@@ -167,11 +167,11 @@ public:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override
+  VerifyInputInformation() const override
   {}
 
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   bool
   CanRunInPlace() const override;

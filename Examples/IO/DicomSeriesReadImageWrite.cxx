@@ -44,7 +44,7 @@
 //  Probably the most common representation of datasets in clinical
 //  applications is the one that uses sets of DICOM slices in order to compose
 //  tridimensional images. This is the case for CT, MRI and PET scanners. It
-//  is very common therefore for image analysists to have to process
+//  is very common therefore for image analysts to have to process
 //  volumetric images that are stored in the form of a set of DICOM files
 //  belonging to a common DICOM series.
 //
@@ -74,11 +74,10 @@ main(int argc, char * argv[])
   using ImageType = itk::Image<short, 3>;
   using ReaderType = itk::ImageSeriesReader<ImageType>;
 
-  itk::DICOMImageIO2::Pointer dicomIO = itk::DICOMImageIO2::New();
+  auto dicomIO = itk::DICOMImageIO2::New();
 
   // Get the DICOM filenames from the directory
-  itk::DICOMSeriesFileNames::Pointer nameGenerator =
-    itk::DICOMSeriesFileNames::New();
+  auto nameGenerator = itk::DICOMSeriesFileNames::New();
   nameGenerator->SetDirectory(argv[1]);
 
 

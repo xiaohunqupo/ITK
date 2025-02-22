@@ -81,7 +81,7 @@ GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::PrintS
   itkPrintSelfObjectMacro(SqrSpacingFilter);
   itkPrintSelfObjectMacro(SqrtFilter);
 
-  os << indent << "NormalizeAcrossScale: " << (m_NormalizeAcrossScale ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(NormalizeAcrossScale);
 }
 
 template <typename TInputImage, typename TOutputImage>
@@ -149,7 +149,7 @@ GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Genera
   Superclass::GenerateInputRequestedRegion();
 
   // This filter needs all of the input
-  typename GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::InputImagePointer image =
+  const typename GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::InputImagePointer image =
     const_cast<InputImageType *>(this->GetInput());
   if (image)
   {
@@ -174,11 +174,11 @@ template <typename TInputImage, typename TOutputImage>
 void
 GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  itkDebugMacro(<< "GradientMagnitudeRecursiveGaussianImageFilter generating data ");
+  itkDebugMacro("GradientMagnitudeRecursiveGaussianImageFilter generating data ");
 
   const typename TInputImage::ConstPointer inputImage(this->GetInput());
 
-  typename TOutputImage::Pointer outputImage(this->GetOutput());
+  const typename TOutputImage::Pointer outputImage(this->GetOutput());
 
   // Reset progress of internal filters to zero,
   // otherwise progress starts from non-zero value the second time the filter is invoked.
@@ -204,8 +204,7 @@ GradientMagnitudeRecursiveGaussianImageFilter<TInputImage, TOutputImage>::Genera
 
   auto cumulativeImage = CumulativeImageType::New();
   cumulativeImage->SetRegions(inputImage->GetBufferedRegion());
-  cumulativeImage->Allocate();
-  cumulativeImage->FillBuffer(NumericTraits<InternalRealType>::ZeroValue());
+  cumulativeImage->AllocateInitialized();
   // The output's information must match the input's information
   cumulativeImage->CopyInformation(this->GetInput());
 

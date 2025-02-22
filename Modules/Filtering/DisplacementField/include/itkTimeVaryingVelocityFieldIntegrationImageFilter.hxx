@@ -35,7 +35,7 @@ TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField,
   this->m_NumberOfTimePoints = 0;
   this->SetNumberOfRequiredInputs(1);
 
-  if (InputImageDimension - 1 != OutputImageDimension)
+  if constexpr (InputImageDimension - 1 != OutputImageDimension)
   {
     itkExceptionMacro("The time-varying velocity field (input) should have "
                       << "dimensionality of 1 greater than the deformation field (output). ");
@@ -44,16 +44,14 @@ TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField,
   using DefaultVelocityFieldInterpolatorType =
     VectorLinearInterpolateImageFunction<TimeVaryingVelocityFieldType, ScalarType>;
 
-  typename DefaultVelocityFieldInterpolatorType::Pointer velocityFieldInterpolator =
-    DefaultVelocityFieldInterpolatorType::New();
+  auto velocityFieldInterpolator = DefaultVelocityFieldInterpolatorType::New();
 
   this->m_VelocityFieldInterpolator = velocityFieldInterpolator;
 
   using DefaultDisplacementFieldInterpolatorType =
     VectorLinearInterpolateImageFunction<DisplacementFieldType, ScalarType>;
 
-  typename DefaultDisplacementFieldInterpolatorType::Pointer deformationFieldInterpolator =
-    DefaultDisplacementFieldInterpolatorType::New();
+  auto deformationFieldInterpolator = DefaultDisplacementFieldInterpolatorType::New();
 
   this->m_DisplacementFieldInterpolator = deformationFieldInterpolator;
   this->DynamicMultiThreadingOn();
@@ -66,11 +64,11 @@ TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField,
 {
   const TimeVaryingVelocityFieldType * input = this->GetInput();
   DisplacementFieldType *              output = this->GetOutput();
-  this->m_NumberOfTimePoints = input->GetLargestPossibleRegion().GetSize()[OutputImageDimension];
   if (!input || !output)
   {
     return;
   }
+  this->m_NumberOfTimePoints = input->GetLargestPossibleRegion().GetSize()[OutputImageDimension];
 
   //
   // The ImageBase::CopyInformation() method ca not be used here
@@ -137,34 +135,33 @@ TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField, TDispl
 {
   if (Math::ExactlyEquals(this->m_LowerTimeBound, this->m_UpperTimeBound) || this->m_NumberOfIntegrationSteps == 0)
   {
-    this->GetOutput()->FillBuffer(itk::NumericTraits<typename DisplacementFieldType::PixelType>::Zero);
+    this->GetOutput()->FillBuffer(typename DisplacementFieldType::PixelType{});
     return;
   }
 
   const TimeVaryingVelocityFieldType * inputField = this->GetInput();
 
-  typename DisplacementFieldType::Pointer outputField = this->GetOutput();
+  const typename DisplacementFieldType::Pointer outputField = this->GetOutput();
 
   for (ImageRegionIteratorWithIndex<DisplacementFieldType> It(outputField, region); !It.IsAtEnd(); ++It)
   {
     PointType point;
     outputField->TransformIndexToPhysicalPoint(It.GetIndex(), point);
-    VectorType displacement = this->IntegrateVelocityAtPoint(point, inputField);
+    const VectorType displacement = this->IntegrateVelocityAtPoint(point, inputField);
     It.Set(displacement);
   }
 }
 
 template <typename TTimeVaryingVelocityField, typename TDisplacementField>
-typename TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField, TDisplacementField>::VectorType
+auto
 TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField, TDisplacementField>::IntegrateVelocityAtPoint(
   const PointType &                    initialSpatialPoint,
-  const TimeVaryingVelocityFieldType * inputField)
+  const TimeVaryingVelocityFieldType * inputField) -> VectorType
 {
   // Solve the initial value problem using fourth-order Runge-Kutta
   //    y' = f(t, y), y(t_0) = y_0
 
-  VectorType zeroVector;
-  zeroVector.Fill(0.0);
+  constexpr VectorType zeroVector{};
 
   // Initial conditions
 
@@ -188,7 +185,7 @@ TimeVaryingVelocityFieldIntegrationImageFilter<TTimeVaryingVelocityField, TDispl
     typename TimeVaryingVelocityFieldType::PointType spaceTimeOrigin = inputField->GetOrigin();
 
     using RegionType = typename TimeVaryingVelocityFieldType::RegionType;
-    RegionType region = inputField->GetLargestPossibleRegion();
+    const RegionType region = inputField->GetLargestPossibleRegion();
 
     typename RegionType::IndexType lastIndex = region.GetIndex();
     typename RegionType::SizeType  size = region.GetSize();

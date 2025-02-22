@@ -29,13 +29,6 @@ SurfaceSpatialObjectPoint<TPointDimension>::SurfaceSpatialObjectPoint()
 }
 
 template <unsigned int TPointDimension>
-SurfaceSpatialObjectPoint<TPointDimension>::SurfaceSpatialObjectPoint(const SurfaceSpatialObjectPoint & other)
-  : Superclass(other)
-{
-  this->m_NormalInObjectSpace = other.m_NormalInObjectSpace;
-}
-
-template <unsigned int TPointDimension>
 void
 SurfaceSpatialObjectPoint<TPointDimension>::SetNormalInObjectSpace(const CovariantVectorType & normal)
 {
@@ -48,7 +41,7 @@ SurfaceSpatialObjectPoint<TPointDimension>::SetNormalInWorldSpace(const Covarian
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   m_NormalInObjectSpace =
@@ -68,7 +61,7 @@ SurfaceSpatialObjectPoint<TPointDimension>::GetNormalInWorldSpace() const -> con
 {
   if (this->m_SpatialObject == nullptr)
   {
-    itkExceptionMacro(<< "The SpatialObject must be set prior to calling.");
+    itkExceptionMacro("The SpatialObject must be set prior to calling.");
   }
 
   return Superclass::m_SpatialObject->GetObjectToWorldTransform()->TransformCovariantVector(m_NormalInObjectSpace);
@@ -83,17 +76,6 @@ SurfaceSpatialObjectPoint<TPointDimension>::PrintSelf(std::ostream & os, Indent 
   os << indent << "NormalInObjectSpace: " << m_NormalInObjectSpace << std::endl;
 }
 
-template <unsigned int TPointDimension>
-auto
-SurfaceSpatialObjectPoint<TPointDimension>::operator=(const SurfaceSpatialObjectPoint & rhs) -> Self &
-{
-  if (this != &rhs)
-  {
-    Superclass::operator=(rhs);
-    this->SetNormalInObjectSpace(rhs.GetNormalInObjectSpace());
-  }
-  return *this;
-}
 } // end namespace itk
 
 #endif

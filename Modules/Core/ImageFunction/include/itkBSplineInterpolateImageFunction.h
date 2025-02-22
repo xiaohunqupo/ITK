@@ -46,22 +46,8 @@ namespace itk
  * \brief Evaluates the B-Spline interpolation of an image.  Spline order may be from 0 to 5.
  *
  * This class defines N-Dimension B-Spline transformation.
- * It is based on:
-\verbatim
-[1] M. Unser,
-    "Splines: A Perfect Fit for Signal and Image Processing,"
-    IEEE Signal Processing Magazine, vol. 16, no. 6, pp. 22-38,
-    November 1999.
-[2] M. Unser, A. Aldroubi and M. Eden,
-    "B-Spline Signal Processing: Part I--Theory,"
-    IEEE Transactions on Signal Processing, vol. 41, no. 2, pp. 821-832,
-    February 1993.
-[3] M. Unser, A. Aldroubi and M. Eden,
-    "B-Spline Signal Processing: Part II--Efficient Design and Applications,"
-     IEEE Transactions on Signal Processing, vol. 41, no. 2, pp. 834-848,
-     February 1993.
-\endverbatim
- * And code obtained from bigwww.epfl.ch by Philippe Thevenaz
+ * It is based on \cite unser1999, \cite unser1993 and \cite unser1993a.
+ * Code obtained from bigwww.epfl.ch by Philippe Thevenaz
  *
  * The B spline coefficients are calculated through the
  * BSplineDecompositionImageFilter
@@ -79,20 +65,20 @@ namespace itk
  * \ingroup ITKImageFunction
  *
  */
-template <typename TImageType, typename TCoordRep = double, typename TCoefficientType = double>
-class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunction : public InterpolateImageFunction<TImageType, TCoordRep>
+template <typename TImageType, typename TCoordinate = double, typename TCoefficientType = double>
+class ITK_TEMPLATE_EXPORT BSplineInterpolateImageFunction : public InterpolateImageFunction<TImageType, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(BSplineInterpolateImageFunction);
 
   /** Standard class type aliases. */
   using Self = BSplineInterpolateImageFunction;
-  using Superclass = InterpolateImageFunction<TImageType, TCoordRep>;
+  using Superclass = InterpolateImageFunction<TImageType, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineInterpolateImageFunction, InterpolateImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineInterpolateImageFunction);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -144,7 +130,7 @@ public:
   Evaluate(const PointType & point) const override
   {
     const ContinuousIndexType index =
-      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordRep>(point);
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
     // No thread info passed in, so call method that doesn't need thread ID.
     return (this->EvaluateAtContinuousIndex(index));
   }
@@ -153,7 +139,7 @@ public:
   Evaluate(const PointType & point, ThreadIdType threadId) const
   {
     const ContinuousIndexType index =
-      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordRep>(point);
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
     return (this->EvaluateAtContinuousIndex(index, threadId));
   }
 
@@ -180,9 +166,9 @@ public:
   CovariantVectorType
   EvaluateDerivative(const PointType & point) const
   {
-    ContinuousIndexType index;
+    const ContinuousIndexType index =
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
 
-    this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point, index);
     // No thread info passed in, so call method that doesn't need thread ID.
     return (this->EvaluateDerivativeAtContinuousIndex(index));
   }
@@ -191,7 +177,7 @@ public:
   EvaluateDerivative(const PointType & point, ThreadIdType threadId) const
   {
     const ContinuousIndexType index =
-      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordRep>(point);
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
     return (this->EvaluateDerivativeAtContinuousIndex(index, threadId));
   }
 
@@ -222,9 +208,8 @@ public:
   void
   EvaluateValueAndDerivative(const PointType & point, OutputType & value, CovariantVectorType & deriv) const
   {
-    ContinuousIndexType index;
-
-    this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point, index);
+    const ContinuousIndexType index =
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
 
     // No thread info passed in, so call method that doesn't need thread ID.
     this->EvaluateValueAndDerivativeAtContinuousIndex(index, value, deriv);
@@ -237,7 +222,7 @@ public:
                              ThreadIdType          threadId) const
   {
     const ContinuousIndexType index =
-      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordRep>(point);
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
     this->EvaluateValueAndDerivativeAtContinuousIndex(index, value, deriv, threadId);
   }
 
@@ -283,7 +268,7 @@ public:
   itkGetConstMacro(SplineOrder, unsigned int);
 
   void
-  SetNumberOfWorkUnits(ThreadIdType numThreads);
+  SetNumberOfWorkUnits(ThreadIdType numWorkUnits);
 
   itkGetConstMacro(NumberOfWorkUnits, ThreadIdType);
 
@@ -412,7 +397,7 @@ private:
 
   // flag to take or not the image direction into account when computing the
   // derivatives.
-  bool m_UseImageDirection{};
+  bool m_UseImageDirection{ true };
 
   ThreadIdType                          m_NumberOfWorkUnits{};
   std::unique_ptr<vnl_matrix<long>[]>   m_ThreadedEvaluateIndex;

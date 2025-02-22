@@ -125,31 +125,24 @@ namespace itk
  * (or ThreadedHalt) method returns a true value to stop iteration.
  *
  *
- * Based on the paper:
- *
- *        "An active contour model without edges"
- *         T. Chan and L. Vese.
- *         In Scale-Space Theories in Computer Vision, pages 141-151, 1999.
+ * Based on the paper \cite chan1999.
  *
  * \author Mosaliganti K., Smith B., Gelas A., Gouaillard A., Megason S.
  *
  *  This code was taken from the Insight Journal paper:
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
- *      https://www.insight-journal.org/browse/publication/642
- *      https://hdl.handle.net/10380/3055
+ *      https://doi.org/10.54294/wvwmf8
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
- *      https://www.insight-journal.org/browse/publication/322
- *      https://hdl.handle.net/1926/1532
+ *      https://doi.org/10.54294/8jk6oy
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
- *      https://www.insight-journal.org/browse/publication/323
- *      https://hdl.handle.net/1926/1533
+ *      https://doi.org/10.54294/23ugmy
  *
  *
  * \ingroup ImageFilter
@@ -173,8 +166,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MultiphaseFiniteDifferenceImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultiphaseFiniteDifferenceImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;
@@ -183,7 +176,11 @@ public:
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;
   using InputPointType = typename InputImageType::PointType;
-  using InputCoordRepType = typename InputPointType::CoordRepType;
+  using InputCoordinateType = typename InputPointType::CoordinateType;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using InputCoordRepType ITK_FUTURE_DEPRECATED(
+    "ITK 6 discourages using `InputCoordRepType`. Please use `InputCoordinateType` instead!") = InputCoordinateType;
+#endif
   using InputIndexType = typename InputImageType::IndexType;
   using InputIndexValueType = typename InputIndexType::IndexValueType;
   using InputSizeType = typename InputImageType::SizeType;
@@ -352,8 +349,7 @@ public:
 
     m_DifferenceFunctions.resize(m_FunctionCount, nullptr);
 
-    RadiusType radius;
-    radius.Fill(1);
+    constexpr auto radius = MakeFilled<RadiusType>(1);
 
     for (unsigned int i = 0; i < this->m_FunctionCount; ++i)
     {

@@ -42,8 +42,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SingleValuedCostFunction, CostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SingleValuedCostFunction);
 
   /**  MeasureType type alias.
    *  It defines a type used to return the cost function value. */

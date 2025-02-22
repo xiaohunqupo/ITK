@@ -36,8 +36,6 @@ template <typename TInput, typename TOutput>
 class ComplexToPhase
 {
 public:
-  ComplexToPhase() = default;
-  ~ComplexToPhase() = default;
   bool
   operator==(const ComplexToPhase &) const
   {
@@ -70,18 +68,14 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ComplexToPhaseImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToPhaseImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;
   using InputPixelValueType = typename NumericTraits<InputPixelType>::ValueType;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputPixelValueType, OutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ComplexToPhaseImageFilter()

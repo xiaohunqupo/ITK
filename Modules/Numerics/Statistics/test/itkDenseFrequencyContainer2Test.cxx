@@ -63,8 +63,8 @@ itkDenseFrequencyContainer2Test(int, char *[])
     }
 
     // Test Set/Get frequency of an out of bound bin
-    unsigned int binOutOfBound = numberOfBins;
-    const auto   frequency = static_cast<AbsoluteFrequencyType>(binOutOfBound * binOutOfBound);
+    constexpr unsigned int binOutOfBound = numberOfBins;
+    constexpr auto         frequency = static_cast<AbsoluteFrequencyType>(binOutOfBound * binOutOfBound);
 
     if (container->SetFrequency(binOutOfBound, frequency))
     {
@@ -73,7 +73,7 @@ itkDenseFrequencyContainer2Test(int, char *[])
       return EXIT_FAILURE;
     }
 
-    if (container->GetFrequency(binOutOfBound) != itk::NumericTraits<AbsoluteFrequencyType>::ZeroValue())
+    if (container->GetFrequency(binOutOfBound) != AbsoluteFrequencyType{})
     {
       std::cerr << "GetFrequency() method should have returned zero frequency since the bin index is out of bound \n"
                 << std::endl;
@@ -118,8 +118,8 @@ itkDenseFrequencyContainer2Test(int, char *[])
         return EXIT_FAILURE;
       }
     }
-    unsigned int binOutOfBound = numberOfBins;
-    const auto   frequency = static_cast<AbsoluteFrequencyType>(binOutOfBound);
+    constexpr unsigned int binOutOfBound = numberOfBins;
+    constexpr auto         frequency = static_cast<AbsoluteFrequencyType>(binOutOfBound);
 
     if (container->IncreaseFrequency(binOutOfBound, frequency))
     {

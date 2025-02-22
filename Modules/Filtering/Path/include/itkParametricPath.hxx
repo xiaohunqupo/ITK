@@ -79,7 +79,7 @@ ParametricPath<VDimension>::IncrementInput(InputType & input) const -> OffsetTyp
   {
     if (iterationCount++ > 10000)
     {
-      itkExceptionMacro(<< "Too many iterations");
+      itkExceptionMacro("Too many iterations");
     }
 
     nextImageIndex = this->EvaluateToIndex(input + inputStepSize);
@@ -119,9 +119,7 @@ template <unsigned int VDimension>
 auto
 ParametricPath<VDimension>::EvaluateDerivative(const InputType & input) const -> VectorType
 {
-  InputType inputStepSize;
-
-  inputStepSize = m_DefaultInputStepSize;
+  InputType inputStepSize = m_DefaultInputStepSize;
   if ((input + inputStepSize) >= this->EndOfInput())
   {
     inputStepSize = this->EndOfInput() - input;

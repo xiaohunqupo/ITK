@@ -42,11 +42,12 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Arnaud Gelas <arnaudgelas@gmail.com>
-itk_fetch_module(MinimalPathExtraction
- "https://www.insight-journal.org/browse/publication/213
+itk_fetch_module(
+  MinimalPathExtraction
+  "https://doi.org/10.54294/z5zwhh
 "
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKMinimalPathExtraction.git
-  GIT_TAG f042f3ed9ba88c5acf3fe5df95108c579f913a49
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKMinimalPathExtraction.git
+  GIT_TAG e43a18f43272bea8c9de5ded7846efbffc81f0ad
   )
 # Release v1.2.6

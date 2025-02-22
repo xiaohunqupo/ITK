@@ -84,7 +84,8 @@ public:
    SetConstant2( constant );
    \endcode
  *
- * \ingroup IntensityImageFilters  MultiThreaded
+ * \ingroup IntensityImageFilters
+ * \ingroup MultiThreaded
  * \ingroup ITKImageIntensity
  *
  */
@@ -107,13 +108,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(PowImageFilter, BinaryGeneratorImageFilter);
-
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
-  // End concept checking
-#endif
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PowImageFilter);
 
 protected:
   PowImageFilter()

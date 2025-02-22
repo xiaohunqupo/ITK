@@ -30,8 +30,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Robust Automatic Threshold Selection"
  * by Lehmann G.
- * https://hdl.handle.net/1926/370
- * https://www.insight-journal.org/browse/publication/134
+ * https://doi.org/10.54294/7w23qz
  *
  *
  * \ingroup Operators
@@ -52,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RobustAutomaticThresholdCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RobustAutomaticThresholdCalculator);
 
   /** Extract the dimension of the image. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

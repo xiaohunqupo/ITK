@@ -40,8 +40,8 @@ void
 MeanImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   const OutputImageRegionType & outputRegionForThread)
 {
-  typename OutputImageType::Pointer     output = this->GetOutput();
-  typename InputImageType::ConstPointer input = this->GetInput();
+  const typename OutputImageType::Pointer     output = this->GetOutput();
+  const typename InputImageType::ConstPointer input = this->GetInput();
 
   const auto radius = this->GetRadius();
 
@@ -83,13 +83,13 @@ MeanImageFilter<TInputImage, TOutputImage>::GenerateDataInSubregion(
 
   auto neighborhoodRange = ShapedImageNeighborhoodRange<const InputImageType, TPixelAccessPolicy>(
     inputImage, Index<InputImageDimension>(), neighborhoodOffsets);
-  auto outputIterator = ImageRegionRange(outputImage, imageRegion).begin();
+  auto outputIterator = ImageRegionRange<OutputImageType>(outputImage, imageRegion).begin();
 
   for (const auto & index : ImageRegionIndexRange<InputImageDimension>(imageRegion))
   {
     neighborhoodRange.SetLocation(index);
 
-    auto sum = NumericTraits<InputRealType>::ZeroValue();
+    auto sum = InputRealType{};
 
     for (const InputPixelType pixelValue : neighborhoodRange)
     {
@@ -116,7 +116,7 @@ MeanImageFilter<TInputImage, TOutputImage>::GenerateDataInSubregion(
 
   auto neighborhoodRange = ShapedImageNeighborhoodRange<const InputImageType, TPixelAccessPolicy>(
     inputImage, Index<InputImageDimension>(), neighborhoodOffsets);
-  auto outputIterator = ImageRegionRange(outputImage, imageRegion).begin();
+  auto outputIterator = ImageRegionRange<OutputImageType>(outputImage, imageRegion).begin();
 
   // These temp variable are needed outside the loop for
   // VariableLengthVectors to avoid memory allocations on a per-pixel

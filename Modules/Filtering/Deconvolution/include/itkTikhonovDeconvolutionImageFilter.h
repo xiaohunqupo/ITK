@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(TikhonovDeconvolutionImageFilter, InverseDeconvolutionImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TikhonovDeconvolutionImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -141,9 +141,9 @@ public:
   inline TOutput
   operator()(const TInput1 & I, const TInput2 & H) const
   {
-    typename TOutput::value_type normH = std::norm(H);
-    typename TOutput::value_type denominator = normH + m_RegularizationConstant;
-    TOutput                      value{};
+    const typename TOutput::value_type normH = std::norm(H);
+    const typename TOutput::value_type denominator = normH + m_RegularizationConstant;
+    TOutput                            value{};
     if (denominator >= m_KernelZeroMagnitudeThreshold)
     {
       value = static_cast<TOutput>(I * (std::conj(H) / denominator));

@@ -107,8 +107,8 @@ public:
   using PointType = typename ImageJointDomainTraitsType::PointType;
   using CoordinateRepType = typename ImageJointDomainTraitsType::CoordinateRepType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(JointDomainImageToListSampleAdaptor, ListSample);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JointDomainImageToListSampleAdaptor);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -295,7 +295,7 @@ public:
   Iterator
   Begin()
   {
-    Iterator iter(this, 0);
+    const Iterator iter(this, 0);
 
     return iter;
   }
@@ -304,7 +304,7 @@ public:
   Iterator
   End()
   {
-    Iterator iter(this, m_Image->GetPixelContainer()->Size());
+    const Iterator iter(this, m_Image->GetPixelContainer()->Size());
 
     return iter;
   }

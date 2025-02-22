@@ -37,27 +37,9 @@ LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::InitializeParameters(
 }
 
 template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::Initialize(const LevelSetInputIndexType &)
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::Update()
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::UpdatePixel(
-  const LevelSetInputIndexType & itkNotUsed(iP),
-  const LevelSetOutputRealType & itkNotUsed(oldValue),
-  const LevelSetOutputRealType & itkNotUsed(newValue))
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-typename LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::LaplacianSpeed(
-  const LevelSetInputIndexType & itkNotUsed(iP)) const
+  const LevelSetInputIndexType & itkNotUsed(iP)) const -> LevelSetOutputRealType
 {
   return NumericTraits<LevelSetOutputRealType>::OneValue();
 }
@@ -75,12 +57,13 @@ LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::Value(const LevelSetI
 }
 
 template <typename TInput, typename TLevelSetContainer>
-typename LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationLaplacianTerm<TInput, TLevelSetContainer>::Value(const LevelSetInputIndexType & iP,
                                                                  const LevelSetDataType &       iData)
+  -> LevelSetOutputRealType
 {
   // Laplacian should be computed by this point.
-  itkAssertInDebugAndIgnoreInReleaseMacro(iData.Laplacian.m_Computed == true);
+  itkAssertInDebugAndIgnoreInReleaseMacro(iData.Laplacian.m_Computed);
 
   LevelSetOutputRealType laplacian = iData.Laplacian.m_Value;
 

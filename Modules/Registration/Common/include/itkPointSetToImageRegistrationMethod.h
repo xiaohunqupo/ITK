@@ -78,8 +78,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PointSetToImageRegistrationMethod, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PointSetToImageRegistrationMethod);
 
   /**  Type of the Fixed PointSet. */
   using FixedPointSetType = TFixedPointSet;

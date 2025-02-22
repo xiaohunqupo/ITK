@@ -132,7 +132,7 @@ CreateMesh(InputImageType * image, unsigned int elementWidth = 1)
   meshFilter->SetInput(image);
   meshFilter->SetPixelsPerElement(pixelsPerElement);
   auto material = MaterialType::New();
-  if (ImageDimension == 2)
+  if constexpr (ImageDimension == 2)
   {
     auto element = Element2DType::New();
     element->SetMaterial(material);
@@ -316,7 +316,7 @@ RunTest(InputImageType *            fixedImage,
       {
         coords[d] = element->GetNodeCoordinates(n)[d];
       }
-      fixedImage->TransformPhysicalPointToIndex(coords, index);
+      index = fixedImage->TransformPhysicalPointToIndex(coords);
       if (!region.IsInside(index))
       {
         continue;
@@ -330,7 +330,7 @@ RunTest(InputImageType *            fixedImage,
       outField->SetPixel(index, pixelVal);
 
     } // end of for (each node in an element)
-  }   // end of for(each element)
+  } // end of for(each element)
 
   // Write to vector image
   auto forceFieldWriter = FieldWriterType::New();
@@ -352,8 +352,9 @@ itkFEMFiniteDifferenceFunctionLoadTest(int argc, char * argv[])
 {
   if (argc != 2)
   {
-    std::cerr << "Missing Parameters" << std::endl;
-    std::cerr << "Usage: " << argv[0] << " outputFilenamePrefix" << std::endl;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << " outputFilenamePrefix" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -381,12 +382,9 @@ itkFEMFiniteDifferenceFunctionLoadTest(int argc, char * argv[])
   SizeType size;
   size.SetSize(sizeArray);
 
-  IndexType index;
-  index.Fill(0);
+  IndexType index{};
 
-  RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
+  RegionType region{ index, size };
 
   auto movingImage = InputImageType::New();
   auto fixedImage = InputImageType::New();
@@ -437,8 +435,7 @@ itkFEMFiniteDifferenceFunctionLoadTest(int argc, char * argv[])
   FillWithCircle<InputImageType>(movingImage, center, radius, fgnd, bgnd);
 
   // Fill initial deformation with zero vectors
-  DeformationFieldVectorType zeroVec;
-  zeroVec.Fill(0.0);
+  DeformationFieldVectorType zeroVec{};
   FillImage<DeformationFieldImageType>(initField, zeroVec);
 
   using ImageWriterType = itk::ImageFileWriter<InputImageType>;

@@ -111,8 +111,8 @@ public:
   using CovarianceMatrixType = typename ThresholdFunctionType::CovarianceMatrixType;
   using ScalarValueType = typename ThresholdFunctionType::ScalarValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorThresholdSegmentationLevelSetImageFilter, SegmentationLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorThresholdSegmentationLevelSetImageFilter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);
@@ -145,7 +145,7 @@ public:
     return m_ThresholdFunction->GetCovariance();
   }
 
-  /** Set/Get the threshold for the Mahanalobis Distance */
+  /** Set/Get the threshold for the Mahalanobis Distance */
   void
   SetThreshold(ScalarValueType thr)
   {

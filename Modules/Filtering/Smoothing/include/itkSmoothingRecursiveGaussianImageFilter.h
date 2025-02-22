@@ -65,8 +65,8 @@ public:
   using RealType = typename NumericTraits<PixelType>::RealType;
   using ScalarRealType = typename NumericTraits<PixelType>::ScalarRealType;
 
-  /** Runtime information support. */
-  itkTypeMacro(SmoothingRecursiveGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SmoothingRecursiveGaussianImageFilter);
 
   /** Image dimension. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -138,13 +138,9 @@ public:
   bool
   CanRunInPlace() const override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   // This concept does not work with variable length vector images
   // itkConceptMacro( InputHasNumericTraitsCheck,
   //( Concept::HasNumericTraits< PixelType > ) );
-  // End concept checking
-#endif
 
 protected:
   SmoothingRecursiveGaussianImageFilter();

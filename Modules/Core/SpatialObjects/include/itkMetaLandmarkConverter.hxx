@@ -37,10 +37,10 @@ MetaLandmarkConverter<VDimension>::MetaObjectToSpatialObject(const MetaObjectTyp
   const auto * landmarkMO = dynamic_cast<const LandmarkMetaObjectType *>(mo);
   if (landmarkMO == nullptr)
   {
-    itkExceptionMacro(<< "Can't convert MetaObject to MetaLandmark");
+    itkExceptionMacro("Can't convert MetaObject to MetaLandmark");
   }
 
-  LandmarkSpatialObjectPointer landmarkSO = LandmarkSpatialObjectType::New();
+  const LandmarkSpatialObjectPointer landmarkSO = LandmarkSpatialObjectType::New();
 
   landmarkSO->GetProperty().SetName(landmarkMO->Name());
   landmarkSO->SetId(landmarkMO->ID());
@@ -89,14 +89,13 @@ MetaLandmarkConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObject
 
   if (landmarkSO.IsNull())
   {
-    itkExceptionMacro(<< "Can't downcast SpatialObject to LandmarkSpatialObject");
+    itkExceptionMacro("Can't downcast SpatialObject to LandmarkSpatialObject");
   }
 
   auto * landmarkMO = new MetaLandmark(VDimension);
 
   // fill in the Landmark information
-  typename LandmarkSpatialObjectType::LandmarkPointListType::const_iterator it;
-  for (it = landmarkSO->GetPoints().begin(); it != landmarkSO->GetPoints().end(); ++it)
+  for (auto it = landmarkSO->GetPoints().begin(); it != landmarkSO->GetPoints().end(); ++it)
   {
     auto * pnt = new LandmarkPnt(VDimension);
 
@@ -112,7 +111,7 @@ MetaLandmarkConverter<VDimension>::SpatialObjectToMetaObject(const SpatialObject
     landmarkMO->GetPoints().push_back(pnt);
   }
 
-  if (VDimension == 2)
+  if constexpr (VDimension == 2)
   {
     landmarkMO->PointDim("x y red green blue alpha");
   }

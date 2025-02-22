@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(JPEGImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(JPEGImageIO);
 
   /** Set/Get the level of quality for the output images. */
   virtual void
@@ -117,7 +117,7 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
-  WriteSlice(std::string & fileName, const void * const buffer);
+  WriteSlice(const std::string & fileName, const void * const buffer);
 
   bool m_Progressive{ true };
 

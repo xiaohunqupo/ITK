@@ -41,15 +41,16 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(BoneMorphometry
+itk_fetch_module(
+  BoneMorphometry
   "An Insight Toolkit (ITK) based implementation for bone morphometry quantification from computed tomography (CT) images.
   A more detailed description can be found in the Insight Journal (IJ) article:
   Vimort J., McCormick M., Paniagua B.
   Computing Bone Morphometric Feature Maps from 3-Dimensional Images
   The Insight Journal. January-December. 2017.
-  https://www.insight-journal.org/browse/publication/988
+  https://doi.org/10.54294/vctqy4
   "
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKBoneMorphometry.git
-  GIT_TAG e68bd5b9274d448f0888acef5abf5ccdeb27b3b8
-)
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKBoneMorphometry.git
+  GIT_TAG 47b8f352fb2cb7204d7a8b332847da438f268b35
+  )

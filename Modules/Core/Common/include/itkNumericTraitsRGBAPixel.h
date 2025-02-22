@@ -115,7 +115,7 @@ public:
   static const Self
   ZeroValue()
   {
-    return MakeFilled<Self>(NumericTraits<T>::ZeroValue());
+    return Self{};
   }
 
   static const Self
@@ -182,10 +182,10 @@ public:
   {
     if (s != 4)
     {
-      itkGenericExceptionMacro(<< "Cannot set the size of a RGBAPixel to anything other "
-                                  "than 4.");
+      itkGenericExceptionMacro("Cannot set the size of a RGBAPixel to anything other "
+                               "than 4.");
     }
-    m.Fill(NumericTraits<T>::ZeroValue());
+    m.Fill(T{});
   }
 
   /** Return the dimensionality of the pixel. Always returns 4. */

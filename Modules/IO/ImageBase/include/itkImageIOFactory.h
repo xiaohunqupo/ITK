@@ -21,7 +21,6 @@
 
 #include "itkObject.h"
 #include "itkImageIOBase.h"
-#include "ITKIOImageBaseExport.h"
 
 namespace itk
 {
@@ -42,8 +41,8 @@ public:
 
   /** Class Methods used to interface with the registered factories */
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageIOFactory, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageIOFactory);
 
   /** Convenient type alias. */
   using ImageIOBasePointer = itk::ImageIOBase::Pointer;

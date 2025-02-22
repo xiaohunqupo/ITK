@@ -119,7 +119,7 @@ FreeSurferBinaryMeshIO::ReadMeshInformation()
   if (m_FileTypeIdentifier == (-2 & 0x00ffffff))
   {
     constexpr unsigned int numberOfCellPoints = 3;
-    // Read input commend
+    // Read input comment
     int byte;
 
     //  Extract Comment, and ignore it.
@@ -133,7 +133,7 @@ FreeSurferBinaryMeshIO::ReadMeshInformation()
       byte = m_InputFile.get();
       if (byte == EOF)
       {
-        itkExceptionMacro(<< "Unexpected EOF");
+        itkExceptionMacro("Unexpected EOF");
       }
     }
     // Try to get the second '\n', but if the '\n' is not there, we put the byte
@@ -143,7 +143,7 @@ FreeSurferBinaryMeshIO::ReadMeshInformation()
     {
       if (byte == EOF)
       {
-        itkExceptionMacro(<< "Unexpected EOF");
+        itkExceptionMacro("Unexpected EOF");
       }
       m_InputFile.unget();
     }
@@ -211,17 +211,17 @@ FreeSurferBinaryMeshIO::ReadMeshInformation()
   }
   else
   {
-    itkExceptionMacro(<< "Unvalid file type " << m_FileTypeIdentifier);
+    itkExceptionMacro("Invalid file type " << m_FileTypeIdentifier);
   }
 
   // Set default point pixel component and point pixel type
   this->m_PointPixelComponentType = IOComponentEnum::FLOAT;
-  this->m_NumberOfPointPixelComponents = itk::NumericTraits<unsigned int>::OneValue();
+  this->m_NumberOfPointPixelComponents = 1;
   this->m_PointPixelType = IOPixelEnum::SCALAR;
 
   // Set default cell pixel component and point pixel type
   this->m_CellPixelComponentType = IOComponentEnum::FLOAT;
-  this->m_NumberOfCellPixelComponents = itk::NumericTraits<unsigned int>::OneValue();
+  this->m_NumberOfCellPixelComponents = 1;
   this->m_CellPixelType = IOPixelEnum::SCALAR;
 
   CloseFile();
@@ -298,10 +298,10 @@ FreeSurferBinaryMeshIO::WriteMeshInformation()
   if (this->m_UpdatePoints && this->m_UpdateCells)
   {
     // MAGIC_NUMBER = 16777214 ( little endian )
-    const char buffer[3] = { static_cast<char>(255), static_cast<char>(255), static_cast<char>(254) };
+    constexpr char buffer[3] = { static_cast<char>(255), static_cast<char>(255), static_cast<char>(254) };
     outputFile.write(buffer, 3);
 
-    std::string creator = "Created by ITK  \n\n";
+    const std::string creator = "Created by ITK  \n\n";
     outputFile.write(const_cast<char *>(creator.c_str()), creator.size());
 
     auto numberOfPoints = static_cast<itk::uint32_t>(this->m_NumberOfPoints);
@@ -312,12 +312,12 @@ FreeSurferBinaryMeshIO::WriteMeshInformation()
   else if (this->m_UpdatePointData && (!this->m_UpdatePoints && !this->m_UpdateCells))
   {
     // MAGIC_NUMBER = 16777215 ( little endian )
-    const char buffer[3] = { static_cast<char>(255), static_cast<char>(255), static_cast<char>(255) };
+    constexpr char buffer[3] = { static_cast<char>(255), static_cast<char>(255), static_cast<char>(255) };
     outputFile.write(buffer, 3);
 
-    auto          numberOfPoints = static_cast<itk::uint32_t>(this->m_NumberOfPointPixels);
-    auto          numberOfCells = static_cast<itk::uint32_t>(this->m_NumberOfCells);
-    itk::uint32_t numberOfValuesPerPoint = 1;
+    auto                    numberOfPoints = static_cast<itk::uint32_t>(this->m_NumberOfPointPixels);
+    auto                    numberOfCells = static_cast<itk::uint32_t>(this->m_NumberOfCells);
+    constexpr itk::uint32_t numberOfValuesPerPoint = 1;
     itk::ByteSwapper<itk::uint32_t>::SwapWriteRangeFromSystemToBigEndian(&numberOfPoints, 1, &outputFile);
     itk::ByteSwapper<itk::uint32_t>::SwapWriteRangeFromSystemToBigEndian(&numberOfCells, 1, &outputFile);
     itk::ByteSwapper<itk::uint32_t>::SwapWriteRangeFromSystemToBigEndian(&numberOfValuesPerPoint, 1, &outputFile);
@@ -427,7 +427,7 @@ FreeSurferBinaryMeshIO::WritePoints(void * buffer)
     }
     default:
     {
-      itkExceptionMacro(<< "Unknown point pixel component type" << std::endl);
+      itkExceptionMacro("Unknown point pixel component type" << std::endl);
     }
   }
 
@@ -523,7 +523,7 @@ FreeSurferBinaryMeshIO::WriteCells(void * buffer)
     }
     default:
     {
-      itkExceptionMacro(<< "Unknown cell component type" << std::endl);
+      itkExceptionMacro("Unknown cell component type" << std::endl);
     }
   }
 
@@ -631,7 +631,7 @@ FreeSurferBinaryMeshIO::WritePointData(void * buffer)
     }
     default:
     {
-      itkExceptionMacro(<< "Unknown point data pixel component type" << std::endl);
+      itkExceptionMacro("Unknown point data pixel component type" << std::endl);
     }
   }
 

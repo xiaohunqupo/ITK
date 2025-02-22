@@ -42,11 +42,11 @@ namespace itk
  * Example:
  * A user wants to optimize two Affine transforms together, then add a
  * Deformation Field (DF) transform, and optimize it separately.
- * He first adds the two Affines, then runs the optimization and both Affines
- * transforms are optimized. Next, he adds the DF transform and calls
+ * They first add the two Affines, then run the optimization and both Affines
+ * transform parameters are optimized. Next, they add the DF transform and call
  * SetOnlyMostRecentTransformToOptimizeOn, which clears the optimization flags
  * for both of the affine transforms, and leaves the flag set only for the DF
- * transform, since it was the last transform added. Now he runs the
+ * transform, since it was the last transform added. Now they run the
  * optimization and only the DF transform is optimized, but the affines are
  * included in the transformation during the optimization.
  *
@@ -95,8 +95,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CompositeTransform, Transform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CompositeTransform);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -206,7 +206,7 @@ public:
     this->SetNthTransformToOptimizeOn(this->GetNumberOfTransforms() - 1);
   }
 
-  /* Get whether the Nth transform is set to be optimizied */
+  /* Get whether the Nth transform is set to be optimized */
   /* NOTE: ambiguous function name here - are we getting if the Nth transform
       is set to be optimized, or the Nth of the transforms that are set to be
       optimized? */

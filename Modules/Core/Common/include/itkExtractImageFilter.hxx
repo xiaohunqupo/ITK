@@ -24,9 +24,7 @@
 
 namespace itk
 {
-/**
- *
- */
+
 template <typename TInputImage, typename TOutputImage>
 ExtractImageFilter<TInputImage, TOutputImage>::ExtractImageFilter()
 {
@@ -34,9 +32,6 @@ ExtractImageFilter<TInputImage, TOutputImage>::ExtractImageFilter()
   this->DynamicMultiThreadingOn();
 }
 
-/**
- *
- */
 template <typename TInputImage, typename TOutputImage>
 void
 ExtractImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
@@ -54,7 +49,7 @@ ExtractImageFilter<TInputImage, TOutputImage>::CallCopyOutputRegionToInputRegion
   InputImageRegionType &        destRegion,
   const OutputImageRegionType & srcRegion)
 {
-  ExtractImageFilterRegionCopierType extractImageRegionCopier;
+  const ExtractImageFilterRegionCopierType extractImageRegionCopier;
 
   extractImageRegionCopier(destRegion, srcRegion, m_ExtractionRegion);
 }
@@ -67,23 +62,24 @@ ExtractImageFilter<TInputImage, TOutputImage>::SetExtractionRegion(InputImageReg
                 "InputImageDimension must be greater than OutputImageDimension");
   m_ExtractionRegion = extractRegion;
 
-  unsigned int        nonzeroSizeCount = 0;
-  InputImageSizeType  inputSize = extractRegion.GetSize();
-  OutputImageSizeType outputSize;
-  outputSize.Fill(0);
-  OutputImageIndexType outputIndex;
-  outputIndex.Fill(0);
+  InputImageSizeType   inputSize = extractRegion.GetSize();
+  OutputImageSizeType  outputSize{};
+  OutputImageIndexType outputIndex{};
 
   /**
    * check to see if the number of non-zero entries in the extraction region
    * matches the number of dimensions in the output image.
    */
+  unsigned int nonzeroSizeCount = 0;
   for (unsigned int i = 0; i < InputImageDimension; ++i)
   {
     if (inputSize[i])
     {
-      outputSize[nonzeroSizeCount] = inputSize[i];
-      outputIndex[nonzeroSizeCount] = extractRegion.GetIndex()[i];
+      if (nonzeroSizeCount < OutputImageDimension)
+      {
+        outputSize[nonzeroSizeCount] = inputSize[i];
+        outputIndex[nonzeroSizeCount] = extractRegion.GetIndex()[i];
+      }
       ++nonzeroSizeCount;
     }
   }
@@ -101,15 +97,6 @@ ExtractImageFilter<TInputImage, TOutputImage>::SetExtractionRegion(InputImageReg
   this->Modified();
 }
 
-/**
- * ExtractImageFilter can produce an image which is a different resolution
- * than its input image.  As such, ExtractImageFilter needs to provide an
- * implementation for GenerateOutputInformation() in order to inform
- * the pipeline execution model.  The original documentation of this
- * method is below.
- *
- * \sa ProcessObject::GenerateOutputInformaton()
- */
 template <typename TInputImage, typename TOutputImage>
 void
 ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
@@ -118,8 +105,8 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   // this filter allows the input and the output to be of different dimensions
 
   // get pointers to the input and output
-  typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
-  typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
+  const typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
+  const typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
 
   if (!outputPtr || !inputPtr)
   {
@@ -130,11 +117,7 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   outputPtr->SetLargestPossibleRegion(m_OutputImageRegion);
 
   // Set the output spacing and origin
-  const ImageBase<InputImageDimension> * phyData;
-
-  phyData = dynamic_cast<const ImageBase<InputImageDimension> *>(this->GetInput());
-
-  if (phyData)
+  if (this->GetInput())
   {
     // Copy what we can from the image from spacing and origin of the input
     // This logic needs to be augmented with logic that select which
@@ -146,8 +129,7 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
 
     typename OutputImageType::SpacingType   outputSpacing;
     typename OutputImageType::DirectionType outputDirection;
-    typename OutputImageType::PointType     outputOrigin;
-    outputOrigin.Fill(0.0);
+    typename OutputImageType::PointType     outputOrigin{};
 
     if (static_cast<unsigned int>(OutputImageDimension) > static_cast<unsigned int>(InputImageDimension))
     {
@@ -215,7 +197,7 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
         {
           if (vnl_determinant(outputDirection.GetVnlMatrix()) == 0.0)
           {
-            itkExceptionMacro(<< "Invalid submatrix extracted for collapsed direction.");
+            itkExceptionMacro("Invalid submatrix extracted for collapsed direction.");
           }
         }
         break;
@@ -247,7 +229,7 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   else
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::ExtractImageFilter::GenerateOutputInformation "
+    itkExceptionMacro("itk::ExtractImageFilter::GenerateOutputInformation "
                       << "cannot cast input to " << typeid(ImageBase<InputImageDimension> *).name());
   }
 }
@@ -278,24 +260,12 @@ ExtractImageFilter<TInputImage, TOutputImage>::GenerateData()
   this->Superclass::GenerateData();
 }
 
-/**
- * ExtractImageFilter can be implemented as a multithreaded filter.
- * Therefore, this implementation provides a DynamicThreadedGenerateData()
- * routine which is called for each processing thread. The output
- * image data is allocated automatically by the superclass prior to
- * calling DynamicThreadedGenerateData().  DynamicThreadedGenerateData can only
- * write to the portion of the output image specified by the
- * parameter "outputRegionForThread"
- *
- * \sa ImageToImageFilter::ThreadedGenerateData(),
- *     ImageToImageFilter::GenerateData()
- */
 template <typename TInputImage, typename TOutputImage>
 void
 ExtractImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   const OutputImageRegionType & outputRegionForThread)
 {
-  itkDebugMacro(<< "Actually executing");
+  itkDebugMacro("Actually executing");
 
   const InputImageType * inputPtr = this->GetInput();
   OutputImageType *      outputPtr = this->GetOutput();

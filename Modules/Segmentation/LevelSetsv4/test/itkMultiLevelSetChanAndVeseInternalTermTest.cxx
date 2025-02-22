@@ -57,11 +57,9 @@ itkMultiLevelSetChanAndVeseInternalTermTest(int, char *[])
   size[0] = 10;
   size[1] = 10;
 
-  ImageType::RegionType region;
-  region.SetIndex(index);
-  region.SetSize(size);
+  const ImageType::RegionType region{ index, size };
 
-  PixelType value = 0.;
+  constexpr PixelType value = 0.;
 
   auto input = InputImageType::New();
   input->SetRegions(region);
@@ -101,7 +99,7 @@ itkMultiLevelSetChanAndVeseInternalTermTest(int, char *[])
   auto domainMapFilter = DomainMapImageFilterType::New();
   domainMapFilter->SetInput(id_image);
   domainMapFilter->Update();
-  CacheImageType::Pointer output = domainMapFilter->GetOutput();
+  const CacheImageType::Pointer output = domainMapFilter->GetOutput();
   std::cout << "Domain partition computed" << std::endl;
 
   IteratorType it1(input1, input1->GetLargestPossibleRegion());

@@ -22,9 +22,7 @@
 
 namespace itk
 {
-/**
- * Initialize member variables with meaningful values.
- */
+
 template <typename TInputImage, typename TOutputImage>
 DirectFourierReconstructionImageToImageFilter<TInputImage,
                                               TOutputImage>::DirectFourierReconstructionImageToImageFilter()
@@ -46,31 +44,25 @@ DirectFourierReconstructionImageToImageFilter<TInputImage,
   m_PI = 4 * std::atan(RADIANS);
 }
 
-/**
- * Print out class state (member variables)
- */
 template <typename TInputImage, typename TOutputImage>
 void
 DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os,
                                                                                     Indent         indent) const
 {
-  // call the superclass' implementation of this method
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "Zero Padding Factor: " << this->GetZeroPadding() << std::endl;
-  os << indent << "Fourier Oversampling Factor: " << this->GetOverSampling() << std::endl;
-  os << indent << "Radial Spline Order: " << this->GetRadialSplineOrder() << std::endl;
-  os << indent << "Fourier Radial Cutoff Frequency: " << this->GetCutoff() << std::endl;
-  os << indent << "Alpha Range: " << this->GetAlphaRange() << std::endl;
-  os << indent << "Z Direction: " << this->GetZDirection() << std::endl;
-  os << indent << "Alpha Direction: " << this->GetAlphaDirection() << std::endl;
-  os << indent << "Radial Direction: " << this->GetRDirection() << std::endl;
-  os << indent << "Input Requested Region: " << m_InputRequestedRegion << std::endl;
+  os << indent << "ZeroPaddingFactor: " << m_ZeroPadding << std::endl;
+  os << indent << "OverSampling: " << m_OverSampling << std::endl;
+  os << indent << "Cutoff: " << m_Cutoff << std::endl;
+  os << indent << "AlphaRange: " << m_AlphaRange << std::endl;
+  os << indent << "ZDirection: " << m_ZDirection << std::endl;
+  os << indent << "AlphaDirection: " << m_AlphaDirection << std::endl;
+  os << indent << "RDirection: " << m_RDirection << std::endl;
+  os << indent << "RadialSplineOrder: " << m_RadialSplineOrder << std::endl;
+  os << indent << "PI: " << m_PI << std::endl;
+  os << indent << "InputRequestedRegion: " << m_InputRequestedRegion << std::endl;
 }
 
-/**
- * Calculate image boundaries and define output regions, spacing, origin etc.
- */
 template <typename TInputImage, typename TOutputImage>
 void
 DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
@@ -123,9 +115,6 @@ DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::Genera
   outputImage->SetSpacing(outputSpacing);
 }
 
-/**
- * Calculate necessary input image boundaries
- */
 template <typename TInputImage, typename TOutputImage>
 void
 DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion()
@@ -156,9 +145,6 @@ DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::Genera
   inputImage->SetRequestedRegion(m_InputRequestedRegion);
 }
 
-/**
- * Actual computation
- */
 template <typename TInputImage, typename TOutputImage>
 void
 DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::GenerateData()
@@ -204,8 +190,7 @@ DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::Genera
   pRegion.SetSize(pSize);
   pRegion.SetIndex(pStart);
   projectionLine->SetRegions(pRegion);
-  projectionLine->Allocate(true); // initialize
-                                  // buffer to zero
+  projectionLine->AllocateInitialized();
 
   ProjectionLineType::IndexType pIdx;
   const unsigned int            pLineHalfShift = pSize[0] - inputROISize[m_RDirection] / 2;
@@ -234,8 +219,7 @@ DirectFourierReconstructionImageToImageFilter<TInputImage, TOutputImage>::Genera
 
   auto FFTSlice = FFTSliceType::New();
   FFTSlice->SetRegions(FFTSliceRegion);
-  FFTSlice->Allocate(true); // initialize
-                            // buffer to zero
+  FFTSlice->AllocateInitialized();
 
   FFTSliceIteratorType    FFTSliceIt(FFTSlice, FFTSliceRegion);
   FFTSliceType::IndexType sIdx;

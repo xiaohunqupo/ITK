@@ -80,8 +80,8 @@ public:
   using typename Superclass::PixelType;
   using typename Superclass::AccessorType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LineIterator, LineConstIterator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LineIterator);
 
   /** Set the pixel value */
   void

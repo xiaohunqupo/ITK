@@ -81,7 +81,7 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValueThreadProcessS
   const MovingImagePointType & itkNotUsed(mappedPoint),
   double                       movingImageValue) const
 {
-  double diff = movingImageValue - this->m_FixedImageSamples[fixedImageSample].value;
+  const double diff = movingImageValue - this->m_FixedImageSamples[fixedImageSample].value;
 
   m_PerThread[threadId].m_MSE += diff * diff;
 
@@ -97,12 +97,12 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValue(const Paramet
 
   if (!this->m_FixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   for (unsigned int i = 0; i < this->m_NumberOfWorkUnits; ++i)
   {
-    m_PerThread[i].m_MSE = NumericTraits<MeasureType>::ZeroValue();
+    m_PerThread[i].m_MSE = MeasureType{};
   }
 
   // Set up the parameters in the transform
@@ -139,13 +139,13 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValueAndDerivativeT
   double                       movingImageValue,
   const ImageDerivativesType & movingImageGradientValue) const
 {
-  double diff = movingImageValue - this->m_FixedImageSamples[fixedImageSample].value;
+  const double diff = movingImageValue - this->m_FixedImageSamples[fixedImageSample].value;
 
   AlignedPerThreadType & threadS = m_PerThread[threadId];
 
   threadS.m_MSE += diff * diff;
 
-  FixedImagePointType fixedImagePoint = this->m_FixedImageSamples[fixedImageSample].point;
+  const FixedImagePointType fixedImagePoint = this->m_FixedImageSamples[fixedImageSample].point;
 
   // Need to use one of the threader transforms if we're
   // not in thread 0.
@@ -164,16 +164,33 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValueAndDerivativeT
     transform = this->m_Transform;
   }
 
-  // Jacobian should be evaluated at the unmapped (fixed image) point.
-  transform->ComputeJacobianWithRespectToParameters(fixedImagePoint, threadS.m_Jacobian);
-  for (unsigned int par = 0; par < this->m_NumberOfParameters; ++par)
+  if (this->m_BSplineTransform && this->m_UseCachingOfBSplineWeights)
   {
-    double sum = 0.0;
-    for (unsigned int dim = 0; dim < MovingImageDimension; ++dim)
+    // using pre-computed weights and indexes to calculate only non zero elements of the derivative
+    for (unsigned int w = 0; w < this->m_NumBSplineWeights; ++w)
     {
-      sum += 2.0 * diff * threadS.m_Jacobian(dim, par) * movingImageGradientValue[dim];
+      const auto precomputedIndex = this->m_BSplineTransformIndicesArray[fixedImageSample][w];
+      const auto precomputedWeight = this->m_BSplineTransformWeightsArray[fixedImageSample][w];
+      for (unsigned int dim = 0; dim < MovingImageDimension; ++dim)
+      {
+        const int par = precomputedIndex + this->m_BSplineParametersOffset[dim];
+        threadS.m_MSEDerivative[par] += 2.0 * diff * precomputedWeight * movingImageGradientValue[dim];
+      }
     }
-    threadS.m_MSEDerivative[par] += sum;
+  }
+  else
+  {
+    // Use generic transform to compute Jacobian at the unmapped (fixed image) point.
+    transform->ComputeJacobianWithRespectToParameters(fixedImagePoint, threadS.m_Jacobian);
+    for (unsigned int par = 0; par < this->m_NumberOfParameters; ++par)
+    {
+      double sum = 0.0;
+      for (unsigned int dim = 0; dim < MovingImageDimension; ++dim)
+      {
+        sum += 2.0 * diff * threadS.m_Jacobian(dim, par) * movingImageGradientValue[dim];
+      }
+      threadS.m_MSEDerivative[par] += sum;
+    }
   }
 
   return true;
@@ -187,7 +204,7 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValueAndDerivative(
 {
   if (!this->m_FixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   // Set up the parameters in the transform
@@ -196,7 +213,7 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetValueAndDerivative(
   // Reset the joint pdfs to zero
   for (unsigned int i = 0; i < this->m_NumberOfWorkUnits; ++i)
   {
-    m_PerThread[i].m_MSE = NumericTraits<MeasureType>::ZeroValue();
+    m_PerThread[i].m_MSE = MeasureType{};
   }
 
   // Set output values to zero
@@ -247,7 +264,7 @@ MeanSquaresImageToImageMetric<TFixedImage, TMovingImage>::GetDerivative(const Pa
 {
   if (!this->m_FixedImage)
   {
-    itkExceptionMacro(<< "Fixed image has not been assigned");
+    itkExceptionMacro("Fixed image has not been assigned");
   }
 
   MeasureType value;

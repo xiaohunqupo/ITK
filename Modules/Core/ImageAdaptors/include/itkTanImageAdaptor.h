@@ -91,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TanImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TanImageAdaptor);
 
 protected:
   TanImageAdaptor() = default;

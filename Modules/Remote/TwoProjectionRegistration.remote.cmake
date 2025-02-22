@@ -42,8 +42,9 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Arnaud Gelas <arnaudgelas@gmail.com>
-itk_fetch_module(TwoProjectionRegistration
-"An ITK-based implementation of intensity-based 2D/3D
+itk_fetch_module(
+  TwoProjectionRegistration
+  "An ITK-based implementation of intensity-based 2D/3D
 rigid image registration for patient setup assessment in external beam
 radiotherapy. The registration framework was designed to simultaneously
 register two projection images to a 3D image volume. The projection geometry
@@ -56,10 +57,10 @@ to compute projection images from a 3D image volume.
 A more detailed description can be found in the Insight Journal article::
 
 Wu, J. \"ITK-Based Implementation of Two-Projection 2D/3D Registration Method with an Application in Patient Setup for External Beam Radiotherapy\".
-  https://www.insight-journal.org/browse/publication/784
+  https://doi.org/10.54294/6f280b
   December, 2010.
 "
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKTwoProjectionRegistration.git
-  GIT_TAG 2cf7d9522031c613a3edcdcd76aee2896536672e
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKTwoProjectionRegistration.git
+  GIT_TAG 7e995fcabd81f2e5099d582e5eec78702f8f4943
   )

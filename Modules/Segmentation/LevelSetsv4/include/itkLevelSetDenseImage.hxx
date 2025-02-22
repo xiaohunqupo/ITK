@@ -42,7 +42,7 @@ template <typename TImage>
 auto
 LevelSetDenseImage<TImage>::Evaluate(const InputType & inputIndex) const -> OutputType
 {
-  InputType mapIndex = inputIndex - this->m_DomainOffset;
+  const InputType mapIndex = inputIndex - this->m_DomainOffset;
   return this->m_Image->GetPixel(mapIndex);
 }
 
@@ -73,8 +73,8 @@ LevelSetDenseImage<TImage>::CopyInformation(const DataObject * data)
   if (!LevelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::LevelSetDenseImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::LevelSetDenseImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                                << typeid(Self *).name());
   }
 }
 
@@ -88,8 +88,8 @@ LevelSetDenseImage<TImage>::Graft(const DataObject * data)
   if (!LevelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::LevelSetDenseImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::LevelSetDenseImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                                << typeid(Self *).name());
   }
 
   this->m_Image = LevelSet->m_Image;
@@ -101,7 +101,7 @@ bool
 LevelSetDenseImage<TImage>::IsInsideDomain(const InputType & inputIndex) const
 {
   const RegionType largestRegion = this->m_Image->GetLargestPossibleRegion();
-  InputType        mapIndex = inputIndex - this->m_DomainOffset;
+  const InputType  mapIndex = inputIndex - this->m_DomainOffset;
   return largestRegion.IsInside(mapIndex);
 }
 

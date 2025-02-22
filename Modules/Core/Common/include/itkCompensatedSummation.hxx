@@ -23,9 +23,9 @@ namespace itk
 {
 
 void ITKCommon_EXPORT
-     CompensatedSummationAddElement(float & compensation, float & sum, const float element);
+CompensatedSummationAddElement(float & compensation, float & sum, const float element);
 void ITKCommon_EXPORT
-     CompensatedSummationAddElement(double & compensation, double & sum, const double element);
+CompensatedSummationAddElement(double & compensation, double & sum, const double element);
 
 #ifndef itkCompensatedSummation_cxx
 // We try the looser pragma guards if we don't have an explicit instantiation.
@@ -61,27 +61,8 @@ CompensatedSummationAddElement(TFloat & compensation, TFloat & sum, const TFloat
 template <typename TFloat>
 CompensatedSummation<TFloat>::CompensatedSummation(const TFloat value)
   : m_Sum(value)
-  , m_Compensation(NumericTraits<AccumulateType>::ZeroValue())
+  , m_Compensation(AccumulateType{})
 {}
-
-template <typename TFloat>
-CompensatedSummation<TFloat>::CompensatedSummation(const Self & rhs)
-{
-  this->m_Sum = rhs.m_Sum;
-  this->m_Compensation = rhs.m_Compensation;
-}
-
-template <typename TFloat>
-auto
-CompensatedSummation<TFloat>::operator=(const Self & rhs) -> Self &
-{
-  if (this != &rhs)
-  {
-    this->m_Sum = rhs.m_Sum;
-    this->m_Compensation = rhs.m_Compensation;
-  }
-  return *this;
-}
 
 template <typename TFloat>
 void
@@ -138,8 +119,8 @@ template <typename TFloat>
 void
 CompensatedSummation<TFloat>::ResetToZero()
 {
-  this->m_Sum = NumericTraits<AccumulateType>::ZeroValue();
-  this->m_Compensation = NumericTraits<AccumulateType>::ZeroValue();
+  this->m_Sum = AccumulateType{};
+  this->m_Compensation = AccumulateType{};
 }
 
 template <typename TFloat>
@@ -147,7 +128,7 @@ CompensatedSummation<TFloat> &
 CompensatedSummation<TFloat>::operator=(const FloatType & rhs)
 {
   this->m_Sum = rhs;
-  this->m_Compensation = NumericTraits<AccumulateType>::ZeroValue();
+  this->m_Compensation = AccumulateType{};
 
   return *this;
 }

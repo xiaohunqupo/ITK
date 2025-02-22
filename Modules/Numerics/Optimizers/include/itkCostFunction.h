@@ -44,8 +44,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CostFunctionTemplate, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CostFunctionTemplate);
 
   /**  ParametersType type alias.
    *  It defines a position in the optimization search space. */

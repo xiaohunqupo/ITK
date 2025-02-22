@@ -69,8 +69,8 @@ public:
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RandomImageSource, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RandomImageSource);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

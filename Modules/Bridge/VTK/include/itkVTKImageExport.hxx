@@ -97,7 +97,7 @@ VTKImageExport<TInputImage>::VTKImageExport()
   }
   else
   {
-    itkExceptionMacro(<< "Type currently not supported");
+    itkExceptionMacro("Type currently not supported");
   }
 }
 
@@ -137,16 +137,16 @@ template <typename TInputImage>
 int *
 VTKImageExport<TInputImage>::WholeExtentCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
-  InputRegionType region = input->GetLargestPossibleRegion();
-  InputSizeType   size = region.GetSize();
-  InputIndexType  index = region.GetIndex();
+  const InputRegionType region = input->GetLargestPossibleRegion();
+  InputSizeType         size = region.GetSize();
+  InputIndexType        index = region.GetIndex();
 
   unsigned int i = 0;
   // Fill in the known portion of the extent.
@@ -172,11 +172,11 @@ template <typename TInputImage>
 double *
 VTKImageExport<TInputImage>::SpacingCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
   const typename TInputImage::SpacingType & spacing = input->GetSpacing();
@@ -203,7 +203,7 @@ template <typename TInputImage>
 float *
 VTKImageExport<TInputImage>::FloatSpacingCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   const typename TInputImage::SpacingType & spacing = input->GetSpacing();
 
@@ -229,11 +229,11 @@ template <typename TInputImage>
 double *
 VTKImageExport<TInputImage>::OriginCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
   const typename TInputImage::PointType & origin = input->GetOrigin();
@@ -260,7 +260,7 @@ template <typename TInputImage>
 float *
 VTKImageExport<TInputImage>::FloatOriginCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   const typename TInputImage::PointType & origin = input->GetOrigin();
 
@@ -286,11 +286,11 @@ template <typename TInputImage>
 double *
 VTKImageExport<TInputImage>::DirectionCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
   const typename TInputImage::DirectionType & direction = input->GetDirection();
@@ -360,10 +360,10 @@ VTKImageExport<TInputImage>::PropagateUpdateExtentCallback(int * extent)
 
   const InputRegionType region(index, size);
 
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
   input->SetRequestedRegion(region);
@@ -379,16 +379,16 @@ template <typename TInputImage>
 int *
 VTKImageExport<TInputImage>::DataExtentCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
-  InputRegionType region = input->GetBufferedRegion();
-  InputSizeType   size = region.GetSize();
-  InputIndexType  index = region.GetIndex();
+  const InputRegionType region = input->GetBufferedRegion();
+  InputSizeType         size = region.GetSize();
+  InputIndexType        index = region.GetIndex();
 
   unsigned int i = 0;
   for (; i < InputImageDimension; ++i)
@@ -412,11 +412,11 @@ template <typename TInputImage>
 void *
 VTKImageExport<TInputImage>::BufferPointerCallback()
 {
-  InputImagePointer input = this->GetInput();
+  const InputImagePointer input = this->GetInput();
 
   if (!input)
   {
-    itkExceptionMacro(<< "Need to set an input");
+    itkExceptionMacro("Need to set an input");
   }
 
   return input->GetBufferPointer();

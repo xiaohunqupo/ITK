@@ -45,11 +45,11 @@ itkOptimizersHierarchyTest(int, char *[])
   using OptimizerType = itk::Optimizer;
   auto genericOptimizer = OptimizerType::New();
 
-  unsigned int spaceDimension = 10;
+  constexpr unsigned int spaceDimension = 10;
 
-  OptimizerType::ParametersType initialPosition(spaceDimension);
-  OptimizerType::ParametersType currentPosition(spaceDimension);
-  OptimizerType::ScalesType     parameterScale(spaceDimension);
+  OptimizerType::ParametersType       initialPosition(spaceDimension);
+  const OptimizerType::ParametersType currentPosition(spaceDimension);
+  OptimizerType::ScalesType           parameterScale(spaceDimension);
 
   parameterScale.Fill(1.5);
   initialPosition.Fill(2.0);
@@ -59,7 +59,7 @@ itkOptimizersHierarchyTest(int, char *[])
 
   const OptimizerType::ScalesType & parameterScaleGot = genericOptimizer->GetScales();
 
-  const double tolerance = 1e-10;
+  constexpr double tolerance = 1e-10;
 
   for (unsigned int i = 0; i < spaceDimension; ++i)
   {
@@ -145,6 +145,12 @@ itkOptimizersHierarchyTest(int, char *[])
   auto cumGaussCostFunc = CumulativeGaussianCostFunctionType::New();
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(cumGaussCostFunc, CumulativeGaussianCostFunction, MultipleValuedCostFunction);
+
+
+  // Not used; empty method body; called for coverage purposes
+  const CumulativeGaussianCostFunctionType::ParametersType parameters{};
+  CumulativeGaussianCostFunctionType::DerivativeType       derivative;
+  cumGaussCostFunc->GetDerivative(parameters, derivative);
 
 
   std::cout << "Test finished." << std::endl;

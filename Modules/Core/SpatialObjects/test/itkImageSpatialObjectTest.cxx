@@ -44,12 +44,11 @@ itkImageSpatialObjectTest(int, char *[])
   using Iterator = itk::ImageRegionIterator<ImageType>;
   using PointType = itk::Point<ScalarType, VDimension>;
 
-  auto                  image = ImageType::New();
-  ImageType::SizeType   size = { { 10, 10, 10 } };
-  ImageType::IndexType  index = { { 0, 0, 0 } };
-  ImageType::RegionType region;
-  ImageType::PointType  origin;
-  origin.Fill(5);
+  auto                           image = ImageType::New();
+  constexpr ImageType::SizeType  size = { { 10, 10, 10 } };
+  constexpr ImageType::IndexType index = { { 0, 0, 0 } };
+  ImageType::RegionType          region;
+  auto                           origin = itk::MakeFilled<ImageType::PointType>(5);
 
   region.SetSize(size);
   region.SetIndex(index);
@@ -71,85 +70,59 @@ itkImageSpatialObjectTest(int, char *[])
   ITK_EXERCISE_BASIC_OBJECT_METHODS(imageSO, ImageSpatialObject, SpatialObject);
 
 
-  typename ImageSpatialObject::IndexType sliceNumber;
-  sliceNumber.Fill(0);
+  constexpr typename ImageSpatialObject::IndexType sliceNumber{};
   imageSO->SetSliceNumber(sliceNumber);
   ITK_TEST_SET_GET_VALUE(sliceNumber, imageSO->GetSliceNumber());
 
   imageSO->SetImage(image);
   imageSO->Update();
 
-  ImageSpatialObject::TransformType::OffsetType offset;
-  offset.Fill(5);
+  auto offset = itk::MakeFilled<ImageSpatialObject::TransformType::OffsetType>(5);
 
   imageSO->GetModifiableObjectToParentTransform()->SetOffset(offset);
   imageSO->Update();
 
-  PointType q;
-  PointType r;
-  double    returnedValue;
-  double    expectedValue;
 
-  r.Fill(9);
-  q.Fill(15);
+  auto r = itk::MakeFilled<PointType>(9);
+  auto q = itk::MakeFilled<PointType>(15);
 
   std::cout << "Bounding Box = " << imageSO->GetMyBoundingBoxInWorldSpace()->GetBounds() << std::endl;
-  std::cout << "IsInside()...";
-  if (imageSO->IsInsideInWorldSpace(r) || !imageSO->IsInsideInWorldSpace(q))
-  {
-    std::cout << "[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-  }
-  else
-  {
-    std::cout << "[PASSED]" << std::endl;
-  }
+
+  ITK_TEST_EXPECT_TRUE(!imageSO->IsInsideInWorldSpace(r));
+  ITK_TEST_EXPECT_TRUE(imageSO->IsInsideInWorldSpace(q));
 
   q.Fill(15.1);
-  expectedValue = 555;
+  double expectedValue = 555;
 
-  try
-  {
-    imageSO->ValueAtInWorldSpace(q, returnedValue);
-  }
-  catch (const itk::ExceptionObject &)
-  {
-    throw;
-  }
+  double returnedValue;
+  ITK_TRY_EXPECT_NO_EXCEPTION(imageSO->ValueAtInWorldSpace(q, returnedValue));
+
 
   std::cout << "ValueAt()...";
   if (itk::Math::NotAlmostEquals(returnedValue, expectedValue))
   {
-    std::cout << "Expected: " << expectedValue << " returned: " << returnedValue << std::endl;
-    std::cout << "[FAILED]: " << std::endl;
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "Error in ValueAt at point " << q << std::endl;
+    std::cerr << "Expected value " << expectedValue << std::endl;
+    std::cerr << " differs from " << returnedValue << std::endl;
     return EXIT_FAILURE;
   }
-  else
-  {
-    std::cout << "[PASSED]" << std::endl;
-  }
+
+  std::cout << "[PASSED]" << std::endl;
+
 
   ImageSpatialObject::DerivativeVectorType derivative;
-  ImageSpatialObject::DerivativeVectorType expectedDerivative;
-  Pixel                                    expectedPixel;
-
   imageSO->DerivativeAtInWorldSpace(q, 1, derivative);
-  expectedPixel = 1;
+  Pixel                                    expectedPixel = 1;
+  ImageSpatialObject::DerivativeVectorType expectedDerivative;
   expectedDerivative[0] = expectedPixel;
   expectedPixel = 10;
   expectedDerivative[1] = expectedPixel;
   expectedPixel = 100;
   expectedDerivative[2] = expectedPixel;
-  std::cout << "DerivativeAt()...";
-  if (derivative != expectedDerivative)
-  {
-    std::cout << "[FAILED]" << std::endl;
-    return EXIT_FAILURE;
-  }
-  else
-  {
-    std::cout << "[PASSED]" << std::endl;
-  }
+
+  ITK_TEST_EXPECT_EQUAL(derivative, expectedDerivative);
+
 
   // Now testing the ValueAt() with an interpolator
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
@@ -163,15 +136,19 @@ itkImageSpatialObjectTest(int, char *[])
 
 
   std::cout << "ValueAt() with interpolator...";
-  if (itk::Math::abs(returnedValue - expectedValue) > 0.001)
+  double epsilon = 0.001;
+  if (itk::Math::abs(returnedValue - expectedValue) > epsilon)
   {
-    std::cout << "Expected: " << expectedValue << " returned: " << returnedValue << std::endl;
+    std::cerr.precision(static_cast<int>(itk::Math::abs(std::log10(epsilon))));
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "Error in ValueAt at point " << q << std::endl;
+    std::cerr << "Expected value " << expectedValue << std::endl;
+    std::cerr << " differs from " << returnedValue;
+    std::cerr << " by more than " << epsilon << std::endl;
     return EXIT_FAILURE;
   }
-  else
-  {
-    std::cout << "[PASSED]" << std::endl;
-  }
+
+  std::cout << "[PASSED]" << std::endl;
 
 
   imageSO->DerivativeAtInWorldSpace(q, 1, derivative);
@@ -179,20 +156,23 @@ itkImageSpatialObjectTest(int, char *[])
   expectedDerivative[1] = 10;
   expectedDerivative[2] = 100;
   std::cout << "DerivativeAt() with interpolator ...";
-  if (itk::Math::abs(derivative[0] - expectedDerivative[0]) > 0.00001 ||
-      itk::Math::abs(derivative[1] - expectedDerivative[1]) > 0.00001 ||
-      itk::Math::abs(derivative[2] - expectedDerivative[2]) > 0.00001)
+  epsilon = 0.00001;
+  if (itk::Math::abs(derivative[0] - expectedDerivative[0]) > epsilon ||
+      itk::Math::abs(derivative[1] - expectedDerivative[1]) > epsilon ||
+      itk::Math::abs(derivative[2] - expectedDerivative[2]) > epsilon)
   {
-    std::cout << "Expected: " << derivative << " returned: " << expectedDerivative << std::endl;
-    std::cout << "[FAILED]" << std::endl;
+    std::cerr.precision(static_cast<int>(itk::Math::abs(std::log10(epsilon))));
+    std::cerr << "Test failed!" << std::endl;
+    std::cerr << "Error in ValueAt at point " << q << std::endl;
+    std::cerr << "Expected value " << expectedDerivative << std::endl;
+    std::cerr << " differs from " << derivative;
+    std::cerr << " by more than " << epsilon << std::endl;
     return EXIT_FAILURE;
   }
-  else
-  {
-    std::cout << "[PASSED]" << std::endl;
-  }
+
+  std::cout << "[PASSED]" << std::endl;
 
 
-  std::cout << "Test finished" << std::endl;
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

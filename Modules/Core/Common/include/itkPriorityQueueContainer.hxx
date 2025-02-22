@@ -35,9 +35,9 @@ const typename ElementWrapperInterface<TElement, TElementIdentifier>::ElementIde
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 template <typename TElementWrapperPointer, typename TElementIdentifier>
-typename ElementWrapperPointerInterface<TElementWrapperPointer, TElementIdentifier>::ElementIdentifierType
+auto
 ElementWrapperPointerInterface<TElementWrapperPointer, TElementIdentifier>::GetLocation(
-  const ElementWrapperPointerType & element) const
+  const ElementWrapperPointerType & element) const -> ElementIdentifierType
 {
   return (element->GetLocation(*element));
 }
@@ -130,9 +130,9 @@ MinPriorityQueueElementWrapper<TElement, TElementPriority, TElementIdentifier>::
 
 // -----------------------------------------------------------------------------
 template <typename TElement, typename TElementPriority, typename TElementIdentifier>
-typename MinPriorityQueueElementWrapper<TElement, TElementPriority, TElementIdentifier>::ElementIdentifierType
+auto
 MinPriorityQueueElementWrapper<TElement, TElementPriority, TElementIdentifier>::GetLocation(
-  const MinPriorityQueueElementWrapper & element) const
+  const MinPriorityQueueElementWrapper & element) const -> ElementIdentifierType
 {
   return element.m_Location;
 }
@@ -296,7 +296,7 @@ const typename PriorityQueueContainer<TElementWrapper, TElementWrapperInterface,
 {
   if (Empty())
   {
-    itkGenericExceptionMacro(<< "Empty PriorityQueueContainer");
+    itkGenericExceptionMacro("Empty PriorityQueueContainer");
   }
   return (GetElementAtLocation(0));
 }
@@ -337,13 +337,13 @@ bool
 PriorityQueueContainer<TElementWrapper, TElementWrapperInterface, TElementPriority, TElementIdentifier>::Update(
   const ElementWrapperType & element)
 {
-  ElementIdentifierType location = m_Interface.GetLocation(element);
+  const ElementIdentifierType location = m_Interface.GetLocation(element);
 
   if (location != m_ElementNotFound)
   {
     if (location >= this->Size())
     {
-      itkGenericExceptionMacro(<< " ElementWrapperType location is out of range");
+      itkGenericExceptionMacro(" ElementWrapperType location is out of range");
     }
     UpdateDownTree(location);
     UpdateUpTree(location);
@@ -363,17 +363,17 @@ bool
 PriorityQueueContainer<TElementWrapper, TElementWrapperInterface, TElementPriority, TElementIdentifier>::DeleteElement(
   const ElementWrapperType & element)
 {
-  ElementIdentifierType location = m_Interface.GetLocation(element);
+  const ElementIdentifierType location = m_Interface.GetLocation(element);
 
   if (location != m_ElementNotFound)
   {
     // m_Interface.SetLocation(element, m_ElementNotFound);
 
-    ElementIdentifierType tsize = this->Size();
+    const ElementIdentifierType tsize = this->Size();
 
     if (location >= tsize)
     {
-      itkGenericExceptionMacro(<< " ElementWrapperType location is out of range");
+      itkGenericExceptionMacro(" ElementWrapperType location is out of range");
     }
     else
     {
@@ -438,7 +438,7 @@ PriorityQueueContainer<TElementWrapper, TElementWrapperInterface, TElementPriori
   ElementIdentifierType id(identifier);
   ElementWrapperType    element = GetElementAtLocation(id);
 
-  ElementIdentifierType queueSize = this->Size();
+  const ElementIdentifierType queueSize = this->Size();
 
   while (id < queueSize)
   {

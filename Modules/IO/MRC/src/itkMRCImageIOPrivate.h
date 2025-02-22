@@ -24,8 +24,7 @@
  *  This code was contributed in the Insight Journal paper:
  *  "A Streaming IO Base Class and Support for Streaming the MRC and VTK File Format"
  *  by Lowekamp B., Chen D.
- *  https://www.insight-journal.org/browse/publication/729
- *  https://hdl.handle.net/10380/3171
+ *  https://doi.org/10.54294/ufs19w
  *
  */
 
@@ -74,7 +73,7 @@ min_max_element(TInputIter first, TInputIter last)
       }
       break;
     }
-    else if (*first < *prev)
+    if (*first < *prev)
     {
       if (*first < *(result.first))
       {

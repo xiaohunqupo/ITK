@@ -57,14 +57,14 @@ template <typename TParametersValueType, unsigned int VDimension>
 auto
 ScaleTransform<TParametersValueType, VDimension>::GetParameters() const -> const ParametersType &
 {
-  itkDebugMacro(<< "Getting parameters ");
+  itkDebugMacro("Getting parameters ");
   // Transfer the translation part
   for (unsigned int i = 0; i < SpaceDimension; ++i)
   {
     this->m_Parameters[i] = m_Scale[i];
   }
 
-  itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
+  itkDebugMacro("After getting parameters " << this->m_Parameters);
 
   return this->m_Parameters;
 }
@@ -185,13 +185,7 @@ template <typename TParametersValueType, unsigned int VDimension>
 auto
 ScaleTransform<TParametersValueType, VDimension>::GetInverseTransform() const -> InverseTransformBasePointer
 {
-  Pointer inv = New();
-
-  if (this->GetInverse(inv))
-  {
-    return inv.GetPointer();
-  }
-  return nullptr;
+  return Superclass::InvertTransform(*this);
 }
 
 template <typename TParametersValueType, unsigned int VDimension>
@@ -199,8 +193,7 @@ void
 ScaleTransform<TParametersValueType, VDimension>::SetIdentity()
 {
   Superclass::SetIdentity();
-  ScaleType i;
-  i.Fill(1.0);
+  constexpr auto i = MakeFilled<ScaleType>(1.0);
   this->SetScale(i);
 }
 
@@ -261,8 +254,8 @@ ScaleTransform<TParametersValueType, VDimension>::ComputeMatrix()
 
 // Back transform a point
 template <typename TParametersValueType, unsigned int VDimension>
-inline typename ScaleTransform<TParametersValueType, VDimension>::InputPointType
-ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputPointType & point) const
+inline auto
+ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputPointType & point) const -> InputPointType
 {
   InputPointType         result;
   const InputPointType & center = this->GetCenter();
@@ -276,8 +269,8 @@ ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputPoin
 
 // Back transform a vector
 template <typename TParametersValueType, unsigned int VDimension>
-inline typename ScaleTransform<TParametersValueType, VDimension>::InputVectorType
-ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputVectorType & vect) const
+inline auto
+ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputVectorType & vect) const -> InputVectorType
 {
   InputVectorType result;
 
@@ -290,8 +283,9 @@ ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputVect
 
 // Back transform a vnl_vector
 template <typename TParametersValueType, unsigned int VDimension>
-inline typename ScaleTransform<TParametersValueType, VDimension>::InputVnlVectorType
+inline auto
 ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputVnlVectorType & vect) const
+  -> InputVnlVectorType
 {
   InputVnlVectorType result;
 
@@ -304,8 +298,9 @@ ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputVnlV
 
 // Back Transform a CovariantVector
 template <typename TParametersValueType, unsigned int VDimension>
-inline typename ScaleTransform<TParametersValueType, VDimension>::InputCovariantVectorType
+inline auto
 ScaleTransform<TParametersValueType, VDimension>::BackTransform(const OutputCovariantVectorType & vect) const
+  -> InputCovariantVectorType
 {
   // Covariant Vectors are scaled by the inverse
   InputCovariantVectorType result;

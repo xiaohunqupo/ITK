@@ -85,14 +85,13 @@ GaussianMembershipFunction<TMeasurementVector>::SetCovariance(const CovarianceMa
   // Sanity check
   if (cov.GetVnlMatrix().rows() != cov.GetVnlMatrix().cols())
   {
-    itkExceptionMacro(<< "Covariance matrix must be square");
+    itkExceptionMacro("Covariance matrix must be square");
   }
   if (this->GetMeasurementVectorSize())
   {
     if (cov.GetVnlMatrix().rows() != this->GetMeasurementVectorSize())
     {
-      itkExceptionMacro(<< "Length of measurement vectors must be"
-                        << " the same as the size of the covariance.");
+      itkExceptionMacro("Length of measurement vectors must be the same as the size of the covariance.");
     }
   }
   else
@@ -110,18 +109,18 @@ GaussianMembershipFunction<TMeasurementVector>::SetCovariance(const CovarianceMa
   m_Covariance = cov;
 
   // the inverse of the covariance matrix is first computed by SVD
-  vnl_matrix_inverse<double> inv_cov(m_Covariance.GetVnlMatrix());
+  const vnl_matrix_inverse<double> inv_cov(m_Covariance.GetVnlMatrix());
 
   // the determinant is then costless this way
-  double det = inv_cov.determinant_magnitude();
+  const double det = inv_cov.determinant_magnitude();
 
   if (det < 0.)
   {
-    itkExceptionMacro(<< "det( m_Covariance ) < 0");
+    itkExceptionMacro("det( m_Covariance ) < 0");
   }
 
   // 1e-6 is an arbitrary value!!!
-  const double singularThreshold = 1.0e-6;
+  constexpr double singularThreshold = 1.0e-6;
   m_CovarianceNonsingular = (det > singularThreshold);
 
   if (m_CovarianceNonsingular)
@@ -177,11 +176,11 @@ template <typename TVector>
 typename LightObject::Pointer
 GaussianMembershipFunction<TVector>::InternalClone() const
 {
-  LightObject::Pointer   loPtr = Superclass::InternalClone();
-  typename Self::Pointer membershipFunction = dynamic_cast<Self *>(loPtr.GetPointer());
+  LightObject::Pointer         loPtr = Superclass::InternalClone();
+  const typename Self::Pointer membershipFunction = dynamic_cast<Self *>(loPtr.GetPointer());
   if (membershipFunction.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
 
   membershipFunction->SetMeasurementVectorSize(this->GetMeasurementVectorSize());

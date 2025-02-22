@@ -30,7 +30,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComposeScaleSkewVersor3
   : Superclass(ParametersDimension)
 {
   m_Scale.Fill(NumericTraits<TParametersValueType>::OneValue());
-  m_Skew.Fill(NumericTraits<TParametersValueType>::ZeroValue());
+  m_Skew.Fill(TParametersValueType{});
 }
 
 // Constructor with arguments
@@ -43,6 +43,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComposeScaleSkewVersor3
   m_Skew.Fill(0.0);
 }
 
+#if !defined(ITK_LEGACY_REMOVE)
 // Constructor with arguments
 template <typename TParametersValueType>
 ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComposeScaleSkewVersor3DTransform(
@@ -52,6 +53,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComposeScaleSkewVersor3
 {
   this->ComputeMatrixParameters();
 }
+#endif
 
 // Directly set the matrix
 template <typename TParametersValueType>
@@ -78,7 +80,7 @@ template <typename TParametersValueType>
 void
 ComposeScaleSkewVersor3DTransform<TParametersValueType>::SetParameters(const ParametersType & parameters)
 {
-  itkDebugMacro(<< "Setting parameters " << parameters);
+  itkDebugMacro("Setting parameters " << parameters);
 
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
   if (&parameters != &(this->m_Parameters))
@@ -101,7 +103,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::SetParameters(const Par
     norm = std::sqrt(norm);
   }
 
-  double epsilon = 1e-10;
+  constexpr double epsilon = 1e-10;
   if (norm >= 1.0 - epsilon)
   {
     axis = axis / (norm + epsilon * norm);
@@ -110,7 +112,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::SetParameters(const Par
   newVersor.Set(axis);
   this->SetVarVersor(newVersor);
 
-  itkDebugMacro(<< "Versor is now " << newVersor);
+  itkDebugMacro("Versor is now " << newVersor);
 
   // Matrix must be defined before translation so that offset can be computed
   // from translation
@@ -136,7 +138,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::SetParameters(const Par
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<< "After setting parameters ");
+  itkDebugMacro("After setting parameters ");
 }
 
 //
@@ -154,7 +156,7 @@ template <typename TParametersValueType>
 auto
 ComposeScaleSkewVersor3DTransform<TParametersValueType>::GetParameters() const -> const ParametersType &
 {
-  itkDebugMacro(<< "Getting parameters ");
+  itkDebugMacro("Getting parameters ");
 
   this->m_Parameters[0] = this->GetVersor().GetX();
   this->m_Parameters[1] = this->GetVersor().GetY();
@@ -172,7 +174,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::GetParameters() const -
   this->m_Parameters[10] = this->GetSkew()[1];
   this->m_Parameters[11] = this->GetSkew()[2];
 
-  itkDebugMacro(<< "After getting parameters " << this->m_Parameters);
+  itkDebugMacro("After getting parameters " << this->m_Parameters);
 
   return this->m_Parameters;
 }
@@ -182,7 +184,7 @@ void
 ComposeScaleSkewVersor3DTransform<TParametersValueType>::SetIdentity()
 {
   m_Scale.Fill(NumericTraits<ScaleVectorValueType>::OneValue());
-  m_Skew.Fill(NumericTraits<SkewVectorValueType>::ZeroValue());
+  m_Skew.Fill(SkewVectorValueType{});
   Superclass::SetIdentity();
 }
 
@@ -211,7 +213,7 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComputeMatrix()
 {
   this->Superclass::ComputeMatrix();
 
-  MatrixType newMatrix = this->GetMatrix();
+  const MatrixType newMatrix = this->GetMatrix();
 
   MatrixType scaleM;
   scaleM.SetIdentity();
@@ -230,8 +232,8 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComputeMatrix()
   skewM(2, 1) = 0;
   skewM(2, 2) = 1;
 
-  MatrixType Q = scaleM * skewM;
-  MatrixType res = newMatrix * Q;
+  const MatrixType Q = scaleM * skewM;
+  const MatrixType res = newMatrix * Q;
 
   this->SetVarMatrix(res);
 }
@@ -246,33 +248,33 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComputeMatrixParameters
   scaleV[0] = M(0, 0);
   scaleV[1] = M(1, 0);
   scaleV[2] = M(2, 0);
-  m_Scale[0] = scaleV.GetVnlVector().magnitude();
+  m_Scale[0] = scaleV.GetNorm();
   M(0, 0) /= m_Scale[0];
   M(1, 0) /= m_Scale[0];
   M(2, 0) /= m_Scale[0];
 
-  double ortho = M(0, 0) * M(0, 1) + M(1, 0) * M(1, 1) + M(2, 0) * M(2, 1);
+  const double ortho = M(0, 0) * M(0, 1) + M(1, 0) * M(1, 1) + M(2, 0) * M(2, 1);
   M(0, 1) -= ortho * M(0, 0);
   M(1, 1) -= ortho * M(1, 0);
   M(2, 1) -= ortho * M(2, 0);
   scaleV[0] = M(0, 1);
   scaleV[1] = M(1, 1);
   scaleV[2] = M(2, 1);
-  m_Scale[1] = scaleV.GetVnlVector().magnitude();
+  m_Scale[1] = scaleV.GetNorm();
   M(0, 1) /= m_Scale[1];
   M(1, 1) /= m_Scale[1];
   M(2, 1) /= m_Scale[1];
   m_Skew[0] = ortho / m_Scale[0];
 
-  double ortho0 = M(0, 0) * M(0, 2) + M(1, 0) * M(1, 2) + M(2, 0) * M(2, 2);
-  double ortho1 = M(0, 1) * M(0, 2) + M(1, 1) * M(1, 2) + M(2, 1) * M(2, 2);
+  const double ortho0 = M(0, 0) * M(0, 2) + M(1, 0) * M(1, 2) + M(2, 0) * M(2, 2);
+  const double ortho1 = M(0, 1) * M(0, 2) + M(1, 1) * M(1, 2) + M(2, 1) * M(2, 2);
   M(0, 2) -= (ortho0 * M(0, 0) + ortho1 * M(0, 1));
   M(1, 2) -= (ortho0 * M(1, 0) + ortho1 * M(1, 1));
   M(2, 2) -= (ortho0 * M(2, 0) + ortho1 * M(2, 1));
   scaleV[0] = M(0, 2);
   scaleV[1] = M(1, 2);
   scaleV[2] = M(2, 2);
-  m_Scale[2] = scaleV.GetVnlVector().magnitude();
+  m_Scale[2] = scaleV.GetNorm();
   M(0, 2) /= m_Scale[2];
   M(1, 2) /= m_Scale[2];
   M(2, 2) /= m_Scale[2];
@@ -353,15 +355,15 @@ ComposeScaleSkewVersor3DTransform<TParametersValueType>::ComputeJacobianWithResp
   jacobian.SetSize(3, this->GetNumberOfLocalParameters());
   jacobian.Fill(0.0);
 
-  double v0v0 = v0 * v0;
-  double v0v1 = v0 * v1;
-  double v0v2 = v0 * v2;
-  double v0w = v0 * w;
-  double v1v1 = v1 * v1;
-  double v1v2 = v1 * v2;
-  double v1w = v1 * w;
-  double v2v2 = v2 * v2;
-  double v2w = v2 * w;
+  const double v0v0 = v0 * v0;
+  const double v0v1 = v0 * v1;
+  const double v0v2 = v0 * v2;
+  const double v0w = v0 * w;
+  const double v1v1 = v1 * v1;
+  const double v1v2 = v1 * v2;
+  const double v1w = v1 * w;
+  const double v2v2 = v2 * v2;
+  const double v2w = v2 * w;
 
   // compute Jacobian with respect to quaternion parameters
   jacobian[0][0] = 2 * s1 * v1 * x1 + x2 * (2 * k2 * s1 * v1 + 2 * s2 * v2);

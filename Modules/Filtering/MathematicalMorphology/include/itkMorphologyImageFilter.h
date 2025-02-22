@@ -80,8 +80,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Runtime information support. */
-  itkTypeMacro(MorphologyImageFilter, KernelImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MorphologyImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

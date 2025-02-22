@@ -54,15 +54,14 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GPUGradientAnisotropicDiffusionImageFilterFactory, itk::ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUGradientAnisotropicDiffusionImageFilterFactory);
 
   /** Register one factory of this type  */
   static void
   RegisterOneFactory()
   {
-    GPUGradientAnisotropicDiffusionImageFilterFactory::Pointer factory =
-      GPUGradientAnisotropicDiffusionImageFilterFactory::New();
+    auto factory = GPUGradientAnisotropicDiffusionImageFilterFactory::New();
 
     itk::ObjectFactoryBase::RegisterFactory(factory);
   }

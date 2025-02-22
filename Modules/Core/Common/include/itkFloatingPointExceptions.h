@@ -30,7 +30,7 @@ namespace itk
 class FloatingPointExceptionsEnums
 {
 public:
-  /** \class ExceptionAction
+  /**
    * \ingroup ITKCommon
    * defines what should happen when exceptions occur */
   enum class ExceptionAction : uint8_t
@@ -43,7 +43,7 @@ public:
 extern ITKCommon_EXPORT std::ostream &
                         operator<<(std::ostream & out, const FloatingPointExceptionsEnums::ExceptionAction value);
 
-/** \class itkFloatingPointExceptions
+/** \class FloatingPointExceptions
  *  \brief Allows floating point exceptions to be caught during program execution.
  *
  * Allows floating point exceptions to be caught during program execution.

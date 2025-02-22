@@ -34,7 +34,7 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::JoinSeriesImageFilter()
 
 template <typename TInputImage, typename TOutputImage>
 void
-JoinSeriesImageFilter<TInputImage, TOutputImage>::VerifyInputInformation() ITKv5_CONST
+JoinSeriesImageFilter<TInputImage, TOutputImage>::VerifyInputInformation() const
 {
 
   Superclass::VerifyInputInformation();
@@ -45,7 +45,7 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::VerifyInputInformation() ITKv5
 
   if (image.IsNull())
   {
-    itkExceptionMacro(<< "Input not set as expected!");
+    itkExceptionMacro("Input not set as expected!");
   }
 
   const unsigned int numComponents = image->GetNumberOfComponentsPerPixel();
@@ -66,8 +66,9 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::VerifyInputInformation() ITKv5
 
     if (numComponents != image->GetNumberOfComponentsPerPixel())
     {
-      itkExceptionMacro(<< "Primary input has " << numComponents << " numberOfComponents "
-                        << "but input " << idx << " has " << image->GetNumberOfComponentsPerPixel() << '!');
+      itkExceptionMacro("Primary input has " << numComponents << " numberOfComponents "
+                                             << "but input " << idx << " has " << image->GetNumberOfComponentsPerPixel()
+                                             << '!');
     }
   }
 }
@@ -80,8 +81,8 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   // this filter allows the input the output to be of different dimensions
 
   // Get pointers to the input and output
-  typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
-  typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
+  const typename Superclass::OutputImagePointer     outputPtr = this->GetOutput();
+  const typename Superclass::InputImageConstPointer inputPtr = this->GetInput();
 
   if (!outputPtr || !inputPtr)
   {
@@ -100,9 +101,7 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   outputPtr->SetLargestPossibleRegion(outputLargestPossibleRegion);
 
   // Set the output spacing and origin
-  const ImageBase<InputImageDimension> * phyData;
-
-  phyData = dynamic_cast<const ImageBase<InputImageDimension> *>(this->GetInput());
+  const auto * phyData = dynamic_cast<const ImageBase<InputImageDimension> *>(this->GetInput());
 
   if (phyData)
   {
@@ -142,8 +141,8 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
     using InputDirectionType = typename InputImageType::DirectionType;
     using OutputDirectionType = typename OutputImageType::DirectionType;
     InputDirectionType  inputDir = inputPtr->GetDirection();
-    unsigned int        inputdim = InputImageType::GetImageDimension();
-    unsigned int        outputdim = OutputImageType::GetImageDimension();
+    const unsigned int  inputdim = InputImageType::GetImageDimension();
+    const unsigned int  outputdim = OutputImageType::GetImageDimension();
     OutputDirectionType outputDir = outputPtr->GetDirection();
     for (unsigned int i = 0; i < outputdim; ++i)
     {
@@ -164,7 +163,7 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   else
   {
     // Pointer could not be cast back down
-    itkExceptionMacro(<< "itk::JoinSeriesImageFilter::GenerateOutputInformation "
+    itkExceptionMacro("itk::JoinSeriesImageFilter::GenerateOutputInformation "
                       << "cannot cast input to " << typeid(ImageBase<InputImageDimension> *).name());
   }
 
@@ -186,17 +185,17 @@ JoinSeriesImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion()
   {
     return;
   }
-  OutputImageRegionType outputRegion = this->GetOutput()->GetRequestedRegion();
-  IndexValueType        begin = outputRegion.GetIndex(InputImageDimension);
-  IndexValueType        end = begin + outputRegion.GetSize(InputImageDimension);
+  const OutputImageRegionType outputRegion = this->GetOutput()->GetRequestedRegion();
+  const IndexValueType        begin = outputRegion.GetIndex(InputImageDimension);
+  const IndexValueType        end = begin + outputRegion.GetSize(InputImageDimension);
   for (IndexValueType idx = 0; idx < this->GetNumberOfIndexedInputs(); ++idx)
   {
-    InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput(idx));
+    const InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput(idx));
     if (!inputPtr)
     {
       // Because DataObject::PropagateRequestedRegion() allows only
       // InvalidRequestedRegionError, it's impossible to write simply:
-      // itkExceptionMacro(<< "Missing input " << idx);
+      // itkExceptionMacro("Missing input " << idx);
       InvalidRequestedRegionError e(__FILE__, __LINE__);
       e.SetLocation(ITK_LOCATION);
       e.SetDescription("Missing input.");

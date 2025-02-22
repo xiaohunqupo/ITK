@@ -66,7 +66,7 @@ template <typename TOutputImage>
 int
 ImageSeriesReader<TOutputImage>::ComputeMovingDimensionIndex(ReaderType * reader)
 {
-  // This method computes the the dimension index which we are going
+  // This method computes the dimension index which we are going
   // to be moving in for slices
 
   unsigned int movingDimension = reader->GetImageIO()->GetNumberOfDimensions();
@@ -93,15 +93,13 @@ template <typename TOutputImage>
 void
 ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
 {
-  typename TOutputImage::Pointer output = this->GetOutput();
+  const typename TOutputImage::Pointer output = this->GetOutput();
 
   using SpacingScalarType = typename TOutputImage::SpacingValueType;
-  Array<SpacingScalarType> position1(TOutputImage::ImageDimension);
-  position1.Fill(0.0f);
-  Array<SpacingScalarType> positionN(TOutputImage::ImageDimension);
-  positionN.Fill(0.0f);
+  Array<SpacingScalarType> position1(TOutputImage::ImageDimension, 0.0f);
+  Array<SpacingScalarType> positionN(TOutputImage::ImageDimension, 0.0f);
 
-  std::string key("ITK_ImageOrigin");
+  const std::string key("ITK_ImageOrigin");
 
   // Clear the previous content of the MetaDictionary array
   if (!m_MetaDataDictionaryArray.empty())
@@ -117,7 +115,7 @@ ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
   const auto numberOfFiles = static_cast<int>(m_FileNames.size());
   if (numberOfFiles == 0)
   {
-    itkExceptionMacro(<< "At least one filename is required.");
+    itkExceptionMacro("At least one filename is required.");
   }
 
   const int firstFileName = (m_ReverseOrder ? numberOfFiles - 1 : 0);
@@ -172,8 +170,7 @@ ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
     largestRegion.SetIndex({ { 0 } });
 
     // Initialize the position to the origin returned by the reader
-    unsigned int j;
-    for (j = 0; j < TOutputImage::ImageDimension; ++j)
+    for (unsigned int j = 0; j < TOutputImage::ImageDimension; ++j)
     {
       position1[j] = static_cast<SpacingScalarType>(origin[j]);
     }
@@ -186,7 +183,7 @@ ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
     const TOutputImage * last = lastReader->GetOutput();
 
     // Initialize the position to the origin returned by the reader
-    for (j = 0; j < TOutputImage::ImageDimension; ++j)
+    for (unsigned int j = 0; j < TOutputImage::ImageDimension; ++j)
     {
       positionN[j] = static_cast<SpacingScalarType>(last->GetOrigin()[j]);
     }
@@ -196,11 +193,11 @@ ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
     // Compute and set the inter slice spacing
     // and last (usually third) axis of direction
     Vector<SpacingScalarType, TOutputImage::ImageDimension> dirN;
-    for (j = 0; j < TOutputImage::ImageDimension; ++j)
+    for (unsigned int j = 0; j < TOutputImage::ImageDimension; ++j)
     {
       dirN[j] = positionN[j] - position1[j];
     }
-    SpacingScalarType dirNnorm = dirN.GetNorm();
+    const SpacingScalarType dirNnorm = dirN.GetNorm();
     if (Math::AlmostEquals(dirNnorm, 0.0))
     {
       spacing[this->m_NumberOfDimensionsInImage] = 1.0;
@@ -212,7 +209,7 @@ ImageSeriesReader<TOutputImage>::GenerateOutputInformation()
       this->m_SpacingDefined = true;
       if (!m_ForceOrthogonalDirection)
       {
-        for (j = 0; j < TOutputImage::ImageDimension; ++j)
+        for (unsigned int j = 0; j < TOutputImage::ImageDimension; ++j)
         {
           direction[j][this->m_NumberOfDimensionsInImage] = dirN[j] / dirNnorm;
         }
@@ -237,9 +234,9 @@ template <typename TOutputImage>
 void
 ImageSeriesReader<TOutputImage>::EnlargeOutputRequestedRegion(DataObject * output)
 {
-  typename TOutputImage::Pointer out = dynamic_cast<TOutputImage *>(output);
-  ImageRegionType                requestedRegion = out->GetRequestedRegion();
-  ImageRegionType                largestRegion = out->GetLargestPossibleRegion();
+  const typename TOutputImage::Pointer out = dynamic_cast<TOutputImage *>(output);
+  const ImageRegionType                requestedRegion = out->GetRequestedRegion();
+  const ImageRegionType                largestRegion = out->GetLargestPossibleRegion();
 
   if (m_UseStreaming)
   {
@@ -257,9 +254,9 @@ ImageSeriesReader<TOutputImage>::GenerateData()
 {
   TOutputImage * output = this->GetOutput();
 
-  ImageRegionType requestedRegion = output->GetRequestedRegion();
-  ImageRegionType largestRegion = output->GetLargestPossibleRegion();
-  ImageRegionType sliceRegionToRequest = output->GetRequestedRegion();
+  const ImageRegionType requestedRegion = output->GetRequestedRegion();
+  const ImageRegionType largestRegion = output->GetLargestPossibleRegion();
+  ImageRegionType       sliceRegionToRequest = output->GetRequestedRegion();
 
   // Each file must have the same size.
   SizeType validSize = largestRegion.GetSize();
@@ -348,14 +345,15 @@ ImageSeriesReader<TOutputImage>::GenerateData()
       // check that the size of each slice is the same
       if (readerOutput->GetLargestPossibleRegion().GetSize() != validSize)
       {
-        itkExceptionMacro(<< "Size mismatch! The size of  " << m_FileNames[iFileName].c_str() << " is "
+        itkExceptionMacro("Size mismatch! The size of  "
+                          << m_FileNames[iFileName].c_str() << " is "
                           << readerOutput->GetLargestPossibleRegion().GetSize()
                           << " and does not match the required size " << validSize << " from file "
                           << m_FileNames[m_ReverseOrder ? numberOfFiles - 1 : 0].c_str());
       }
 
       // get the size of the region to be read
-      SizeType readSize = readerOutput->GetRequestedRegion().GetSize();
+      const SizeType readSize = readerOutput->GetRequestedRegion().GetSize();
 
       if (readSize == sliceRegionToRequest.GetSize())
       {
@@ -428,7 +426,7 @@ ImageSeriesReader<TOutputImage>::GenerateData()
         {
           dirN[j] = static_cast<SpacingScalarType>(sliceOrigin[j]) - static_cast<SpacingScalarType>(prevSliceOrigin[j]);
         }
-        SpacingScalarType dirNnorm = dirN.GetNorm();
+        const SpacingScalarType dirNnorm = dirN.GetNorm();
 
         if (this->m_SpacingDefined &&
             !Math::AlmostEquals(
@@ -474,8 +472,7 @@ ImageSeriesReader<TOutputImage>::GenerateData()
   if (TOutputImage::ImageDimension != this->m_NumberOfDimensionsInImage &&
       maxSpacingDeviation > m_SpacingWarningRelThreshold * outputSpacing[this->m_NumberOfDimensionsInImage])
   {
-    itkWarningMacro(<< "Non uniform sampling or missing slices detected,  maximum nonuniformity:"
-                    << maxSpacingDeviation);
+    itkWarningMacro("Non uniform sampling or missing slices detected,  maximum nonuniformity:" << maxSpacingDeviation);
   }
   if (maxSpacingDeviation > 0.0)
   {

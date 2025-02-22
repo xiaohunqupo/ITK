@@ -40,8 +40,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MetaArrayWriter, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MetaArrayWriter);
 
   /** Set/Get the filename. */
   itkSetStringMacro(FileName);

@@ -28,11 +28,6 @@ namespace itk
  *
  * Template parameters for PolyLineCell:
  *
- * \tparam TPixelType The type associated with a point, cell, or boundary
- * for use in storing its data.
- *
- * \tparam TCellTraits Type information of mesh containing cell.
- *
  * \ingroup MeshObjects
  * \ingroup ITKCommon
  */
@@ -47,8 +42,8 @@ public:
   itkCellCommonTypedefs(PolyLineCell);
   itkCellInheritedTypedefs(TCellInterface);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(PolyLineCell, CellInterface);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PolyLineCell);
 
   /** The type of boundary for this lines's vertices. */
   using VertexType = VertexCell<TCellInterface>;

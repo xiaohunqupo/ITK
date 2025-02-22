@@ -41,8 +41,8 @@ FlipImageFilter<TImage>::GenerateOutputInformation()
   Superclass::GenerateOutputInformation();
 
   // Get pointers to the input and output
-  InputImagePointer  inputPtr = const_cast<TImage *>(this->GetInput());
-  OutputImagePointer outputPtr = this->GetOutput();
+  const InputImagePointer  inputPtr = const_cast<TImage *>(this->GetInput());
+  const OutputImagePointer outputPtr = this->GetOutput();
 
   if (!inputPtr || !outputPtr)
   {
@@ -115,8 +115,8 @@ FlipImageFilter<TImage>::GenerateInputRequestedRegion()
   Superclass::GenerateInputRequestedRegion();
 
   // Get pointers to the input and output
-  InputImagePointer  inputPtr = const_cast<TImage *>(this->GetInput());
-  OutputImagePointer outputPtr = this->GetOutput();
+  const InputImagePointer  inputPtr = const_cast<TImage *>(this->GetInput());
+  const OutputImagePointer outputPtr = this->GetOutput();
 
   if (!inputPtr || !outputPtr)
   {
@@ -141,7 +141,7 @@ FlipImageFilter<TImage>::GenerateInputRequestedRegion()
     }
   }
 
-  typename TImage::RegionType inputRequestedRegion(inputRequestedIndex, outputRequestedSize);
+  const typename TImage::RegionType inputRequestedRegion(inputRequestedIndex, outputRequestedSize);
 
   inputPtr->SetRequestedRegion(inputRequestedRegion);
 }
@@ -150,8 +150,8 @@ template <typename TImage>
 void
 FlipImageFilter<TImage>::DynamicThreadedGenerateData(const OutputImageRegionType & outputRegionForThread)
 {
-  InputImageConstPointer inputPtr = this->GetInput();
-  OutputImagePointer     outputPtr = this->GetOutput();
+  const InputImageConstPointer inputPtr = this->GetInput();
+  const OutputImagePointer     outputPtr = this->GetOutput();
 
   const typename TImage::SizeType &  outputLargestPossibleSize = outputPtr->GetLargestPossibleRegion().GetSize();
   const typename TImage::IndexType & outputLargestPossibleIndex = outputPtr->GetLargestPossibleRegion().GetIndex();
@@ -169,9 +169,8 @@ FlipImageFilter<TImage>::DynamicThreadedGenerateData(const OutputImageRegionType
     }
   }
 
-  // Setup output region iterator
-  ImageScanlineIterator<TImage>      outputIt(outputPtr, outputRegionForThread);
-  ImageScanlineConstIterator<TImage> inputIter(inputPtr, inputReginForThread);
+  // Setup region iterator
+  ImageScanlineConstIterator inputIter(inputPtr, inputReginForThread);
 
   IndexValueType offset[ImageDimension];
   for (unsigned int j = 0; j < ImageDimension; ++j)
@@ -188,7 +187,7 @@ FlipImageFilter<TImage>::DynamicThreadedGenerateData(const OutputImageRegionType
 
   TotalProgressReporter progress(this, outputPtr->GetRequestedRegion().GetNumberOfPixels());
 
-  while (!outputIt.IsAtEnd())
+  for (ImageScanlineIterator outputIt(outputPtr, outputRegionForThread); !outputIt.IsAtEnd(); outputIt.NextLine())
   {
     // Determine the index of the output line
     const typename TImage::IndexType outputIndex = outputIt.GetIndex();
@@ -231,7 +230,6 @@ FlipImageFilter<TImage>::DynamicThreadedGenerateData(const OutputImageRegionType
       }
     }
 
-    outputIt.NextLine();
     progress.Completed(outputRegionForThread.GetSize()[0]);
   }
 }

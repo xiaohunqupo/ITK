@@ -35,18 +35,18 @@ namespace itk
 //----------------------------------------------------------------------------
 template <typename TPixel, unsigned int VImageDimension>
 void
-VectorImage<TPixel, VImageDimension>::Allocate(const bool UseDefaultConstructor)
+VectorImage<TPixel, VImageDimension>::Allocate(const bool UseValueInitialization)
 {
   if (m_VectorLength == 0)
   {
-    itkExceptionMacro(<< "Cannot allocate VectorImage with VectorLength = 0");
+    itkExceptionMacro("Cannot allocate VectorImage with VectorLength = 0");
   }
 
   SizeValueType num;
   this->ComputeOffsetTable();
   num = this->GetOffsetTable()[VImageDimension];
 
-  m_Buffer->Reserve(num * m_VectorLength, UseDefaultConstructor);
+  m_Buffer->Reserve(num * m_VectorLength, UseValueInitialization);
 }
 
 template <typename TPixel, unsigned int VImageDimension>
@@ -127,8 +127,8 @@ VectorImage<TPixel, VImageDimension>::Graft(const DataObject * data)
   if (imgData == nullptr)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::VectorImage::Graft() cannot cast " << typeid(data).name() << " to "
-                      << typeid(const Self *).name());
+    itkExceptionMacro("itk::VectorImage::Graft() cannot cast " << typeid(data).name() << " to "
+                                                               << typeid(const Self *).name());
   }
   // Copy from VectorImage< TPixel, dim >
   // Now copy anything remaining that is needed

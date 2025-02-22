@@ -58,7 +58,7 @@ Expect_EvaluateAtIndex_returns_zero_when_all_pixels_are_zero(const typename TIma
 {
   const auto image = TImage::New();
   image->SetRegions(imageSize);
-  image->Allocate(true);
+  image->AllocateInitialized();
 
   const auto imageFunction = itk::SumOfSquaresImageFunction<TImage>::New();
 
@@ -102,13 +102,13 @@ TestBasicObjectProperties()
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(imageFunction, SumOfSquaresImageFunction, ImageFunction);
 
-  unsigned int radius = 1;
+  constexpr unsigned int radius = 1;
   imageFunction->SetNeighborhoodRadius(radius);
   EXPECT_EQ(radius, imageFunction->GetNeighborhoodRadius());
 
   auto                                                                 size = TImage::SizeType::Filled(radius);
   const itk::RectangularImageNeighborhoodShape<TImage::ImageDimension> shape(size);
-  unsigned int                                                         neighborhoodSize = shape.GetNumberOfOffsets();
+  const unsigned int                                                   neighborhoodSize = shape.GetNumberOfOffsets();
   EXPECT_EQ(neighborhoodSize, imageFunction->GetNeighborhoodSize());
 
   return EXIT_SUCCESS;

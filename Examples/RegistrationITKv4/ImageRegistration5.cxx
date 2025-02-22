@@ -172,7 +172,7 @@ main(int argc, char * argv[])
   //  run a multistage registration process, from which the output of each
   //  stage can be used to initialize the next registration stage.
   //
-  //  To get a better underestanding of the registration process in
+  //  To get a better understanding of the registration process in
   //  such situations, consider an example of 3 stages registration process
   //  that is started using an initial moving transform ($\Gamma_{mi}$).
   //  Multiple stages are handled by linking multiple instantiations of
@@ -293,7 +293,7 @@ main(int argc, char * argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
+  const FixedImageType::Pointer fixedImage = fixedImageReader->GetOutput();
 
   const SpacingType fixedSpacing = fixedImage->GetSpacing();
   const OriginType  fixedOrigin = fixedImage->GetOrigin();
@@ -314,7 +314,7 @@ main(int argc, char * argv[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  MovingImageType::Pointer movingImage = movingImageReader->GetOutput();
+  const MovingImageType::Pointer movingImage = movingImageReader->GetOutput();
 
   const SpacingType movingSpacing = movingImage->GetSpacing();
   const OriginType  movingOrigin = movingImage->GetOrigin();
@@ -396,7 +396,7 @@ main(int argc, char * argv[])
   using OptimizerScalesType = OptimizerType::ScalesType;
   OptimizerScalesType optimizerScales(
     initialTransform->GetNumberOfParameters());
-  const double translationScale = 1.0 / 1000.0;
+  constexpr double translationScale = 1.0 / 1000.0;
 
   optimizerScales[0] = 1.0;
   optimizerScales[1] = translationScale;

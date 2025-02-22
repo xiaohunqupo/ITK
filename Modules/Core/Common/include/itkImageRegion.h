@@ -33,6 +33,17 @@
 #include "itkSize.h"
 #include "itkContinuousIndex.h"
 #include "itkMath.h"
+#include <type_traits> // For conditional and integral_constant.
+#include <utility>     // For tuple_element and tuple_size.
+
+// Macro added to each `ImageRegion` member function that overrides a virtual member function of `Region`, when legacy
+// support is enabled. Without legacy support, `ImageRegion` will no longer inherit from `Region`, so then those
+// `ImageRegion` member functions will no longer override.
+#ifdef ITK_LEGACY_REMOVE
+#  define itkRegionOverrideMacro // nothing
+#else
+#  define itkRegionOverrideMacro override
+#endif
 
 namespace itk
 {
@@ -66,15 +77,26 @@ class ITK_TEMPLATE_EXPORT ImageBase;
  * \endsphinx
  */
 template <unsigned int VImageDimension>
-class ITK_TEMPLATE_EXPORT ImageRegion final : public Region
+class ITK_TEMPLATE_EXPORT ImageRegion final
+#ifndef ITK_LEGACY_REMOVE
+  // This inheritance is only there when legacy support is enabled.
+  : public Region
+#endif
 {
 public:
   /** Standard class type aliases. */
   using Self = ImageRegion;
+
+#ifndef ITK_LEGACY_REMOVE
   using Superclass = Region;
+#endif
 
   /** Standard part of all itk objects. */
-  itkTypeMacro(ImageRegion, Region);
+  const char *
+  GetNameOfClass() const itkRegionOverrideMacro
+  {
+    return "ImageRegion";
+  }
 
   /** Dimension of the image available at compile time. */
   static constexpr unsigned int ImageDimension = VImageDimension;
@@ -83,15 +105,15 @@ public:
       in which case the SliceDimension is also one dimensional. */
   static constexpr unsigned int SliceDimension = ImageDimension - (ImageDimension > 1);
 
-  /** Dimension of the image available at run time. */
-  static unsigned int
+  /** Dimension of the image available at compile-time and at run time. */
+  static constexpr unsigned int
   GetImageDimension()
   {
     return ImageDimension;
   }
 
   /** Index type alias support An index is used to access pixel values. */
-  using IndexType = Index<Self::ImageDimension>;
+  using IndexType = Index<VImageDimension>;
   using IndexValueType = typename IndexType::IndexValueType;
   using OffsetType = typename IndexType::OffsetType;
   using OffsetValueType = typename OffsetType::OffsetValueType;
@@ -99,18 +121,22 @@ public:
   using OffsetTableType = OffsetValueType[ImageDimension + 1];
 
   /** Size type alias support A size is used to define region bounds. */
-  using SizeType = Size<Self::ImageDimension>;
+  using SizeType = Size<VImageDimension>;
   using SizeValueType = typename SizeType::SizeValueType;
 
   /** Slice region type alias. SliceRegion is one dimension less than Self. */
   using SliceRegion = ImageRegion<Self::SliceDimension>;
 
   /** Return the region type. Images are described with structured regions. */
-  Superclass::RegionEnum
-  GetRegionType() const override
+  Region::RegionEnum
+  GetRegionType() const itkRegionOverrideMacro
   {
-    return Superclass::RegionEnum::ITK_STRUCTURED_REGION;
+    return Region::RegionEnum::ITK_STRUCTURED_REGION;
   }
+
+  /** Print the region. */
+  void
+  Print(std::ostream & os, Indent indent = 0) const itkRegionOverrideMacro;
 
   /** Constructor. ImageRegion is a lightweight object that is not reference
    * counted, so the constructor is public. Its two data members are filled
@@ -119,14 +145,15 @@ public:
 
   /** Destructor. ImageRegion is a lightweight object that is not reference
    * counted, so the destructor is public. */
-  ~ImageRegion() override = default;
+  ~ImageRegion() itkRegionOverrideMacro = default;
 
   /** Copy constructor. ImageRegion is a lightweight object that is not
    * reference counted, so the copy constructor is public. */
   ImageRegion(const Self &) noexcept = default;
 
   /** Constructor that takes an index and size. ImageRegion is a lightweight
-   * object that is not reference counted, so this constructor is public. */
+   * object that is not reference counted, so this constructor is public.
+   * \note This constructor supports class template argument deduction (CTAD). */
   ImageRegion(const IndexType & index, const SizeType & size) noexcept
     : // Note: Use parentheses instead of curly braces to initialize data members,
       // to avoid AppleClang 6.0.0.6000056 compile errors, "no viable conversion..."
@@ -136,7 +163,8 @@ public:
 
   /** Constructor that takes a size and assumes an index of zeros. ImageRegion
    * is lightweight object that is not reference counted so this constructor
-   * is public. */
+   * is public.
+   * \note This constructor supports class template argument deduction (CTAD). */
   ImageRegion(const SizeType & size) noexcept
     : m_Size(size)
   {
@@ -252,11 +280,11 @@ public:
    * We take into account the fact that each voxel has its
    * center at the integer coordinate and extends half way
    * to the next integer coordinate, inclusive on all sides. */
-  template <typename TCoordRepType>
+  template <typename TCoordinate>
   bool
-  IsInside(const ContinuousIndex<TCoordRepType, VImageDimension> & index) const
+  IsInside(const ContinuousIndex<TCoordinate, VImageDimension> & index) const
   {
-    constexpr TCoordRepType half = 0.5;
+    constexpr TCoordinate half = 0.5;
     for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       // Use negation of tests so that index[i]==NaN leads to returning false.
@@ -275,8 +303,8 @@ public:
   bool
   IsInside(const Self & otherRegion) const
   {
-    const auto otherIndex = otherRegion.m_Index;
-    const auto otherSize = otherRegion.m_Size;
+    const auto & otherIndex = otherRegion.m_Index;
+    const auto & otherSize = otherRegion.m_Size;
 
     for (unsigned int i = 0; i < ImageDimension; ++i)
     {
@@ -333,13 +361,46 @@ public:
   SliceRegion
   Slice(const unsigned int dim) const;
 
+  /** Supports tuple-like access: `get<0>()` returns a reference to the index and `get<1>()` returns a reference to the
+   * size of the region. */
+  template <size_t VTupleIndex>
+  [[nodiscard]] auto &
+  get()
+  {
+    if constexpr (VTupleIndex == 0)
+    {
+      return m_Index;
+    }
+    else
+    {
+      static_assert(VTupleIndex == 1);
+      return m_Size;
+    }
+  }
+
+  /** Supports tuple-like access. Const overload. */
+  template <size_t VTupleIndex>
+  [[nodiscard]] const auto &
+  get() const
+  {
+    if constexpr (VTupleIndex == 0)
+    {
+      return m_Index;
+    }
+    else
+    {
+      static_assert(VTupleIndex == 1);
+      return m_Size;
+    }
+  }
+
 protected:
   /** Methods invoked by Print() to print information about the object
    * including superclasses. Typically not called by the user (use Print()
    * instead) but used in the hierarchical print process to combine the
    * output of several classes.  */
   void
-  PrintSelf(std::ostream & os, Indent indent) const override;
+  PrintSelf(std::ostream & os, Indent indent) const itkRegionOverrideMacro;
 
 private:
   IndexType m_Index = { { 0 } };
@@ -349,10 +410,58 @@ private:
   friend class ImageBase<VImageDimension>;
 };
 
+
+// Deduction guide to avoid compiler warnings (-wctad-maybe-unsupported) when using class template argument deduction.
+template <unsigned int VImageDimension>
+ImageRegion(const Index<VImageDimension> &, const Size<VImageDimension> &) -> ImageRegion<VImageDimension>;
+
+
 template <unsigned int VImageDimension>
 std::ostream &
 operator<<(std::ostream & os, const ImageRegion<VImageDimension> & region);
 } // end namespace itk
+
+
+namespace std
+{
+#if defined(__clang__) && defined(__apple_build_version__) && (__clang_major__ <= 10)
+#  pragma clang diagnostic push
+// Old AppleClang 10.0.0 (Xcode 10.1, newest on macOS 10.13) produced some unimportant warnings, like:
+// "warning: 'tuple_size' defined as a struct template here but previously declared as a class template"
+#  pragma clang diagnostic ignored "-Wmismatched-tags"
+#endif
+
+// NOLINTBEGIN(cert-dcl58-cpp)
+// Locally suppressed the following warning from Clang-Tidy (LLVM 17.0.1), as it appears undeserved.
+// > warning: modification of 'std' namespace can result in undefined behavior [cert-dcl58-cpp]
+
+/** `std::tuple_size` specialization, needed for ImageRegion to support C++ structured binding.
+ *
+ * Example, using structured binding to retrieve the index and size of a region:
+   \code
+    auto [index, size] = image.GetRequestedRegion();
+   \endcode
+ */
+template <unsigned int VImageDimension>
+struct tuple_size<itk::ImageRegion<VImageDimension>> : integral_constant<size_t, 2>
+{};
+
+/** `std::tuple_element` specialization, needed for ImageRegion to support C++ structured binding. */
+template <size_t VTupleIndex, unsigned int VImageDimension>
+struct tuple_element<VTupleIndex, itk::ImageRegion<VImageDimension>>
+  : conditional<VTupleIndex == 0, itk::Index<VImageDimension>, itk::Size<VImageDimension>>
+{
+  static_assert(VTupleIndex < tuple_size_v<itk::ImageRegion<VImageDimension>>);
+};
+
+// NOLINTEND(cert-dcl58-cpp)
+
+#if defined(__clang__) && defined(__apple_build_version__) && (__clang_major__ <= 10)
+#  pragma clang diagnostic pop
+#endif
+} // namespace std
+
+#undef itkRegionOverrideMacro
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "itkImageRegion.hxx"

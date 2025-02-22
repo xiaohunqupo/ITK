@@ -58,8 +58,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GiftiMeshIO, MeshIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GiftiMeshIO);
 
   itkGetConstMacro(ReadPointData, bool);
   itkSetMacro(ReadPointData, bool);

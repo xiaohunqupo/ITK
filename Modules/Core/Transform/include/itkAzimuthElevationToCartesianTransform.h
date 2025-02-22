@@ -101,8 +101,8 @@ public:
   static constexpr unsigned int SpaceDimension = VDimension;
   static constexpr unsigned int ParametersDimension = VDimension * (VDimension + 1);
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(AzimuthElevationToCartesianTransform, AffineTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AzimuthElevationToCartesianTransform);
 
   /** New macro for creation of through a Smart Pointer.   */
   itkNewMacro(Self);

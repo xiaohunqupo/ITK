@@ -28,7 +28,6 @@ namespace itk
 
 
 /** \class DivideOrZeroOutImageFilter
- * \brief
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la
  * Reproduction, INRA de Jouy-en-Josas, France.
@@ -61,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(DivideOrZeroOutImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DivideOrZeroOutImageFilter);
 
   /** Print internal ivars */
   void

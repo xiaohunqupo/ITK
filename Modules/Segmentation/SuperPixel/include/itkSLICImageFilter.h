@@ -53,7 +53,7 @@ namespace itk
  * "Scalable Simple Linear Iterative Clustering (SSLIC) Using a
  * Generic and Parallel Approach" by Lowekamp B. C., Chen D. T., Yaniv
  * Z., Yoo T. S.
- * https://www.insight-journal.org/browse/publication/989
+ * https://doi.org/10.54294/8hic7f
  *
  * \ingroup Segmentation ITKSuperPixel MultiThreading
  */
@@ -72,8 +72,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SLICImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SLICImageFilter);
 
   /** ImageDimension constants */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

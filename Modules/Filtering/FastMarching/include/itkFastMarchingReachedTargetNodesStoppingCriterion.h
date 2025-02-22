@@ -45,7 +45,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKFastMarching_EXPORT std::ostream &
-                              operator<<(std::ostream & out, const FastMarchingReachedTargetNodesStoppingCriterionEnums::TargetCondition value);
+operator<<(std::ostream & out, const FastMarchingReachedTargetNodesStoppingCriterionEnums::TargetCondition value);
 /**
  * \class FastMarchingReachedTargetNodesStoppingCriterion
  * \brief Stopping criterion for FastMarchingFilterBase.
@@ -71,8 +71,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingReachedTargetNodesStoppingCriterion, FastMarchingStoppingCriterionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingReachedTargetNodesStoppingCriterion);
 
   using typename Superclass::OutputPixelType;
   using typename Superclass::NodeType;
@@ -134,8 +134,8 @@ public:
       // there is at least one TargetPoint.
       if (!m_TargetNodes.empty())
       {
-        typename std::vector<NodeType>::const_iterator pointsIter = m_TargetNodes.begin();
-        typename std::vector<NodeType>::const_iterator pointsEnd = m_TargetNodes.end();
+        auto       pointsIter = m_TargetNodes.begin();
+        const auto pointsEnd = m_TargetNodes.end();
 
         while (pointsIter != pointsEnd)
         {
@@ -177,8 +177,8 @@ protected:
   /** Constructor */
   FastMarchingReachedTargetNodesStoppingCriterion()
     : Superclass()
-    , m_TargetOffset(NumericTraits<OutputPixelType>::ZeroValue())
-    , m_StoppingValue(NumericTraits<OutputPixelType>::ZeroValue())
+    , m_TargetOffset(OutputPixelType{})
+    , m_StoppingValue(OutputPixelType{})
   {}
 
   /** Destructor */
@@ -212,7 +212,7 @@ protected:
     }
     if (m_NumberOfTargetsToBeReached < 1)
     {
-      itkExceptionMacro(<< "Number of target nodes to be reached is null");
+      itkExceptionMacro("Number of target nodes to be reached is null");
     }
     if (m_NumberOfTargetsToBeReached > m_TargetNodes.size())
     {

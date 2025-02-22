@@ -41,9 +41,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(MGHIO
+itk_fetch_module(
+  MGHIO
   "MGHIO ImageIO plugin for ITK"
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/itkMGHImageIO.git
-  GIT_TAG 4b2e7bd514d3759b6903b75c71d593d061b6e6a3
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/itkMGHImageIO.git
+  GIT_TAG a3a970296f72a3fa7fa496e4370fb7d2feb9311d
   )

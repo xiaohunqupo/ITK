@@ -84,8 +84,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ApproximateSignedDistanceMapImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ApproximateSignedDistanceMapImageFilter);
 
   /** standard New() method support */
   itkNewMacro(Self);
@@ -123,11 +123,7 @@ public:
   itkSetMacro(OutsideValue, InputPixelType);
   itkGetConstMacro(OutsideValue, InputPixelType);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputEqualityComparableCheck, (Concept::EqualityComparable<typename InputImageType::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   ApproximateSignedDistanceMapImageFilter();

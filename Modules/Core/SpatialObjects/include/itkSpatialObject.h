@@ -30,6 +30,7 @@
 #include "itkAffineTransform.h"
 #include "itkVectorContainer.h"
 #include "itkBoundingBox.h"
+#include <limits>
 
 namespace itk
 {
@@ -37,8 +38,8 @@ namespace itk
  * \class SpatialObject
  * \brief Implementation of the composite pattern
  *
- * The purpose of this class is to implement the composite pattern [Design
- * Patterns, Gamma, 1995] within itk, so that it becomes easy to create an
+ * The purpose of this class is to implement the composite pattern
+ * \cite gamma1994 within ITK, so that it becomes easy to create an
  * environment containing objects within a scene, and to manipulate the
  * environment as a whole or any of its component objects.  An
  * object has a list of transformations to transform object coordinates
@@ -46,10 +47,10 @@ namespace itk
  * system, and a list of inverse transformation to go backward.  Any
  * spatial objects can be plugged to a spatial object as children.  To
  * implement your own spatial object, you need to derive from the
- * following class, which requires the definition of just a few pure
- * virtual functions.  Examples of such functions are ValueAtInWorldSpace(),
- * IsEvaluableAtInWorldSpace(), and IsInsideInWorldSpace(), each of which has a meaning
- * specific to each particular object type.
+ * following class, which requires overriding just a few virtual functions.
+ * Examples of such functions are ValueAtInObjectSpace(),
+ * IsInsideInObjectSpace(), and ComputeMyBoundingBox(), each of which has a
+ * meaning specific to each particular object type.
  * \ingroup ITKSpatialObjects
  */
 
@@ -65,7 +66,7 @@ public:
 
   static constexpr ObjectDimensionType ObjectDimension = VDimension;
 
-  static constexpr unsigned int MaximumDepth = 9999999;
+  static constexpr unsigned int MaximumDepth = std::numeric_limits<unsigned int>::max();
 
   /** Return the maximum depth that a tree of spatial objects can
    * have.  This provides convenient access to a static constant. */
@@ -100,7 +101,7 @@ public:
   using TransformPointer = typename TransformType::Pointer;
   using TransformConstPointer = const TransformType *;
 
-  using VectorContainerType = VectorContainer<IdentifierType, PointType>;
+  using VectorContainerType = VectorContainer<PointType>;
 
   using BoundingBoxType = BoundingBox<IdentifierType, VDimension, ScalarType, VectorContainerType>;
   using BoundingBoxPointer = typename BoundingBoxType::Pointer;
@@ -132,8 +133,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SpatialObject, DataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SpatialObject);
 
   /** Get/Set the ID */
   void
@@ -146,7 +147,7 @@ public:
   itkSetMacro(TypeName, std::string);
 
   /** Get the typename of the SpatialObject */
-  virtual const std::string
+  virtual std::string
   GetTypeName() const
   {
     return m_TypeName;
@@ -240,11 +241,11 @@ public:
 
   /**********************************************************************/
   /* These are the three member functions that a subclass will typically
-   *    overwrite.
+   *    override.
    *    * ComputeMyBoundingBox (protected:)
    *    * IsInsideInObjectSpace
    *    * Update
-   *  Optionally, a subclass may also wish to overwrite
+   *  Optionally, a subclass may also wish to override
    *    * ValueAtInObjectSpace
    *    * IsEvaluableAtInObjectSpace - if the extent is beyond IsInside.
    */
@@ -317,20 +318,49 @@ public:
   itkSetMacro(DefaultOutsideValue, double);
   itkGetConstMacro(DefaultOutsideValue, double);
 
-  /** World space equivalent to ValueAtInObjectSpace */
-  virtual bool
-  ValueAtInWorldSpace(const PointType &   point,
-                      double &            value,
-                      unsigned int        depth = 0,
-                      const std::string & name = "") const;
+  /** World space equivalent to ValueAtInObjectSpace
+   * \note This member function assumes that the internal `ObjectToWorldTransformInverse` transform is up-to-date. This
+   * transform may be updated explicitly by calling `GetObjectToWorldTransformInverse()`, `Update()`, or
+   * `SetObjectToWorldTransform(transform)`
+   * \note This member function is not meant to be overridden. In the future, it may not be declared `virtual` anymore.
+   */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual
+#endif
+    bool
+    ValueAtInWorldSpace(const PointType &   point,
+                        double &            value,
+                        unsigned int        depth = 0,
+                        const std::string & name = "") const;
 
-  /** World space equivalent to IsInsideInObjectSpace */
-  virtual bool
-  IsInsideInWorldSpace(const PointType & point, unsigned int depth = 0, const std::string & name = "") const;
+  /** World space equivalent to IsInsideInObjectSpace
+   * \note This member function assumes that the internal `ObjectToWorldTransformInverse` transform is up-to-date. This
+   * transform may be updated explicitly by calling `GetObjectToWorldTransformInverse()`, `Update()`, or
+   * `SetObjectToWorldTransform(transform)`
+   * \note This member function is not meant to be overridden. In the future, it may not be declared `virtual` anymore.
+   */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual
+#endif
+    bool
+    IsInsideInWorldSpace(const PointType & point, unsigned int depth, const std::string & name = "") const;
 
-  /** World space equivalent to IsEvaluableAtInObjectSpace */
-  virtual bool
-  IsEvaluableAtInWorldSpace(const PointType & point, unsigned int depth = 0, const std::string & name = "") const;
+  /** Overload, optimized for depth = 0 and name = "": `spatialObject.IsInsideInWorldSpace(point)` is equivalent to
+   * `spatialObject.IsInsideInWorldSpace(point, 0, "")`, but much faster. */
+  bool
+  IsInsideInWorldSpace(const PointType & point) const;
+
+  /** World space equivalent to IsEvaluableAtInObjectSpace
+   * \note This member function assumes that the internal `ObjectToWorldTransformInverse` transform is up-to-date. This
+   * transform may be updated explicitly by calling `GetObjectToWorldTransformInverse()`, `Update()`, or
+   * `SetObjectToWorldTransform(transform)`
+   * \note This member function is not meant to be overridden. In the future, it may not be declared `virtual` anymore.
+   */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual
+#endif
+    bool
+    IsEvaluableAtInWorldSpace(const PointType & point, unsigned int depth = 0, const std::string & name = "") const;
 
 
   /** Return the n-th order derivative value at the specified point. */
@@ -342,14 +372,22 @@ public:
                             const std::string &          name = "",
                             const DerivativeOffsetType & offset = MakeFilled<DerivativeOffsetType>(1));
 
-  /** Return the n-th order derivative value at the specified point. */
-  virtual void
-  DerivativeAtInWorldSpace(const PointType &            point,
-                           short unsigned int           order,
-                           CovariantVectorType &        value,
-                           unsigned int                 depth = 0,
-                           const std::string &          name = "",
-                           const DerivativeOffsetType & offset = MakeFilled<DerivativeOffsetType>(1));
+  /** Return the n-th order derivative value at the specified point.
+   * \note This member function assumes that the internal `ObjectToWorldTransformInverse` transform is up-to-date. This
+   * transform may be updated explicitly by calling `GetObjectToWorldTransformInverse()`, `Update()`, or
+   * `SetObjectToWorldTransform(transform)`
+   * \note This member function is not meant to be overridden. In the future, it may not be declared `virtual` anymore.
+   */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual
+#endif
+    void
+    DerivativeAtInWorldSpace(const PointType &            point,
+                             short unsigned int           order,
+                             CovariantVectorType &        value,
+                             unsigned int                 depth = 0,
+                             const std::string &          name = "",
+                             const DerivativeOffsetType & offset = MakeFilled<DerivativeOffsetType>(1));
 
 
   /*********************/
@@ -427,7 +465,7 @@ public:
   AddChildrenToList(ChildrenListType * childrenList, unsigned int depth = 0, const std::string & name = "") const;
 
   virtual void
-  AddChildrenToConstList(ChildrenConstListType * childrenList,
+  AddChildrenToConstList(ChildrenConstListType * childrenCList,
                          unsigned int            depth = 0,
                          const std::string &     name = "") const;
 
@@ -644,7 +682,8 @@ public:
                    const)
   {
     return IsInsideInObjectSpace(point, depth, name);
-  };
+  }
+
 #endif
 
 protected:

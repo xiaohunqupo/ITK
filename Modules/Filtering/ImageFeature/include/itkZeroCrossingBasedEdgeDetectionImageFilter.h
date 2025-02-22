@@ -100,8 +100,8 @@ public:
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(ZeroCrossingBasedEdgeDetectionImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ZeroCrossingBasedEdgeDetectionImageFilter);
 
   /** ImageDimension enumeration   */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -141,15 +141,11 @@ public:
     m_MaximumError.Fill(v);
   }
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputEqualityComparableCheck, (Concept::EqualityComparable<OutputImagePixelType>));
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, OutputImageDimension>));
   itkConceptMacro(SameTypeCheck, (Concept::SameType<InputImagePixelType, OutputImagePixelType>));
   itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputImagePixelType>));
   itkConceptMacro(PixelTypeIsFloatingPointCheck, (Concept::IsFloatingPoint<InputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   ZeroCrossingBasedEdgeDetectionImageFilter();

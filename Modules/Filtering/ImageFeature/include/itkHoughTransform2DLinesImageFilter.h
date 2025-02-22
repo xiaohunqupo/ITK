@@ -101,8 +101,8 @@ public:
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename InputImageType::RegionType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HoughTransform2DLinesImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HoughTransform2DLinesImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -148,13 +148,9 @@ public:
   itkSetMacro(Variance, double);
   itkGetConstMacro(Variance, double);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(IntConvertibleToOutputCheck, (Concept::Convertible<int, TOutputPixelType>));
   itkConceptMacro(InputGreaterThanFloatCheck, (Concept::GreaterThanComparable<PixelType, float>));
   itkConceptMacro(OutputPlusIntCheck, (Concept::AdditiveOperators<TOutputPixelType, int>));
-  // End concept checking
-#endif
 
 protected:
   HoughTransform2DLinesImageFilter();

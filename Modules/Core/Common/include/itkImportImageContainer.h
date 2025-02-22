@@ -60,8 +60,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(ImportImageContainer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImportImageContainer);
 
   /** Get the pointer from which the image data is imported. */
   TElement *
@@ -80,10 +80,18 @@ public:
   SetImportPointer(TElement * ptr, TElementIdentifier num, bool LetContainerManageMemory = false);
 
   /** Index operator. This version can be an lvalue. */
-  TElement & operator[](const ElementIdentifier id) { return m_ImportPointer[id]; }
+  TElement &
+  operator[](const ElementIdentifier id)
+  {
+    return m_ImportPointer[id];
+  }
 
   /** Index operator. This version can only be an rvalue */
-  const TElement & operator[](const ElementIdentifier id) const { return m_ImportPointer[id]; }
+  const TElement &
+  operator[](const ElementIdentifier id) const
+  {
+    return m_ImportPointer[id];
+  }
 
   /** Return a pointer to the beginning of the buffer.  This is used by
    * the image iterator class. */
@@ -118,12 +126,12 @@ public:
    * container. However, in this particular case, Reserve as a Resize
    * semantics that is kept for backward compatibility reasons.
    *
-   * If UseDefaultConstructor is true, then * the default constructor is used
-   * to initialize each element.  POD date types initialize to zero.
+   * If UseValueInitialization is true, then POD types will be
+   * zero-initialized.
    *
    * \sa SetImportPointer() */
   void
-  Reserve(ElementIdentifier size, const bool UseDefaultConstructor = false);
+  Reserve(ElementIdentifier size, const bool UseValueInitialization = false);
 
   /** Tell the container to try to minimize its memory usage for
    * storage of the current number of elements.  If new memory is
@@ -162,12 +170,11 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   /**
-   * Allocates elements of the array.  If UseDefaultConstructor is true, then
-   * the default constructor is used to initialize each element.  POD date types
-   * initialize to zero.
+   * Allocates elements of the array.  If UseValueInitialization is true, then
+   * POD types will be zero-initialized.
    */
   virtual TElement *
-  AllocateElements(ElementIdentifier size, bool UseDefaultConstructor = false) const;
+  AllocateElements(ElementIdentifier size, bool UseValueInitialization = false) const;
 
   virtual void
   DeallocateManagedMemory();

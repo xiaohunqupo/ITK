@@ -35,7 +35,7 @@ namespace itk
 class NiftiImageIOEnums
 {
 public:
-  /** \class Analyze75Flavor
+  /**
    * \ingroup ITKIONIFTI
    * Enum used to define the way to treat legacy Analyze75 files.
    */
@@ -107,8 +107,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NiftiImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NiftiImageIO);
 
   //-------- This part of the interfaces deals with reading data. -----
 
@@ -219,6 +219,11 @@ public:
   itkGetConstMacro(ConvertRASDisplacementVectors, bool);
   itkBooleanMacro(ConvertRASDisplacementVectors);
 
+  /** Allow to read nifti files with non-orthogonal sform*/
+  itkSetMacro(SFORM_Permissive, bool);
+  itkGetConstMacro(SFORM_Permissive, bool);
+  itkBooleanMacro(SFORM_Permissive);
+
 protected:
   NiftiImageIO();
   ~NiftiImageIO() override;
@@ -251,7 +256,7 @@ private:
   SetNIfTIOrientationFromImageIO(unsigned short origdims, unsigned short dims);
 
   void
-  SetImageIOOrientationFromNIfTI(unsigned short dims);
+  SetImageIOOrientationFromNIfTI(unsigned short dims, double spacingscale, double timingscale);
 
   void
   SetImageIOMetadataFromNIfTI();
@@ -276,6 +281,9 @@ private:
   IOComponentEnum m_OnDiskComponentType{ IOComponentEnum::UNKNOWNCOMPONENTTYPE };
 
   NiftiImageIOEnums::Analyze75Flavor m_LegacyAnalyze75Mode{};
+
+  bool m_SFORM_Permissive;
+  bool m_SFORM_Corrected{ false };
 };
 
 

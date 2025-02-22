@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaussianDerivativeImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianDerivativeImageFunction);
 
   /** InputImageType type alias support */
   using InputImageType = TInputImage;
@@ -77,7 +77,7 @@ public:
   static constexpr unsigned int ImageDimension2 = ImageDimension;
 #endif
 
-  using ContinuousIndexType = ContinuousIndex<SpacePrecisionType, Self::ImageDimension>;
+  using ContinuousIndexType = typename Superclass::ContinuousIndexType;
 
   using NeighborhoodType = Neighborhood<InputPixelType, Self::ImageDimension>;
   using OperatorNeighborhoodType = Neighborhood<TOutput, Self::ImageDimension>;
@@ -96,7 +96,7 @@ public:
 
   /** Point type alias support */
   // using PointType = Point< TOutput, Self::ImageDimension >;
-  using PointType = typename InputImageType::PointType;
+  using PointType = typename Superclass::PointType;
 
   /** Evaluate the function at the specified point. */
   OutputType
@@ -121,6 +121,7 @@ public:
     {
       this->m_UseImageSpacing = val;
       this->RecomputeGaussianKernel();
+      this->Modified();
     }
   }
   itkBooleanMacro(UseImageSpacing);

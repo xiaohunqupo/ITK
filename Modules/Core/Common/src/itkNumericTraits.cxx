@@ -27,57 +27,6 @@
 namespace itk
 {
 
-/* Add definition for static constexpr members
-
-Reason: You have to provide the definition of the static member as well as the
-declaration. The declaration and the initializer go inside the class,
-but the member definition has to be in a single separate compilation unit.
-*/
-constexpr bool NumericTraits<bool>::Zero;
-constexpr bool NumericTraits<bool>::One;
-
-constexpr unsigned char NumericTraits<unsigned char>::Zero;
-constexpr unsigned char NumericTraits<unsigned char>::One;
-
-constexpr signed char NumericTraits<signed char>::Zero;
-constexpr signed char NumericTraits<signed char>::One;
-
-constexpr char NumericTraits<char>::Zero;
-constexpr char NumericTraits<char>::One;
-
-constexpr unsigned short NumericTraits<unsigned short>::Zero;
-constexpr unsigned short NumericTraits<unsigned short>::One;
-
-constexpr short NumericTraits<short>::Zero;
-constexpr short NumericTraits<short>::One;
-
-constexpr unsigned int NumericTraits<unsigned int>::Zero;
-constexpr unsigned int NumericTraits<unsigned int>::One;
-
-constexpr int NumericTraits<int>::Zero;
-constexpr int NumericTraits<int>::One;
-
-constexpr unsigned long NumericTraits<unsigned long>::Zero;
-constexpr unsigned long NumericTraits<unsigned long>::One;
-
-constexpr long NumericTraits<long>::Zero;
-constexpr long NumericTraits<long>::One;
-
-constexpr long long NumericTraits<long long>::Zero;
-constexpr long long NumericTraits<long long>::One;
-
-constexpr unsigned long long NumericTraits<unsigned long long>::Zero;
-constexpr unsigned long long NumericTraits<unsigned long long>::One;
-
-constexpr float NumericTraits<float>::Zero;
-constexpr float NumericTraits<float>::One;
-
-constexpr double NumericTraits<double>::Zero;
-constexpr double NumericTraits<double>::One;
-
-constexpr long double NumericTraits<long double>::Zero;
-constexpr long double NumericTraits<long double>::One;
-
 #if !defined(ITK_LEGACY_REMOVE)
 template <>
 const std::complex<char> NumericTraits<std::complex<char>>::Zero = std::complex<char>(0, 0);
@@ -95,11 +44,11 @@ template <>
 const std::complex<short> NumericTraits<std::complex<short>>::One = std::complex<short>(1, 0);
 
 template <>
-const std::complex<unsigned short> NumericTraits<std::complex<unsigned short>>::Zero = std::complex<unsigned short>(0,
-                                                                                                                    0);
+const std::complex<unsigned short> NumericTraits<std::complex<unsigned short>>::Zero =
+  std::complex<unsigned short>(0, 0);
 template <>
-const std::complex<unsigned short> NumericTraits<std::complex<unsigned short>>::One = std::complex<unsigned short>(1,
-                                                                                                                   0);
+const std::complex<unsigned short> NumericTraits<std::complex<unsigned short>>::One =
+  std::complex<unsigned short>(1, 0);
 
 template <>
 const std::complex<int> NumericTraits<std::complex<int>>::Zero = std::complex<int>(0, 0);
@@ -117,11 +66,11 @@ template <>
 const std::complex<long> NumericTraits<std::complex<long>>::One = std::complex<long>(1L, 0L);
 
 template <>
-const std::complex<unsigned long> NumericTraits<std::complex<unsigned long>>::Zero = std::complex<unsigned long>(0UL,
-                                                                                                                 0UL);
+const std::complex<unsigned long> NumericTraits<std::complex<unsigned long>>::Zero =
+  std::complex<unsigned long>(0UL, 0UL);
 template <>
-const std::complex<unsigned long> NumericTraits<std::complex<unsigned long>>::One = std::complex<unsigned long>(1UL,
-                                                                                                                0UL);
+const std::complex<unsigned long> NumericTraits<std::complex<unsigned long>>::One =
+  std::complex<unsigned long>(1UL, 0UL);
 #endif // !defined(ITK_LEGACY_REMOVE)
 
 template <>

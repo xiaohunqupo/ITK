@@ -32,7 +32,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * https://www.insight-journal.org/browse/publication/160
+ * https://doi.org/10.54294/igq8fn
  *
  * \author Richard Beare
  * \author Gaetan Lehmann
@@ -55,8 +55,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(MaskedMovingHistogramImageFilter, MovingHistogramImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MaskedMovingHistogramImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

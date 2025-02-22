@@ -58,8 +58,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CSVArray2DDataObject, DataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CSVArray2DDataObject);
 
   /* Vector type alias. */
   using NumericVectorType = typename std::vector<TData>;

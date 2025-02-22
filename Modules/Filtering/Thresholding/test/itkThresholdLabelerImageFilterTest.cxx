@@ -40,9 +40,7 @@ ThresholdLabelerImageFilterTestHelper(bool useRealTypeThresholds)
   // Create an image with stripes to label
   InputImageType::IndexType  index = { { 0, 0 } };
   InputImageType::SizeType   size = { { 32, 32 } };
-  InputImageType::RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
+  InputImageType::RegionType region{ index, size };
 
   auto inputImage = InputImageType::New();
   inputImage->SetLargestPossibleRegion(region);
@@ -69,7 +67,7 @@ ThresholdLabelerImageFilterTestHelper(bool useRealTypeThresholds)
   values.push_back(3.5);
 
   // Set the value for the offset
-  unsigned long offset = 4;
+  constexpr unsigned long offset = 4;
 
   //  Set the labels vector
   std::vector<LabeledPixelType> labels;

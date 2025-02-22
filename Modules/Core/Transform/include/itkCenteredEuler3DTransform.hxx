@@ -53,7 +53,7 @@ template <typename TParametersValueType>
 void
 CenteredEuler3DTransform<TParametersValueType>::SetParameters(const ParametersType & parameters)
 {
-  itkDebugMacro(<< "Setting parameters " << parameters);
+  itkDebugMacro("Setting parameters " << parameters);
 
   // Save parameters
   if (&parameters != &(this->m_Parameters))
@@ -84,7 +84,7 @@ CenteredEuler3DTransform<TParametersValueType>::SetParameters(const ParametersTy
   // parameters and cannot know if the parameters have changed.
   this->Modified();
 
-  itkDebugMacro(<< "After setting parameters ");
+  itkDebugMacro("After setting parameters ");
 }
 
 //
@@ -101,7 +101,7 @@ template <typename TParametersValueType>
 auto
 CenteredEuler3DTransform<TParametersValueType>::GetParameters() const -> const ParametersType &
 {
-  ParametersType parameters;
+  const ParametersType parameters;
 
   this->m_Parameters[0] = this->GetAngleX();
   this->m_Parameters[1] = this->GetAngleY();
@@ -194,9 +194,7 @@ template <typename TParametersValueType>
 auto
 CenteredEuler3DTransform<TParametersValueType>::GetInverseTransform() const -> InverseTransformBasePointer
 {
-  Pointer inv = New();
-
-  return this->GetInverse(inv) ? inv.GetPointer() : nullptr;
+  return Superclass::InvertTransform(*this);
 }
 
 // Print self

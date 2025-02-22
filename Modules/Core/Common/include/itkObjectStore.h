@@ -34,7 +34,7 @@ namespace itk
 class ObjectStoreEnums
 {
 public:
-  /** \class GrowthStrategy
+  /**
    * \ingroup ITKCommon
    * Type of memory allocation strategy */
   enum class GrowthStrategy : uint8_t
@@ -95,8 +95,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ObjectStore, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ObjectStore);
 
   /** Type of the objects in storage. */
   using ObjectType = TObjectType;

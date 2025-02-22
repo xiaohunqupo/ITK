@@ -94,8 +94,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(HistogramToIntensityImageFilter, HistogramToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HistogramToIntensityImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

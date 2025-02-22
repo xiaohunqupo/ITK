@@ -56,7 +56,7 @@ NCCRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Initiali
 {
   if (!this->m_MovingImage || !this->m_FixedImage || !m_MovingImageInterpolator)
   {
-    itkExceptionMacro(<< "MovingImage, FixedImage and/or Interpolator not set");
+    itkExceptionMacro("MovingImage, FixedImage and/or Interpolator not set");
   }
 
   // Cache fixed image information
@@ -75,11 +75,11 @@ NCCRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::Initiali
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-typename NCCRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::PixelType
+auto
 NCCRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ComputeUpdate(
   const NeighborhoodType & it,
   void *                   itkNotUsed(globalData),
-  const FloatOffsetType &  itkNotUsed(offset))
+  const FloatOffsetType &  itkNotUsed(offset)) -> PixelType
 {
   const IndexType oindex = it.GetIndex();
 
@@ -155,9 +155,8 @@ NCCRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ComputeU
     }
   }
 
-  PixelType update;
-  update.Fill(0.0);
-  double updatenorm = 0.0;
+  PixelType update{};
+  double    updatenorm = 0.0;
   if ((sff * smm) != 0.0)
   {
     const double factor = 1.0 / std::sqrt(sff * smm);

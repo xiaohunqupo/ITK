@@ -29,8 +29,8 @@ namespace itk
 template <typename TInputImage, typename TOutputImage, typename TMaskImage>
 HistogramThresholdImageFilter<TInputImage, TOutputImage, TMaskImage>::HistogramThresholdImageFilter()
   : m_InsideValue(NumericTraits<OutputPixelType>::max())
-  , m_OutsideValue(NumericTraits<OutputPixelType>::ZeroValue())
-  , m_Threshold(NumericTraits<InputPixelType>::ZeroValue())
+  , m_OutsideValue(OutputPixelType{})
+  , m_Threshold(InputPixelType{})
   , m_MaskValue(NumericTraits<MaskPixelType>::max())
 
 {
@@ -73,7 +73,7 @@ HistogramThresholdImageFilter<TInputImage, TOutputImage, TMaskImage>::GenerateDa
   auto progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
 
-  HistogramGeneratorPointer histogramGenerator = HistogramGeneratorType::New();
+  const HistogramGeneratorPointer histogramGenerator = HistogramGeneratorType::New();
 
   using MaskedHistogramGeneratorType = Statistics::MaskedImageToHistogramFilter<InputImageType, MaskImageType>;
   auto maskedHistogramGenerator = MaskedHistogramGeneratorType::New();

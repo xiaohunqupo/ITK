@@ -72,8 +72,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageModelEstimatorBase, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageModelEstimatorBase);
 
   /** Set the number of classes. */
   itkSetMacro(NumberOfModels, unsigned int);

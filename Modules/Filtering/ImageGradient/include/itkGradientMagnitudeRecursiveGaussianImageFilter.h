@@ -107,8 +107,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GradientMagnitudeRecursiveGaussianImageFilter, InPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientMagnitudeRecursiveGaussianImageFilter);
 
   /** Set/Get Sigma value. Sigma is measured in the units of image spacing.  */
   void
@@ -128,11 +128,7 @@ public:
   void
   SetNumberOfWorkUnits(ThreadIdType nb) override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<PixelType>));
-  // End concept checking
-#endif
 
 protected:
   GradientMagnitudeRecursiveGaussianImageFilter();

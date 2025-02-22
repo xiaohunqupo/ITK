@@ -101,8 +101,8 @@ ImageAdaptor<TImage, TAccessor>::Graft(const DataObject * data)
     else
     {
       // pointer could not be cast back down
-      itkExceptionMacro(<< "itk::ImageAdaptor::Graft() cannot cast " << typeid(data).name() << " to "
-                        << typeid(const Self *).name());
+      itkExceptionMacro("itk::ImageAdaptor::Graft() cannot cast " << typeid(data).name() << " to "
+                                                                  << typeid(const Self *).name());
     }
   }
 }
@@ -317,10 +317,8 @@ template <typename TImage, typename TAccessor>
 ModifiedTimeType
 ImageAdaptor<TImage, TAccessor>::GetMTime() const
 {
-  ModifiedTimeType mtime1, mtime2;
-
-  mtime1 = Superclass::GetMTime();
-  mtime2 = m_Image->GetMTime();
+  const ModifiedTimeType mtime1 = Superclass::GetMTime();
+  const ModifiedTimeType mtime2 = m_Image->GetMTime();
 
   return (mtime1 >= mtime2 ? mtime1 : mtime2);
 }

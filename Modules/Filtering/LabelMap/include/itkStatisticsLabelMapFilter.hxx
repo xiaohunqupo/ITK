@@ -23,7 +23,6 @@
 #include "itkProgressReporter.h"
 #include "vnl/algo/vnl_real_eigensystem.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
-#include "itkMath.h"
 
 namespace itk
 {
@@ -97,18 +96,12 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
   double                sum2 = 0;
   double                sum3 = 0;
   double                sum4 = 0;
-  IndexType             minIdx;
-  minIdx.Fill(0);
-  IndexType maxIdx;
-  maxIdx.Fill(0);
-  PointType centerOfGravity;
-  centerOfGravity.Fill(0);
-  MatrixType centralMoments;
-  centralMoments.Fill(0);
-  MatrixType principalAxes;
-  principalAxes.Fill(0);
-  VectorType principalMoments;
-  principalMoments.Fill(0);
+  IndexType             minIdx{};
+  IndexType             maxIdx{};
+  PointType             centerOfGravity{};
+  MatrixType            centralMoments{};
+  MatrixType            principalAxes{};
+  VectorType            principalMoments{};
 
 
   // iterate over all the indexes
@@ -135,7 +128,7 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
 
     // increase the sums
     sum += v;
-    sum2 += std::pow(static_cast<double>(v), 2);
+    sum2 += Math::sqr(static_cast<double>(v));
     sum3 += std::pow(static_cast<double>(v), 3);
     sum4 += std::pow(static_cast<double>(v), 4);
 
@@ -148,7 +141,7 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
       centralMoments[i][i] += v * physicalPosition[i] * physicalPosition[i];
       for (unsigned int j = i + 1; j < ImageDimension; ++j)
       {
-        double weight = v * physicalPosition[i] * physicalPosition[j];
+        const double weight = v * physicalPosition[i] * physicalPosition[j];
         centralMoments[i][j] += weight;
         centralMoments[j][i] += weight;
       }
@@ -161,7 +154,7 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
   const double                                          mean = sum / totalFreq;
   // Note that totalFreq could be 1. Stats on a population of size 1 are not useful.
   // We protect against dividing by 0 in that case.
-  const double variance = (totalFreq > 1) ? (sum2 - (std::pow(sum, 2) / totalFreq)) / (totalFreq - 1) : 0;
+  const double variance = (totalFreq > 1) ? (sum2 - (Math::sqr(sum) / totalFreq)) / (totalFreq - 1) : 0;
   const double sigma = std::sqrt(variance);
   const double mean2 = mean * mean;
   double       skewness;
@@ -242,8 +235,8 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
     }
 
     // Compute principal moments and axes
-    vnl_symmetric_eigensystem<double> eigen{ centralMoments.GetVnlMatrix().as_matrix() };
-    vnl_diag_matrix<double>           pm{ eigen.D };
+    const vnl_symmetric_eigensystem<double> eigen{ centralMoments.GetVnlMatrix().as_matrix() };
+    vnl_diag_matrix<double>                 pm{ eigen.D };
     for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       //    principalMoments[i] = 4 * std::sqrt( pm(i,i) );
@@ -253,7 +246,7 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
 
     // Add a final reflection if needed for a proper rotation,
     // by multiplying the last row by the determinant
-    vnl_real_eigensystem                  eigenrot{ principalAxes.GetVnlMatrix().as_matrix() };
+    const vnl_real_eigensystem            eigenrot{ principalAxes.GetVnlMatrix().as_matrix() };
     vnl_diag_matrix<std::complex<double>> eigenval{ eigenrot.D };
     std::complex<double>                  det(1.0, 0.0);
 
@@ -267,13 +260,12 @@ StatisticsLabelMapFilter<TImage, TFeatureImage>::ThreadedProcessLabelObject(Labe
       principalAxes[ImageDimension - 1][i] *= std::real(det);
     }
 
-    if (ImageDimension < 2)
+    if constexpr (ImageDimension < 2)
     {
       elongation = 1;
       flatness = 1;
     }
-    else if (Math::NotAlmostEquals(principalMoments[0],
-                                   itk::NumericTraits<typename VectorType::ValueType>::ZeroValue()))
+    else if (Math::NotAlmostEquals(principalMoments[0], typename VectorType::ValueType{}))
     {
       //    elongation = principalMoments[ImageDimension-1] /
       // principalMoments[0];

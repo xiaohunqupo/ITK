@@ -39,10 +39,10 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::InternalClone() const
 {
   typename LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
+  const typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
   if (rval.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
 
   rval->m_NumberOfResultsRequested = this->m_NumberOfResultsRequested;
@@ -58,11 +58,11 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceI
 {
   if (!this->m_RadiusInitialized)
   {
-    itkExceptionMacro(<< "Radius not set.");
+    itkExceptionMacro("Radius not set.");
   }
   if (!this->m_SampleRegionInitialized)
   {
-    itkExceptionMacro(<< "Sample region not set.");
+    itkExceptionMacro("Sample region not set.");
   }
   if (!this->GetRegionConstraintInitialized())
   {
@@ -72,9 +72,8 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceI
   results->Clear();
   results->SetSample(this->m_Sample);
 
-  RegionType searchRegion;
-  IndexType  searchStartIndex;
-  IndexType  searchEndIndex;
+  IndexType searchStartIndex;
+  IndexType searchEndIndex;
 
   IndexType constraintIndex = this->m_RegionConstraint.GetIndex();
   SizeType  constraintSize = this->m_RegionConstraint.GetSize();
@@ -90,7 +89,7 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceI
   {
     if (queryIndex[dim] < static_cast<IndexValueType>(this->m_Radius[dim]))
     {
-      searchStartIndex[dim] = std::max(NumericTraits<IndexValueType>::ZeroValue(), constraintIndex[dim]);
+      searchStartIndex[dim] = std::max(IndexValueType{}, constraintIndex[dim]);
     }
     else
     {
@@ -124,7 +123,7 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceI
 
   unsigned int pointsFound = 0;
 
-  std::set<InstanceIdentifier>         usedIds;
+  const std::set<InstanceIdentifier>   usedIds;
   typename RegionType::OffsetValueType offset;
 
   // The trouble with decoupling the region from the sample is that
@@ -173,12 +172,13 @@ UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::Search(const InstanceI
 } // end Search method
 
 template <typename TSample, typename TRegion>
-typename UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::RandomIntType
+auto
 UniformRandomSpatialNeighborSubsampler<TSample, TRegion>::GetIntegerVariate(RandomIntType lowerBound,
                                                                             RandomIntType upperBound,
                                                                             RandomIntType itkNotUsed(mean))
+  -> RandomIntType
 {
-  RandomIntType sizeRange = upperBound - lowerBound;
+  const RandomIntType sizeRange = upperBound - lowerBound;
   // mean ignored since we are uniformly sampling
   return lowerBound + m_RandomNumberGenerator->GetIntegerVariate(sizeRange);
 }

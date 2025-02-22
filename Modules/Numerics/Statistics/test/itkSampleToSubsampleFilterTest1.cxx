@@ -39,8 +39,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(SubsamplerTester, SampleToSubsampleFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SubsamplerTester);
   itkNewMacro(Self);
 
 protected:

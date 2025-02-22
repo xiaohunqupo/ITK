@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NormalizedCorrelationPointSetToImageMetric, PointSetToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NormalizedCorrelationPointSetToImageMetric);
 
   /** Types transferred from the base class */
   using typename Superclass::RealType;

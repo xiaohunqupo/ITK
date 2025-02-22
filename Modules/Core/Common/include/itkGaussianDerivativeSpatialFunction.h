@@ -53,8 +53,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaussianDerivativeSpatialFunction, SpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianDerivativeSpatialFunction);
 
   /** Input type for the function. */
   using typename Superclass::InputType;

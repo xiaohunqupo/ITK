@@ -75,8 +75,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ContourDirectedMeanDistanceImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ContourDirectedMeanDistanceImageFilter);
 
   /** Image related type alias. */
   using InputImage1Type = TInputImage1;
@@ -123,11 +123,7 @@ public:
   itkGetConstMacro(UseImageSpacing, bool);
   itkBooleanMacro(UseImageSpacing);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImage1PixelType>));
-  // End concept checking
-#endif
 
 protected:
   ContourDirectedMeanDistanceImageFilter();
@@ -175,7 +171,7 @@ private:
   Array<RealType>       m_MeanDistance{};
   Array<IdentifierType> m_Count{};
   RealType              m_ContourDirectedMeanDistance{};
-  bool                  m_UseImageSpacing{};
+  bool                  m_UseImageSpacing{ true };
 };
 } // end namespace itk
 

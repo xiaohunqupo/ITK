@@ -93,18 +93,16 @@ public:
   /**
    * Run-time type information (and related methods)
    */
-  itkTypeMacro(UnsharpMaskImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(UnsharpMaskImageFilter);
 
   /**
    * Method for creation through the object factory.
    */
   itkNewMacro(Self);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
   itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, ImageDimension>));
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelType>));
   itkConceptMacro(InternalTypeIsFloatingPoint, (Concept::IsFloatingPoint<TInternalPrecision>));
-#endif
 
   using GaussianType =
     SmoothingRecursiveGaussianImageFilter<TInputImage, Image<TInternalPrecision, TOutputImage::ImageDimension>>;
@@ -120,8 +118,7 @@ public:
   void
   SetSigma(const typename SigmaArrayType::ValueType sigma)
   {
-    SigmaArrayType sigmas;
-    sigmas.Fill(sigma);
+    auto sigmas = MakeFilled<SigmaArrayType>(sigma);
     this->SetSigmas(sigmas); // checks whether it is actually modified
   }
 
@@ -155,7 +152,7 @@ protected:
   GenerateInputRequestedRegion() override;
 
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
   void
   GenerateData() override;
 
@@ -224,7 +221,7 @@ private:
         {
           return itk::NumericTraits<OutPixelType>::NonpositiveMin();
         }
-        else if (result > itk::NumericTraits<OutPixelType>::max())
+        if (result > itk::NumericTraits<OutPixelType>::max())
         {
           return itk::NumericTraits<OutPixelType>::max();
         }
@@ -233,7 +230,7 @@ private:
       return static_cast<OutPixelType>(result);
     }
   }; // end UnsharpMaskingFunctor
-};   // end UnsharpMaskImageFilter
+}; // end UnsharpMaskImageFilter
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

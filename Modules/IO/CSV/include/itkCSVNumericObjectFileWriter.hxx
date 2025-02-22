@@ -95,20 +95,20 @@ CSVNumericObjectFileWriter<TValue, VRows, VColumns>::PrepareForWriting()
   // throw an exception if no filename is provided
   if (this->m_FileName.empty())
   {
-    itkExceptionMacro(<< "A filename for writing was not specified!");
+    itkExceptionMacro("A filename for writing was not specified!");
   }
 
   // throw an exception if no input object is provided
   if (this->m_InputObject == nullptr)
   {
-    itkExceptionMacro(<< "An input object was not specified!");
+    itkExceptionMacro("An input object was not specified!");
   }
 
   // output a warning if the number of row headers and number of rows in the
   // object are not the same
   if (!this->m_RowHeaders.empty() && (this->m_RowHeaders.size() != this->m_Rows))
   {
-    itkWarningMacro(<< "Warning: The number of row headers and the number of rows in"
+    itkWarningMacro("Warning: The number of row headers and the number of rows in"
                     << " the input object is not consistent.");
   }
 
@@ -118,12 +118,12 @@ CSVNumericObjectFileWriter<TValue, VRows, VColumns>::PrepareForWriting()
   {
     if (!this->m_RowHeaders.empty() && this->m_ColumnHeaders.size() != (this->m_Columns + 1))
     {
-      itkWarningMacro(<< "Warning: The number of column headers and the number of"
+      itkWarningMacro("Warning: The number of column headers and the number of"
                       << " columns in the input object is not consistent.");
     }
     if (this->m_RowHeaders.empty() && this->m_ColumnHeaders.size() != this->m_Columns)
     {
-      itkWarningMacro(<< "Warning: The number of column headers and the number of"
+      itkWarningMacro("Warning: The number of column headers and the number of"
                       << " columns in the input object is not consistent.");
     }
   }

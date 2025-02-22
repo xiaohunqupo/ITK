@@ -19,6 +19,7 @@
 #define itkImageScanlineConstIterator_h
 
 #include "itkImageIterator.h"
+#include <type_traits> // For remove_const_t.
 
 namespace itk
 {
@@ -74,7 +75,7 @@ public:
   static constexpr unsigned int ImageIteratorDimension = Superclass::ImageIteratorDimension;
 
   /**
-   * Index type alias support While these were already typdef'ed in the superclass,
+   * Index type alias support While these were already typedef'ed in the superclass,
    * they need to be redone here for this subclass to compile properly with gcc.
    */
   /** Types inherited from the Superclass */
@@ -89,8 +90,8 @@ public:
   using typename Superclass::PixelType;
   using typename Superclass::AccessorType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageScanlineConstIterator, ImageConstIterator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageScanlineConstIterator);
 
   /** Default constructor. Needed since we provide a cast constructor. */
   ImageScanlineConstIterator()
@@ -100,9 +101,9 @@ public:
     m_SpanEndOffset = 0;
   }
 
-  /** Constructor establishes an iterator to walk a particular image and a
-   * particular region of that image. */
-  ImageScanlineConstIterator(const ImageType * ptr, const RegionType & region)
+  /** Constructor establishes an iterator to walk a particular image and a particular region of that image. Initializes
+   * the iterator at the begin of the region. */
+  ImageScanlineConstIterator(const TImage * ptr, const RegionType & region)
     : ImageConstIterator<TImage>(ptr, region)
   {
     m_SpanBeginOffset = this->m_BeginOffset;
@@ -260,6 +261,12 @@ protected:
   OffsetValueType m_SpanBeginOffset{}; // one pixel the beginning of the scanline
   OffsetValueType m_SpanEndOffset{};   // one pixel past the end of the scanline
 };
+
+// Deduction guide for class template argument deduction (CTAD).
+template <typename TImage>
+ImageScanlineConstIterator(SmartPointer<TImage>, const typename TImage::RegionType &)
+  -> ImageScanlineConstIterator<std::remove_const_t<TImage>>;
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

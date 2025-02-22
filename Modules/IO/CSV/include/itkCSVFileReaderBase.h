@@ -73,8 +73,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(CSVFileReaderBase, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CSVFileReaderBase);
 
   /** Set the name of the file to be read */
   itkSetStringMacro(FileName);
@@ -140,7 +140,7 @@ public:
    */
   template <typename TData>
   TData
-  ConvertStringToValueType(const std::string str)
+  ConvertStringToValueType(const std::string & str)
   {
     TData              value;
     std::istringstream isstream(str);
@@ -149,10 +149,8 @@ public:
     {
       return std::numeric_limits<TData>::quiet_NaN();
     }
-    else
-    {
-      return value;
-    }
+
+    return value;
   }
 
   /** This method must be defined in derived classes to parse the entire

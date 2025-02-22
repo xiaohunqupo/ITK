@@ -58,7 +58,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   itkNewMacro(Self);
-  itkTypeMacro(GPUKernelManager, LightObject);
+  itkOverrideGetNameOfClassMacro(GPUKernelManager);
 
   bool
   LoadProgramFromFile(const char * filename, const char * cPreamble = "");
@@ -124,9 +124,7 @@ public:
       return false;
     }
 
-    cl_int errid;
-
-    errid = clSetKernelArg(m_KernelContainer[kernelIdx], argIdx, sizeof(cl_mem), manager->GetGPUBufferPointer());
+    cl_int errid = clSetKernelArg(m_KernelContainer[kernelIdx], argIdx, sizeof(cl_mem), manager->GetGPUBufferPointer());
     OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
     m_KernelArgumentReady[kernelIdx][argIdx].m_IsReady = true;

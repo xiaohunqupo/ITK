@@ -129,7 +129,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(Boundary, DataObject);
+  itkOverrideGetNameOfClassMacro(Boundary);
 
   /** The following averts an internal compiler error on microsoft compilers */
   using FacePointer = typename face_t::Pointer;
@@ -151,10 +151,8 @@ public:
     {
       return m_Faces[dimension].first;
     }
-    else
-    {
-      return m_Faces[dimension].second;
-    }
+
+    return m_Faces[dimension].second;
   }
 
   void
@@ -190,10 +188,8 @@ public:
     {
       return &(m_FlatHashes[dimension].first);
     }
-    else
-    {
-      return &(m_FlatHashes[dimension].second);
-    }
+
+    return &(m_FlatHashes[dimension].second);
   }
 
   void
@@ -250,10 +246,8 @@ public:
     {
       return m_Valid[dimension].first;
     }
-    else
-    {
-      return m_Valid[dimension].second;
-    }
+
+    return m_Valid[dimension].second;
   }
 
 protected:

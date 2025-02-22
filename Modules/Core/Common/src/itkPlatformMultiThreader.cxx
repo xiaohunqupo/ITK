@@ -30,7 +30,6 @@
 #include <algorithm>
 #include <iostream>
 #include <string>
-#include <algorithm>
 
 #if defined(ITK_USE_PTHREADS)
 #  include "itkPlatformMultiThreaderPosix.cxx"
@@ -57,7 +56,7 @@ PlatformMultiThreader::PlatformMultiThreader()
 #endif
 
     m_SpawnedThreadActiveFlag[i] = 0;
-    m_SpawnedThreadActiveFlagLock[i] = nullptr;
+    m_SpawnedThreadActiveFlagMutex[i] = nullptr;
     m_SpawnedThreadInfoArray[i].WorkUnitID = i;
   }
 }
@@ -80,7 +79,7 @@ PlatformMultiThreader::SetNumberOfWorkUnits(ThreadIdType numberOfWorkUnits)
 void
 PlatformMultiThreader::SetSingleMethod(ThreadFunctionType f, void * data)
 {
-  m_SingleMethod = f;
+  m_SingleMethod = std::move(f);
   m_SingleData = data;
 }
 
@@ -95,7 +94,7 @@ PlatformMultiThreader::SetMultipleMethod(ThreadIdType index, ThreadFunctionType 
   // You can only set the method for 0 through NumberOfWorkUnits-1
   if (index >= m_NumberOfWorkUnits)
   {
-    itkExceptionMacro(<< "Can't set method " << index << " with a thread count of " << m_NumberOfWorkUnits);
+    itkExceptionMacro("Can't set method " << index << " with a thread count of " << m_NumberOfWorkUnits);
   }
   else
   {
@@ -113,7 +112,7 @@ PlatformMultiThreader::SingleMethodExecute()
 
   if (!m_SingleMethod)
   {
-    itkExceptionMacro(<< "No single method set!");
+    itkExceptionMacro("No single method set!");
   }
 
   // obey the global maximum number of threads limit
@@ -228,7 +227,7 @@ PlatformMultiThreader::SingleMethodExecute()
     }
     else
     {
-      itkExceptionMacro(<< "Exception occurred during SingleMethodExecute" << std::endl << exceptionDetails);
+      itkExceptionMacro("Exception occurred during SingleMethodExecute" << std::endl << exceptionDetails);
     }
   }
 }

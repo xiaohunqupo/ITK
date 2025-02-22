@@ -77,17 +77,20 @@ public:
 
   /** Typedef to describe the boundary condition. */
   using BoundaryConditionType = ImageBoundaryCondition<TInputImage, TOutputImage>;
-  using BoundaryConditionPointerType = BoundaryConditionType *;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using BoundaryConditionPointerType [[deprecated("Please just use `BoundaryConditionType *` instead!")]] =
+    BoundaryConditionType *;
+#endif
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PadImageFilterBase, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PadImageFilterBase);
 
   /** ImageDimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Set/get the boundary condition. */
-  itkSetMacro(BoundaryCondition, BoundaryConditionPointerType);
-  itkGetConstMacro(BoundaryCondition, BoundaryConditionPointerType);
+  itkSetMacro(BoundaryCondition, BoundaryConditionType *);
+  itkGetConstMacro(BoundaryCondition, BoundaryConditionType *);
 
 protected:
   PadImageFilterBase();
@@ -110,10 +113,10 @@ protected:
 
   /** Method for subclasses to set the boundary condition. */
   void
-  InternalSetBoundaryCondition(const BoundaryConditionPointerType boundaryCondition);
+  InternalSetBoundaryCondition(BoundaryConditionType * const boundaryCondition);
 
 private:
-  BoundaryConditionPointerType m_BoundaryCondition{};
+  BoundaryConditionType * m_BoundaryCondition{};
 };
 
 } // end namespace itk

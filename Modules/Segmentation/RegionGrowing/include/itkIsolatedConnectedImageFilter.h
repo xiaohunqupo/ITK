@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods).  */
-  itkTypeMacro(IsolatedConnectedImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(IsolatedConnectedImageFilter);
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::Pointer;
   using InputImageConstPointer = typename InputImageType::ConstPointer;
@@ -199,11 +199,7 @@ public:
    * threshold. */
   itkGetConstReferenceMacro(ThresholdingFailed, bool);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   IsolatedConnectedImageFilter();

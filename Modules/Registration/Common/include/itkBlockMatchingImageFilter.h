@@ -53,9 +53,7 @@ namespace itk
  *
  * This filter is intended to be used in the process of Physics-Based
  * Non-Rigid Registration. It computes displacement for selected points based
- * on similarity [M. Bierling, Displacement estimation by hierarchical block
- * matching, Proc. SPIE Vis. Comm. and Image Proc., vol. 1001, pp. 942-951,
- * 1988.].
+ * on similarity as described in \cite bierling1988.
  *
  * \author Andriy Kot, Center for Real-Time Computing, Old Dominion University,
  * Norfolk, VA
@@ -125,8 +123,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BlockMatchingImageFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BlockMatchingImageFilter);
 
   /** set/get half size */
   itkSetMacro(BlockRadius, ImageSizeType);
@@ -160,13 +158,13 @@ public:
     return dynamic_cast<SimilaritiesType *>(this->ProcessObject::GetOutput(1));
   }
 
-protected:
   /** MakeOutput is provided for handling multiple outputs */
   using Superclass::MakeOutput;
   DataObject::Pointer
   MakeOutput(ProcessObject::DataObjectPointerArraySizeType idx) override;
 
-  /** We need to create our own GenerateOutputInformation because the the
+protected:
+  /** We need to create our own GenerateOutputInformation because the
    * default version from ProcessObject result in a dynamic_cast of the input
    * pointer to the output pointer type in PointSet::CopyInformation.  This does
    * not work since they are different types. */

@@ -52,8 +52,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(NeighborhoodSampler, SampleToSubsampleFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NeighborhoodSampler);
   itkNewMacro(Self);
 
   /** Typedefs for Measurement vector, measurement, Instance Identifier,

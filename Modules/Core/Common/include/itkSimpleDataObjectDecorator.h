@@ -80,8 +80,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SimpleDataObjectDecorator, DataObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SimpleDataObjectDecorator);
 
   /** Set the contained object */
   virtual void
@@ -100,7 +100,7 @@ public:
   }
 
 protected:
-  SimpleDataObjectDecorator();
+  SimpleDataObjectDecorator() = default;
   ~SimpleDataObjectDecorator() override = default;
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

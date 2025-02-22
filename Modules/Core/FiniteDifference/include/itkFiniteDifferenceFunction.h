@@ -74,8 +74,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(FiniteDifferenceFunction, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FiniteDifferenceFunction);
 
   /** Extract some parameters from the image type */
   using ImageType = TImageType;

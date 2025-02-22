@@ -30,7 +30,7 @@ namespace itk
  * shape model.
  *
  * This class extends the basic LevelSetFunction with a shape prior term
- * as developed in [1].
+ * as developed in \cite leventon2000.
  *
  * \f$ \zeta( \phi^{*} - \phi) \f$
  *
@@ -43,10 +43,6 @@ namespace itk
  * \sa LevelSetFunction
  * \sa SegmentationLevelSetImageFunction
  * \sa ShapeSignedDistanceFunction
- *
- * \par REFERENCES
- * \par
- * [1] Leventon, M.E. et al. "Statistical Shape Influence in Geodesic Active Contours", CVPR 2000.
  *
  * \ingroup FiniteDifferenceFunctions
  * \ingroup ITKLevelSets
@@ -68,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(ShapePriorSegmentationLevelSetFunction, SegmentationLevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapePriorSegmentationLevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   using typename Superclass::ImageType;
@@ -139,10 +135,10 @@ public:
   {
     auto * ans = new ShapePriorGlobalDataStruct();
 
-    ans->m_MaxAdvectionChange = NumericTraits<ScalarValueType>::ZeroValue();
-    ans->m_MaxPropagationChange = NumericTraits<ScalarValueType>::ZeroValue();
-    ans->m_MaxCurvatureChange = NumericTraits<ScalarValueType>::ZeroValue();
-    ans->m_MaxShapePriorChange = NumericTraits<ScalarValueType>::ZeroValue();
+    ans->m_MaxAdvectionChange = ScalarValueType{};
+    ans->m_MaxPropagationChange = ScalarValueType{};
+    ans->m_MaxCurvatureChange = ScalarValueType{};
+    ans->m_MaxShapePriorChange = ScalarValueType{};
     return ans;
   }
 

@@ -63,8 +63,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThreadPool, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThreadPool);
 
   /** Returns the global instance */
   static Pointer
@@ -89,11 +89,11 @@ auto result = pool->AddWork([](int param) { return param; }, 7);
     using return_type = std::invoke_result_t<Function, Arguments...>;
 
     auto task = std::make_shared<std::packaged_task<return_type()>>(
-      std::bind(std::forward<Function>(function), std::forward<Arguments>(arguments)...));
+      [function, arguments...]() -> return_type { return function(arguments...); });
 
     std::future<return_type> res = task->get_future();
     {
-      std::unique_lock<std::mutex> lock(this->GetMutex());
+      const std::lock_guard<std::mutex> lockGuard(this->GetMutex());
       m_WorkQueue.emplace_back([task]() { (*task)(); });
     }
     m_Condition.notify_one();
@@ -107,7 +107,7 @@ auto result = pool->AddWork([](int param) { return param; }, 7);
   ThreadIdType
   GetMaximumNumberOfThreads() const
   {
-    std::unique_lock<std::mutex> lock(this->GetMutex());
+    const std::lock_guard<std::mutex> lockGuard(this->GetMutex());
     return static_cast<ThreadIdType>(m_Threads.size());
   }
 

@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorToRGBImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorToRGBImageAdaptor);
 
   /** PixelContainer type alias support Used to construct a container for
    * the pixel data. */

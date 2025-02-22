@@ -24,7 +24,6 @@
 #include "itkImageFileWriter.h"
 #include "itkMaskFeaturePointSelectionFilter.h"
 #include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkRGBPixel.h"
 #include "itkRegionOfInterestImageFilter.h"
 #include "itkTestingMacros.h"
@@ -80,8 +79,7 @@ itkMaskFeaturePointSelectionFilterTest(int argc, char * argv[])
   ITK_TEST_SET_GET_VALUE(nonConnectivity, filter->GetNonConnectivity());
 
   auto blockRadiusValue = static_cast<typename FilterType::SizeType::SizeValueType>(std::stod(argv[4]));
-  typename FilterType::SizeType blockRadius;
-  blockRadius.Fill(blockRadiusValue);
+  auto blockRadius = FilterType::SizeType::Filled(blockRadiusValue);
   filter->SetBlockRadius(blockRadius);
   ITK_TEST_SET_GET_VALUE(blockRadius, filter->GetBlockRadius());
 
@@ -143,8 +141,8 @@ itkMaskFeaturePointSelectionFilterTest(int argc, char * argv[])
   // Highlight the feature points identified in the output image
   using PointIteratorType = PointSetType::PointsContainer::ConstIterator;
 
-  PointIteratorType pointItr = filter->GetOutput()->GetPoints()->Begin();
-  PointIteratorType pointEnd = filter->GetOutput()->GetPoints()->End();
+  PointIteratorType       pointItr = filter->GetOutput()->GetPoints()->Begin();
+  const PointIteratorType pointEnd = filter->GetOutput()->GetPoints()->End();
 
   OutputImageType::IndexType index;
 

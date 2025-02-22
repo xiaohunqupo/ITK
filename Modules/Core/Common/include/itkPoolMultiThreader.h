@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PoolMultiThreader, MultiThreaderBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PoolMultiThreader);
 
 
   /** Execute the SingleMethod (as define by SetSingleMethod) using

@@ -69,8 +69,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(MahalanobisDistanceMembershipFunction, MembershipFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MahalanobisDistanceMembershipFunction);
   itkNewMacro(Self);
 
   /** SmartPointer class for superclass */

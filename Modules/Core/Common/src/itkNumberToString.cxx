@@ -54,9 +54,9 @@ FloatingPointNumberToString(const TValue val)
 
   if (!ConvertToShortest(double_conversion::DoubleToStringConverter::EcmaScriptConverter(), val, builder))
   {
-    itkGenericExceptionMacro(<< "Conversion failed for " << val);
+    itkGenericExceptionMacro("Conversion failed for " << val);
   }
-  return std::string(builder.Finalize());
+  return { builder.Finalize() };
 }
 
 } // namespace

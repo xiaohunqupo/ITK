@@ -42,7 +42,7 @@ LabelMapOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::GenerateInpu
   Superclass::GenerateInputRequestedRegion();
 
   // We need all the input.
-  LabelMapPointer input = const_cast<LabelMapType *>(this->GetInput());
+  const LabelMapPointer input = const_cast<LabelMapType *>(this->GetInput());
   if (!input)
   {
     return;
@@ -100,8 +100,8 @@ LabelMapOverlayImageFilter<TLabelMap, TFeatureImage, TOutputImage>::DynamicThrea
   function.SetBackgroundValue(input->GetBackgroundValue());
   function.SetOpacity(m_Opacity);
 
-  ImageScanlineConstIterator<FeatureImageType> featureIt(input2, outputRegionForThread);
-  ImageScanlineIterator<OutputImageType>       outputIt(output, outputRegionForThread);
+  ImageScanlineConstIterator featureIt(input2, outputRegionForThread);
+  ImageScanlineIterator      outputIt(output, outputRegionForThread);
 
   while (!featureIt.IsAtEnd())
   {

@@ -36,8 +36,7 @@ namespace itk
  *
  * "Grayscale morphological attribute operations"
  * by Beare R.
- * https://hdl.handle.net/1926/1316
- * https://www.insight-journal.org/browse/publication/203
+ * https://doi.org/10.54294/ifvjls
  *
  * \author Richard Beare. Department of Medicine, Monash University, Melbourne, Australia.
  *
@@ -83,8 +82,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(AreaClosingImageFilter, AttributeMorphologyBaseImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AreaClosingImageFilter);
 
   /**
    * Set/Get whether the image spacing is used or not - defaults to true.
@@ -104,11 +103,13 @@ protected:
     this->m_AttributeValuePerPixel = 1;
     if (m_UseImageSpacing)
     {
+      const auto & spacing = this->GetInput()->GetSpacing();
+
       // compute pixel size
       double psize = 1.0;
       for (unsigned int i = 0; i < ImageDimension; ++i)
       {
-        psize *= this->GetInput()->GetSpacing()[i];
+        psize *= spacing[i];
       }
       this->m_AttributeValuePerPixel = static_cast<AttributeType>(psize);
       // std::cout << "m_AttributeValuePerPixel: " <<
@@ -122,7 +123,7 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override
   {
     Superclass::PrintSelf(os, indent);
-    os << indent << "UseImageSpacing: " << m_UseImageSpacing << std::endl;
+    itkPrintSelfBooleanMacro(UseImageSpacing);
   }
 
 private:

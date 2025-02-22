@@ -23,7 +23,7 @@ int
 itkFEMElementTest(int argc, char * argv[])
 {
   // Need to register default FEM object types,
-  // and setup SpatialReader to recognize FEM types
+  // and setup spatialReader to recognize FEM types
   // which is all currently done as a HACK in
   // the initialization of the itk::FEMFactoryBase::GetFactory()
   itk::FEMFactoryBase::GetFactory()->RegisterDefaultTypes();
@@ -51,7 +51,6 @@ itkFEMElementTest(int argc, char * argv[])
   // Solvers being tested
   int numsolvers = 3;
   int currsolver;
-  int s;
 
   // Output comments
   char comment;
@@ -175,7 +174,7 @@ itkFEMElementTest(int argc, char * argv[])
     itk::fem::LinearSystemWrapperDenseVNL lsw_dvnl;
     itk::fem::LinearSystemWrapperItpack   lsw_itpack;
     itk::fem::LinearSystemWrapperVNL      lsw_vnl;
-    for (s = 0; s < numsolvers; ++s)
+    for (int s = 0; s < numsolvers; ++s)
     {
       if (s == 2)
       {

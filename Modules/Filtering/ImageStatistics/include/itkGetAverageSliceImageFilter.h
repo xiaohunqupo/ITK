@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GetAverageSliceImageFilter, AccumulateImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GetAverageSliceImageFilter);
 
   /** Set the direction in which to reflect the data. */
   itkGetConstMacro(AveragedOutDimension, unsigned int);

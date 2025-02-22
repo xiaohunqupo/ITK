@@ -81,8 +81,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RegularExpressionSeriesFileNames, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegularExpressionSeriesFileNames);
 
   /* -------- Define the API for RegularExpressionSeriesFileNames ---------- */
   /** The directory containing the files. */

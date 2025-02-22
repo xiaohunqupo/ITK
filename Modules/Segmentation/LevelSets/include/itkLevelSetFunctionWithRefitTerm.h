@@ -60,8 +60,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(LevelSetFunctionWithRefitTerm, LevelSetFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetFunctionWithRefitTerm);
 
   /** Standard New macro. */
   itkNewMacro(Self);
@@ -155,7 +155,7 @@ protected:
   virtual ScalarValueType
   OtherPropagationSpeed(const NeighborhoodType &, const FloatOffsetType &, GlobalDataStruct * = 0) const
   {
-    return NumericTraits<ScalarValueType>::ZeroValue();
+    return ScalarValueType{};
   }
 
 private:

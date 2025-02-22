@@ -23,6 +23,7 @@
 #include "itkImageFileWriter.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkImageRegionConstIterator.h"
+#include "itkBSplineDeformableTransform.h"
 #include "itkTestingMacros.h"
 
 #include <iostream>
@@ -39,7 +40,7 @@ template <typename ImageType>
 bool
 imagesDifferent(ImageType * baselineImage, ImageType * outputImage)
 {
-  double tol = 1.e-3; // tolerance
+  constexpr double tol = 1.e-3; // tolerance
 
   typename ImageType::PointType     origin = outputImage->GetOrigin();
   typename ImageType::DirectionType direction = outputImage->GetDirection();
@@ -101,14 +102,12 @@ itkTransformGeometryImageFilterTest(int argc, char * argv[])
   ITK_TRY_EXPECT_NO_EXCEPTION(inputImage = itk::ReadImage<ImageType>(argv[1]));
 
   // Set up transforms
-  ImageType::PointType center;
-  center.Fill(0.0);
+  ImageType::PointType center{};
   center[0] = 2.0; // In mm along X (RL-axis)
   center[1] = 5.0; // In mm along Y (AP-axis)
   center[2] = 7.0; // In mm along Z (IS-axis)
 
-  itk::Vector<double, Dimension> translation;
-  translation.Fill(0.);
+  itk::Vector<double, Dimension> translation{};
   translation[0] = 10.0; // In mm along X (RL-axis)
   translation[1] = 15.0; // In mm along Y (AP-axis)
   translation[2] = 20.0; // In mm along Z (IS-axis)
@@ -118,7 +117,7 @@ itkTransformGeometryImageFilterTest(int argc, char * argv[])
   rotationAxis[1] = 0.2;
   rotationAxis[2] = 0.7;
 
-  double rotationAngle = .5; // Radians
+  constexpr double rotationAngle = .5; // Radians
 
   auto transform = TransformType::New(); // Identity by default
   transform->SetCenter(center);
@@ -130,15 +129,22 @@ itkTransformGeometryImageFilterTest(int argc, char * argv[])
   ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, TransformGeometryImageFilter, InPlaceImageFilter);
 
   // Test the exceptions
-  ITK_TRY_EXPECT_EXCEPTION(filter->Update());
 
+  // Test the exception about input image not being set
+  ITK_TRY_EXPECT_EXCEPTION(filter->Update());
 
   filter->SetInputImage(inputImage);
   ITK_TEST_SET_GET_VALUE(inputImage, filter->GetInputImage());
+
+  // Test the exception about the transform not being linear
+  auto nonLinearTransform = itk::BSplineDeformableTransform<double, Dimension, 3>::New();
+  filter->SetTransform(nonLinearTransform);
+  ITK_TRY_EXPECT_EXCEPTION(filter->Update());
+
   filter->SetTransform(transform);
   ITK_TEST_SET_GET_VALUE(transform, filter->GetTransform());
   ITK_TRY_EXPECT_NO_EXCEPTION(filter->Update());
-  ImagePointer outputImage = filter->GetOutput();
+  const ImagePointer outputImage = filter->GetOutput();
   ITK_TRY_EXPECT_NO_EXCEPTION(itk::WriteImage(outputImage, argv[3]));
 
   // Read in baseline image
@@ -156,7 +162,7 @@ itkTransformGeometryImageFilterTest(int argc, char * argv[])
   rawPointerTransform->ApplyToImageMetadata(inputImage.GetPointer());
   const TransformType * constRawPointerTransform = transform.GetPointer();
   constRawPointerTransform->ApplyToImageMetadata(inputImage);
-  TransformType::ConstPointer constPointerTransform = transform.GetPointer();
+  const TransformType::ConstPointer constPointerTransform = transform.GetPointer();
   constPointerTransform->ApplyToImageMetadata(inputImage);
   constPointerTransform->ApplyToImageMetadata(inputImage.GetPointer());
 

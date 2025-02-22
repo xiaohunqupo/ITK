@@ -27,8 +27,6 @@ template <typename TPixel>
 class MaxFunctor
 {
 public:
-  MaxFunctor() = default;
-  ~MaxFunctor() = default;
   inline TPixel
   operator()(const TPixel & A, const TPixel & B) const
   {
@@ -46,8 +44,8 @@ public:
   using Self = VanHerkGilWermanDilateImageFilter;
   using Superclass = VanHerkGilWermanErodeDilateImageFilter<TImage, TKernel, MaxFunctor<typename TImage::PixelType>>;
 
-  /** Runtime information support. */
-  itkTypeMacro(VanHerkGilWermanDilateImageFilter, VanHerkGilWermanErodeDilateImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VanHerkGilWermanDilateImageFilter);
 
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;

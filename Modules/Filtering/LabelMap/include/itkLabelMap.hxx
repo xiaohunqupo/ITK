@@ -36,14 +36,6 @@ namespace itk
 {
 
 template <typename TLabelObject>
-LabelMap<TLabelObject>::LabelMap()
-{
-  m_BackgroundValue = NumericTraits<LabelType>::ZeroValue();
-  this->Initialize();
-}
-
-
-template <typename TLabelObject>
 void
 LabelMap<TLabelObject>::PrintSelf(std::ostream & os, Indent indent) const
 {
@@ -107,8 +99,8 @@ LabelMap<TLabelObject>::Graft(const DataObject * data)
   if (imgData == nullptr)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::LabelMap::Graft() cannot cast " << typeid(data).name() << " to "
-                      << typeid(const Self *).name());
+    itkExceptionMacro("itk::LabelMap::Graft() cannot cast " << typeid(data).name() << " to "
+                                                            << typeid(const Self *).name());
   }
   this->Graft(imgData);
 }
@@ -120,14 +112,14 @@ LabelMap<TLabelObject>::GetLabelObject(const LabelType & label) -> LabelObjectTy
 {
   if (m_BackgroundValue == label)
   {
-    itkExceptionMacro(<< "Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
-                      << " is the background label.");
+    itkExceptionMacro("Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
+                               << " is the background label.");
   }
   auto it = m_LabelObjectContainer.find(label);
   if (it == m_LabelObjectContainer.end())
   {
-    itkExceptionMacro(<< "No label object with label "
-                      << static_cast<typename NumericTraits<LabelType>::PrintType>(label) << '.');
+    itkExceptionMacro("No label object with label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
+                                                    << '.');
   }
 
   return it->second;
@@ -140,14 +132,14 @@ LabelMap<TLabelObject>::GetLabelObject(const LabelType & label) const -> const L
 {
   if (m_BackgroundValue == label)
   {
-    itkExceptionMacro(<< "Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
-                      << " is the background label.");
+    itkExceptionMacro("Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
+                               << " is the background label.");
   }
   auto it = m_LabelObjectContainer.find(label);
   if (it == m_LabelObjectContainer.end())
   {
-    itkExceptionMacro(<< "No label object with label "
-                      << static_cast<typename NumericTraits<LabelType>::PrintType>(label) << '.');
+    itkExceptionMacro("No label object with label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
+                                                    << '.');
   }
 
   return it->second;
@@ -181,39 +173,27 @@ LabelMap<TLabelObject>::GetPixel(const IndexType & idx) const -> const LabelType
 
 template <typename TLabelObject>
 auto
-LabelMap<TLabelObject>::GetNthLabelObject(const SizeValueType & pos) -> LabelObjectType *
+LabelMap<TLabelObject>::GetNthLabelObject(const LabelMap::SizeValueType & pos) -> LabelObjectType *
 {
-  SizeValueType i = 0;
-
-  for (auto it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); ++it)
+  if (const auto numberOfLabelObjects = m_LabelObjectContainer.size(); numberOfLabelObjects <= pos)
   {
-    if (i == pos)
-    {
-      return it->second;
-    }
-    ++i;
+    itkExceptionMacro("Can't access label object at position " << pos << ". The label map has only "
+                                                               << numberOfLabelObjects << " label objects registered.");
   }
-  itkExceptionMacro(<< "Can't access to label object at position " << pos << ". The label map has only "
-                    << this->GetNumberOfLabelObjects() << " label objects registered.");
+  return std::next(m_LabelObjectContainer.cbegin(), pos)->second;
 }
 
 
 template <typename TLabelObject>
 auto
-LabelMap<TLabelObject>::GetNthLabelObject(const SizeValueType & pos) const -> const LabelObjectType *
+LabelMap<TLabelObject>::GetNthLabelObject(const LabelMap::SizeValueType & pos) const -> const LabelObjectType *
 {
-  SizeValueType i = 0;
-
-  for (LabelObjectContainerConstIterator it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); ++it)
+  if (const auto numberOfLabelObjects = m_LabelObjectContainer.size(); numberOfLabelObjects <= pos)
   {
-    if (i == pos)
-    {
-      return it->second;
-    }
-    ++i;
+    itkExceptionMacro("Can't access label object at position " << pos << ". The label map has only "
+                                                               << numberOfLabelObjects << " label objects registered.");
   }
-  itkExceptionMacro(<< "Can't access to label object at position " << pos << ". The label map has only "
-                    << this->GetNumberOfLabelObjects() << " label objects registered.");
+  return std::next(m_LabelObjectContainer.cbegin(), pos)->second;
 }
 
 
@@ -234,7 +214,7 @@ LabelMap<TLabelObject>::SetPixel(const IndexType & idx, const LabelType & iLabel
     {
       auto tempIt = it;
       ++it;
-      bool emitModifiedEvent = (iLabel == m_BackgroundValue);
+      const bool emitModifiedEvent = (iLabel == m_BackgroundValue);
       this->RemovePixel(tempIt, idx, emitModifiedEvent);
     }
     else
@@ -261,7 +241,7 @@ LabelMap<TLabelObject>::AddPixel(const IndexType & idx, const LabelType & label)
     return;
   }
 
-  LabelObjectContainerIterator it = m_LabelObjectContainer.find(label);
+  const LabelObjectContainerIterator it = m_LabelObjectContainer.find(label);
 
   this->AddPixel(it, idx, label);
 }
@@ -288,7 +268,7 @@ LabelMap<TLabelObject>::AddPixel(const LabelObjectContainerIterator & it,
   else
   {
     // the label does not exist yet - create a new one
-    LabelObjectPointerType labelObject = LabelObjectType::New();
+    const LabelObjectPointerType labelObject = LabelObjectType::New();
     labelObject->SetLabel(label);
     labelObject->AddIndex(idx);
     // Modified() is called in AddLabelObject()
@@ -331,9 +311,9 @@ LabelMap<TLabelObject>::RemovePixel(const IndexType & idx, const LabelType & lab
     return;
   }
 
-  LabelObjectContainerIterator it = m_LabelObjectContainer.find(label);
+  const LabelObjectContainerIterator it = m_LabelObjectContainer.find(label);
 
-  bool emitModifiedEvent = true;
+  constexpr bool emitModifiedEvent = true;
   RemovePixel(it, idx, emitModifiedEvent);
 }
 
@@ -359,7 +339,7 @@ LabelMap<TLabelObject>::SetLine(const IndexType & idx, const LengthType & length
   else
   {
     // the label does not exist yet - create a new one
-    LabelObjectPointerType labelObject = LabelObjectType::New();
+    const LabelObjectPointerType labelObject = LabelObjectType::New();
     labelObject->SetLabel(label);
     labelObject->AddLine(idx, length);
     // Modified() is called in AddLabelObject()
@@ -379,7 +359,7 @@ LabelMap<TLabelObject>::GetLabelObject(const IndexType & idx) const -> LabelObje
       return it->second.GetPointer();
     }
   }
-  itkExceptionMacro(<< "No label object at index " << idx << '.');
+  itkExceptionMacro("No label object at index " << idx << '.');
   //   return nullptr;
 }
 
@@ -414,8 +394,8 @@ LabelMap<TLabelObject>::PushLabelObject(LabelObjectType * labelObject)
   }
   else
   {
-    LabelType lastLabel = m_LabelObjectContainer.rbegin()->first;
-    LabelType firstLabel = m_LabelObjectContainer.begin()->first;
+    const LabelType lastLabel = m_LabelObjectContainer.rbegin()->first;
+    const LabelType firstLabel = m_LabelObjectContainer.begin()->first;
     if (lastLabel != NumericTraits<LabelType>::max() && lastLabel + 1 != m_BackgroundValue)
     {
       labelObject->SetLabel(lastLabel + 1);
@@ -434,7 +414,7 @@ LabelMap<TLabelObject>::PushLabelObject(LabelObjectType * labelObject)
       // search for an unused label
       LabelType                         label = firstLabel;
       LabelObjectContainerConstIterator it;
-      for (it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); it++, label++)
+      for (it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); ++it, ++label)
       {
         assert((it->second.IsNotNull()));
         if (label == m_BackgroundValue)
@@ -449,7 +429,7 @@ LabelMap<TLabelObject>::PushLabelObject(LabelObjectType * labelObject)
       }
       if (label == lastLabel)
       {
-        itkExceptionMacro(<< "Can't push the label object: the label map is full.");
+        itkExceptionMacro("Can't push the label object: the label map is full.");
       }
     }
   }
@@ -474,8 +454,8 @@ LabelMap<TLabelObject>::RemoveLabel(const LabelType & label)
 {
   if (m_BackgroundValue == label)
   {
-    itkExceptionMacro(<< "Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
-                      << " is the background label.");
+    itkExceptionMacro("Label " << static_cast<typename NumericTraits<LabelType>::PrintType>(label)
+                               << " is the background label.");
   }
   m_LabelObjectContainer.erase(label);
   this->Modified();
@@ -491,14 +471,6 @@ LabelMap<TLabelObject>::ClearLabels()
     m_LabelObjectContainer.clear();
     this->Modified();
   }
-}
-
-
-template <typename TLabelObject>
-auto
-LabelMap<TLabelObject>::GetNumberOfLabelObjects() const -> SizeValueType
-{
-  return static_cast<typename LabelMap<TLabelObject>::SizeValueType>(m_LabelObjectContainer.size());
 }
 
 
@@ -549,7 +521,7 @@ template <typename TLabelObject>
 void
 LabelMap<TLabelObject>::Optimize()
 {
-  for (LabelObjectContainerConstIterator it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); ++it)
+  for (auto it = m_LabelObjectContainer.begin(); it != m_LabelObjectContainer.end(); ++it)
   {
     assert((it->second.IsNotNull()));
     it->second->Optimize();

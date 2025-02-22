@@ -32,11 +32,13 @@ namespace itk
 class ITKIOMeshBase_EXPORT MeshFileWriterException : public ExceptionObject
 {
 public:
+  ITK_DEFAULT_COPY_AND_MOVE(MeshFileWriterException);
+
   /** Has to have empty throw(). */
   ~MeshFileWriterException() noexcept override;
 
-  /** Run-time information. */
-  itkTypeMacro(MeshFileWriterException, ExceptionObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MeshFileWriterException);
 
   /** Constructor. */
   MeshFileWriterException(const char * file,

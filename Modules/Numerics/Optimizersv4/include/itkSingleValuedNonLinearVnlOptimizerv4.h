@@ -24,6 +24,8 @@
 #include "itkSingleValuedVnlCostFunctionAdaptorv4.h"
 #include "itkCommand.h"
 
+#include <memory> // For unique_ptr.
+
 namespace itk
 {
 /**
@@ -46,8 +48,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SingleValuedNonLinearVnlOptimizerv4, ObjectToObjectOptimizerBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SingleValuedNonLinearVnlOptimizerv4);
 
   /** Command observer that will interact with the ITKVNL cost-function
    * adaptor in order to generate iteration events. This will allow to overcome
@@ -87,7 +89,7 @@ public:
   itkGetConstReferenceMacro(CachedCurrentPosition, ParametersType);
 
   /** Get the reason for termination */
-  const StopConditionReturnStringType
+  StopConditionReturnStringType
   GetStopConditionDescription() const override = 0;
 
 protected:
@@ -124,7 +126,7 @@ private:
   void
   IterationReport(const EventObject & event);
 
-  CostFunctionAdaptorType * m_CostFunctionAdaptor{};
+  std::unique_ptr<CostFunctionAdaptorType> m_CostFunctionAdaptor;
 
   CommandType::Pointer m_Command{};
 

@@ -26,15 +26,15 @@
 #include "itkImageRegionIterator.h"
 #include "itkOffset.h"
 #include "itkNeighborhoodAlgorithm.h"
-#include "itkShapedNeighborhoodIterator.h"
 #include "itkZeroFluxNeumannBoundaryCondition.h"
+#include <algorithm> // For min.
 
 /*
  *
  * This code was contributed in the Insight Journal paper:
  * "Efficient implementation of kernel filtering"
  * by Beare R., Lehmann G
- * https://www.insight-journal.org/browse/publication/160
+ * https://doi.org/10.54294/igq8fn
  *
  */
 
@@ -64,7 +64,7 @@ setConnectivityEarlyBox(TIterator * it, bool fullyConnected = false)
   {
     // activate all neighbors that are face+edge+vertex
     // connected to the current pixel. do not include the center pixel
-    unsigned int centerIndex = it->GetCenterNeighborhoodIndex();
+    const unsigned int centerIndex = it->GetCenterNeighborhoodIndex();
     for (unsigned int d = 0; d < centerIndex; ++d)
     {
       offset = it->GetOffset(d);
@@ -99,13 +99,7 @@ void
 BoxAccumulateFunction(const TInputImage *               inputImage,
                       const TOutputImage *              outputImage,
                       typename TInputImage::RegionType  inputRegion,
-                      typename TOutputImage::RegionType outputRegion
-#if defined(ITKV4_COMPATIBILITY)
-                      ,
-                      ProgressReporter & progress)
-#else
-)
-#endif
+                      typename TOutputImage::RegionType outputRegion)
 {
   // type alias
   using InputImageType = TInputImage;
@@ -116,16 +110,15 @@ BoxAccumulateFunction(const TInputImage *               inputImage,
   using InputIterator = ImageRegionConstIterator<TInputImage>;
 
   using NOutputIterator = ShapedNeighborhoodIterator<TOutputImage>;
-  InputIterator                  inIt(inputImage, inputRegion);
-  typename TInputImage::SizeType kernelRadius;
-  kernelRadius.Fill(1);
+  InputIterator inIt(inputImage, inputRegion);
+  auto          kernelRadius = TInputImage::SizeType::Filled(1);
 
   NOutputIterator noutIt(kernelRadius, outputImage, outputRegion);
   // this iterator is fully connected
   itk_impl_details::setConnectivityEarlyBox(&noutIt, true);
 
   ConstantBoundaryCondition<OutputImageType> oBC;
-  oBC.SetConstant(NumericTraits<OutputPixelType>::ZeroValue());
+  oBC.SetConstant(OutputPixelType{});
   noutIt.OverrideBoundaryCondition(&oBC);
   // This uses several iterators. An alternative and probably better
   // approach would be to copy the input to the output and convolve
@@ -162,9 +155,6 @@ BoxAccumulateFunction(const TInputImage *               inputImage,
       sum += sIt.Get() * weights[k];
     }
     noutIt.SetCenterPixel(sum + inIt.Get());
-#if defined(ITKV4_COMPATIBILITY)
-    progress.CompletedPixel();
-#endif
   }
 }
 
@@ -174,10 +164,9 @@ std::vector<typename TImage::OffsetType>
 CornerOffsets(const TImage * im)
 {
   using NIterator = ShapedNeighborhoodIterator<TImage>;
-  typename TImage::SizeType unitradius;
-  unitradius.Fill(1);
-  NIterator                                n1(unitradius, im, im->GetRequestedRegion());
-  unsigned int                             centerIndex = n1.GetCenterNeighborhoodIndex();
+  auto                                     unitradius = TImage::SizeType::Filled(1);
+  const NIterator                          n1(unitradius, im, im->GetRequestedRegion());
+  const unsigned int                       centerIndex = n1.GetCenterNeighborhoodIndex();
   typename NIterator::OffsetType           offset;
   std::vector<typename TImage::OffsetType> result;
   for (unsigned int d = 0; d < centerIndex * 2 + 1; ++d)
@@ -207,13 +196,7 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
                           TOutputImage *                    outputImage,
                           typename TInputImage::RegionType  inputRegion,
                           typename TOutputImage::RegionType outputRegion,
-                          typename TInputImage::SizeType    radius
-#if defined(ITKV4_COMPATIBILITY)
-                          ,
-                          ProgressReporter & progress)
-#else
-)
-#endif
+                          typename TInputImage::SizeType    radius)
 {
   // type alias
   using InputImageType = TInputImage;
@@ -228,7 +211,7 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
   using FaceListType = typename FaceCalculatorType::FaceListType;
   FaceCalculatorType faceCalculator;
 
-  ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
+  const ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
 
   // this process is actually slightly asymmetric because we need to
   // subtract rectangles that are next to our kernel, not overlapping it
@@ -313,9 +296,6 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
           ++(cornerItVec[k]);
         }
         oIt.Set(static_cast<OutputPixelType>(sum / pixelscount));
-#if defined(ITKV4_COMPATIBILITY)
-        progress.CompletedPixel();
-#endif
       }
     }
     else
@@ -332,16 +312,16 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
         RegionType currentKernelRegion;
         currentKernelRegion.SetSize(kernelSize);
         // compute the region's index
-        IndexType kernelRegionIdx = oIt.GetIndex();
-        IndexType centIndex = kernelRegionIdx;
+        IndexType       kernelRegionIdx = oIt.GetIndex();
+        const IndexType centIndex = kernelRegionIdx;
         for (unsigned int i = 0; i < TInputImage::ImageDimension; ++i)
         {
           kernelRegionIdx[i] -= radius[i];
         }
         currentKernelRegion.SetIndex(kernelRegionIdx);
         currentKernelRegion.Crop(inputRegion);
-        OffsetValueType edgepixelscount = currentKernelRegion.GetNumberOfPixels();
-        AccPixType      sum = 0;
+        const OffsetValueType edgepixelscount = currentKernelRegion.GetNumberOfPixels();
+        AccPixType            sum = 0;
         // rules are : for each corner,
         //               for each dimension
         //                  if dimension offset is positive -> this is
@@ -359,10 +339,7 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
             if (unitCorners[k][j] > 0)
             {
               // leading edge - crop it
-              if (thisCorner[j] > static_cast<OffsetValueType>(regionLimit[j]))
-              {
-                thisCorner[j] = static_cast<OffsetValueType>(regionLimit[j]);
-              }
+              thisCorner[j] = std::min(thisCorner[j], static_cast<OffsetValueType>(regionLimit[j]));
             }
             else
             {
@@ -381,9 +358,6 @@ BoxMeanCalculatorFunction(const TInputImage *               accImage,
         }
 
         oIt.Set(static_cast<OutputPixelType>(sum / (AccPixType)edgepixelscount));
-#if defined(ITKV4_COMPATIBILITY)
-        progress.CompletedPixel();
-#endif
       }
     }
   }
@@ -395,13 +369,7 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
                            TOutputImage *                    outputImage,
                            typename TInputImage::RegionType  inputRegion,
                            typename TOutputImage::RegionType outputRegion,
-                           typename TInputImage::SizeType    radius
-#if defined(ITKV4_COMPATIBILITY)
-                           ,
-                           ProgressReporter & progress)
-#else
-)
-#endif
+                           typename TInputImage::SizeType    radius)
 {
   // type alias
   using InputImageType = TInputImage;
@@ -417,7 +385,7 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
   using FaceListType = typename FaceCalculatorType::FaceListType;
   FaceCalculatorType faceCalculator;
 
-  ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
+  const ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
 
   // this process is actually slightly asymmetric because we need to
   // subtract rectangles that are next to our kernel, not overlapping it
@@ -505,9 +473,6 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
         }
 
         oIt.Set(static_cast<OutputPixelType>(std::sqrt((squareSum - sum * sum / pixelscount) / (pixelscount - 1))));
-#if defined(ITKV4_COMPATIBILITY)
-        progress.CompletedPixel();
-#endif
       }
     }
     else
@@ -524,17 +489,17 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
         RegionType currentKernelRegion;
         currentKernelRegion.SetSize(kernelSize);
         // compute the region's index
-        IndexType kernelRegionIdx = oIt.GetIndex();
-        IndexType centIndex = kernelRegionIdx;
+        IndexType       kernelRegionIdx = oIt.GetIndex();
+        const IndexType centIndex = kernelRegionIdx;
         for (unsigned int i = 0; i < TInputImage::ImageDimension; ++i)
         {
           kernelRegionIdx[i] -= radius[i];
         }
         currentKernelRegion.SetIndex(kernelRegionIdx);
         currentKernelRegion.Crop(inputRegion);
-        SizeValueType edgepixelscount = currentKernelRegion.GetNumberOfPixels();
-        AccPixType    sum = 0;
-        AccPixType    squareSum = 0;
+        const SizeValueType edgepixelscount = currentKernelRegion.GetNumberOfPixels();
+        AccPixType          sum = 0;
+        AccPixType          squareSum = 0;
         // rules are : for each corner,
         //               for each dimension
         //                  if dimension offset is positive -> this is
@@ -552,10 +517,7 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
             if (unitCorners[k][j] > 0)
             {
               // leading edge - crop it
-              if (thisCorner[j] > static_cast<OffsetValueType>(regionLimit[j]))
-              {
-                thisCorner[j] = static_cast<OffsetValueType>(regionLimit[j]);
-              }
+              thisCorner[j] = std::min(thisCorner[j], static_cast<OffsetValueType>(regionLimit[j]));
             }
             else
             {
@@ -577,9 +539,6 @@ BoxSigmaCalculatorFunction(const TInputImage *               accImage,
 
         oIt.Set(
           static_cast<OutputPixelType>(std::sqrt((squareSum - sum * sum / edgepixelscount) / (edgepixelscount - 1))));
-#if defined(ITKV4_COMPATIBILITY)
-        progress.CompletedPixel();
-#endif
       }
     }
   }
@@ -590,13 +549,7 @@ void
 BoxSquareAccumulateFunction(const TInputImage *               inputImage,
                             TOutputImage *                    outputImage,
                             typename TInputImage::RegionType  inputRegion,
-                            typename TOutputImage::RegionType outputRegion
-#if defined(ITKV4_COMPATIBILITY)
-                            ,
-                            ProgressReporter & progress)
-#else
-)
-#endif
+                            typename TOutputImage::RegionType outputRegion)
 {
   // type alias
   using InputImageType = TInputImage;
@@ -609,16 +562,15 @@ BoxSquareAccumulateFunction(const TInputImage *               inputImage,
   using InputIterator = ImageRegionConstIterator<TInputImage>;
 
   using NOutputIterator = ShapedNeighborhoodIterator<TOutputImage>;
-  InputIterator                  inIt(inputImage, inputRegion);
-  typename TInputImage::SizeType kernelRadius;
-  kernelRadius.Fill(1);
+  InputIterator inIt(inputImage, inputRegion);
+  auto          kernelRadius = TInputImage::SizeType::Filled(1);
 
   NOutputIterator noutIt(kernelRadius, outputImage, outputRegion);
   // this iterator is fully connected
   itk_impl_details::setConnectivityEarlyBox(&noutIt, true);
 
   ConstantBoundaryCondition<OutputImageType> oBC;
-  oBC.SetConstant(NumericTraits<OutputPixelType>::ZeroValue());
+  oBC.SetConstant(OutputPixelType{});
   noutIt.OverrideBoundaryCondition(&oBC);
   // This uses several iterators. An alternative and probably better
   // approach would be to copy the input to the output and convolve
@@ -661,9 +613,6 @@ BoxSquareAccumulateFunction(const TInputImage *               inputImage,
     o[0] = sum + i;
     o[1] = squareSum + i * i;
     noutIt.SetCenterPixel(o);
-#if defined(ITKV4_COMPATIBILITY)
-    progress.CompletedPixel();
-#endif
   }
 }
 } // namespace itk

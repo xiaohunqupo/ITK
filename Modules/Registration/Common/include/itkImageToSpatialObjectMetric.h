@@ -121,8 +121,8 @@ public:
    *  It defines a position in the optimization search space. */
   using ParametersType = Superclass::ParametersType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToSpatialObjectMetric, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToSpatialObjectMetric);
 
   /** Get/Set the FixedImage. */
   itkSetConstObjectMacro(FixedImage, FixedImageType);

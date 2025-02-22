@@ -27,31 +27,24 @@ namespace itk
 /** \class ScalarChanAndVeseDenseLevelSetImageFilter
  * \brief Dense implementation of the Chan and Vese multiphase level set image filter.
  *
- * This code was adapted from the paper:
- *
- *        "An active contour model without edges"
- *         T. Chan and L. Vese.
- *         In Scale-Space Theories in Computer Vision, pages 141-151, 1999.
+ * This code was adapted from the paper \cite chan1999.
  *
  * \author Mosaliganti K., Smith B., Gelas A., Gouaillard A., Megason S.
  *
  *  This code was taken from the Insight Journal paper:
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
- *      https://www.insight-journal.org/browse/publication/642
- *      https://hdl.handle.net/10380/3055
+ *      https://doi.org/10.54294/wvwmf8
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
- *      https://www.insight-journal.org/browse/publication/322
- *      https://hdl.handle.net/1926/1532
+ *      https://doi.org/10.54294/8jk6oy
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
- *      https://www.insight-journal.org/browse/publication/323
- *      https://hdl.handle.net/1926/1533
+ *      https://doi.org/10.54294/23ugmy
  *
  * \ingroup ITKReview
  */
@@ -74,8 +67,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarChanAndVeseDenseLevelSetImageFilter, MultiphaseDenseFiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ScalarChanAndVeseDenseLevelSetImageFilter);
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
@@ -93,7 +86,7 @@ public:
   using FeatureIndexValueType = typename FeatureIndexType::IndexValueType;
   using FeatureRegionType = typename FeatureImageType::RegionType;
 
-  /** Output image type type alias */
+  /** Output image type alias */
   using OutputImageType = TOutputImage;
   using IndexType = typename OutputImageType::IndexType;
   using OutputPixelType = typename OutputImageType::PixelType;
@@ -110,11 +103,7 @@ public:
   using ROIFilterType = RegionOfInterestImageFilter<FeatureImageType, FeatureImageType>;
   using ROIFilterPointer = typename ROIFilterType::Pointer;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelType>));
-  // End concept checking
-#endif
 
   /** Set/Get the feature image to be used for speed function of the level set
    *  equation.  Equivalent to calling Set/GetInput(1, ..) */

@@ -342,8 +342,8 @@ DiscreteLevelSetImage<TOutput, VDimension>::EvaluateHessian(const InputType & in
   InputType inputIndexCa;
   InputType inputIndexDa;
 
-  bool backward = data.BackwardGradient.m_Computed;
-  bool forward = data.ForwardGradient.m_Computed;
+  const bool backward = data.BackwardGradient.m_Computed;
+  const bool forward = data.ForwardGradient.m_Computed;
 
   for (unsigned int dim1 = 0; dim1 < Dimension; ++dim1)
   {
@@ -457,7 +457,7 @@ DiscreteLevelSetImage<TOutput, VDimension>::EvaluateMeanCurvature(const InputTyp
     }
   }
 
-  OutputRealType gradNorm = grad.GetNorm();
+  const OutputRealType gradNorm = grad.GetNorm();
 
   if (gradNorm > itk::Math::eps)
   {
@@ -544,7 +544,7 @@ DiscreteLevelSetImage<TOutput, VDimension>::EvaluateMeanCurvature(const InputTyp
     }
 
     data.MeanCurvature.m_Computed = true;
-    data.MeanCurvature.m_Value = NumericTraits<OutputRealType>::ZeroValue();
+    data.MeanCurvature.m_Value = OutputRealType{};
 
     for (unsigned int i = 0; i < Dimension; ++i)
     {
@@ -560,7 +560,7 @@ DiscreteLevelSetImage<TOutput, VDimension>::EvaluateMeanCurvature(const InputTyp
       }
     }
 
-    OutputRealType temp = data.GradientNorm.m_Value;
+    const OutputRealType temp = data.GradientNorm.m_Value;
 
     if (temp > itk::Math::eps)
     {
@@ -682,8 +682,8 @@ DiscreteLevelSetImage<TOutput, VDimension>::CopyInformation(const DataObject * d
   if (!LevelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::DiscreteLevelSetImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::DiscreteLevelSetImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                                   << typeid(Self *).name());
   }
 }
 
@@ -698,8 +698,8 @@ DiscreteLevelSetImage<TOutput, VDimension>::Graft(const DataObject * data)
   if (!LevelSet)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::DiscreteLevelSetImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::DiscreteLevelSetImage::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                                   << typeid(Self *).name());
   }
 
   this->m_NeighborhoodScales = LevelSet->m_NeighborhoodScales;

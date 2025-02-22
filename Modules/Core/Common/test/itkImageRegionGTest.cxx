@@ -20,8 +20,60 @@
 #include "itkImageRegion.h"
 #include "itkIndexRange.h"
 #include <gtest/gtest.h>
+#include <limits>
 #include <type_traits> // For remove_const_t and remove_reference_t.
 
+
+namespace
+{
+// Tells whether GetImageDimension() returns ImageDimension, for all of the specified values of VImageDimension.
+template <unsigned int... VImageDimension>
+constexpr bool GetImageDimension_returns_ImageDimension{ (
+  (itk::ImageRegion<VImageDimension>::GetImageDimension() == VImageDimension) && ...) };
+
+static_assert(GetImageDimension_returns_ImageDimension<2, 3, 4>, "GetImageDimension() should return ImageDimension.");
+
+
+template <unsigned int VDimension>
+constexpr bool
+CheckTrivialCopyabilityOfImageRegion()
+{
+  constexpr bool isImageRegionTriviallyCopyable{ std::is_trivially_copyable_v<itk::ImageRegion<VDimension>> };
+
+#ifdef ITK_LEGACY_REMOVE
+  static_assert(isImageRegionTriviallyCopyable,
+                "When legacy support is removed, ImageRegion<VDimension> should be trivially copyable.");
+  return isImageRegionTriviallyCopyable;
+#else
+  static_assert(!isImageRegionTriviallyCopyable,
+                "When legacy support is enabled, ImageRegion<VDimension> should *not* be trivially copyable.");
+  return !isImageRegionTriviallyCopyable;
+#endif
+}
+
+
+// Checks that `ImageRegion` supports class template argument deduction (CTAD).
+template <unsigned int VDimension>
+constexpr bool
+CheckClassTemplateArgumentDeduction()
+{
+  using ExpectedType = itk::ImageRegion<VDimension>;
+
+  static_assert(
+    std::is_same_v<decltype(itk::ImageRegion(itk::Index<VDimension>{}, itk::Size<VDimension>{})), ExpectedType>,
+    "The `ImageRegion(Index, Size)` constructor should support CTAD!");
+  static_assert(std::is_same_v<decltype(itk::ImageRegion(itk::Size<VDimension>{})), ExpectedType>,
+                "The `ImageRegion(Size)` constructor should support CTAD!");
+  return true;
+}
+
+
+} // namespace
+
+static_assert(CheckTrivialCopyabilityOfImageRegion<2>() && CheckTrivialCopyabilityOfImageRegion<3>(),
+              "ImageRegion<VDimension> should be trivially copyable when legacy support is removed.");
+
+static_assert(CheckClassTemplateArgumentDeduction<2>() && CheckClassTemplateArgumentDeduction<3>());
 
 // Tests that a zero-sized region is not considered to be inside of another region.
 TEST(ImageRegion, ZeroSizedRegionIsNotInside)
@@ -64,4 +116,139 @@ TEST(ImageRegion, OneSizedRegionIsInsideIffItsIndexIsInside)
   // Check for a 2D and a 3D image region.
   check(itk::ImageRegion<2>(itk::Size<2>::Filled(3)));
   check(itk::ImageRegion<3>(itk::MakeIndex(-1, 0, 1), itk::MakeSize(2, 3, 4)));
+}
+
+
+// Tests that Crop returns false and does not change anything, when it cannot crop. That is when one of the regions is
+// zero-sized, or when the region to be cropped and the crop region don't overlap.
+TEST(ImageRegion, CropReturnsFalseWithoutChangingAnythingWhenItCannotCrop)
+{
+  const auto check = [](const auto & originalRegion, const auto & cropRegion) {
+    auto regionToBeCropped = originalRegion;
+
+    EXPECT_FALSE(regionToBeCropped.Crop(cropRegion));
+    EXPECT_EQ(regionToBeCropped, originalRegion);
+  };
+
+  using RegionType = itk::ImageRegion<2>;
+  using IndexType = RegionType::IndexType;
+  using SizeType = RegionType::SizeType;
+
+  for (const auto indexValue : { std::numeric_limits<itk::IndexValueType>::min(),
+                                 itk::IndexValueType{ -1 },
+                                 itk::IndexValueType{},
+                                 itk::IndexValueType{ 1 } })
+  {
+    const RegionType zeroSizedRegion{ IndexType::Filled(indexValue), SizeType{} };
+    const RegionType nonZeroSizedRegion{ IndexType::Filled(indexValue), SizeType::Filled(1) };
+
+    // Cannot crop when the region to be cropped and/or the crop region is zero-sized.
+    check(zeroSizedRegion, zeroSizedRegion);
+    check(zeroSizedRegion, nonZeroSizedRegion);
+    check(nonZeroSizedRegion, zeroSizedRegion);
+  }
+
+  for (const auto indexValue : { std::numeric_limits<itk::IndexValueType>::min(),
+                                 itk::IndexValueType{ -1 },
+                                 itk::IndexValueType{},
+                                 itk::IndexValueType{ 1 } })
+  {
+    for (const itk::SizeValueType sizeValue : { 1, 2 })
+    {
+      const RegionType region1{ IndexType::Filled(indexValue), SizeType::Filled(sizeValue) };
+      const RegionType region2{ IndexType::Filled(indexValue + static_cast<itk::IndexValueType>(sizeValue)),
+                                SizeType::Filled(sizeValue) };
+
+      // Cannot crop when the region to be cropped and the crop region do not overlap.
+      check(region1, region2);
+      check(region2, region1);
+    }
+  }
+}
+
+
+// Tests that Crop returns true, and does not change the region to be cropped, when it is equal to the crop region
+// (assuming that both regions are not zero-sized).
+TEST(ImageRegion, CropDoesNotChangeRegionToBeCroppedWhenCropRegionIsEqual)
+{
+  using RegionType = itk::ImageRegion<2>;
+  using IndexType = RegionType::IndexType;
+  using SizeType = RegionType::SizeType;
+
+  for (const auto indexValue : { std::numeric_limits<itk::IndexValueType>::min(),
+                                 itk::IndexValueType{ -1 },
+                                 itk::IndexValueType{},
+                                 itk::IndexValueType{ 1 } })
+  {
+    for (const itk::SizeValueType sizeValue : { 1, 2 })
+    {
+      const RegionType region{ IndexType::Filled(indexValue), SizeType::Filled(sizeValue) };
+      auto             regionToBeCropped = region;
+      EXPECT_TRUE(regionToBeCropped.Crop(region));
+      EXPECT_EQ(regionToBeCropped, region);
+    }
+  }
+}
+
+
+// Tests cropping a larger to a smaller region, and vice versa.
+TEST(ImageRegion, CropLargerToSmallerRegionAndViceVersa)
+{
+  using RegionType = itk::ImageRegion<2>;
+  using IndexType = RegionType::IndexType;
+  using SizeType = RegionType::SizeType;
+
+  for (const auto indexValue : { std::numeric_limits<itk::IndexValueType>::min(),
+                                 itk::IndexValueType{ -1 },
+                                 itk::IndexValueType{},
+                                 itk::IndexValueType{ 1 } })
+  {
+    for (const itk::SizeValueType sizeValue : { 1, 2 })
+    {
+      const RegionType smallerRegion{ IndexType::Filled(indexValue), SizeType::Filled(sizeValue) };
+      const RegionType largerRegion{ smallerRegion.GetIndex(), SizeType::Filled(sizeValue + 1) };
+
+      {
+        auto regionToBeCropped = largerRegion;
+
+        EXPECT_TRUE(regionToBeCropped.Crop(smallerRegion));
+        EXPECT_EQ(regionToBeCropped, smallerRegion);
+      }
+      {
+        auto regionToBeCropped = smallerRegion;
+
+        EXPECT_TRUE(regionToBeCropped.Crop(largerRegion));
+        EXPECT_EQ(regionToBeCropped, smallerRegion);
+      }
+    }
+  }
+}
+
+
+// Tests C++ structured binding of an ImageRegion.
+TEST(ImageRegion, SupportsStructuredBinding)
+{
+  using RegionType = itk::ImageRegion<2>;
+  using IndexType = RegionType::IndexType;
+  using SizeType = RegionType::SizeType;
+
+  {
+    // Testing non-cost behavior
+    RegionType nonConstRegion{}; // NOLINT(misc-const-correctness)
+    auto && [index, size] = nonConstRegion;
+
+    static_assert(std::is_same_v<decltype(index), IndexType>);
+    static_assert(std::is_same_v<decltype(size), SizeType>);
+    EXPECT_EQ(&index, &(nonConstRegion.GetIndex()));
+    EXPECT_EQ(&size, &(nonConstRegion.GetSize()));
+  }
+  {
+    const RegionType constRegion{};
+    auto && [constIndex, constSize] = constRegion;
+
+    static_assert(std::is_same_v<decltype(constIndex), const IndexType>);
+    static_assert(std::is_same_v<decltype(constSize), const SizeType>);
+    EXPECT_EQ(&constIndex, &(constRegion.GetIndex()));
+    EXPECT_EQ(&constSize, &(constRegion.GetSize()));
+  }
 }

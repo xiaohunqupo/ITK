@@ -27,9 +27,8 @@ ThinPlateR2LogRSplineKernelTransform<TParametersValueType, VDimension>::ComputeG
 {
   const TParametersValueType r = x.GetNorm();
 
-  gmatrix.fill(NumericTraits<TParametersValueType>::ZeroValue());
-  const TParametersValueType R2logR =
-    (r > 1e-8) ? r * r * std::log(r) : NumericTraits<TParametersValueType>::ZeroValue();
+  gmatrix.fill(TParametersValueType{});
+  const TParametersValueType R2logR = (r > 1e-8) ? r * r * std::log(r) : TParametersValueType{};
 
   gmatrix.fill_diagonal(R2logR);
 }
@@ -40,16 +39,15 @@ ThinPlateR2LogRSplineKernelTransform<TParametersValueType, VDimension>::ComputeD
   const InputPointType & thisPoint,
   OutputPointType &      result) const
 {
-  unsigned long numberOfLandmarks = this->m_SourceLandmarks->GetNumberOfPoints();
+  const unsigned long numberOfLandmarks = this->m_SourceLandmarks->GetNumberOfPoints();
 
   PointsIterator sp = this->m_SourceLandmarks->GetPoints()->Begin();
 
   for (unsigned int lnd = 0; lnd < numberOfLandmarks; ++lnd)
   {
-    InputVectorType            position = thisPoint - sp->Value();
+    const InputVectorType      position = thisPoint - sp->Value();
     const TParametersValueType r = position.GetNorm();
-    const TParametersValueType R2logR =
-      (r > 1e-8) ? r * r * std::log(r) : NumericTraits<TParametersValueType>::ZeroValue();
+    const TParametersValueType R2logR = (r > 1e-8) ? r * r * std::log(r) : TParametersValueType{};
     for (unsigned int odim = 0; odim < VDimension; ++odim)
     {
       result[odim] += R2logR * this->m_DMatrix(odim, lnd);

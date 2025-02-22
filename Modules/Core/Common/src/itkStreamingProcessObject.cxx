@@ -36,7 +36,7 @@ StreamingProcessObject::GenerateData()
   // minimum of what the user specified via SetNumberOfStreamDivisions()
   // and what the Splitter thinks is a reasonable value.
   //
-  unsigned int numberOfInputRequestRegion = this->GetNumberOfInputRequestedRegions();
+  const unsigned int numberOfInputRequestRegion = this->GetNumberOfInputRequestedRegions();
 
   //
   // Loop over the number of pieces, execute the upstream pipeline on each
@@ -139,8 +139,8 @@ StreamingProcessObject::UpdateOutputData(DataObject * itkNotUsed(output))
   const DataObjectPointerArraySizeType ninputs = this->GetNumberOfValidRequiredInputs();
   if (ninputs < this->GetNumberOfRequiredInputs())
   {
-    itkExceptionMacro(<< "At least " << this->GetNumberOfRequiredInputs() << " inputs are required but only " << ninputs
-                      << " are specified.");
+    itkExceptionMacro("At least " << this->GetNumberOfRequiredInputs() << " inputs are required but only " << ninputs
+                                  << " are specified.");
   }
 
   this->SetAbortGenerateData(false);

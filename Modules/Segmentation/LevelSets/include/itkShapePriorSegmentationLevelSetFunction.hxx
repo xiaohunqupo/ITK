@@ -27,7 +27,7 @@ template <typename TImageType, typename TFeatureImageType>
 ShapePriorSegmentationLevelSetFunction<TImageType, TFeatureImageType>::ShapePriorSegmentationLevelSetFunction()
 {
   m_ShapeFunction = nullptr;
-  m_ShapePriorWeight = NumericTraits<ScalarValueType>::ZeroValue();
+  m_ShapePriorWeight = ScalarValueType{};
 }
 
 template <typename TImageType, typename TFeatureImageType>
@@ -44,17 +44,17 @@ ShapePriorSegmentationLevelSetFunction<TImageType, TFeatureImageType>::PrintSelf
 }
 
 template <typename TImageType, typename TFeatureImageType>
-typename ShapePriorSegmentationLevelSetFunction<TImageType, TFeatureImageType>::PixelType
+auto
 ShapePriorSegmentationLevelSetFunction<TImageType, TFeatureImageType>::ComputeUpdate(
   const NeighborhoodType & neighborhood,
   void *                   gd,
-  const FloatOffsetType &  offset)
+  const FloatOffsetType &  offset) -> PixelType
 {
   // Compute the generic level set update using superclass
   PixelType value = this->Superclass::ComputeUpdate(neighborhood, gd, offset);
 
   // Add the shape prior term
-  if (m_ShapeFunction && Math::NotExactlyEquals(m_ShapePriorWeight, NumericTraits<ScalarValueType>::ZeroValue()))
+  if (m_ShapeFunction && Math::NotExactlyEquals(m_ShapePriorWeight, ScalarValueType{}))
   {
     IndexType                               idx = neighborhood.GetIndex();
     ContinuousIndex<double, ImageDimension> cdx;
@@ -65,7 +65,7 @@ ShapePriorSegmentationLevelSetFunction<TImageType, TFeatureImageType>::ComputeUp
     typename ShapeFunctionType::PointType point;
     this->GetFeatureImage()->TransformContinuousIndexToPhysicalPoint(cdx, point);
 
-    ScalarValueType shape_term =
+    const ScalarValueType shape_term =
       m_ShapePriorWeight * (m_ShapeFunction->Evaluate(point) - neighborhood.GetCenterPixel());
 
     value += shape_term;

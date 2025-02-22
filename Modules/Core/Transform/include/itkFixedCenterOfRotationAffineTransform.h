@@ -44,8 +44,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods).   */
-  itkTypeMacro(FixedCenterOfRotationAffineTransform, ScalableAffineTransform);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FixedCenterOfRotationAffineTransform);
 
   /** New macro for creation of through a Smart Pointer   */
   itkNewMacro(Self);
@@ -119,7 +119,10 @@ public:
 
 protected:
   /** Construct an FixedCenterOfRotationAffineTransform object */
-  FixedCenterOfRotationAffineTransform(const MatrixType & matrix, const OutputVectorType & offset);
+#if !defined(ITK_LEGACY_REMOVE)
+  [[deprecated("Removed unused constructor")]] FixedCenterOfRotationAffineTransform(const MatrixType &       matrix,
+                                                                                    const OutputVectorType & offset);
+#endif
   FixedCenterOfRotationAffineTransform(unsigned int outputSpaceDims, unsigned int paramsDims);
   FixedCenterOfRotationAffineTransform();
 

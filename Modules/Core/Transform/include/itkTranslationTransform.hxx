@@ -46,8 +46,8 @@ TranslationTransform<TParametersValueType, VDimension>::SetParameters(const Para
 {
   if (parameters.Size() < SpaceDimension)
   {
-    itkExceptionMacro(<< "Error setting parameters: parameters array size (" << parameters.Size()
-                      << ") is less than expected (SpaceDimension = " << SpaceDimension << ')');
+    itkExceptionMacro("Error setting parameters: parameters array size ("
+                      << parameters.Size() << ") is less than expected (SpaceDimension = " << SpaceDimension << ')');
   }
 
   // Save parameters. Needed for proper operation of TransformUpdateParameters.
@@ -144,9 +144,9 @@ TranslationTransform<TParametersValueType, VDimension>::TransformVector(const In
 
 
 template <typename TParametersValueType, unsigned int VDimension>
-typename TranslationTransform<TParametersValueType, VDimension>::OutputCovariantVectorType
+auto
 TranslationTransform<TParametersValueType, VDimension>::TransformCovariantVector(
-  const InputCovariantVectorType & vect) const
+  const InputCovariantVectorType & vect) const -> OutputCovariantVectorType
 {
   return vect;
 }
@@ -171,9 +171,7 @@ template <typename TParametersValueType, unsigned int VDimension>
 auto
 TranslationTransform<TParametersValueType, VDimension>::GetInverseTransform() const -> InverseTransformBasePointer
 {
-  Pointer inv = New();
-
-  return GetInverse(inv) ? inv.GetPointer() : nullptr;
+  return Superclass::InvertTransform(*this);
 }
 
 

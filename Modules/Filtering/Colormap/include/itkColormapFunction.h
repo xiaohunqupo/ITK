@@ -37,7 +37,7 @@ namespace Function
  * This code was contributed in the Insight Journal paper:
  *
  * "Meeting Andy Warhol Somewhere Over the Rainbow: RGB Colormapping and ITK"
- * https://www.insight-journal.org/browse/publication/285
+ * https://doi.org/10.54294/tmojbk
  *
  * \ingroup ITKColormap
  */
@@ -52,8 +52,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ColormapFunction, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ColormapFunction);
 
   using RGBPixelType = TRGBPixel;
   using RGBComponentType = typename TRGBPixel::ComponentType;
@@ -97,9 +97,7 @@ protected:
 
     auto     d = static_cast<RealType>(maxInputValue - minInputValue);
     RealType value = (static_cast<RealType>(v) - static_cast<RealType>(minInputValue)) / d;
-
-    value = std::max(0.0, value);
-    value = std::min(1.0, value);
+    value = std::clamp(value, 0.0, 1.0);
     return value;
   }
 

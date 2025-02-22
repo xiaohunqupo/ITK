@@ -87,7 +87,7 @@ public:
   using ImageType = TImage;
 
   /** PixelContainer type alias support Used to refer to the container for
-   * the pixel data. While this was already typdef'ed in the superclass,
+   * the pixel data. While this was already typedef'ed in the superclass,
    * it needs to be redone here for this subclass to compile properly with gcc. */
   using PixelContainer = typename TImage::PixelContainer;
   using PixelContainerPointer = typename PixelContainer::Pointer;
@@ -102,8 +102,8 @@ public:
    *  representations. */
   using AccessorType = typename TImage::AccessorType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacroNoParent(LineConstIterator);
+  /** \see LightObject::GetNameOfClass() */
+  itkVirtualGetNameOfClassMacro(LineConstIterator);
 
   /** Get the dimension (size) of the index. */
   static unsigned int

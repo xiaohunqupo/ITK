@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RawImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RawImageIO);
 
   /** Pixel type alias support Used to declare pixel type in filters
    * or other operations. */
@@ -205,8 +205,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RawImageIOFactory, ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RawImageIOFactory);
 
   /** Register one factory of this type  */
   static void

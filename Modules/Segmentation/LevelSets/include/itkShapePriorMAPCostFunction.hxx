@@ -53,8 +53,8 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogInsideTerm(con
 {
   this->m_ShapeFunction->SetParameters(parameters);
 
-  typename NodeContainerType::ConstIterator iter = this->GetActiveRegion()->Begin();
-  typename NodeContainerType::ConstIterator end = this->GetActiveRegion()->End();
+  typename NodeContainerType::ConstIterator       iter = this->GetActiveRegion()->Begin();
+  const typename NodeContainerType::ConstIterator end = this->GetActiveRegion()->End();
 
   MeasureType counter = 0.0;
 
@@ -69,7 +69,7 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogInsideTerm(con
 
     if (node.GetValue() <= 0.0)
     {
-      double value = this->m_ShapeFunction->Evaluate(point);
+      const double value = this->m_ShapeFunction->Evaluate(point);
       if (value > 0.0)
       {
         counter += 1.0;
@@ -83,14 +83,14 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogInsideTerm(con
     ++iter;
   }
 
-  MeasureType output = counter * m_Weights[0];
+  const MeasureType output = counter * m_Weights[0];
   return output;
 }
 
 template <typename TFeatureImage, typename TOutputPixel>
-typename ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::MeasureType
+auto
 ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogShapePriorTerm(
-  const ParametersType & parameters) const
+  const ParametersType & parameters) const -> MeasureType
 {
   // assume the shape parameters is from an independent gaussian distributions
   MeasureType measure = 0.0;
@@ -110,9 +110,9 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogGradientTerm(c
 {
   this->m_ShapeFunction->SetParameters(parameters);
 
-  typename NodeContainerType::ConstIterator iter = this->GetActiveRegion()->Begin();
-  typename NodeContainerType::ConstIterator end = this->GetActiveRegion()->End();
-  MeasureType                               sum = 0.0;
+  typename NodeContainerType::ConstIterator       iter = this->GetActiveRegion()->Begin();
+  const typename NodeContainerType::ConstIterator end = this->GetActiveRegion()->End();
+  MeasureType                                     sum = 0.0;
 
   // Assume that ( 1 - FeatureImage ) approximates a Gaussian (zero mean, unit
   // variance)
@@ -137,9 +137,9 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogGradientTerm(c
 }
 
 template <typename TFeatureImage, typename TOutputPixel>
-typename ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::MeasureType
+auto
 ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::ComputeLogPosePriorTerm(
-  const ParametersType & itkNotUsed(parameters)) const
+  const ParametersType & itkNotUsed(parameters)) const -> MeasureType
 {
   return 0.0;
 }
@@ -153,13 +153,13 @@ ShapePriorMAPCostFunction<TFeatureImage, TOutputPixel>::Initialize()
   // check if the mean and variances array are of the right size
   if (m_ShapeParameterMeans.Size() < this->m_ShapeFunction->GetNumberOfShapeParameters())
   {
-    itkExceptionMacro(<< "ShapeParameterMeans does not have at least "
+    itkExceptionMacro("ShapeParameterMeans does not have at least "
                       << this->m_ShapeFunction->GetNumberOfShapeParameters() << " number of elements.");
   }
 
   if (m_ShapeParameterStandardDeviations.Size() < this->m_ShapeFunction->GetNumberOfShapeParameters())
   {
-    itkExceptionMacro(<< "ShapeParameterStandardDeviations does not have at least "
+    itkExceptionMacro("ShapeParameterStandardDeviations does not have at least "
                       << this->m_ShapeFunction->GetNumberOfShapeParameters() << " number of elements.");
   }
 }

@@ -43,19 +43,19 @@ DCMTKSeriesFileNames::SetInputDirectory(const char * name)
 {
   if (!name)
   {
-    itkExceptionMacro(<< "SetInputDirectory() received a nullptr string");
+    itkExceptionMacro("SetInputDirectory() received a nullptr string");
   }
   std::string fname = name;
   this->SetInputDirectory(fname);
 }
 
 void
-DCMTKSeriesFileNames::SetInputDirectory(std::string const & name)
+DCMTKSeriesFileNames::SetInputDirectory(const std::string & name)
 {
   if (name.empty())
   {
-    itkWarningMacro(<< "You need to specify a directory where "
-                       "the DICOM files are located");
+    itkWarningMacro("You need to specify a directory where "
+                    "the DICOM files are located");
     return;
   }
   if (m_InputDirectory == name)
@@ -210,41 +210,10 @@ DCMTKSeriesFileNames::PrintSelf(std::ostream & os, Indent indent) const
     os << indent << "SeriesUIDs[" << i << "]: " << m_SeriesUIDs[i] << std::endl;
   }
 
-  if (m_UseSeriesDetails)
-  {
-    os << indent << "UseSeriesDetails: True" << std::endl;
-  }
-  else
-  {
-    os << indent << "UseSeriesDetails: False" << std::endl;
-  }
-
-  if (m_Recursive)
-  {
-    os << indent << "Recursive: True" << std::endl;
-  }
-  else
-  {
-    os << indent << "Recursive: False" << std::endl;
-  }
-
-  if (m_LoadSequences)
-  {
-    os << indent << "LoadSequences: True" << std::endl;
-  }
-  else
-  {
-    os << indent << "LoadSequences: False" << std::endl;
-  }
-
-  if (m_LoadPrivateTags)
-  {
-    os << indent << "LoadPrivateTags: True" << std::endl;
-  }
-  else
-  {
-    os << indent << "LoadPrivateTags: False" << std::endl;
-  }
+  itkPrintSelfBooleanMacro(UseSeriesDetails);
+  itkPrintSelfBooleanMacro(Recursive);
+  itkPrintSelfBooleanMacro(LoadSequences);
+  itkPrintSelfBooleanMacro(LoadPrivateTags);
 }
 
 void

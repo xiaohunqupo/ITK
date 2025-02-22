@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PermuteAxesImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PermuteAxesImageFilter);
 
   /** ImageDimension enumeration */
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;

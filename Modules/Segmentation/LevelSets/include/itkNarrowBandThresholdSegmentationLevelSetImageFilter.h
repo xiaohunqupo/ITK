@@ -106,8 +106,8 @@ public:
   using ThresholdFunctionType = ThresholdSegmentationLevelSetFunction<OutputImageType, FeatureImageType>;
   using ThresholdFunctionPointer = typename ThresholdFunctionType::Pointer;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NarrowBandThresholdSegmentationLevelSetImageFilter, NarrowBandLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NarrowBandThresholdSegmentationLevelSetImageFilter);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);
@@ -203,11 +203,7 @@ public:
     return m_ThresholdFunction->GetSmoothingConductance();
   }
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<TOutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ~NarrowBandThresholdSegmentationLevelSetImageFilter() override = default;

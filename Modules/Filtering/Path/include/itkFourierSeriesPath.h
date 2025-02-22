@@ -67,8 +67,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FourierSeriesPath, ParametricPath);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FourierSeriesPath);
 
   /** Input type */
   using typename Superclass::InputType;

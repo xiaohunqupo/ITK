@@ -42,7 +42,7 @@ namespace itk
  * by D. Zosso, M. Bach Cuadra and J. Thiran, August 2007
  *
  * This implementation was taken from the Insight Journal paper:
- * https://hdl.handle.net/1926/585
+ * https://doi.org/10.54294/z83ly1
  *
  * \ingroup ImageFilters
  * \ingroup ITKReview
@@ -71,7 +71,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   itkNewMacro(Self);
-  itkTypeMacro(DirectFourierReconstructionImageToImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(DirectFourierReconstructionImageToImageFilter);
 
   /** Class RegionType */
   using RegionType = typename InputImageType::RegionType;

@@ -41,12 +41,13 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(ParabolicMorphology
+itk_fetch_module(
+  ParabolicMorphology
   "Classes performing morphology using parabolic functions.
   Fast distance transforms and binary erosions/dilations/openings/closings
   by spheres, sharpenings and grayscale operations.
-  https://www.insight-journal.org/browse/publication/228"
+  https://doi.org/10.54294/aq68pt"
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKParabolicMorphology.git
-  GIT_TAG 2c6aa18ff5415b320bf9d85dae6b1cf68c099d55
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKParabolicMorphology.git
+  GIT_TAG 68286edc7459072eb33422a7d53c855318496922
   )

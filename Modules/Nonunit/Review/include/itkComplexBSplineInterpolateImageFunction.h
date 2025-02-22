@@ -35,14 +35,14 @@ namespace itk
  * Derivative support is currently not implemented
  *
  * This implementation was taken from the Insight Journal paper:
- * https://hdl.handle.net/1926/585
+ * https://doi.org/10.54294/z83ly1
  *
  * \ingroup ImageInterpolators
  * \ingroup ITKReview
  */
-template <typename TImageType, typename TCoordRep = double, typename TCoefficientType = double>
+template <typename TImageType, typename TCoordinate = double, typename TCoefficientType = double>
 class ITK_TEMPLATE_EXPORT ComplexBSplineInterpolateImageFunction
-  : public InterpolateImageFunction<TImageType, TCoordRep>
+  : public InterpolateImageFunction<TImageType, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(ComplexBSplineInterpolateImageFunction);
@@ -50,14 +50,14 @@ public:
   /** Standard class type alias. */
   using Self = ComplexBSplineInterpolateImageFunction;
   /** Standard class type alias. */
-  using Superclass = InterpolateImageFunction<TImageType, TCoordRep>;
+  using Superclass = InterpolateImageFunction<TImageType, TCoordinate>;
   /** Standard class type alias. */
   using Pointer = SmartPointer<Self>;
   /** Standard class type alias. */
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ComplexBSplineInterpolateImageFunction, InterpolateImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexBSplineInterpolateImageFunction);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -91,7 +91,7 @@ public:
   using ImaginaryFilterType = ComplexToImaginaryImageFilter<InputImageType, InternalImageType>;
 
   /** Underlying real BSpline interpolator */
-  using InterpolatorType = BSplineInterpolateImageFunction<InternalImageType, TCoordRep, TCoefficientType>;
+  using InterpolatorType = BSplineInterpolateImageFunction<InternalImageType, TCoordinate, TCoefficientType>;
 
   /** Evaluate the function at a ContinuousIndex position.
    *

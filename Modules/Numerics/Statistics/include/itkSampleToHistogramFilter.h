@@ -76,8 +76,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(SampleToHistogramFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SampleToHistogramFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -186,7 +186,7 @@ private:
       {
         return NumericTraits<HistogramMeasurementType>::max();
       }
-      else if (from <= fromMin)
+      if (from <= fromMin)
       {
         return NumericTraits<HistogramMeasurementType>::min();
       }

@@ -27,7 +27,7 @@
  *         The Pennsylvania State University 2005
  *
  * This implementation was contributed as a paper to the Insight Journal
- * https://hdl.handle.net/1926/1381
+ * https://doi.org/10.54294/o8w4c0
  *
  */
 
@@ -222,8 +222,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PhilipsPAR, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PhilipsPAR);
 
   // Reads the PAR file parameters in "parFile" and stores the PAR parameters in
   // pPar.

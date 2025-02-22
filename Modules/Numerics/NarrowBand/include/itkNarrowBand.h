@@ -39,7 +39,7 @@ public:
   TIndexType  m_Index;
   signed char m_NodeState{ 0 };
   BandNode()
-    : m_Data(NumericTraits<TDataType>::ZeroValue())
+    : m_Data(TDataType{})
   {}
 };
 
@@ -62,8 +62,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NarrowBand, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NarrowBand);
 
   using NodeContainerType = std::vector<NodeType>;
   using SizeType = typename NodeContainerType::size_type;
@@ -153,9 +153,17 @@ public:
     m_NodeContainer.resize(n);
   }
 
-  NodeType & operator[](SizeType n) { return m_NodeContainer[n]; }
+  NodeType &
+  operator[](SizeType n)
+  {
+    return m_NodeContainer[n];
+  }
 
-  const NodeType & operator[](SizeType n) const { return m_NodeContainer[n]; }
+  const NodeType &
+  operator[](SizeType n) const
+  {
+    return m_NodeContainer[n];
+  }
 
   /** Set/Get the narrow band total radius. The narrow band width will be twice
   this value (positive and negative distance to the zero level set).

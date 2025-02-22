@@ -64,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GPUDiscreteGaussianImageFilter, GPUImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUDiscreteGaussianImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;

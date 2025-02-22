@@ -26,7 +26,7 @@ namespace itk
 
 namespace
 {
-std::mutex createImageIOLock;
+std::mutex createImageIOMutex;
 }
 
 ImageIOBase::Pointer
@@ -34,7 +34,7 @@ ImageIOFactory::CreateImageIO(const char * path, IOFileModeEnum mode)
 {
   std::list<ImageIOBase::Pointer> possibleImageIO;
 
-  const std::lock_guard mutexHolder(createImageIOLock);
+  const std::lock_guard<std::mutex> lockGuard(createImageIOMutex);
 
   for (auto & allobject : ObjectFactoryBase::CreateAllInstance("itkImageIOBase"))
   {

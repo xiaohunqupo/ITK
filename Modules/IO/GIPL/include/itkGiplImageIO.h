@@ -23,6 +23,7 @@
 #include <fstream>
 #include "itkImageIOBase.h"
 #include <cstdio>
+#include <memory> // For unique_ptr.
 
 namespace itk
 {
@@ -31,7 +32,7 @@ class GiplImageIOInternals;
 /**
  * \class GiplImageIO
  *
- *  \brief Read GiplImage file format.
+ *  \brief Read GIPL (Guy's Image Processing Lab) file format.
  *
  *  \ingroup IOFilters
  *
@@ -50,8 +51,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GiplImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GiplImageIO);
 
   /*-------- This part of the interfaces deals with reading data. ----- */
 
@@ -100,7 +101,7 @@ private:
   std::ofstream m_Ofstream{};
   bool          m_IsCompressed{};
 
-  GiplImageIOInternals * m_Internal{};
+  const std::unique_ptr<GiplImageIOInternals> m_Internal;
 };
 } // end namespace itk
 

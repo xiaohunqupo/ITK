@@ -49,8 +49,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Optimizer, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Optimizer);
 
   /**  Parameters type.
    *  It defines a position in the optimization search space. */
@@ -88,7 +88,7 @@ public:
   {}
 
   /** Get the reason for termination */
-  virtual const std::string
+  virtual std::string
   GetStopConditionDescription() const;
 
 protected:

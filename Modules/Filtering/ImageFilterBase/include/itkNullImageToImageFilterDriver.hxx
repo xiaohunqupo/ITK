@@ -48,7 +48,8 @@ class NullImageToImageFilterDriver
 {
 public:
   NullImageToImageFilterDriver()
-    : m_Filter(nullptr){};
+    : m_Filter(nullptr)
+  {}
 
   using ImageSizeType = typename TInputImage::SizeType;
   using InputPixelType = typename TInputImage::PixelType;
@@ -114,7 +115,7 @@ NullImageToImageFilterDriver<TInputImage, TOutputImage>::InitializePixel(const D
 {
   for (unsigned int i = 0; i < InputPixelDimension; ++i)
   {
-    pixel[i] = NumericTraits<typename PixelTraits<InputPixelType>::ValueType>::ZeroValue();
+    pixel[i] = typename PixelTraits<InputPixelType>::ValueType{};
   }
 }
 
@@ -122,7 +123,7 @@ template <typename TInputImage, typename TOutputImage>
 void
 NullImageToImageFilterDriver<TInputImage, TOutputImage>::InitializePixel(const Dispatch<1> &, InputPixelType & pixel)
 {
-  pixel = NumericTraits<InputPixelType>::ZeroValue();
+  pixel = InputPixelType{};
 }
 
 /**
@@ -164,18 +165,18 @@ NullImageToImageFilterDriver<TInputImage, TOutputImage>::Execute()
   //            << m_Filter->GetOutput() << std::endl;
 
   using ImageFilterType = ImageToImageFilter<TInputImage, TOutputImage>;
-  typename ImageFilterType::Pointer sourceBefore =
+  const typename ImageFilterType::Pointer sourceBefore =
     dynamic_cast<ImageFilterType *>(m_Filter->GetOutput()->GetSource().GetPointer());
 
   // Execute the filter
-  clock_t start = ::clock();
+  const clock_t start = ::clock();
   m_Filter->UpdateLargestPossibleRegion();
-  clock_t stop = ::clock();
+  const clock_t stop = ::clock();
 
   // print out the output object so we can see it modified times and regions
   std::cout << "Output object after filter execution" << std::endl << m_Filter->GetOutput() << std::endl;
 
-  typename ImageFilterType::Pointer sourceAfter =
+  const typename ImageFilterType::Pointer sourceAfter =
     dynamic_cast<ImageFilterType *>(m_Filter->GetOutput()->GetSource().GetPointer());
 
   std::cout << sourceBefore.GetPointer() << ", " << sourceAfter.GetPointer() << std::endl;

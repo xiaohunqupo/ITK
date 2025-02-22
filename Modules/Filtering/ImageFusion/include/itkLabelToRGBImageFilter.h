@@ -35,7 +35,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "The watershed transform in ITK - discussion and new developments"
  * by Beare R., Lehmann G.
- * https://www.insight-journal.org/browse/publication/92
+ * https://doi.org/10.54294/lf8u75
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  * \author Richard Beare. Department of Medicine, Monash University, Melbourne, Australia.
@@ -73,8 +73,8 @@ public:
   using LabelPixelType = typename TLabelImage::PixelType;
   using OutputPixelValueType = typename NumericTraits<OutputPixelType>::ValueType;
 
-  /** Runtime information support. */
-  itkTypeMacro(LabelToRGBImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LabelToRGBImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

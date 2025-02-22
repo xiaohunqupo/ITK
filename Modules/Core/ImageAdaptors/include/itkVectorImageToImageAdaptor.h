@@ -66,7 +66,7 @@ public:
   }
 
   inline void
-  Set(InternalType & output, const ExternalType & input, const unsigned long offset) const
+  Set(InternalType & output, const ExternalType & input, const SizeValueType offset) const
   {
     return Set(Superclass::Get(output, offset), input);
   }
@@ -74,9 +74,7 @@ public:
   inline ExternalType
   Get(const ActualPixelType & input) const
   {
-    ExternalType output;
-
-    output = input[m_ComponentIdx];
+    const ExternalType output = input[m_ComponentIdx];
     return output;
   }
 
@@ -162,8 +160,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VectorImageToImageAdaptor, ImageAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorImageToImageAdaptor);
 
   /** PixelContainer type alias support Used to construct a container for
    * the pixel data. */

@@ -59,8 +59,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using SampleType = TSample;
 
-  /** Standard Macros */
-  itkTypeMacro(StandardDeviationPerComponentSampleFilter, ProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(StandardDeviationPerComponentSampleFilter);
   itkNewMacro(Self);
 
   /** Length of a measurement vector */
@@ -98,12 +98,6 @@ public:
   const MeasurementVectorRealDecoratedType *
   GetMeanPerComponentOutput() const;
 
-protected:
-  StandardDeviationPerComponentSampleFilter();
-  ~StandardDeviationPerComponentSampleFilter() override = default;
-  void
-  PrintSelf(std::ostream & os, Indent indent) const override;
-
   /** DataObject pointer */
   using DataObjectPointer = DataObject::Pointer;
 
@@ -111,6 +105,12 @@ protected:
   using Superclass::MakeOutput;
   DataObjectPointer
   MakeOutput(DataObjectPointerArraySizeType index) override;
+
+protected:
+  StandardDeviationPerComponentSampleFilter();
+  ~StandardDeviationPerComponentSampleFilter() override = default;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   GenerateData() override;

@@ -26,13 +26,12 @@
 #include "itkProgressAccumulator.h"
 #include "itkMath.h"
 #include "vnl/vnl_vector.h"
-#include "itkMath.h"
 
 namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::SignedMaurerDistanceMapImageFilter()
-  : m_BackgroundValue(NumericTraits<InputPixelType>::ZeroValue())
+  : m_BackgroundValue(InputPixelType{})
   , m_Spacing()
   , m_InputCache(nullptr)
 {
@@ -72,8 +71,9 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::SplitRequestedReg
   // determine the actual number of pieces that will be generated
   auto range = static_cast<double>(requestedRegionSize[splitAxis]);
 
-  auto         valuesPerThread = static_cast<unsigned int>(std::ceil(range / static_cast<double>(num)));
-  unsigned int maxThreadIdUsed = static_cast<unsigned int>(std::ceil(range / static_cast<double>(valuesPerThread))) - 1;
+  auto               valuesPerThread = static_cast<unsigned int>(std::ceil(range / static_cast<double>(num)));
+  const unsigned int maxThreadIdUsed =
+    static_cast<unsigned int>(std::ceil(range / static_cast<double>(valuesPerThread))) - 1;
 
   // Split the region
   if (i < maxThreadIdUsed)
@@ -101,7 +101,7 @@ template <typename TInputImage, typename TOutputImage>
 void
 SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
-  ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
+  const ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
 
   OutputImageType *      outputPtr = this->GetOutput();
   const InputImageType * inputPtr = this->GetInput();
@@ -127,7 +127,7 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::GenerateData()
   binaryFilter->SetLowerThreshold(this->m_BackgroundValue);
   binaryFilter->SetUpperThreshold(this->m_BackgroundValue);
   binaryFilter->SetInsideValue(NumericTraits<OutputPixelType>::max());
-  binaryFilter->SetOutsideValue(NumericTraits<OutputPixelType>::ZeroValue());
+  binaryFilter->SetOutsideValue(OutputPixelType{});
   binaryFilter->SetInput(inputPtr);
   binaryFilter->SetNumberOfWorkUnits(numberOfWorkUnits);
   progressAcc->RegisterInternalFilter(binaryFilter, 0.1f);
@@ -139,7 +139,7 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::GenerateData()
   using BorderFilterType = BinaryContourImageFilter<OutputImageType, OutputImageType>;
   auto borderFilter = BorderFilterType::New();
   borderFilter->SetInput(binaryFilter->GetOutput());
-  borderFilter->SetForegroundValue(NumericTraits<OutputPixelType>::ZeroValue());
+  borderFilter->SetForegroundValue(OutputPixelType{});
   borderFilter->SetBackgroundValue(NumericTraits<OutputPixelType>::max());
   borderFilter->SetFullyConnected(true);
   borderFilter->SetNumberOfWorkUnits(numberOfWorkUnits);
@@ -171,9 +171,9 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::ThreadedGenerateD
 {
   OutputImageType * outputImage = this->GetOutput();
 
-  InputRegionType region = outputRegionForThread;
-  InputSizeType   size = region.GetSize();
-  InputIndexType  startIndex = outputRegionForThread.GetIndex();
+  const InputRegionType region = outputRegionForThread;
+  InputSizeType         size = region.GetSize();
+  InputIndexType        startIndex = outputRegionForThread.GetIndex();
 
   OutputImageType * outputPtr = this->GetOutput();
 
@@ -223,12 +223,10 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::ThreadedGenerateD
   // It must be divided by each dimension size in order to get the index for that dimension.
   // The result of this division is the offsetIndex, which is the index offset relative to the region of this thread.
   // The true pixel location (idx) is provided by the sum of the offsetIndex and the startIndex.
-  InputSizeValueType index;
-  OutputIndexType    offsetIndex;
-  offsetIndex.Fill(0);
-  InputSizeValueType tempRow = NumberOfRows[m_CurrentDimension];
-  OutputIndexType    idx;
-  idx.Fill(0);
+  InputSizeValueType       index;
+  OutputIndexType          offsetIndex{};
+  const InputSizeValueType tempRow = NumberOfRows[m_CurrentDimension];
+  OutputIndexType          idx{};
 
   for (InputSizeValueType n = 0; n < tempRow; ++n)
   {
@@ -254,7 +252,7 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::ThreadedGenerateD
     using OutputIterator = ImageRegionIterator<OutputImageType>;
     using InputIterator = ImageRegionConstIterator<InputImageType>;
 
-    typename OutputImageType::RegionType outputRegion = outputRegionForThread;
+    const typename OutputImageType::RegionType outputRegion = outputRegionForThread;
 
     OutputIterator Ot(outputPtr, outputRegion);
     InputIterator  It(m_InputCache, outputRegion);
@@ -313,15 +311,15 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::Voronoi(unsigned 
                                                                        OutputIndexType   idx,
                                                                        OutputImageType * output)
 {
-  OutputRegionType    oRegion = output->GetRequestedRegion();
-  OutputSizeValueType nd = oRegion.GetSize()[d];
+  const OutputRegionType    oRegion = output->GetRequestedRegion();
+  const OutputSizeValueType nd = oRegion.GetSize()[d];
 
   vnl_vector<OutputPixelType> g(nd, 0);
   vnl_vector<OutputPixelType> h(nd, 0);
 
 
-  InputRegionType iRegion = m_InputCache->GetRequestedRegion();
-  InputIndexType  startIndex = iRegion.GetIndex();
+  const InputRegionType iRegion = m_InputCache->GetRequestedRegion();
+  InputIndexType        startIndex = iRegion.GetIndex();
 
   OutputPixelType di;
 
@@ -370,7 +368,7 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::Voronoi(unsigned 
     return;
   }
 
-  int ns = l;
+  const int ns = l;
 
   l = 0;
 
@@ -392,7 +390,7 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::Voronoi(unsigned 
     while (l < ns)
     {
       // be sure to compute d2 *only* if l < ns
-      OutputPixelType d2 = itk::Math::abs(g(l + 1)) + (h(l + 1) - iw) * (h(l + 1) - iw);
+      const OutputPixelType d2 = itk::Math::abs(g(l + 1)) + (h(l + 1) - iw) * (h(l + 1) - iw);
       // then compare d1 and d2
       if (d1 <= d2)
       {
@@ -437,11 +435,11 @@ SignedMaurerDistanceMapImageFilter<TInputImage, TOutputImage>::Remove(OutputPixe
                                                                       OutputPixelType x2,
                                                                       OutputPixelType xf)
 {
-  OutputPixelType a = x2 - x1;
-  OutputPixelType b = xf - x2;
-  OutputPixelType c = xf - x1;
+  const OutputPixelType a = x2 - x1;
+  const OutputPixelType b = xf - x2;
+  const OutputPixelType c = xf - x1;
 
-  OutputPixelType value = (c * itk::Math::abs(d2) - b * itk::Math::abs(d1) - a * itk::Math::abs(df) - a * b * c);
+  const OutputPixelType value = (c * itk::Math::abs(d2) - b * itk::Math::abs(d1) - a * itk::Math::abs(df) - a * b * c);
 
   return (value > 0);
 }

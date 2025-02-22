@@ -64,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CumulativeGaussianOptimizer, MultipleValuedNonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CumulativeGaussianOptimizer);
 
   /** Set and get macros. */
   itkSetMacro(DifferenceTolerance, double);
@@ -92,7 +92,7 @@ public:
   PrintArray(MeasureType * array);
 
   /** Report the reason for stopping. */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
 protected:

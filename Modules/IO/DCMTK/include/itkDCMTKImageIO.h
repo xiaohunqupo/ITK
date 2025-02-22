@@ -81,8 +81,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DCMTKImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DCMTKImageIO);
 
   using LogLevelEnum = DCMTKImageIOEnums::LogLevel;
 #if !defined(ITK_LEGACY_REMOVE)

@@ -32,6 +32,7 @@
 #include "itkMatrix.h"
 
 #include "ITKIOMINCExport.h"
+#include <memory> // For unique_ptr.
 
 namespace itk
 {
@@ -62,7 +63,7 @@ struct ITKIOMINC_HIDDEN MINCImageIOPImpl;
  * This code was contributed in the Insight Journal paper:
  * "MINC2.0 IO Support for ITK"
  * by Baghdadi L.
- * https://www.insight-journal.org/browse/publication/88
+ * https://doi.org/10.54294/j8lsa6
  *
  * \ingroup IOFilters
  *
@@ -80,8 +81,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MINCImageIO, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MINCImageIO);
 
   /** Right now MINC supports up to 3D with multiple components */
   bool
@@ -122,6 +123,11 @@ public:
   void
   Write(const void * buffer) override;
 
+  /** Set to automatically convert from PositiveCoordinateOrientation RAS to PositiveCoordinateOrientation LPS*/
+  itkSetMacro(RAStoLPS, bool);
+  itkGetConstMacro(RAStoLPS, bool);
+  itkBooleanMacro(RAStoLPS);
+
 protected:
   MINCImageIO();
   ~MINCImageIO() override;
@@ -146,12 +152,13 @@ protected:
   CloseVolume();
 
 private:
-  MINCImageIOPImpl * m_MINCPImpl{};
+  const std::unique_ptr<MINCImageIOPImpl> m_MINCPImpl;
 
   MatrixType m_DirectionCosines{};
 
   // complex type images, composed of complex numbers
   // int m_Complex;
+  bool m_RAStoLPS;
 };
 } // end namespace itk
 

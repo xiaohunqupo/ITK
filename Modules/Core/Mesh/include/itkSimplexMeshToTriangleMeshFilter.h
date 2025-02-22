@@ -58,8 +58,8 @@ public:
   /** Method of creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SimplexMeshToTriangleMeshFilter, MeshToMeshFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SimplexMeshToTriangleMeshFilter);
 
   using InputMeshType = TInputMesh;
   using InputMeshConstPointer = typename InputMeshType::ConstPointer;
@@ -112,11 +112,9 @@ public:
     {
       using PointIdIterator = typename SimplexPolygonType::PointIdIterator;
       PointIdIterator it = poly->PointIdsBegin();
-      InputPointType  center;
-      center.Fill(0);
+      InputPointType  center{};
 
-      InputPointType p;
-      p.Fill(0);
+      InputPointType p{};
 
       while (it != poly->PointIdsEnd())
       {

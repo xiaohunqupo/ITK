@@ -52,8 +52,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GPUUnaryFunctorImageFilter, GPUInPlaceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUUnaryFunctorImageFilter);
 
   /** Some type alias. */
   using FunctorType = TFunction;

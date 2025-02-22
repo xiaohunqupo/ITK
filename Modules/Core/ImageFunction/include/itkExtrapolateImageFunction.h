@@ -40,9 +40,9 @@ namespace itk
  *
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = float>
+template <typename TInputImage, typename TCoordinate = float>
 class ExtrapolateImageFunction
-  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>
+  : public ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(ExtrapolateImageFunction);
@@ -50,12 +50,12 @@ public:
   /** Standard class type aliases. */
   using Self = ExtrapolateImageFunction;
   using Superclass =
-    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordRep>;
+    ImageFunction<TInputImage, typename NumericTraits<typename TInputImage::PixelType>::RealType, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExtrapolateImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExtrapolateImageFunction);
 
   /** OutputType type alias support */
   using typename Superclass::OutputType;
@@ -87,7 +87,7 @@ public:
   Evaluate(const PointType & point) const override
   {
     const ContinuousIndexType index =
-      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordRep>(point);
+      this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<TCoordinate>(point);
     return (this->EvaluateAtContinuousIndex(index));
   }
 
@@ -110,11 +110,6 @@ public:
 protected:
   ExtrapolateImageFunction() = default;
   ~ExtrapolateImageFunction() override = default;
-  void
-  PrintSelf(std::ostream & os, Indent indent) const override
-  {
-    Superclass::PrintSelf(os, indent);
-  }
 };
 } // end namespace itk
 

@@ -50,8 +50,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VTKPolyDataMeshIOFactory, ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VTKPolyDataMeshIOFactory);
 
   /** Register one factory of this type  */
   static void

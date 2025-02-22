@@ -25,7 +25,6 @@
 int
 itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
 {
-  unsigned int i;
 
   // Define the dimension of the images
   constexpr unsigned int myDimension = 2;
@@ -58,9 +57,7 @@ itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
   start[0] = 0;
   start[1] = 0;
 
-  myRegionType region;
-  region.SetIndex(start);
-  region.SetSize(size);
+  const myRegionType region{ start, size };
 
   // Initialize Image
   inputImage->SetRegions(region);
@@ -100,7 +97,7 @@ itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
   ind[1] = 19;
   inputImage->SetPixel(ind, fgValue);
 
-  i = 0;
+  unsigned int i = 0;
   it.GoToBegin();
   while (!it.IsAtEnd())
   {
@@ -120,8 +117,12 @@ itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
   using myFilterType = itk::GrayscaleFunctionErodeImageFilter<myImageType, myImageType, myKernelType>;
 
   // Create the filter
-  auto                     filter = myFilterType::New();
-  itk::SimpleFilterWatcher watcher(filter, "filter");
+  auto filter = myFilterType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, GrayscaleFunctionErodeImageFilter, MorphologyImageFilter);
+
+
+  const itk::SimpleFilterWatcher watcher(filter, "filter");
 
   // Create the structuring element
   myKernelType           ball;
@@ -136,16 +137,18 @@ itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
   filter->SetKernel(ball);
 
   // Get the Smart Pointer to the Filter Output
-  myImageType::Pointer outputImage = filter->GetOutput();
+  const myImageType::Pointer outputImage = filter->GetOutput();
 
   // Execute the filter
   ITK_TRY_EXPECT_NO_EXCEPTION(filter->Update());
 
 
+  std::cout << "BoundaryCondition: " << filter->GetBoundaryCondition() << std::endl;
+
   // Create an iterator for going through the image output
   myIteratorType it2(outputImage, outputImage->GetBufferedRegion());
 
-  //  Print the content of the result image
+  // Print the content of the result image
   std::cout << "Result " << std::endl;
   i = 0;
   while (!it2.IsAtEnd())
@@ -168,7 +171,7 @@ itkGrayscaleFunctionErodeImageFilterTest(int argc, char * argv[])
     writer->Update();
   }
 
-  // All objects should be automatically destroyed at this point
 
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

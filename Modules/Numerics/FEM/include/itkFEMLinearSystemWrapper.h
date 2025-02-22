@@ -550,8 +550,8 @@ public:
   /** Virtual destructor needed for subclasses. Has to have empty throw(). */
   ~FEMExceptionLinearSystem() noexcept override;
 
-  /** Type related information. */
-  itkTypeMacro(FEMExceptionLinearSystem, FEMException);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FEMExceptionLinearSystem);
 };
 
 class ITK_ABI_EXPORT FEMExceptionLinearSystemBounds : public FEMException
@@ -582,8 +582,8 @@ public:
   /** Virtual destructor needed for subclasses. Has to have empty throw(). */
   ~FEMExceptionLinearSystemBounds() noexcept override;
 
-  /** Type related information. */
-  itkTypeMacro(FEMExceptionLinearSystem, FEMException);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FEMExceptionLinearSystemBounds);
 };
 } // end namespace fem
 } // end namespace itk

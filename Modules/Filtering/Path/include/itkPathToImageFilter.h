@@ -48,8 +48,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(PathToImageFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(PathToImageFilter);
 
   /** Some convenient type alias. */
   using typename Superclass::OutputImageRegionType;

@@ -65,8 +65,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DoubleThresholdImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DoubleThresholdImageFilter);
 
   /** Types from the superclass */
   using typename Superclass::InputImagePointer;
@@ -77,7 +77,7 @@ public:
   using OutputPixelType = typename TOutputImage::PixelType;
 
   /** Set the "outside" pixel value. The default value
-   * NumericTraits<OutputPixelType>::ZeroValue(). */
+   * OutputPixelType{}. */
   itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
@@ -116,14 +116,10 @@ public:
   itkGetConstReferenceMacro(FullyConnected, bool);
   itkBooleanMacro(FullyConnected);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputEqualityComparableCheck, (Concept::EqualityComparable<OutputPixelType>));
   itkConceptMacro(InputComparableCheck, (Concept::Comparable<InputPixelType>));
   itkConceptMacro(InputOStreamWritableCheck, (Concept::OStreamWritable<InputPixelType>));
   itkConceptMacro(OutputOStreamWritableCheck, (Concept::OStreamWritable<OutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   DoubleThresholdImageFilter();

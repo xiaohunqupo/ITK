@@ -49,7 +49,7 @@ namespace itk
  * number of tissue types.  For such an image, one does not want to
  * interpolate between different pixel values, and so
  * NearestNeighborInterpolateImageFunction< InputImageType,
- * TCoordRep > would be a better choice.
+ * TCoordinate > would be a better choice.
  *
  * If an sample is taken from outside the image domain, the default behavior is
  * to use a default pixel value.  If different behavior is desired, an
@@ -108,8 +108,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ResampleImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ResampleImageFilter);
 
   /** Number of dimensions of output image. */
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
@@ -168,7 +168,7 @@ public:
 
   using PixelComponentType = typename PixelConvertType::ComponentType;
 
-  /** Input pixel continuous index typdef */
+  /** Input pixel continuous index typedef */
   using ContinuousInputIndexType = ContinuousIndex<TInterpolatorPrecisionType, InputImageDimension>;
 
   /** Typedef to describe the output image region type. */
@@ -185,7 +185,7 @@ public:
   /* See superclass for doxygen. This method adds the additional check
    * that the output space is set */
   void
-  VerifyPreconditions() ITKv5_CONST override;
+  VerifyPreconditions() const override;
 
   /** Get/Set the coordinate transformation.
    * Set the coordinate transform to use for resampling.  Note that this must
@@ -270,11 +270,7 @@ public:
   itkBooleanMacro(UseReferenceImage);
   itkGetConstMacro(UseReferenceImage, bool);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<PixelComponentType>));
-  // End concept checking
-#endif
 
 protected:
   ResampleImageFilter();
@@ -288,7 +284,7 @@ protected:
    * \sa ProcessObject::VerifyInputInformation
    */
   void
-  VerifyInputInformation() ITKv5_CONST override
+  VerifyInputInformation() const override
   {}
 
   /** ResampleImageFilter produces an image which is a different size
@@ -344,10 +340,12 @@ protected:
   virtual void
   LinearThreadedGenerateData(const OutputImageRegionType & outputRegionForThread);
 
+#if !defined(ITK_LEGACY_REMOVE)
   /** Cast pixel from interpolator output to PixelType. */
   itkLegacyMacro(virtual PixelType CastPixelWithBoundsChecking(const InterpolatorOutputType value,
                                                                const ComponentType          minComponent,
-                                                               const ComponentType          maxComponent) const);
+                                                               const ComponentType          maxComponent) const;)
+#endif
 
 private:
   static PixelComponentType

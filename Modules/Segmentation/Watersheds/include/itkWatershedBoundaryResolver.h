@@ -73,7 +73,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(BoundaryResolver, ProcessObject);
+  itkOverrideGetNameOfClassMacro(BoundaryResolver);
 
   /** Expose the image dimension at run time. */
   static constexpr unsigned int ImageDimension = TDimension;
@@ -141,7 +141,7 @@ public:
 protected:
   BoundaryResolver()
   {
-    EquivalencyTable::Pointer eq = static_cast<EquivalencyTable *>(this->MakeOutput(0).GetPointer());
+    const EquivalencyTable::Pointer eq = static_cast<EquivalencyTable *>(this->MakeOutput(0).GetPointer());
 
     this->SetNumberOfRequiredOutputs(1);
     this->ProcessObject::SetNthOutput(0, eq.GetPointer());
@@ -154,7 +154,8 @@ protected:
 
   unsigned short m_Face{ 0 };
   void
-  GenerateOutputRequestedRegion(DataObject * output) override;
+  GenerateOutputRequestedRegion(DataObject * itkNotUsed(output)) override
+  {}
 };
 } // end namespace watershed
 } // end namespace itk

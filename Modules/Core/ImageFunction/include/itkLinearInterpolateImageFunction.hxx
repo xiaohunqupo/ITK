@@ -21,12 +21,13 @@
 #include "itkConceptChecking.h"
 
 #include "itkMath.h"
+#include <algorithm> // For min and max.
 
 namespace itk
 {
-template <typename TInputImage, typename TCoordRep>
+template <typename TInputImage, typename TCoordinate>
 auto
-LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(const ContinuousIndexType & index) const
+LinearInterpolateImageFunction<TInputImage, TCoordinate>::EvaluateUnoptimized(const ContinuousIndexType & index) const
   -> OutputType
 {
   // Avoid the smartpointer de-reference in the loop for
@@ -50,8 +51,6 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(cons
 
   // When RealType is VariableLengthVector, 'value' will be resized properly
   // below when it's assigned again.
-  Concept::Detail::UniqueType<typename NumericTraits<RealType>::ScalarRealType>();
-
   RealType value;
   // Initialize variable "value" with overloaded function so that
   // in the case of variable length vectors the "value" is initialized
@@ -77,20 +76,14 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(cons
         ++(neighIndex[dim]);
         // Take care of the case where the pixel is just
         // in the outer upper boundary of the image grid.
-        if (neighIndex[dim] > this->m_EndIndex[dim])
-        {
-          neighIndex[dim] = this->m_EndIndex[dim];
-        }
+        neighIndex[dim] = std::min(neighIndex[dim], this->m_EndIndex[dim]);
         overlap *= distance[dim];
       }
       else
       {
         // Take care of the case where the pixel is just
         // in the outer lower boundary of the image grid.
-        if (neighIndex[dim] < this->m_StartIndex[dim])
-        {
-          neighIndex[dim] = this->m_StartIndex[dim];
-        }
+        neighIndex[dim] = std::max(neighIndex[dim], this->m_StartIndex[dim]);
         overlap *= 1.0 - distance[dim];
       }
 
@@ -102,9 +95,9 @@ LinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateUnoptimized(cons
   return (static_cast<OutputType>(value));
 }
 
-template <typename TInputImage, typename TCoordRep>
+template <typename TInputImage, typename TCoordinate>
 void
-LinearInterpolateImageFunction<TInputImage, TCoordRep>::PrintSelf(std::ostream & os, Indent indent) const
+LinearInterpolateImageFunction<TInputImage, TCoordinate>::PrintSelf(std::ostream & os, Indent indent) const
 {
   this->Superclass::PrintSelf(os, indent);
 }

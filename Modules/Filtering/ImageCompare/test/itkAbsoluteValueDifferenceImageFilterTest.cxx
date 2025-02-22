@@ -36,7 +36,7 @@ itkAbsoluteValueDifferenceImageFilterTest(int, char *[])
   constexpr float outputValue = 1.0;
 
   // Define the precision for output comparison
-  const float epsilon = 1e-6;
+  constexpr float epsilon = 1e-6;
 
   // Declare the types of the images
   using myImageType1 = itk::Image<float, myDimension>;
@@ -67,9 +67,7 @@ itkAbsoluteValueDifferenceImageFilterTest(int, char *[])
   start[1] = 0;
   start[2] = 0;
 
-  myRegionType region;
-  region.SetIndex(start);
-  region.SetSize(size);
+  const myRegionType region{ start, size };
 
   // Initialize Image A
   inputImageA->SetRegions(region);
@@ -124,7 +122,7 @@ itkAbsoluteValueDifferenceImageFilterTest(int, char *[])
   filter->SetInput2(inputImageB);
 
   // Get the Smart Pointer to the Filter Output
-  myImageType4::Pointer outputImage = filter->GetOutput();
+  const myImageType4::Pointer outputImage = filter->GetOutput();
 
 
   // Execute the filter
@@ -133,7 +131,7 @@ itkAbsoluteValueDifferenceImageFilterTest(int, char *[])
   // Create an iterator for going through the image output
   myIteratorType4 it4(outputImage, outputImage->GetBufferedRegion());
 
-  //  Print the content of the result image
+  // Print the content of the result image
   std::cout << " Result " << std::endl;
   while (!it4.IsAtEnd())
   {

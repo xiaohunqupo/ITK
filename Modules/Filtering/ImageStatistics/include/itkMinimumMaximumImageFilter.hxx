@@ -76,7 +76,7 @@ MinimumMaximumImageFilter<TInputImage>::ThreadedStreamedGenerateData(const Regio
   PixelType localMin = NumericTraits<PixelType>::max();
   PixelType localMax = NumericTraits<PixelType>::NonpositiveMin();
 
-  ImageScanlineConstIterator<TInputImage> it(this->GetInput(), regionForThread);
+  ImageScanlineConstIterator it(this->GetInput(), regionForThread);
 
 
   // do the work
@@ -112,7 +112,7 @@ MinimumMaximumImageFilter<TInputImage>::ThreadedStreamedGenerateData(const Regio
     it.NextLine();
   }
 
-  const std::lock_guard mutexHolder(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   m_ThreadMin = std::min(localMin, m_ThreadMin);
   m_ThreadMax = std::max(localMax, m_ThreadMax);
 }

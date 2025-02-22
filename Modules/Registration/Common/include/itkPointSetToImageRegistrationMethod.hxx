@@ -33,7 +33,7 @@ PointSetToImageRegistrationMethod<TFixedPointSet, TMovingImage>::PointSetToImage
   m_InitialTransformParameters.Fill(0);
   m_LastTransformParameters.Fill(0);
 
-  TransformOutputPointer transformDecorator =
+  const TransformOutputPointer transformDecorator =
     itkDynamicCastInDebugMode<TransformOutputType *>(this->MakeOutput(0).GetPointer());
 
   this->ProcessObject::SetNthOutput(0, transformDecorator.GetPointer());
@@ -54,32 +54,32 @@ PointSetToImageRegistrationMethod<TFixedPointSet, TMovingImage>::Initialize()
 {
   if (!m_FixedPointSet)
   {
-    itkExceptionMacro(<< "FixedPointSet is not present");
+    itkExceptionMacro("FixedPointSet is not present");
   }
 
   if (!m_MovingImage)
   {
-    itkExceptionMacro(<< "MovingImage is not present");
+    itkExceptionMacro("MovingImage is not present");
   }
 
   if (!m_Metric)
   {
-    itkExceptionMacro(<< "Metric is not present");
+    itkExceptionMacro("Metric is not present");
   }
 
   if (!m_Optimizer)
   {
-    itkExceptionMacro(<< "Optimizer is not present");
+    itkExceptionMacro("Optimizer is not present");
   }
 
   if (!m_Transform)
   {
-    itkExceptionMacro(<< "Transform is not present");
+    itkExceptionMacro("Transform is not present");
   }
 
   if (!m_Interpolator)
   {
-    itkExceptionMacro(<< "Interpolator is not present");
+    itkExceptionMacro("Interpolator is not present");
   }
 
   // Set up the metric
@@ -96,7 +96,7 @@ PointSetToImageRegistrationMethod<TFixedPointSet, TMovingImage>::Initialize()
   // Validate initial transform parameters
   if (m_InitialTransformParameters.Size() != m_Transform->GetNumberOfParameters())
   {
-    itkExceptionMacro(<< "Size mismatch between initial parameter and transform");
+    itkExceptionMacro("Size mismatch between initial parameter and transform");
   }
 
   m_Optimizer->SetInitialPosition(m_InitialTransformParameters);

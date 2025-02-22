@@ -44,7 +44,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRe
   Superclass::GenerateInputRequestedRegion();
 
   // We need all the input.
-  InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
+  const InputImagePointer input = const_cast<InputImageType *>(this->GetInput());
   if (input)
   {
     input->SetRequestedRegion(input->GetLargestPossibleRegion());
@@ -60,7 +60,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::ParallelComputeLabels(co
   initialSize.m_SizeInPixels = 0;
 
   // walk the input
-  ImageScanlineConstIterator<InputImageType> it(this->GetInput(), inputRegionForThread);
+  ImageScanlineConstIterator it(this->GetInput(), inputRegionForThread);
 
   auto                  inputRequestedRegion = this->GetInput()->GetRequestedRegion();
   TotalProgressReporter report(this, inputRequestedRegion.GetNumberOfPixels(), 100, 0.5f);
@@ -76,7 +76,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::ParallelComputeLabels(co
       const auto inputValue = it.Get();
 
       // if the input pixel is not the background
-      if (inputValue != NumericTraits<LabelType>::ZeroValue())
+      if (inputValue != LabelType{})
       {
         // label is not currently in the map
         mapIt = localSizeMap.insert(mapIt, { inputValue, initialSize });
@@ -96,29 +96,27 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::ParallelComputeLabels(co
   // local copy, this thread may do multiple merges.
   while (true)
   {
-    std::unique_lock<std::mutex> lock(m_Mutex);
+    MapType toMerge{};
+    {
+      const std::lock_guard<std::mutex> lockGuard(m_Mutex);
 
-    if (m_SizeMap.empty())
-    {
-      swap(m_SizeMap, localSizeMap);
-      break;
-    }
-    else
-    {
-      // copy the output map to thread local storage
-      MapType toMerge;
+      if (m_SizeMap.empty())
+      {
+        swap(m_SizeMap, localSizeMap);
+        break;
+      }
+
+      // Move the data of the output map to the local `toMerge` and clear the output map.
       swap(m_SizeMap, toMerge);
 
-      // allow other threads to merge data
-      lock.unlock();
+    } // release lock, allow other threads to merge data
 
-      // Merge toMerge into localSizeMap, locally
-      for (auto & sizePair : toMerge)
-      {
-        localSizeMap[sizePair.first] += sizePair.second;
-      }
+    // Merge toMerge into localSizeMap, locally
+    for (auto & sizePair : toMerge)
+    {
+      localSizeMap[sizePair.first] += sizePair.second;
     }
-  } // release lock
+  }
 }
 
 
@@ -184,7 +182,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::GenerateData()
     {
       // map small objects to the background
       ++NumberOfObjectsRemoved;
-      relabelMap.insert({ sizeVectorPair.first, NumericTraits<OutputPixelType>::ZeroValue() });
+      relabelMap.insert({ sizeVectorPair.first, OutputPixelType{} });
     }
     else
     {
@@ -219,7 +217,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::GenerateData()
 
 
   // After the objects stats are computed add in the background label so the relabelMap can be directly applied.
-  relabelMap.insert({ NumericTraits<LabelType>::ZeroValue(), NumericTraits<OutputPixelType>::ZeroValue() });
+  relabelMap.insert({ LabelType{}, OutputPixelType{} });
 
   // Second pass: walk just the output requested region and relabel
   // the necessary pixels.
@@ -235,8 +233,8 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::GenerateData()
       auto                  outputRequestedRegion = this->GetOutput()->GetRequestedRegion();
       TotalProgressReporter report(this, outputRequestedRegion.GetNumberOfPixels(), 100, 0.5f);
 
-      ImageScanlineIterator<OutputImageType>     oit(this->GetOutput(), outputRegionForThread);
-      ImageScanlineConstIterator<InputImageType> it(this->GetInput(), outputRegionForThread);
+      ImageScanlineIterator      oit(this->GetOutput(), outputRegionForThread);
+      ImageScanlineConstIterator it(this->GetInput(), outputRegionForThread);
 
       auto mapIt = relabelMap.cbegin();
 
@@ -284,7 +282,7 @@ RelabelComponentImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream &
   SizeValueType                                            i;
 
   // limit the number of objects to print
-  SizeValueType numPrint = std::min<SizeValueType>(m_NumberOfObjectsToPrint, m_SizeOfObjectsInPixels.size());
+  const SizeValueType numPrint = std::min<SizeValueType>(m_NumberOfObjectsToPrint, m_SizeOfObjectsInPixels.size());
 
   for (i = 0, it = m_SizeOfObjectsInPixels.begin(), fit = m_SizeOfObjectsInPhysicalUnits.begin(); i < numPrint;
        ++it, ++fit, ++i)

@@ -73,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(QuasiNewtonOptimizerv4Template, GradientDescentOptimizerv4Template);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(QuasiNewtonOptimizerv4Template);
 
   /** It should be possible to derive the internal computation type from the class object. */
   using InternalComputationValueType = TInternalComputationValueType;

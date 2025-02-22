@@ -35,8 +35,8 @@ namespace itk
  * maximized.
  *
  * This calculator also includes an option to use the valley emphasis algorithm from
- * H.F. Ng, "Automatic thresholding for defect detection", Pattern Recognition Letters, (27): 1644-1649, 2006.
- * The valley emphasis algorithm is particularly effective when the object to be thresholded is small.
+ * \cite ng2006. The valley emphasis algorithm is particularly
+ * effective when the object to be thresholded is small.
  * See the following tests for examples:
  * itkOtsuMultipleThresholdsImageFilterTest3 and itkOtsuMultipleThresholdsImageFilterTest4
  * To use this algorithm, simple call the setter: SetValleyEmphasis(true)
@@ -71,7 +71,7 @@ public:
   using InstanceIdentifierVectorType = std::vector<InstanceIdentifierType>;
 
   /**Standard Macros */
-  itkTypeMacro(OtsuMultipleThresholdsCalculator, HistogramAlgorithmsBase);
+  itkOverrideGetNameOfClassMacro(OtsuMultipleThresholdsCalculator);
   itkNewMacro(Self);
 
   /** Typedef for the thresholds output */
@@ -118,11 +118,7 @@ private:
   SizeValueType m_NumberOfThresholds{ 1 };
   OutputType    m_Output{};
   bool          m_ValleyEmphasis{ false };
-#if defined(ITKV4_COMPATIBILITY)
-  bool m_ReturnBinMidpoint{ true };
-#else
-  bool m_ReturnBinMidpoint{ false };
-#endif
+  bool          m_ReturnBinMidpoint{ false };
 };
 } // end of namespace itk
 

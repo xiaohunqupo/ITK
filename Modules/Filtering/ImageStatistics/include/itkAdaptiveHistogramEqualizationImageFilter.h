@@ -57,9 +57,7 @@ namespace itk
  * outside the image, and over-weights the valid part of the
  * neighborhood.
  *
- * For detail description, reference "Adaptive Image Contrast
- * Enhancement using Generalizations of Histogram Equalization."
- * J.Alex Stark. IEEE Transactions on Image Processing, May 2000.
+ * For a detailed description see \cite stark2000.
  *
  * \ingroup ImageEnhancement
  * \ingroup ITKImageStatistics
@@ -97,10 +95,10 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(AdaptiveHistogramEqualizationImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AdaptiveHistogramEqualizationImageFilter);
 
-  /** Image type type alias support */
+  /** Image type alias support */
   using ImageType = TImageType;
   using InputPixelType = typename ImageType::PixelType;
   using ImageSizeType = typename ImageType::SizeType;
@@ -134,6 +132,7 @@ public:
       this->Modified();
     }
   }
+
   itkGetConstMacro(UseLookupTable, bool);
   itkBooleanMacro(UseLookupTable);
 #endif

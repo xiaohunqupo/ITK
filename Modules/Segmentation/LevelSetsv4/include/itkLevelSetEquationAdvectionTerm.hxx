@@ -36,7 +36,7 @@ LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::LevelSetEquationAdvec
   this->m_TermName = "Advection term";
   this->m_RequiredData.insert("BackwardGradient");
   this->m_RequiredData.insert("ForwardGradient");
-  this->m_DerivativeSigma = NumericTraits<LevelSetOutputRealType>::ZeroValue();
+  this->m_DerivativeSigma = LevelSetOutputRealType{};
   this->m_AutoGenerateAdvectionImage = true;
 }
 
@@ -73,7 +73,7 @@ LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::GenerateAdvectionImag
 
   AdvectionImagePointer gradientImage;
 
-  if (Math::NotAlmostEquals(m_DerivativeSigma, NumericTraits<LevelSetOutputRealType>::ZeroValue()))
+  if (Math::NotAlmostEquals(m_DerivativeSigma, LevelSetOutputRealType{}))
   {
     using DerivativeFilterType = GradientRecursiveGaussianImageFilter<InputImageType, AdvectionImageType>;
 
@@ -119,24 +119,6 @@ LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::GenerateAdvectionImag
 }
 
 template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::Initialize(const LevelSetInputIndexType &)
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::Update()
-{}
-
-template <typename TInput, typename TLevelSetContainer>
-void
-LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::UpdatePixel(
-  const LevelSetInputIndexType & itkNotUsed(iP),
-  const LevelSetOutputRealType & itkNotUsed(oldValue),
-  const LevelSetOutputRealType & itkNotUsed(newValue))
-{}
-
-template <typename TInput, typename TLevelSetContainer>
 auto
 LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::AdvectionSpeed(const LevelSetInputIndexType & iP) const
   -> VectorType
@@ -157,9 +139,9 @@ LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::Value(const LevelSetI
 
   for (unsigned int dim = 0; dim < ImageDimension; ++dim)
   {
-    LevelSetOutputRealType component = advectionField[dim];
+    const LevelSetOutputRealType component = advectionField[dim];
 
-    if (component > NumericTraits<LevelSetOutputRealType>::ZeroValue())
+    if (component > LevelSetOutputRealType{})
     {
       oValue += component * backwardGradient[dim];
     }
@@ -173,18 +155,19 @@ LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::Value(const LevelSetI
 }
 
 template <typename TInput, typename TLevelSetContainer>
-typename LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::LevelSetOutputRealType
+auto
 LevelSetEquationAdvectionTerm<TInput, TLevelSetContainer>::Value(const LevelSetInputIndexType & iP,
                                                                  const LevelSetDataType &       iData)
+  -> LevelSetOutputRealType
 {
   VectorType             advectionField = this->AdvectionSpeed(iP);
   LevelSetOutputRealType oValue{};
 
   for (unsigned int dim = 0; dim < ImageDimension; ++dim)
   {
-    LevelSetOutputRealType component = advectionField[dim];
+    const LevelSetOutputRealType component = advectionField[dim];
 
-    if (component > NumericTraits<LevelSetOutputRealType>::ZeroValue())
+    if (component > LevelSetOutputRealType{})
     {
       oValue += component * iData.BackwardGradient.m_Value[dim];
     }

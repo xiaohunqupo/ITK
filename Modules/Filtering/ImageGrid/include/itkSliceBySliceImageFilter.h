@@ -65,7 +65,7 @@ namespace itk
  * \author Gaetan Lehmann
  *
  * This class was taken from the Insight Journal paper:
- * https://insight-journal.org/browse/publication/133
+ * https://doi.org/10.54294/47329s
  *
  * \ingroup ITKImageGrid
  */
@@ -95,8 +95,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(SliceBySliceImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SliceBySliceImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;
@@ -166,7 +166,7 @@ protected:
   ~SliceBySliceImageFilter() override = default;
 
   void
-  VerifyInputInformation() ITKv5_CONST override;
+  VerifyInputInformation() const override;
 
   void
   GenerateData() override;

@@ -78,7 +78,18 @@ public:
 
   /** Default-constructor.
    * \note The other five "special member functions" are defaulted implicitly, following the C++ "Rule of Zero". */
-  RGBAPixel() { this->Fill(0); }
+#ifdef ITK_FUTURE_LEGACY_REMOVE
+  RGBAPixel() = default;
+#else
+  constexpr RGBAPixel()
+    : Superclass(Superclass())
+  {
+    // `: Superclass(Superclass())` is a workaround for an old compiler bug. A simple `: Superclass()` triggered
+    // warnings from GCC 9.4.0 saying: "warning: '<anonymous>' may be used uninitialized in this function
+    // [-Wmaybe-uninitialized]".
+  }
+#endif
+
   /** Pass-through constructor for the Array base class. */
   template <typename TRGBAPixelValueType>
   RGBAPixel(const RGBAPixel<TRGBAPixelValueType> & r)
@@ -106,8 +117,9 @@ public:
   Self
   operator+(const Self & r) const;
   Self
-       operator-(const Self & r) const;
-  Self operator*(const ComponentType & r) const;
+  operator-(const Self & r) const;
+  Self
+  operator*(const ComponentType & r) const;
   Self
   operator/(const ComponentType & r) const;
 
@@ -240,7 +252,7 @@ operator>>(std::istream & is, RGBAPixel<TComponent> & c);
 
 template <typename T>
 inline void
-swap(RGBAPixel<T> & a, RGBAPixel<T> & b)
+swap(RGBAPixel<T> & a, RGBAPixel<T> & b) noexcept
 {
   a.swap(b);
 }

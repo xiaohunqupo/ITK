@@ -23,20 +23,21 @@ namespace itk
 {
 
 template <typename TInputImage, typename TOutputImage>
-typename ConstantBoundaryCondition<TInputImage, TOutputImage>::OutputPixelType
+auto
 ConstantBoundaryCondition<TInputImage, TOutputImage>::operator()(const OffsetType &,
                                                                  const OffsetType &,
-                                                                 const NeighborhoodType *) const
+                                                                 const NeighborhoodType *) const -> OutputPixelType
 {
   return m_Constant;
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename ConstantBoundaryCondition<TInputImage, TOutputImage>::OutputPixelType
+auto
 ConstantBoundaryCondition<TInputImage, TOutputImage>::operator()(const OffsetType &,
                                                                  const OffsetType &,
                                                                  const NeighborhoodType *,
                                                                  const NeighborhoodAccessorFunctorType &) const
+  -> OutputPixelType
 {
   return m_Constant;
 }
@@ -56,13 +57,13 @@ ConstantBoundaryCondition<TInputImage, TOutputImage>::GetConstant() const -> con
 }
 
 template <typename TInputImage, typename TOutputImage>
-typename ConstantBoundaryCondition<TInputImage, TOutputImage>::RegionType
+auto
 ConstantBoundaryCondition<TInputImage, TOutputImage>::GetInputRequestedRegion(
   const RegionType & inputLargestPossibleRegion,
-  const RegionType & outputRequestedRegion) const
+  const RegionType & outputRequestedRegion) const -> RegionType
 {
   RegionType inputRequestedRegion(inputLargestPossibleRegion);
-  bool       cropped = inputRequestedRegion.Crop(outputRequestedRegion);
+  const bool cropped = inputRequestedRegion.Crop(outputRequestedRegion);
 
   if (!cropped)
   {
@@ -78,7 +79,7 @@ auto
 ConstantBoundaryCondition<TInputImage, TOutputImage>::GetPixel(const IndexType & index, const TInputImage * image) const
   -> OutputPixelType
 {
-  RegionType imageRegion = image->GetLargestPossibleRegion();
+  const RegionType imageRegion = image->GetLargestPossibleRegion();
   if (imageRegion.IsInside(index))
   {
     return static_cast<OutputPixelType>(image->GetPixel(index));

@@ -69,7 +69,7 @@ namespace itk
  * This code was contributed in the Insight Journal paper:
  * "Label object representation and manipulation with ITK"
  * by Lehmann G.
- * https://www.insight-journal.org/browse/publication/176
+ * https://doi.org/10.54294/q6auw4
  *
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction,
@@ -91,8 +91,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(InPlaceLabelMapFilter, LabelMapFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(InPlaceLabelMapFilter);
 
   /** Standard New method. */
   itkNewMacro(Self);

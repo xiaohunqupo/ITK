@@ -101,8 +101,8 @@ public:
 
   using ConstTransformListType = typename TransformIOBaseTemplate<ParametersValueType>::ConstTransformListType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(HDF5TransformIOTemplate, TransformIOBaseTemplate);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(HDF5TransformIOTemplate);
   itkNewMacro(Self);
 
   /** Determine the file type. Returns true if this ImageIO can read the
@@ -160,8 +160,8 @@ private:
   GetH5TypeFromString() const;
 };
 
-const std::string ITKIOTransformHDF5_EXPORT
-                  GetTransformName(int);
+std::string ITKIOTransformHDF5_EXPORT
+GetTransformName(int);
 
 /** This helps to meet backward compatibility */
 using HDF5TransformIO = HDF5TransformIOTemplate<double>;

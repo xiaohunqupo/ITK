@@ -47,8 +47,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FiniteCylinderSpatialFunction, InteriorExteriorSpatialFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FiniteCylinderSpatialFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -81,12 +81,8 @@ public:
   OutputType
   Evaluate(const InputType & position) const override;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(DimensionShouldBe3, (Concept::SameDimension<VDimension, 3u>));
   itkConceptMacro(PointDimensionShouldBe3, (Concept::SameDimension<InputType::Dimension, 3u>));
-  // End concept checking
-#endif
 
 protected:
   FiniteCylinderSpatialFunction();

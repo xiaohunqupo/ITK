@@ -65,14 +65,14 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FFTDiscreteGaussianImageFilterFactory, itk::ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FFTDiscreteGaussianImageFilterFactory);
 
   /** Register one factory of this type  */
   static void
   RegisterOneFactory()
   {
-    FFTDiscreteGaussianImageFilterFactory::Pointer factory = FFTDiscreteGaussianImageFilterFactory::New();
+    auto factory = FFTDiscreteGaussianImageFilterFactory::New();
 
     ObjectFactoryBase::RegisterFactoryInternal(factory);
   }

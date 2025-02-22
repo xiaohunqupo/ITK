@@ -28,10 +28,7 @@ template <typename TSample>
 CovarianceSampleFilter<TSample>::CovarianceSampleFilter()
 {
   this->ProcessObject::SetNumberOfRequiredInputs(1);
-  this->ProcessObject::SetNumberOfRequiredOutputs(2);
-
-  this->ProcessObject::SetNthOutput(0, this->MakeOutput(0));
-  this->ProcessObject::SetNthOutput(1, this->MakeOutput(1));
+  ProcessObject::MakeRequiredOutputs(*this, 2);
 }
 
 template <typename TSample>
@@ -59,7 +56,7 @@ template <typename TSample>
 auto
 CovarianceSampleFilter<TSample>::MakeOutput(DataObjectPointerArraySizeType index) -> DataObjectPointer
 {
-  MeasurementVectorSizeType measurementVectorSize = this->GetMeasurementVectorSize();
+  const MeasurementVectorSizeType measurementVectorSize = this->GetMeasurementVectorSize();
 
   if (index == 0)
   {
@@ -72,8 +69,7 @@ CovarianceSampleFilter<TSample>::MakeOutput(DataObjectPointerArraySizeType index
 
   if (index == 1)
   {
-    MeasurementVectorRealType mean;
-    (void)mean; // for complainty pants : valgrind
+    [[maybe_unused]] MeasurementVectorRealType mean;
     NumericTraits<MeasurementVectorRealType>::SetLength(mean, this->GetMeasurementVectorSize());
     // NumericTraits::SetLength also initializes array to zero
     auto decoratedMean = MeasurementVectorDecoratedType::New();
@@ -114,13 +110,13 @@ CovarianceSampleFilter<TSample>::GenerateData()
   // set up input / output
   const SampleType * input = this->GetInput();
 
-  MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
+  const MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
 
   auto * decoratedOutput = itkDynamicCastInDebugMode<MatrixDecoratedType *>(this->ProcessObject::GetOutput(0));
 
   MatrixType output = decoratedOutput->Get();
   output.SetSize(measurementVectorSize, measurementVectorSize);
-  output.Fill(NumericTraits<typename MatrixType::ValueType>::ZeroValue());
+  output.Fill(typename MatrixType::ValueType{});
 
   auto * decoratedMeanOutput =
     itkDynamicCastInDebugMode<MeasurementVectorDecoratedType *>(this->ProcessObject::GetOutput(1));

@@ -19,6 +19,7 @@
 #define itkNearestNeighborExtrapolateImageFunction_h
 
 #include "itkExtrapolateImageFunction.h"
+#include <algorithm> // For clamp.
 
 namespace itk
 {
@@ -37,21 +38,21 @@ namespace itk
  * \ingroup ImageFunctions
  * \ingroup ITKImageFunction
  */
-template <typename TInputImage, typename TCoordRep = float>
+template <typename TInputImage, typename TCoordinate = float>
 class ITK_TEMPLATE_EXPORT NearestNeighborExtrapolateImageFunction
-  : public ExtrapolateImageFunction<TInputImage, TCoordRep>
+  : public ExtrapolateImageFunction<TInputImage, TCoordinate>
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(NearestNeighborExtrapolateImageFunction);
 
   /** Standard class type aliases. */
   using Self = NearestNeighborExtrapolateImageFunction;
-  using Superclass = ExtrapolateImageFunction<TInputImage, TCoordRep>;
+  using Superclass = ExtrapolateImageFunction<TInputImage, TCoordinate>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NearestNeighborExtrapolateImageFunction, ExtrapolateImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NearestNeighborExtrapolateImageFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -84,17 +85,12 @@ public:
   {
     IndexType nindex;
 
+    const IndexType startIndex = this->GetStartIndex();
+    const IndexType endIndex = this->GetEndIndex();
+
     for (unsigned int j = 0; j < ImageDimension; ++j)
     {
-      nindex[j] = Math::RoundHalfIntegerUp<IndexValueType>(index[j]);
-      if (nindex[j] < this->GetStartIndex()[j])
-      {
-        nindex[j] = this->GetStartIndex()[j];
-      }
-      else if (nindex[j] > this->GetEndIndex()[j])
-      {
-        nindex[j] = this->GetEndIndex()[j];
-      }
+      nindex[j] = std::clamp(Math::RoundHalfIntegerUp<IndexValueType>(index[j]), startIndex[j], endIndex[j]);
     }
     return static_cast<OutputType>(this->GetInputImage()->GetPixel(nindex));
   }
@@ -111,20 +107,12 @@ public:
   {
     IndexType nindex;
 
+    const IndexType startIndex = this->GetStartIndex();
+    const IndexType endIndex = this->GetEndIndex();
+
     for (unsigned int j = 0; j < ImageDimension; ++j)
     {
-      if (index[j] < this->GetStartIndex()[j])
-      {
-        nindex[j] = this->GetStartIndex()[j];
-      }
-      else if (index[j] > this->GetEndIndex()[j])
-      {
-        nindex[j] = this->GetEndIndex()[j];
-      }
-      else
-      {
-        nindex[j] = index[j];
-      }
+      nindex[j] = std::clamp(index[j], startIndex[j], endIndex[j]);
     }
     return static_cast<OutputType>(this->GetInputImage()->GetPixel(nindex));
   }

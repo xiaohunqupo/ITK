@@ -48,14 +48,14 @@ itkNiftiLargeImageRegionReadTest(int argc, char * argv[])
   using ImageType = itk::Image<PixelType, Dimension>;
 
   // Create a large image
-  ImageType::SizeType   size = { { 1034, 1034, 1020 } };
-  ImageType::RegionType region;
+  constexpr ImageType::SizeType size = { { 1034, 1034, 1020 } };
+  ImageType::RegionType         region;
   region.SetSize(size);
 
   {
     auto image = ImageType::New();
     image->SetRegions(region);
-    image->Allocate(true);
+    image->AllocateInitialized();
     itk::WriteImage(image, fname);
   }
 

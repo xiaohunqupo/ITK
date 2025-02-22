@@ -147,8 +147,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ProcessObject, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ProcessObject);
 
   /** Smart Pointer type to a DataObject. */
   using DataObjectPointer = DataObject::Pointer;
@@ -342,7 +342,7 @@ public:
 
   /** \brief Increment the progress of the process object.
    *
-   * Atomically add the the current progress and may invoke observers of the ProgressEvent. Progress is represented in
+   * Atomically add the current progress and may invoke observers of the ProgressEvent. Progress is represented in
    * [0.0,1.0] or percentage. This method will invoke the ProgressEvent when called by the same as the pipeline.
    *
    * Multiple threads may call this method and the total progress will be atomically incremented.
@@ -493,12 +493,6 @@ public:
   /** Get/Set the number of work units to create when executing. */
   itkSetClampMacro(NumberOfWorkUnits, ThreadIdType, 1, ITK_MAX_THREADS);
   itkGetConstReferenceMacro(NumberOfWorkUnits, ThreadIdType);
-
-#if !defined(ITK_LEGACY_REMOVE) || defined(ITKV4_COMPATIBILITY)
-  itkLegacyMacro(void SetNumberOfThreads(ThreadIdType count)) { this->SetNumberOfWorkUnits(count); }
-
-  itkLegacyMacro(ThreadIdType GetNumberOfThreads() const) { return this->GetNumberOfWorkUnits(); }
-#endif // !ITK_LEGACY_REMOVE
 
   /** Return the multithreader used by this class. */
   MultiThreaderType *
@@ -788,7 +782,7 @@ protected:
    *
    */
   virtual void
-  VerifyPreconditions() ITKv5_CONST;
+  VerifyPreconditions() const;
 
   /** \brief Verifies that the inputs meta-data is consistent and valid
    * for continued execution of the pipeline, throws an exception if
@@ -801,7 +795,7 @@ protected:
    *
    */
   virtual void
-  VerifyInputInformation() ITKv5_CONST;
+  VerifyInputInformation() const;
 
   /** What is the input requested region that is required to produce the
    * output requested region? By default, the largest possible region is
@@ -905,7 +899,7 @@ protected:
   progressFixedToFloat(uint32_t fixed)
   {
     return static_cast<double>(fixed) / static_cast<double>(std::numeric_limits<uint32_t>::max());
-  };
+  }
 
   /**
    * Internal method convert floating point progress [0.0, 1.0] to internal integer representation. Values outside the
@@ -922,9 +916,23 @@ protected:
     {
       return std::numeric_limits<uint32_t>::max();
     }
-    double temp = static_cast<double>(f) * std::numeric_limits<uint32_t>::max();
+    const double temp = static_cast<double>(f) * std::numeric_limits<uint32_t>::max();
     return static_cast<uint32_t>(temp);
-  };
+  }
+
+
+  /** Sets the required number of outputs, and creates each of them by MakeOutput. */
+  template <typename TSourceObject>
+  static void
+  MakeRequiredOutputs(TSourceObject & sourceObject, const DataObjectPointerArraySizeType numberOfRequiredOutputs)
+  {
+    sourceObject.ProcessObject::SetNumberOfRequiredOutputs(numberOfRequiredOutputs);
+
+    for (unsigned int i{}; i < numberOfRequiredOutputs; ++i)
+    {
+      sourceObject.ProcessObject::SetNthOutput(i, sourceObject.TSourceObject::MakeOutput(i));
+    }
+  }
 
   /** These ivars are made protected so filters like itkStreamingImageFilter
    * can access them directly. */

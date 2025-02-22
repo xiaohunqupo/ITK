@@ -23,9 +23,9 @@ namespace itk
 {
 template <unsigned int VImageDimension>
 LabelObjectLine<VImageDimension>::LabelObjectLine()
-  : m_Length(NumericTraits<SizeValueType>::ZeroValue())
+  : m_Length(SizeValueType{})
 {
-  m_Index.Fill(NumericTraits<IndexValueType>::ZeroValue());
+  m_Index.Fill(IndexValueType{});
 }
 
 template <unsigned int VImageDimension>
@@ -126,14 +126,6 @@ LabelObjectLine<VImageDimension>::PrintSelf(std::ostream & os, Indent indent) co
   os << indent << "Index: " << this->m_Index << std::endl;
   os << indent << "Length: " << this->m_Length << std::endl;
 }
-
-/**
- * Define a default print trailer for all objects.
- */
-template <unsigned int VImageDimension>
-void
-LabelObjectLine<VImageDimension>::PrintTrailer(std::ostream & itkNotUsed(os), Indent itkNotUsed(indent)) const
-{}
 } // namespace itk
 
 #endif

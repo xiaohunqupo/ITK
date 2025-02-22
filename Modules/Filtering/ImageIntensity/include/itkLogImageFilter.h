@@ -34,8 +34,6 @@ template <typename TInput, typename TOutput>
 class Log
 {
 public:
-  Log() = default;
-  ~Log() = default;
   bool
   operator==(const Log &) const
   {
@@ -76,15 +74,11 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(LogImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LogImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage::PixelType, double>));
   itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   LogImageFilter()

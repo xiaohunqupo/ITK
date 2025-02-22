@@ -43,7 +43,7 @@ namespace itk
  *
  * \author Gaetan Lehmann
  * \note This class was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/132
+ * https://doi.org/10.54294/39qekn
  *
  * \ingroup Operators
  * \ingroup ITKThresholding
@@ -63,8 +63,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(KappaSigmaThresholdImageCalculator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KappaSigmaThresholdImageCalculator);
 
   /** Extract the dimension of the image. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

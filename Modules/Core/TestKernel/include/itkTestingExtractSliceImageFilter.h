@@ -34,7 +34,6 @@ class ExtractSliceImageFilterEnums
 {
 public:
   /**
-   * \class TestExtractSliceImageFilterCollapseStrategy
    * \ingroup ITKTestKernel
    */
   enum class TestExtractSliceImageFilterCollapseStrategy : uint8_t
@@ -118,8 +117,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExtractSliceImageFilter, ImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExtractSliceImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;
@@ -192,7 +191,7 @@ public:
         break;
       case TestExtractSliceImageFilterCollapseStrategyEnum::DIRECTIONCOLLAPSETOUNKOWN:
       default:
-        itkExceptionMacro(<< "Invalid Strategy Chosen for itk::ExtractSliceImageFilter");
+        itkExceptionMacro("Invalid Strategy Chosen for itk::ExtractSliceImageFilter");
     }
 
     this->m_DirectionCollaspeStrategy = choosenStrategy;
@@ -255,11 +254,7 @@ public:
   const TInputImage *
   GetInput() const;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputCovertibleToOutputCheck, (Concept::Convertible<InputImagePixelType, OutputImagePixelType>));
-  // End concept checking
-#endif
 
 protected:
   ExtractSliceImageFilter();

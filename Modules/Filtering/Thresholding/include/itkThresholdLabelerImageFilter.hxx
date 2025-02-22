@@ -35,7 +35,7 @@ namespace itk
 
 template <typename TInputImage, typename TOutputImage>
 ThresholdLabelerImageFilter<TInputImage, TOutputImage>::ThresholdLabelerImageFilter()
-  : m_LabelOffset(NumericTraits<OutputPixelType>::ZeroValue())
+  : m_LabelOffset(OutputPixelType{})
 {
   m_Thresholds.clear();
   m_RealThresholds.clear();
@@ -51,7 +51,7 @@ ThresholdLabelerImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateDa
   {
     if (m_Thresholds[i - 1] > m_Thresholds[i])
     {
-      itkExceptionMacro(<< "Thresholds must be sorted.");
+      itkExceptionMacro("Thresholds must be sorted.");
     }
   }
 

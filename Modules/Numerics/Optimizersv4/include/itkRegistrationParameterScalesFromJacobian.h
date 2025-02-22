@@ -53,8 +53,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(RegistrationParameterScalesFromJacobian, RegistrationParameterScalesEstimator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(RegistrationParameterScalesFromJacobian);
 
   /** Type of scales */
   using typename Superclass::ScalesType;

@@ -52,10 +52,9 @@ main(int argc, char * argv[])
 
   if (argc < 2)
   {
-    std::cerr << "Missing command line arguments" << std::endl;
-    std::cerr << "Usage :  " << argv[0] << "  inputImageFileName "
-              << std::endl;
-    return -1;
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << argv[0] << " inputImageFileName" << std::endl;
+    return EXIT_FAILURE;
   }
 
   using PixelType = unsigned char;
@@ -63,22 +62,17 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<PixelType, Dimension>;
 
-  using ReaderType = itk::ImageFileReader<ImageType>;
-
-  auto reader = ReaderType::New();
-
-  reader->SetFileName(argv[1]);
-
+  ImageType::Pointer input;
   try
   {
-    reader->Update();
+    input = itk::ReadImage<ImageType>(argv[1]);
   }
   catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Problem encountered while reading image file : " << argv[1]
               << std::endl;
     std::cerr << excp << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
 
@@ -89,7 +83,7 @@ main(int argc, char * argv[])
 
   auto adaptor = AdaptorType::New();
 
-  adaptor->SetImage(reader->GetOutput());
+  adaptor->SetImage(input);
 
   // Create the K-d tree structure
   using TreeGeneratorType =

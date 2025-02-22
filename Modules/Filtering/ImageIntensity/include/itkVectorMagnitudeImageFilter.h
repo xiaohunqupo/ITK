@@ -48,9 +48,6 @@ template <typename TInput, typename TOutput>
 class VectorMagnitude
 {
 public:
-  VectorMagnitude() = default;
-  ~VectorMagnitude() = default;
-
   bool
   operator==(const VectorMagnitude &) const
   {
@@ -83,14 +80,10 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(VectorMagnitudeImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VectorMagnitudeImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<typename TInputImage::PixelType::ValueType>));
-  // End concept checking
-#endif
 
 protected:
   VectorMagnitudeImageFilter()

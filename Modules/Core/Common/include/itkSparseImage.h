@@ -79,8 +79,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SparseImage, Image);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SparseImage);
 
   /** Dimension of the image. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;

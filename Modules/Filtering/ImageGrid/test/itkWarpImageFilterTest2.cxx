@@ -21,6 +21,7 @@
 
 #include "itkPipelineMonitorImageFilter.h"
 #include "itkMath.h"
+#include "itkTestingMacros.h"
 
 using ImageType = itk::Image<float, 3>;
 using DisplacementFieldType = itk::Image<itk::Vector<double, 3>, 3>;
@@ -43,24 +44,22 @@ ImageType::Pointer
 MakeCheckerboard()
 {
   using IteratorType = itk::ImageRegionIterator<ImageType>;
-  ImageType::SizeType    size = { { 16, 16, 16 } };
-  ImageType::SpacingType spacing;
+  constexpr ImageType::SizeType size = { { 16, 16, 16 } };
+  ImageType::SpacingType        spacing;
   spacing[0] = spacing[1] = spacing[2] = 1.0;
-  ImageType::IndexType  index = { { 0, 0, 0 } };
-  ImageType::RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
-  ImageType::Pointer image;
+  constexpr ImageType::IndexType index = { { 0, 0, 0 } };
+  const ImageType::RegionType    region{ index, size };
+  ImageType::Pointer             image;
   AllocateImageFromRegionAndSpacing(ImageType, image, region, spacing);
   image->FillBuffer(0.0);
   for (IteratorType it(image, image->GetLargestPossibleRegion()); !it.IsAtEnd(); ++it)
   {
     ImageType::IndexType ind(it.GetIndex());
     // initially checkboard 4 pixels wide
-    int  x = ind[0] / 4;
-    int  y = ind[1] / 4;
-    int  z = ind[2] / 4;
-    bool black(((x & 1) + (y & 1)) & 1);
+    const int x = ind[0] / 4;
+    const int y = ind[1] / 4;
+    const int z = ind[2] / 4;
+    bool      black(((x & 1) + (y & 1)) & 1);
     if (z & 1)
     {
       black = !black;
@@ -78,11 +77,9 @@ MakeDisplacementField()
   const DisplacementFieldType::SizeType size = { { TImageIndexSpaceSize, TImageIndexSpaceSize, TImageIndexSpaceSize } };
   DisplacementFieldType::SpacingType    spacing;
   spacing[0] = spacing[1] = spacing[2] = 16.0 / static_cast<double>(TImageIndexSpaceSize);
-  DisplacementFieldType::IndexType  index = { { 0, 0, 0 } };
-  DisplacementFieldType::RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
-  DisplacementFieldType::Pointer image;
+  constexpr DisplacementFieldType::IndexType index = { { 0, 0, 0 } };
+  const DisplacementFieldType::RegionType    region{ index, size };
+  DisplacementFieldType::Pointer             image;
   AllocateImageFromRegionAndSpacing(DisplacementFieldType, image, region, spacing);
   for (IteratorType it(image, image->GetLargestPossibleRegion()); !it.IsAtEnd(); ++it)
   {
@@ -101,46 +98,50 @@ MakeDisplacementField()
 int
 itkWarpImageFilterTest2(int, char *[])
 {
-  //  itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(1);
-  // make test image
-  ImageType::Pointer image = MakeCheckerboard();
-  // make full-res displacement field
-  DisplacementFieldType::Pointer defField1 = MakeDisplacementField<16u>();
-  // make half-res displacement field
-  DisplacementFieldType::Pointer defField2 = MakeDisplacementField<8u>();
+  // itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(1);
+  // Make test image
+  const ImageType::Pointer image = MakeCheckerboard();
+
+  // Make full-res displacement field
+  const DisplacementFieldType::Pointer defField1 = MakeDisplacementField<16u>();
+  // Make half-res displacement field
+  const DisplacementFieldType::Pointer defField2 = MakeDisplacementField<8u>();
 
   auto filter = WarpFilterType::New();
-  // test with full res
+  // Test with full res
   filter->SetDisplacementField(defField1);
   filter->SetInput(image);
   filter->SetOutputParametersFromImage(image);
   filter->Update();
-  ImageType::Pointer result1 = filter->GetOutput(); // save output for later comparison
-  result1->DisconnectPipeline();                    // disconnect to create new output
-  // test with half res
+  // Save output for later comparison
+  const ImageType::Pointer result1 = filter->GetOutput();
+  // Disconnect to create new output
+  result1->DisconnectPipeline();
+  // Test with half res
   filter->SetDisplacementField(defField2);
   filter->SetInput(image);
   filter->SetOutputParametersFromImage(image);
-  filter->Modified(); // enforce re-execution just to be sure
+  // Enforce re-execution just to be sure
+  filter->Modified();
   filter->Update();
-  ImageType::Pointer                  result2 = filter->GetOutput();
-  itk::ImageRegionIterator<ImageType> it1(result1, result1->GetLargestPossibleRegion()),
-    it2(result2, result1->GetLargestPossibleRegion());
+  const ImageType::Pointer            result2 = filter->GetOutput();
+  itk::ImageRegionIterator<ImageType> it1(result1, result1->GetLargestPossibleRegion());
+  itk::ImageRegionIterator<ImageType> it2(result2, result1->GetLargestPossibleRegion());
   for (it1.GoToBegin(), it2.GoToBegin(); !it1.IsAtEnd() && !it2.IsAtEnd(); ++it1, ++it2)
   {
     if (itk::Math::NotAlmostEquals(it1.Value(), it2.Value()))
     {
-      std::cout << "Pixels differ " << it1.Value() << ' ' << it2.Value() << std::endl;
+      std::cerr << "Test failed!" << std::endl;
+      std::cerr << "Error in pixel value at index [" << it1.GetIndex() << "]" << std::endl;
+      std::cerr << "Expected value " << it1.Value() << std::endl;
+      std::cerr << " differs from " << it2.Value();
       return EXIT_FAILURE;
     }
   }
-  if (it1.IsAtEnd() != it2.IsAtEnd())
-  {
-    std::cout << "Iterators don't agree on end of image" << std::endl;
-    return EXIT_FAILURE;
-  }
-  //
-  // try streaming
+
+  ITK_TEST_EXPECT_EQUAL(it1.IsAtEnd(), it2.IsAtEnd());
+
+  // Try streaming
   auto monitor1 = MonitorFilter::New();
   monitor1->SetInput(image);
 
@@ -163,24 +164,20 @@ itkWarpImageFilterTest2(int, char *[])
   {
     if (itk::Math::NotAlmostEquals(streamIt.Value(), it2.Value()))
     {
-      std::cout << "Pixels differ " << streamIt.Value() << ' ' << it2.Value() << std::endl;
+      std::cerr << "Test failed!" << std::endl;
+      std::cerr << "Error in pixel value at index [" << streamIt.GetIndex() << "]" << std::endl;
+      std::cerr << "Expected value " << it2.Value() << std::endl;
+      std::cerr << " differs from " << streamIt.Value();
       return EXIT_FAILURE;
     }
   }
-  if (streamIt.IsAtEnd() != it2.IsAtEnd())
-  {
-    std::cout << "Iterators don't agree on end of image" << std::endl;
-    return EXIT_FAILURE;
-  }
 
-  // this verifies that the pipeline was executed as expected along
-  // with correct region propagation and output information
-  if (!monitor2->VerifyAllInputCanStream(4))
-  {
-    std::cout << "Filter failed to execute as expected!" << std::endl;
-    std::cout << monitor2;
-    return EXIT_FAILURE;
-  }
+  ITK_TEST_EXPECT_EQUAL(streamIt.IsAtEnd(), it2.IsAtEnd());
 
+  // Verify that the pipeline was executed as expected along with correct region propagation and output information
+  ITK_TEST_EXPECT_TRUE(monitor2->VerifyAllInputCanStream(4));
+
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

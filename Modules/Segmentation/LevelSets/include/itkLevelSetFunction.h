@@ -29,7 +29,7 @@ namespace itk
  * finite difference image filter.  (See FiniteDifferenceImageFilter.)
  *
  * LevelSetFunction implements a generic level set function.  This function is
- * an expanded form of the basic equation developed in [1].
+ * an expanded form of the basic equation developed in \cite sethian1996.
  *
  * \f$\phi_{t} + \alpha
  * \stackrel{\rightharpoonup}{A}(\mathbf{x})\cdot\nabla\phi + \beta
@@ -54,10 +54,6 @@ namespace itk
  * the calculations.  If your subclass does not do any additional neighborhood
  * processing, then the default radius should be 1 in each direction.
  *
- * \par REFERENCES
- * \par
- * [1] Sethian, J.A. Level Set Methods. Cambridge University Press. 1996.
- *
  * \ingroup FiniteDifferenceFunctions
  * \ingroup Functions
  * \ingroup ITKLevelSets
@@ -77,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(LevelSetFunction, FiniteDifferenceFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetFunction);
 
   /** Extract some parameters from the superclass. */
   static constexpr unsigned int ImageDimension = Superclass::ImageDimension;
@@ -133,7 +129,7 @@ public:
   virtual ScalarValueType
   PropagationSpeed(const NeighborhoodType &, const FloatOffsetType &, GlobalDataStruct * = 0) const
   {
-    return NumericTraits<ScalarValueType>::ZeroValue();
+    return ScalarValueType{};
   }
 
   /** Curvature speed.  Can be used to spatially modify the effects of
@@ -239,9 +235,9 @@ public:
   {
     auto * ans = new GlobalDataStruct();
 
-    ans->m_MaxAdvectionChange = NumericTraits<ScalarValueType>::ZeroValue();
-    ans->m_MaxPropagationChange = NumericTraits<ScalarValueType>::ZeroValue();
-    ans->m_MaxCurvatureChange = NumericTraits<ScalarValueType>::ZeroValue();
+    ans->m_MaxAdvectionChange = ScalarValueType{};
+    ans->m_MaxPropagationChange = ScalarValueType{};
+    ans->m_MaxCurvatureChange = ScalarValueType{};
     return ans;
   }
 
@@ -334,10 +330,10 @@ public:
 protected:
   LevelSetFunction()
     : m_EpsilonMagnitude(static_cast<ScalarValueType>(1.0e-5))
-    , m_AdvectionWeight(NumericTraits<ScalarValueType>::ZeroValue())
-    , m_PropagationWeight(NumericTraits<ScalarValueType>::ZeroValue())
-    , m_CurvatureWeight(NumericTraits<ScalarValueType>::ZeroValue())
-    , m_LaplacianSmoothingWeight(NumericTraits<ScalarValueType>::ZeroValue())
+    , m_AdvectionWeight(ScalarValueType{})
+    , m_PropagationWeight(ScalarValueType{})
+    , m_CurvatureWeight(ScalarValueType{})
+    , m_LaplacianSmoothingWeight(ScalarValueType{})
   {}
 
   ~LevelSetFunction() override = default;

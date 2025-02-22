@@ -31,11 +31,9 @@ namespace itk
  * This filter performs Gaussian blurring by separable convolution of an image
  * and a discrete Gaussian operator (kernel).
  *
- * The Gaussian operator used here was described by Tony Lindeberg (Discrete
- * Scale-Space Theory and the Scale-Space Primal Sketch.  Dissertation. Royal
- * Institute of Technology, Stockholm, Sweden. May 1991.) The Gaussian kernel
- * used here was designed so that smoothing and derivative operations commute
- * after discretization.
+ * The Gaussian operator used here was described by Tony Lindeberg in
+ * \cite lindeberg1991. The Gaussian kernel used here was designed so
+ * that smoothing and derivative operations commute after discretization.
  *
  * The variance or standard deviation (sigma) will be evaluated as pixel units
  * if SetUseImageSpacing is off (false) or as physical units if
@@ -75,8 +73,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DiscreteGaussianImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DiscreteGaussianImageFilter);
 
   /** Image type information. */
   using InputImageType = TInputImage;
@@ -104,7 +102,10 @@ public:
 
   /** Typedef to describe the boundary condition. */
   using BoundaryConditionType = ImageBoundaryCondition<TInputImage>;
-  using InputBoundaryConditionPointerType = BoundaryConditionType *;
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  using InputBoundaryConditionPointerType [[deprecated("Please just use `BoundaryConditionType *` instead!")]] =
+    BoundaryConditionType *;
+#endif
   using InputDefaultBoundaryConditionType = ZeroFluxNeumannBoundaryCondition<TInputImage>;
   using RealBoundaryConditionPointerType = ImageBoundaryCondition<RealOutputImageType> *;
   using RealDefaultBoundaryConditionType = ZeroFluxNeumannBoundaryCondition<RealOutputImageType>;
@@ -147,8 +148,8 @@ public:
   itkSetMacro(FilterDimensionality, unsigned int);
 
   /** Set/get the boundary condition. */
-  itkSetMacro(InputBoundaryCondition, InputBoundaryConditionPointerType);
-  itkGetConstMacro(InputBoundaryCondition, InputBoundaryConditionPointerType);
+  itkSetMacro(InputBoundaryCondition, BoundaryConditionType *);
+  itkGetConstMacro(InputBoundaryCondition, BoundaryConditionType *);
   itkSetMacro(RealBoundaryCondition, RealBoundaryConditionPointerType);
   itkGetConstMacro(RealBoundaryCondition, RealBoundaryConditionPointerType);
 
@@ -313,16 +314,10 @@ public:
    * This parameter was introduced to reduce the memory used by images
    * internally, at the cost of performance.
    */
-  itkLegacyMacro(unsigned int GetInternalNumberOfStreamDivisions() const);
-  itkLegacyMacro(void SetInternalNumberOfStreamDivisions(unsigned int));
-
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
+  itkLegacyMacro(unsigned int GetInternalNumberOfStreamDivisions() const;)
+  itkLegacyMacro(void SetInternalNumberOfStreamDivisions(unsigned int);)
 
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelValueType>));
-
-  // End concept checking
-#endif
 
 protected:
   DiscreteGaussianImageFilter()
@@ -387,7 +382,7 @@ private:
 
   /** Pointer to a persistent boundary condition object used
    ** for the image iterator. */
-  InputBoundaryConditionPointerType m_InputBoundaryCondition{};
+  BoundaryConditionType * m_InputBoundaryCondition{};
 
   /** Default boundary condition */
   InputDefaultBoundaryConditionType m_InputDefaultBoundaryCondition{};

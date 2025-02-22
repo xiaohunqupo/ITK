@@ -43,8 +43,8 @@ public:
 
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(SpatialObjectDuplicator, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SpatialObjectDuplicator);
 
   /** Type definitions for the input SpatialObject. */
   using SpatialObjectType = TInputSpatialObject;

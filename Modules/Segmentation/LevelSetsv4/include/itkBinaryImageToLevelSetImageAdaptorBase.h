@@ -39,8 +39,8 @@ public:
   using ConstPointer = SmartPointer<const Self>;
   using Superclass = Object;
 
-  /** Run-time type information */
-  itkTypeMacro(BinaryImageToLevelSetImageAdaptorBase, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryImageToLevelSetImageAdaptorBase);
 
   using InputImageType = TInputImage;
   using InputImagePixelType = typename InputImageType::PixelType;

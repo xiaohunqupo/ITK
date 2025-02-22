@@ -1,5 +1,6 @@
 #define NIFTI1_IO_C
 
+#include <stdint.h>
 #include <assert.h>
 #include "nifti1_io.h"   /* typedefs, prototypes, macros, etc. */
 #include "nifti1_io_version.h"
@@ -658,38 +659,38 @@ int nifti_update_dims_from_array( nifti_image * nim )
    nim->dx = nim->pixdim[1];
 
    /* if undefined, or less than 1, set to 1 */
-   if(nim->dim[0] < 2 || (nim->dim[0] >= 2 && nim->dim[2] < 1))
+   if(nim->dim[0] < 2 || nim->dim[2] < 1)
       nim->ny = nim->dim[2] = 1;
    else
       nim->ny = nim->dim[2];
    /* copy delta values, in any case */
    nim->dy = nim->pixdim[2];
 
-   if(nim->dim[0] < 3 || (nim->dim[0] >= 3 && nim->dim[3] < 1))
+   if(nim->dim[0] < 3 || nim->dim[3] < 1)
       nim->nz = nim->dim[3] = 1;
    else /* just copy vals from arrays */
       nim->nz = nim->dim[3];
    nim->dz = nim->pixdim[3];
 
-   if(nim->dim[0] < 4 || (nim->dim[0] >= 4 && nim->dim[4] < 1))
+   if(nim->dim[0] < 4 || nim->dim[4] < 1)
       nim->nt = nim->dim[4] = 1;
    else /* just copy vals from arrays */
       nim->nt = nim->dim[4];
    nim->dt = nim->pixdim[4];
 
-   if(nim->dim[0] < 5 || (nim->dim[0] >= 5 && nim->dim[5] < 1))
+   if(nim->dim[0] < 5 || nim->dim[5] < 1)
       nim->nu = nim->dim[5] = 1;
    else /* just copy vals from arrays */
       nim->nu = nim->dim[5];
    nim->du = nim->pixdim[5];
 
-   if(nim->dim[0] < 6 || (nim->dim[0] >= 6 && nim->dim[6] < 1))
+   if(nim->dim[0] < 6 || nim->dim[6] < 1)
       nim->nv = nim->dim[6] = 1;
    else /* just copy vals from arrays */
       nim->nv = nim->dim[6];
    nim->dv = nim->pixdim[6];
 
-   if(nim->dim[0] < 7 || (nim->dim[0] >= 7 && nim->dim[7] < 1))
+   if(nim->dim[0] < 7 || nim->dim[7] < 1)
       nim->nw = nim->dim[7] = 1;
    else /* just copy vals from arrays */
       nim->nw = nim->dim[7];
@@ -2527,7 +2528,7 @@ int nifti_is_complete_filename(const char* fname)
        return 0;
    }
 
-   if ( ext && ext == fname ) {   /* then no filename prefix */
+   if ( ext == fname ) {   /* then no filename prefix */
       if ( g_opts.debug > 0 )
          fprintf(stderr,"-- no prefix for filename '%s'\n", fname);
       return 0;
@@ -3227,12 +3228,17 @@ static int fileext_compare(const char * test_ext, const char * known_ext)
 {
    char caps[8] = "";
    size_t c,len;
+
+   /* Pointer-equal is equal, including both NULL. */
+   if( test_ext == known_ext ) return 0;
+
+   /* If one is NULL consider it as less than the other. */
+   if( !test_ext ) return -1;
+   if( !known_ext ) return 1;
+
    /* if equal, don't need to check case (store to avoid multiple calls) */
    const int cmp = strcmp(test_ext, known_ext);
    if( cmp == 0 ) return cmp;
-
-   /* if anything odd, use default */
-   if( !test_ext || !known_ext ) return cmp;
 
    len = strlen(known_ext);
    if( len > 7 ) return cmp;
@@ -3252,12 +3258,17 @@ static int fileext_n_compare(const char * test_ext,
 {
    char caps[8] = "";
    size_t c,len;
+
+   /* Pointer-equal is equal, including both NULL. */
+   if( test_ext == known_ext ) return 0;
+
+   /* If one is NULL consider it as less than the other. */
+   if( !test_ext ) return -1;
+   if( !known_ext ) return 1;
+
    /* if equal, don't need to check case (store to avoid multiple calls) */
    const int  cmp = strncmp(test_ext, known_ext, maxlen);
    if( cmp == 0 ) return cmp;
-
-   /* if anything odd, use default */
-   if( !test_ext || !known_ext ) return cmp;
 
    len = strlen(known_ext);
    if( len > maxlen ) len = maxlen;     /* ignore anything past maxlen */
@@ -4263,7 +4274,7 @@ nifti_image *nifti_image_read( const char *hname , int read_data )
 
    if( g_opts.debug > 3 ){
       fprintf(stderr,"+d nifti_image_read(), have nifti image:\n");
-      if( g_opts.debug > 2 ) nifti_image_infodump(nim);
+      nifti_image_infodump(nim);
    }
 
    /**- check for extensions (any errors here means no extensions) */
@@ -4396,6 +4407,7 @@ static int nifti_read_extensions( nifti_image *nim, znzFile fp, int remain )
    nifti1_extender    extdr;      /* defines extension existence  */
    nifti1_extension   extn;       /* single extension to process  */
    nifti1_extension * Elist;      /* list of processed extensions */
+   znz_off_t          posn;
    int                count;
 
    if( !nim || znz_isnull(fp) ) {
@@ -4405,16 +4417,17 @@ static int nifti_read_extensions( nifti_image *nim, znzFile fp, int remain )
       return -1;
    }
 
-   znz_off_t posn = znztell(fp);
+   posn = znztell(fp);
 
    if( (posn != sizeof(nifti_1_header)) &&
        (nim->nifti_type != NIFTI_FTYPE_ASCII) )
       fprintf(stderr,"** WARNING: posn not header size (%lld, %lu)\n",
-              posn, sizeof(nifti_1_header));
+              (long long)posn, sizeof(nifti_1_header));
 
    if( g_opts.debug > 2 )
-       fprintf(stderr,"-d nre: posn = %lld, offset = %d, type = %d, remain = %d\n",
-              posn, nim->iname_offset, nim->nifti_type, remain);
+      fprintf(stderr,"-d nre: posn = %lld, offset = %d, type = %d,"
+                     " remain = %d\n",
+              (long long)posn, nim->iname_offset, nim->nifti_type, remain);
 
    if( remain < 16 ){
       if( g_opts.debug > 2 ){
@@ -4534,8 +4547,8 @@ static int nifti_add_exten_to_list( nifti1_extension *  new_ext,
 
    /* check for failure first */
    if( ! *list ){
-      fprintf(stderr,"** failed to alloc %d extension structs (%d bytes)\n",
-              new_length, new_length*(int)sizeof(nifti1_extension));
+      fprintf(stderr,"** failed to alloc %d extension structs (%zu bytes)\n",
+              new_length, new_length*sizeof(nifti1_extension));
       if( !tmplist ) return -1;  /* no old list to lose */
 
       *list = tmplist;  /* reset list to old one */
@@ -4856,7 +4869,7 @@ static znzFile nifti_image_load_prep( nifti_image *nim )
         return NULL;
      }
      ii = nifti_get_filesize( nim->iname ) ;
-     if( ii <= 0 ){
+     if( ii == 0 ){
         if( g_opts.debug > 0 ) LNI_FERR(fname,"empty data file",nim->iname);
         znzclose(fp);
         return NULL;
@@ -5211,7 +5224,7 @@ static int nifti_write_extensions(znzFile fp, nifti_image *nim)
 {
    nifti1_extension * list;
    char               extdr[4] = { 0, 0, 0, 0 };
-   int                c, size, ok = 1;
+   int                c, size, ok;
 
    if( znz_isnull(fp) || !nim || nim->num_ext < 0 ){
       if( g_opts.debug > 0 )
@@ -6191,7 +6204,7 @@ static char *escapize_string( const char * str )
 *//*-------------------------------------------------------------------------*/
 char *nifti_image_to_ascii( const nifti_image *nim )
 {
-   char *buf , *ebuf ; int nbuf ;
+   char *buf , *ebuf , *newbuf; int nbuf ;
 
    if( nim == NULL ) return NULL ;   /* stupid caller */
 
@@ -6428,9 +6441,12 @@ char *nifti_image_to_ascii( const nifti_image *nim )
    snprintf( buf+strlen(buf) , bufLen-strlen(buf) , "/>\n" ) ;   /* XML-ish closer */
 
    nbuf = (int)strlen(buf) ;
-   buf  = (char *)realloc((void *)buf, nbuf+1); /* cut back to proper length */
-   if( !buf ) fprintf(stderr,"** NITA: failed to realloc %d bytes\n",nbuf+1);
-   return buf ;
+   newbuf = (char *)realloc((void *)buf, nbuf+1); /* cut back to proper length */
+   if( !newbuf ){
+      free(buf);
+      fprintf(stderr,"** NITA: failed to realloc %d bytes\n",nbuf+1);
+   }
+   return newbuf ;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -6719,7 +6735,6 @@ int nifti_nim_has_valid_dims(nifti_image * nim, int complain)
 
    /**- start with dim[0]: failure here is considered terminal */
    if( nim->dim[0] <= 0 || nim->dim[0] > 7 ){
-      errs++;
       if( complain )
          fprintf(stderr,"** NVd: dim[0] (%d) out of range [1,7]\n",nim->dim[0]);
       return 0;
@@ -6761,7 +6776,7 @@ int nifti_nim_has_valid_dims(nifti_image * nim, int complain)
    for( c = 1; c <= nim->dim[0]; c++ ){
       if( nim->dim[c] > 0)
          prod *= nim->dim[c];
-      else if( nim->dim[c] <= 0 ){
+      else {
          if( !complain ) return 0;
          fprintf(stderr,"** NVd: dim[%d] (=%d) <= 0\n",c, nim->dim[c]);
          errs++;
@@ -6928,7 +6943,7 @@ int nifti_read_collapsed_image( nifti_image * nim, const int dims [8],
 ** stride array.
 */
 static void
-compute_strides(int *strides,const int *size,int nbyper)
+compute_strides(int64_t *strides,const int *size,int nbyper)
 {
   int i;
   strides[0] = nbyper;
@@ -6977,7 +6992,7 @@ int nifti_read_subregion_image( nifti_image * nim,
   long int bytes = 0;           /* total # bytes read */
   size_t total_alloc_size;      /* size of buffer allocation */
   char *readptr;                /* where in *data to read next */
-  int strides[7];               /* strides between dimensions */
+  int64_t strides[7];           /* strides between dimensions */
   int collapsed_dims[8];        /* for read_collapsed_image */
   int *image_size;              /* pointer to dimensions in header */
   long int initial_offset;
@@ -7343,10 +7358,11 @@ static int make_pivot_list(nifti_image * nim, const int dims[], int pivots[],
 *//*-------------------------------------------------------------------*/
 int * nifti_get_intlist( int nvals , const char * str )
 {
-   int *subv = NULL ;
-   int *subv_realloc = NULL;
-   int ii , ipos , nout , slen ;
-   int ibot,itop,istep ;
+   int  *subv = NULL ;
+   int  *subv_realloc = NULL;
+   int   ii , ipos , nout , slen ;
+   int   ibot,itop,istep ;
+   long  nused, temp ;
    char *cpt ;
 
    /* Meaningless input? */
@@ -7383,7 +7399,7 @@ int * nifti_get_intlist( int nvals , const char * str )
          ibot = nvals-1 ; ipos++ ;
       } else {                 /* decode an integer */
          errno = 0;
-         long temp = strtol( str+ipos , &cpt , 10 ) ;
+         temp = strtol( str+ipos , &cpt , 10 ) ;
          if( (temp == 0 && errno != 0) || temp <= INT_MIN || temp >= INT_MAX){
             fprintf(stderr,"** ERROR: list index does not fit in int\n") ;
             free(subv) ; return NULL ;
@@ -7399,7 +7415,7 @@ int * nifti_get_intlist( int nvals , const char * str )
                    ibot,nvals-1) ;
            free(subv) ; return NULL ;
          }
-         long nused = (cpt-(str+ipos)) ;
+         nused = (cpt-(str+ipos)) ;
          if( ibot == 0 && nused == 0 ){
            fprintf(stderr,"** ERROR: list syntax error '%s'\n",str+ipos) ;
            free(subv) ; return NULL ;
@@ -7446,7 +7462,7 @@ int * nifti_get_intlist( int nvals , const char * str )
          itop = nvals-1 ; ipos++ ;
       } else {                 /* decode an integer */
          errno = 0;
-         long temp = strtol( str+ipos , &cpt , 10 ) ;
+         temp = strtol( str+ipos , &cpt , 10 ) ;
          if( (temp == 0 && errno != 0) || temp <= INT_MIN || temp >= INT_MAX){
             fprintf(stderr,"** ERROR: list index does not fit in int\n") ;
             free(subv) ; return NULL ;
@@ -7462,7 +7478,7 @@ int * nifti_get_intlist( int nvals , const char * str )
                    itop,nvals-1) ;
            free(subv) ; return NULL ;
          }
-         long nused = (cpt-(str+ipos)) ;
+         nused = (cpt-(str+ipos)) ;
          if( itop == 0 && nused == 0 ){
            fprintf(stderr,"** ERROR: index list syntax error '%s'\n",str+ipos) ;
            free(subv) ; return NULL ;
@@ -7481,7 +7497,7 @@ int * nifti_get_intlist( int nvals , const char * str )
       if( str[ipos] == '(' ){  /* decode an integer */
          ipos++ ;
          errno = 0;
-         long temp = strtol( str+ipos , &cpt , 10 ) ;
+         temp = strtol( str+ipos , &cpt , 10 ) ;
          if( (temp == 0 && errno != 0) || temp <= INT_MIN || temp >= INT_MAX){
             fprintf(stderr,"** ERROR: list index does not fit in int\n") ;
             free(subv) ; return NULL ;
@@ -7491,7 +7507,7 @@ int * nifti_get_intlist( int nvals , const char * str )
            fprintf(stderr,"** ERROR: index loop step is 0!\n") ;
            free(subv) ; return NULL ;
          }
-         long nused = (cpt-(str+ipos)) ;
+         nused = (cpt-(str+ipos)) ;
          ipos += nused ;
          if( str[ipos] == ')' ) ipos++ ;
          if( (ibot-itop)*istep > 0 ){

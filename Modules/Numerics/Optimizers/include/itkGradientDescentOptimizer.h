@@ -42,7 +42,7 @@ public:
 };
 // Define how to print enumeration
 extern ITKOptimizers_EXPORT std::ostream &
-                            operator<<(std::ostream & out, const GradientDescentOptimizerEnums::StopConditionGradientDescentOptimizer value);
+operator<<(std::ostream & out, const GradientDescentOptimizerEnums::StopConditionGradientDescentOptimizer value);
 
 /** \class GradientDescentOptimizer
  * \brief Implement a gradient descent optimizer
@@ -83,8 +83,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDescentOptimizer, SingleValuedNonLinearOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientDescentOptimizer);
 
   using StopConditionGradientDescentOptimizerEnum =
     GradientDescentOptimizerEnums::StopConditionGradientDescentOptimizer;
@@ -160,7 +160,7 @@ public:
 
   /** Get Stop condition. */
   itkGetConstReferenceMacro(StopCondition, StopConditionGradientDescentOptimizerEnum);
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /** Get Gradient condition. */
@@ -192,7 +192,7 @@ private:
 
 // Define how to print enumeration
 extern ITKOptimizers_EXPORT std::ostream &
-                            operator<<(std::ostream & out, const GradientDescentOptimizer::StopConditionGradientDescentOptimizerEnum value);
+operator<<(std::ostream & out, const GradientDescentOptimizer::StopConditionGradientDescentOptimizerEnum value);
 
 } // end namespace itk
 

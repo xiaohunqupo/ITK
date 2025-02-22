@@ -21,10 +21,7 @@
 namespace itk
 {
 /** Constructor */
-StdStreamLogOutput::StdStreamLogOutput()
-{
-  this->m_Stream = nullptr;
-}
+StdStreamLogOutput::StdStreamLogOutput() { this->m_Stream = nullptr; }
 
 /** Destructor */
 StdStreamLogOutput::~StdStreamLogOutput()
@@ -47,7 +44,7 @@ StdStreamLogOutput::SetStream(StreamType & Stream)
 void
 StdStreamLogOutput::Flush()
 {
-  const std::lock_guard lockGuard(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   if (this->m_Stream)
   {
     this->m_Stream->flush();
@@ -58,7 +55,7 @@ StdStreamLogOutput::Flush()
 void
 StdStreamLogOutput::Write(double timestamp)
 {
-  const std::lock_guard lockGuard(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   if (this->m_Stream)
   {
     (*this->m_Stream) << timestamp;
@@ -67,9 +64,9 @@ StdStreamLogOutput::Write(double timestamp)
 
 /** Write to a buffer */
 void
-StdStreamLogOutput::Write(std::string const & content)
+StdStreamLogOutput::Write(const std::string & content)
 {
-  const std::lock_guard lockGuard(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   if (this->m_Stream)
   {
     (*this->m_Stream) << content;
@@ -78,9 +75,9 @@ StdStreamLogOutput::Write(std::string const & content)
 
 /** Write to a buffer */
 void
-StdStreamLogOutput::Write(std::string const & content, double timestamp)
+StdStreamLogOutput::Write(const std::string & content, double timestamp)
 {
-  const std::lock_guard lockGuard(m_Mutex);
+  const std::lock_guard<std::mutex> lockGuard(m_Mutex);
   if (this->m_Stream)
   {
     (*this->m_Stream) << timestamp << "  :  " << content;

@@ -66,8 +66,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information ( and related methods ) */
-  itkTypeMacro(TimeVaryingVelocityFieldIntegrationImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TimeVaryingVelocityFieldIntegrationImageFilter);
 
   /**
    * Dimensionality of input data is assumed to be one more than the output

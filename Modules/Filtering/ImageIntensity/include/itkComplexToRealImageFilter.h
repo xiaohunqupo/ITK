@@ -35,8 +35,6 @@ template <typename TInput, typename TOutput>
 class ComplexToReal
 {
 public:
-  ComplexToReal() = default;
-  ~ComplexToReal() = default;
   bool
   operator==(const ComplexToReal &) const
   {
@@ -70,18 +68,14 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(ComplexToRealImageFilter, UnaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ComplexToRealImageFilter);
 
   using InputPixelType = typename TInputImage::PixelType;
   using OutputPixelType = typename TOutputImage::PixelType;
   using InputPixelValueType = typename NumericTraits<InputPixelType>::ValueType;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputPixelValueType, OutputPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ComplexToRealImageFilter()

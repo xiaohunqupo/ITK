@@ -98,7 +98,7 @@ public:
   /**
    * Run-time type information (and related methods).
    */
-  itkTypeMacro(CommandIterationUpdatev4, itk::Command);
+  itkOverrideGetNameOfClassMacro(CommandIterationUpdatev4);
 
 
   /**
@@ -135,7 +135,7 @@ protected:
   /**
    * Constructor
    */
-  CommandIterationUpdatev4(){};
+  CommandIterationUpdatev4() {}
 
 private:
   /**

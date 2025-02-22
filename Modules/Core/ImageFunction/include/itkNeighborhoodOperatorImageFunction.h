@@ -60,8 +60,8 @@ public:
   using typename Superclass::IndexType;
   using typename Superclass::ContinuousIndexType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(NeighborhoodOperatorImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(NeighborhoodOperatorImageFunction);
 
   /** Dimension of the underlying image. */
   static constexpr unsigned int ImageDimension = InputImageType::ImageDimension;
@@ -90,8 +90,7 @@ public:
   Evaluate(const PointType &) const override
   {
     std::cout << "NeighborhoodOperatorImageFunction::Evaluate(): Not implemented!" << std::endl;
-    TOutput out;
-    out = 0;
+    TOutput out = 0;
     return out;
   }
 
@@ -105,8 +104,7 @@ public:
   EvaluateAtContinuousIndex(const ContinuousIndexType &) const override
   {
     std::cout << "NeighborhoodOperatorImageFunction::EvaluateAtContinuousIndex():Not implemented!" << std::endl;
-    TOutput out;
-    out = 0;
+    TOutput out = 0;
     return out;
   }
 

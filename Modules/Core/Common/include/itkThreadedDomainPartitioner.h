@@ -55,8 +55,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ThreadedDomainPartitioner, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ThreadedDomainPartitioner);
 
   /** Type of the input object that's split for threading */
   using DomainType = TDomain;

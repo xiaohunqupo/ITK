@@ -28,11 +28,6 @@ namespace itk
 /** \class QuadraticEdgeCell
  *  \brief Represents a second order line segment for a Mesh.
  *
- * \tparam TPixelType The type associated with a point, cell, or boundary
- * for use in storing its data.
- *
- * \tparam TCellTraits Type information of mesh containing cell.
- *
  * \ingroup MeshObjects
  * \ingroup ITKCommon
  */
@@ -46,8 +41,8 @@ public:
   itkCellCommonTypedefs(QuadraticEdgeCell);
   itkCellInheritedTypedefs(TCellInterface);
 
-  /** Standard part of every itk Object. */
-  itkTypeMacro(QuadraticEdgeCell, CellInterface);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(QuadraticEdgeCell);
 
   /** The type of boundary for this lines's vertices. */
   using VertexType = VertexCell<TCellInterface>;

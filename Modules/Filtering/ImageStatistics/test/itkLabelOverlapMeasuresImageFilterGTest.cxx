@@ -45,13 +45,12 @@ protected:
 
 
     static typename ImageType::Pointer
-    CreateImage(PixelType fillValue = itk::NumericTraits<PixelType>::ZeroValue())
+    CreateImage(PixelType fillValue = PixelType{})
     {
       auto image = ImageType::New();
 
-      typename ImageType::SizeType imageSize;
-      imageSize.Fill(m_ImageSize);
-      typename ImageType::RegionType region(imageSize);
+      auto                                 imageSize = ImageType::SizeType::Filled(m_ImageSize);
+      const typename ImageType::RegionType region(imageSize);
       image->SetRegions(region);
       image->Allocate();
       image->FillBuffer(fillValue);
@@ -62,7 +61,7 @@ protected:
   };
 
   using Utils = FixtureUtilities<3, unsigned char>;
-  static const itk::SizeValueType m_ImageSize{ 128 };
+  static constexpr itk::SizeValueType m_ImageSize{ 128 };
 };
 
 } // namespace

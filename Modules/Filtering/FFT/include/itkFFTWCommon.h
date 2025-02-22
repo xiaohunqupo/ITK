@@ -44,7 +44,7 @@ namespace fftw
  * \brief Wrapper for FFTW API
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/717
+ * https://doi.org/10.54294/0iky0u
  *
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
@@ -124,19 +124,17 @@ public:
   }
 
   static PlanType
-  Plan_dft_c2r(int           rank,
-               const int *   n,
-               ComplexType * in,
-               PixelType *   out,
-               unsigned int  flags,
-               int           threads = 1,
-               bool          canDestroyInput = false)
+  Plan_dft_c2r(int                  rank,
+               const int *          n,
+               ComplexType *        in,
+               PixelType *          out,
+               unsigned int         flags,
+               [[maybe_unused]] int threads = 1,
+               bool                 canDestroyInput = false)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftwf_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -223,20 +221,18 @@ public:
   }
 
   static PlanType
-  Plan_dft_r2c(int           rank,
-               const int *   n,
-               PixelType *   in,
-               ComplexType * out,
-               unsigned int  flags,
-               int           threads = 1,
-               bool          canDestroyInput = false)
+  Plan_dft_r2c(int                  rank,
+               const int *          n,
+               PixelType *          in,
+               ComplexType *        out,
+               unsigned int         flags,
+               [[maybe_unused]] int threads = 1,
+               bool                 canDestroyInput = false)
   {
     //
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftwf_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -325,20 +321,18 @@ public:
   }
 
   static PlanType
-  Plan_dft(int           rank,
-           const int *   n,
-           ComplexType * in,
-           ComplexType * out,
-           int           sign,
-           unsigned int  flags,
-           int           threads = 1,
-           bool          canDestroyInput = false)
+  Plan_dft(int                  rank,
+           const int *          n,
+           ComplexType *        in,
+           ComplexType *        out,
+           int                  sign,
+           unsigned int         flags,
+           [[maybe_unused]] int threads = 1,
+           bool                 canDestroyInput = false)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftwf_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -388,7 +382,7 @@ public:
   DestroyPlan(PlanType p)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
 #  endif
     fftwf_destroy_plan(p);
   }
@@ -460,19 +454,17 @@ public:
   }
 
   static PlanType
-  Plan_dft_c2r(int           rank,
-               const int *   n,
-               ComplexType * in,
-               PixelType *   out,
-               unsigned int  flags,
-               int           threads = 1,
-               bool          canDestroyInput = false)
+  Plan_dft_c2r(int                  rank,
+               const int *          n,
+               ComplexType *        in,
+               PixelType *          out,
+               unsigned int         flags,
+               [[maybe_unused]] int threads = 1,
+               bool                 canDestroyInput = false)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftw_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -559,19 +551,17 @@ public:
   }
 
   static PlanType
-  Plan_dft_r2c(int           rank,
-               const int *   n,
-               PixelType *   in,
-               ComplexType * out,
-               unsigned int  flags,
-               int           threads = 1,
-               bool          canDestroyInput = false)
+  Plan_dft_r2c(int                  rank,
+               const int *          n,
+               PixelType *          in,
+               ComplexType *        out,
+               unsigned int         flags,
+               [[maybe_unused]] int threads = 1,
+               bool                 canDestroyInput = false)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftw_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -660,20 +650,18 @@ public:
   }
 
   static PlanType
-  Plan_dft(int           rank,
-           const int *   n,
-           ComplexType * in,
-           ComplexType * out,
-           int           sign,
-           unsigned int  flags,
-           int           threads = 1,
-           bool          canDestroyInput = false)
+  Plan_dft(int                  rank,
+           const int *          n,
+           ComplexType *        in,
+           ComplexType *        out,
+           int                  sign,
+           unsigned int         flags,
+           [[maybe_unused]] int threads = 1,
+           bool                 canDestroyInput = false)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
     fftw_plan_with_nthreads(threads);
-#  else
-    (void)threads;
 #  endif
     // don't add FFTW_WISDOM_ONLY if the plan rigor is FFTW_ESTIMATE
     // because FFTW_ESTIMATE guarantee to not destroy the input
@@ -723,7 +711,7 @@ public:
   DestroyPlan(PlanType p)
   {
 #  ifndef ITK_USE_CUFFTW
-    const std::lock_guard lock(FFTWGlobalConfiguration::GetLockMutex());
+    const std::lock_guard<FFTWGlobalConfiguration::MutexType> lockGuard(FFTWGlobalConfiguration::GetLockMutex());
 #  endif
     fftw_destroy_plan(p);
   }

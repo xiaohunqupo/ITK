@@ -112,8 +112,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetCellsArray() -> CellsVectorContain
   IdentifierType index = 0;
   for (auto cellItr = m_CellsContainer->Begin(); cellItr != m_CellsContainer->End(); ++cellItr)
   {
-    auto         cellPointer = cellItr->Value();
-    unsigned int numOfPoints = cellPointer->GetNumberOfPoints();
+    auto               cellPointer = cellItr->Value();
+    const unsigned int numOfPoints = cellPointer->GetNumberOfPoints();
 
     // Insert the cell type
     cellOutputVectorContainer->InsertElement(index++, static_cast<IdentifierType>(cellPointer->GetType()));
@@ -171,7 +171,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::CreateCell(int cellType, CellAutoPoin
       cellPointer.TakeOwnership(new OutputQuadraticTriangleCellType);
       break;
     default:
-      itkExceptionMacro(<< "Unknown mesh cell");
+      itkExceptionMacro("Unknown mesh cell");
   }
 
   return;
@@ -189,8 +189,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::SetCellsArray(CellsVectorContainer * 
 
   while (index < cells->Size())
   {
-    int currentCellType = static_cast<int>(cells->GetElement(index++));
-    int numOfPoints = static_cast<int>(cells->GetElement(index++));
+    const int currentCellType = static_cast<int>(cells->GetElement(index++));
+    const int numOfPoints = static_cast<int>(cells->GetElement(index++));
 
     CellAutoPointer cellPointer;
 
@@ -418,7 +418,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::SetBoundaryAssignment(int            
                                                                  CellFeatureIdentifier featureId,
                                                                  CellIdentifier        boundaryId)
 {
-  BoundaryAssignmentIdentifier assignId(cellId, featureId);
+  const BoundaryAssignmentIdentifier assignId(cellId, featureId);
 
   /**
    * Make sure a boundary assignment container exists for the given dimension.
@@ -449,7 +449,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetBoundaryAssignment(int            
                                                                  CellFeatureIdentifier featureId,
                                                                  CellIdentifier *      boundaryId) const
 {
-  BoundaryAssignmentIdentifier assignId(cellId, featureId);
+  const BoundaryAssignmentIdentifier assignId(cellId, featureId);
 
   /**
    * If the boundary assignments container for the given dimension doesn't
@@ -472,7 +472,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::RemoveBoundaryAssignment(int         
                                                                     CellIdentifier        cellId,
                                                                     CellFeatureIdentifier featureId)
 {
-  BoundaryAssignmentIdentifier assignId(cellId, featureId);
+  const BoundaryAssignmentIdentifier assignId(cellId, featureId);
 
   /**
    * If the boundary assignments container for the given dimension doesn't
@@ -492,10 +492,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::RemoveBoundaryAssignment(int         
     m_BoundaryAssignmentsContainers[dimension]->DeleteIndex(assignId);
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
 template <typename TPixelType, unsigned int VDimension, typename TMeshTraits>
@@ -536,10 +534,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetNumberOfCells() const -> CellIdent
   {
     return 0;
   }
-  else
-  {
-    return m_CellsContainer->Size();
-  }
+
+  return m_CellsContainer->Size();
 }
 
 template <typename TPixelType, unsigned int VDimension, typename TMeshTraits>
@@ -584,11 +580,9 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetCellBoundaryFeature(int           
     {
       return true;
     }
-    else
-    {
-      boundary.Reset();
-      return false;
-    }
+
+    boundary.Reset();
+    return false;
   }
 
   /**
@@ -605,11 +599,12 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetCellBoundaryFeature(int           
  * though, and we are not sure how wide-spread this support is.
  */
 template <typename TPixelType, unsigned int VDimension, typename TMeshTraits>
-typename Mesh<TPixelType, VDimension, TMeshTraits>::CellIdentifier
+auto
 Mesh<TPixelType, VDimension, TMeshTraits>::GetCellBoundaryFeatureNeighbors(int                        dimension,
                                                                            CellIdentifier             cellId,
                                                                            CellFeatureIdentifier      featureId,
                                                                            std::set<CellIdentifier> * cellSet)
+  -> CellIdentifier
 {
   /**
    * Sanity check on mesh status.
@@ -637,8 +632,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetCellBoundaryFeatureNeighbors(int  
     {
       cellSet->erase(cellSet->begin(), cellSet->end());
 
-      typename CellType::UsingCellsContainerIterator usingCell;
-      for (usingCell = boundary->UsingCellsBegin(); usingCell != boundary->UsingCellsEnd(); ++usingCell)
+      for (auto usingCell = boundary->UsingCellsBegin(); usingCell != boundary->UsingCellsEnd(); ++usingCell)
       {
         if ((*usingCell) != cellId)
         {
@@ -779,8 +773,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetCellNeighbors(CellIdentifier cellI
     {
       cellSet->erase(cellSet->begin(), cellSet->end());
 
-      typename CellType::UsingCellsContainerIterator usingCell;
-      for (usingCell = cell->UsingCellsBegin(); usingCell != cell->UsingCellsEnd(); ++usingCell)
+      for (auto usingCell = cell->UsingCellsBegin(); usingCell != cell->UsingCellsEnd(); ++usingCell)
       {
         cellSet->insert(*usingCell);
       }
@@ -870,8 +863,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::GetAssignedCellBoundaryIfOneExists(in
 {
   if (m_BoundaryAssignmentsContainers[dimension].IsNotNull())
   {
-    BoundaryAssignmentIdentifier assignId(cellId, featureId);
-    CellIdentifier               boundaryId;
+    const BoundaryAssignmentIdentifier assignId(cellId, featureId);
+    CellIdentifier                     boundaryId;
 
     if (m_BoundaryAssignmentsContainers[dimension]->GetElementIfIndexExists(assignId, &boundaryId))
     {
@@ -944,8 +937,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::BuildCellLinks() const
    */
   for (CellsContainerIterator cellItr = m_CellsContainer->Begin(); cellItr != m_CellsContainer->End(); ++cellItr)
   {
-    CellIdentifier cellId = cellItr->Index();
-    CellType *     cellptr = cellItr->Value();
+    const CellIdentifier cellId = cellItr->Index();
+    CellType *           cellptr = cellItr->Value();
 
     /**
      * For each point, make sure the cell links container has its index,
@@ -1017,7 +1010,7 @@ Mesh<TPixelType, VDimension, TMeshTraits>::ReleaseCellsMemory()
       {
         // The user forgot to tell the mesh about how he allocated
         // the cells. No responsible guess can be made here. Call for help.
-        itkGenericExceptionMacro(<< "Cells Allocation Method was not specified. See SetCellsAllocationMethod()");
+        itkGenericExceptionMacro("Cells Allocation Method was not specified. See SetCellsAllocationMethod()");
         break;
       }
       case MeshEnums::MeshClassCellsAllocationMethod::CellsAllocatedAsStaticArray:
@@ -1044,12 +1037,12 @@ Mesh<TPixelType, VDimension, TMeshTraits>::ReleaseCellsMemory()
         // It is assumed that every cell was allocated independently.
         // A Cell iterator is created for going through the cells
         // deleting one by one.
-        CellsContainerIterator cell = m_CellsContainer->Begin();
-        CellsContainerIterator end = m_CellsContainer->End();
+        CellsContainerIterator       cell = m_CellsContainer->Begin();
+        const CellsContainerIterator end = m_CellsContainer->End();
         while (cell != end)
         {
           const CellType * cellToBeDeleted = cell->Value();
-          itkDebugMacro(<< "Mesh destructor deleting cell = " << cellToBeDeleted);
+          itkDebugMacro("Mesh destructor deleting cell = " << cellToBeDeleted);
           delete cellToBeDeleted;
           ++cell;
         }
@@ -1072,8 +1065,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::CopyInformation(const DataObject * da
   if (!mesh)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::Mesh::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::Mesh::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                  << typeid(Self *).name());
   }
 
   // Copy here specific elements of the Mesh
@@ -1090,8 +1083,8 @@ Mesh<TPixelType, VDimension, TMeshTraits>::Graft(const DataObject * data)
   if (!mesh)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::Mesh::CopyInformation() cannot cast " << typeid(data).name() << " to "
-                      << typeid(Self *).name());
+    itkExceptionMacro("itk::Mesh::CopyInformation() cannot cast " << typeid(data).name() << " to "
+                                                                  << typeid(Self *).name());
   }
 
   this->ReleaseCellsMemory();

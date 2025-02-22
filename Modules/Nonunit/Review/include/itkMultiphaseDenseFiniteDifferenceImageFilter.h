@@ -66,31 +66,24 @@ namespace itk
  * subclass it to a specific instance that supplies a function and Halt()
  * method.
  *
- * Based on the paper:
- *
- *        "An active contour model without edges"
- *         T. Chan and L. Vese.
- *         In Scale-Space Theories in Computer Vision, pages 141-151, 1999.
+ * Based on the paper \cite chan1999.
  *
  * \author Mosaliganti K., Smith B., Gelas A., Gouaillard A., Megason S.
  *
  *  This code was taken from the Insight Journal paper:
  *
  *      "Cell Tracking using Coupled Active Surfaces for Nuclei and Membranes"
- *      https://www.insight-journal.org/browse/publication/642
- *      https://hdl.handle.net/10380/3055
+ *      https://doi.org/10.54294/wvwmf8
  *
  *  That is based on the papers:
  *
  *      "Level Set Segmentation: Active Contours without edge"
- *      https://www.insight-journal.org/browse/publication/322
- *      https://hdl.handle.net/1926/1532
+ *      https://doi.org/10.54294/8jk6oy
  *
  *      and
  *
  *      "Level set segmentation using coupled active surfaces"
- *      https://www.insight-journal.org/browse/publication/323
- *      https://hdl.handle.net/1926/1533
+ *      https://doi.org/10.54294/23ugmy
  *
  *
  * \ingroup ImageFilters
@@ -115,8 +108,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods) */
-  itkTypeMacro(MultiphaseDenseFiniteDifferenceImageFilter, MultiphaseFiniteDifferenceImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultiphaseDenseFiniteDifferenceImageFilter);
 
   /** Dimensionality of input and output data is assumed to be the same.
    * It is inherited from the superclass. */
@@ -173,13 +166,9 @@ public:
   void
   SetFunctionCount(const IdCellType & n);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(OutputTimesDoubleCheck, (Concept::MultiplyOperator<OutputPixelType, double>));
   itkConceptMacro(OutputAdditiveOperatorsCheck, (Concept::AdditiveOperators<OutputPixelType>));
   itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<FeaturePixelType, OutputPixelType>));
-  // End concept checking
-#endif
 
   itkSetMacro(ReinitializeCounter, unsigned int);
   itkGetMacro(ReinitializeCounter, unsigned int);

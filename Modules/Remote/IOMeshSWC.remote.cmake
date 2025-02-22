@@ -42,9 +42,11 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Matt McCormick <matt.mccormick@kitware.com>
-itk_fetch_module(IOMeshSWC
+itk_fetch_module(
+  IOMeshSWC
   "Read meshes from SWC files, a format for representing neuron morphology."
   MODULE_COMPLIANCE_LEVEL 4
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKIOMeshSWC.git
-  GIT_TAG 212b3678780b5b6ab27ae17ea68072ec5a088156
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKIOMeshSWC.git
+  GIT_TAG 6cc788b6f677d95e0e23080d0457fede2ade2e97
   )
+mark_as_advanced(FORCE Module_IOMeshSWC)

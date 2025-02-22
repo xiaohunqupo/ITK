@@ -55,8 +55,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(GPUBoxImageFilter, GPUImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GPUBoxImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

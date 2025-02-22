@@ -63,8 +63,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageSpatialObject, SpatialObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageSpatialObject);
 
   /** Reset the spatial object to its initial condition, yet preserves
    *   Id, Parent, and Child information */
@@ -116,13 +116,20 @@ public:
   }
 
 #if !defined(ITK_LEGACY_REMOVE)
-  itkLegacyMacro(const char * GetPixelTypeName()) { return m_PixelType.c_str(); }
+  itkLegacyMacro(const char * GetPixelTypeName())
+  {
+    return m_PixelType.c_str();
+  }
 #endif
 
   /** Set/Get the interpolator. */
   void
   SetInterpolator(InterpolatorType * interpolator);
   itkGetConstMacro(Interpolator, InterpolatorType *);
+
+  /** Updates the regions of this spatial object in accordance with its current image, and calls its Superclass. */
+  void
+  Update() override;
 
 protected:
   /** Compute the boundaries of the image spatial object. */
@@ -148,6 +155,10 @@ private:
 #endif
 
   typename InterpolatorType::Pointer m_Interpolator{};
+
+  /** Updates the regions of this spatial object in accordance with its current image. */
+  void
+  UpdateImageRegions();
 
 #if !defined(ITK_LEGACY_REMOVE)
   template <typename T>

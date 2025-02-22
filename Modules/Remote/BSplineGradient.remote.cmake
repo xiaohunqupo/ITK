@@ -41,9 +41,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(BSplineGradient
+itk_fetch_module(
+  BSplineGradient
   "Approximate an image's gradient from a b-spline fit to its intensity."
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKBSplineGradient.git
-  GIT_TAG 3577ec7bf4489ba309b7adcbcfb072641874ad89
-)
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKBSplineGradient.git
+  GIT_TAG 73dcf827d76bbf2a36d08784d421b234fb630c80
+  )

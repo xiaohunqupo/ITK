@@ -81,8 +81,8 @@ public:
   LightObject::Pointer
   CreateAnother() const override;
 
-  /** Standard part of all itk objects. */
-  itkTypeMacro(Object, LightObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Object);
 
   /** Turn debugging output on.  */
   virtual void
@@ -152,15 +152,11 @@ public:
    * which can be used later to remove the event or retrieve the
    * command.
    *
-   * \note This member function is overloaded for const and non-const,
-   * just for backward compatibility. Removing the non-const overload
-   * appears to break the use of SWIG %pythonprepend in
+   * \note The parameter name `cmd` is part of the interface to SWIG! It is used by the %pythonprepend section in
    * ITK/Wrapping/Generators/Python/PyBase/pyBase.i
    */
   unsigned long
-  AddObserver(const EventObject & event, Command *);
-  unsigned long
-  AddObserver(const EventObject & event, Command *) const;
+  AddObserver(const EventObject & event, Command * cmd) const;
 
   /** \brief A convenient method to add an C++ lambda function as an observer.
    *
@@ -201,7 +197,7 @@ public:
 
   /** Remove the observer with this tag value. */
   void
-  RemoveObserver(unsigned long tag);
+  RemoveObserver(unsigned long tag) const;
 
   /** Remove all observers . */
   void

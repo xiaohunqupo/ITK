@@ -53,8 +53,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(KernelImageFilter, BoxImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(KernelImageFilter);
 
   /** Image related type alias. */
   using InputImageType = TInputImage;

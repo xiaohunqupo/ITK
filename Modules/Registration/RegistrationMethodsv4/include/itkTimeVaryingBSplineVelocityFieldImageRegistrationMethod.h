@@ -106,8 +106,8 @@ public:
   /** ImageDimension constants */
   static constexpr unsigned int ImageDimension = TFixedImage::ImageDimension;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TimeVaryingBSplineVelocityFieldImageRegistrationMethod, ImageRegistrationMethodv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TimeVaryingBSplineVelocityFieldImageRegistrationMethod);
 
   /** Input type alias for the images and transforms. */
   using FixedImageType = TFixedImage;
@@ -154,7 +154,7 @@ public:
   using DisplacementFieldType = typename OutputTransformType::DisplacementFieldType;
   using DisplacementFieldPointType = typename DisplacementFieldType::PointType;
 
-  using ContinuousIndexType = ContinuousIndex<typename DisplacementFieldPointType::CoordRepType, ImageDimension>;
+  using ContinuousIndexType = ContinuousIndex<typename DisplacementFieldPointType::CoordinateType, ImageDimension>;
 
   using TimeVaryingVelocityFieldControlPointLatticeType =
     typename OutputTransformType::TimeVaryingVelocityFieldControlPointLatticeType;

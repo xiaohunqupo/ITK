@@ -26,7 +26,7 @@ namespace itk
 {
 template <typename TInputImage, typename TGradientImage>
 RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>::RobustAutomaticThresholdCalculator()
-  : m_Output(NumericTraits<InputPixelType>::ZeroValue())
+  : m_Output(InputPixelType{})
 {}
 
 template <typename TInputImage, typename TGradientImage>
@@ -35,7 +35,7 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>::Compute()
 {
   if (!m_Input || !m_Gradient)
   {
-    itkExceptionMacro(<< "Input or gradient image(s) not set.");
+    itkExceptionMacro("Input or gradient image(s) not set.");
   }
 
   ImageRegionConstIteratorWithIndex<InputImageType> iIt(m_Input, m_Input->GetRequestedRegion());
@@ -66,7 +66,7 @@ RobustAutomaticThresholdCalculator<TInputImage, TGradientImage>::GetOutput() con
 {
   if (!m_Valid)
   {
-    itkExceptionMacro(<< "GetOutput() invoked, but the output has not been computed. Call Compute() first.");
+    itkExceptionMacro("GetOutput() invoked, but the output has not been computed. Call Compute() first.");
   }
   return m_Output;
 }

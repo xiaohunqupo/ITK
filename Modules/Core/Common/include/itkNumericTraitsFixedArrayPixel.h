@@ -116,7 +116,7 @@ public:
   static const Self
   ZeroValue()
   {
-    return MakeFilled<Self>(NumericTraits<T>::ZeroValue());
+    return Self{};
   }
 
   static const Self
@@ -151,9 +151,9 @@ public:
   {
     if (s != D)
     {
-      itkGenericExceptionMacro(<< "Cannot set the size of a FixedArray of length " << D << " to " << s);
+      itkGenericExceptionMacro("Cannot set the size of a FixedArray of length " << D << " to " << s);
     }
-    m.Fill(NumericTraits<T>::ZeroValue());
+    m.Fill(T{});
   }
 
   /** Return the length of the array. */
@@ -204,7 +204,8 @@ public:
     MakeFilled<GENERIC_ARRAY<T, D>>(NumericTraits<T>::Zero);                            \
   template <>                                                                           \
   ITKCommon_EXPORT const GENERIC_ARRAY<T, D> NumericTraits<GENERIC_ARRAY<T, D>>::One =  \
-    MakeFilled<GENERIC_ARRAY<T, D>>(NumericTraits<T>::One);
+    MakeFilled<GENERIC_ARRAY<T, D>>(NumericTraits<T>::One);                             \
+  ITK_MACROEND_NOOP_STATEMENT
 
 //
 // List here the array dimension specializations of these static
@@ -220,7 +221,8 @@ public:
   itkStaticNumericTraitsGenericArrayMacro(GENERIC_ARRAY, T, 7);             \
   itkStaticNumericTraitsGenericArrayMacro(GENERIC_ARRAY, T, 8);             \
   itkStaticNumericTraitsGenericArrayMacro(GENERIC_ARRAY, T, 9);             \
-  itkStaticNumericTraitsGenericArrayMacro(GENERIC_ARRAY, T, 10);
+  itkStaticNumericTraitsGenericArrayMacro(GENERIC_ARRAY, T, 10);            \
+  ITK_MACROEND_NOOP_STATEMENT
 } // end namespace itk
 
 #endif // itkNumericTraitsFixedArrayPixel_h

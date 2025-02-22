@@ -47,8 +47,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LoggerManager, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LoggerManager);
 
   /** New macro for creation of through a Smart Pointer */
   itkNewMacro(Self);
@@ -91,7 +91,7 @@ public:
   AddLogOutput(OutputType * output);
 
   void
-  Write(PriorityLevelEnum level, std::string const & content);
+  Write(PriorityLevelEnum level, const std::string & content);
 
   void
   Flush();

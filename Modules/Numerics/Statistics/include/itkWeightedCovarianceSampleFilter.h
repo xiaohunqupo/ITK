@@ -52,8 +52,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard Macros */
-  itkTypeMacro(WeightedCovarianceSampleFilter, CovarianceSampleFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(WeightedCovarianceSampleFilter);
   itkNewMacro(Self);
 
   /** Types derived from the base class */

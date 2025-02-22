@@ -80,8 +80,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(ProbabilityDistribution, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ProbabilityDistribution);
 
   /** Type of the parameter vector. */
   using ParametersType = Array<double>;

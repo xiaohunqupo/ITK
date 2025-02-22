@@ -29,10 +29,7 @@ template <typename TSample>
 StandardDeviationPerComponentSampleFilter<TSample>::StandardDeviationPerComponentSampleFilter()
 {
   this->ProcessObject::SetNumberOfRequiredInputs(1);
-  this->ProcessObject::SetNumberOfRequiredOutputs(2);
-
-  this->ProcessObject::SetNthOutput(0, this->MakeOutput(0));
-  this->ProcessObject::SetNthOutput(1, this->MakeOutput(1));
+  ProcessObject::MakeRequiredOutputs(*this, 2);
 }
 
 template <typename TSample>
@@ -66,9 +63,8 @@ StandardDeviationPerComponentSampleFilter<TSample>::MakeOutput(DataObjectPointer
     using ValueType = typename MeasurementVectorTraitsTypes<MeasurementVectorType>::ValueType;
     MeasurementVectorType standardDeviation;
     NumericTraits<MeasurementVectorType>::SetLength(standardDeviation, this->GetMeasurementVectorSize());
-    standardDeviation.Fill(NumericTraits<ValueType>::ZeroValue());
-    typename MeasurementVectorRealDecoratedType::Pointer decoratedStandardDeviation =
-      MeasurementVectorRealDecoratedType::New();
+    standardDeviation.Fill(ValueType{});
+    auto decoratedStandardDeviation = MeasurementVectorRealDecoratedType::New();
     decoratedStandardDeviation->Set(standardDeviation);
     return decoratedStandardDeviation.GetPointer();
   }
@@ -78,9 +74,8 @@ StandardDeviationPerComponentSampleFilter<TSample>::MakeOutput(DataObjectPointer
     using ValueType = typename MeasurementVectorTraitsTypes<MeasurementVectorType>::ValueType;
     MeasurementVectorType mean;
     NumericTraits<MeasurementVectorType>::SetLength(mean, this->GetMeasurementVectorSize());
-    mean.Fill(NumericTraits<ValueType>::ZeroValue());
-    typename MeasurementVectorRealDecoratedType::Pointer decoratedStandardDeviation =
-      MeasurementVectorRealDecoratedType::New();
+    mean.Fill(ValueType{});
+    auto decoratedStandardDeviation = MeasurementVectorRealDecoratedType::New();
     decoratedStandardDeviation->Set(mean);
     return decoratedStandardDeviation.GetPointer();
   }
@@ -118,7 +113,7 @@ StandardDeviationPerComponentSampleFilter<TSample>::GenerateData()
 {
   const SampleType * input = this->GetInput();
 
-  MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
+  const MeasurementVectorSizeType measurementVectorSize = input->GetMeasurementVectorSize();
 
   auto * decoratedStandardDeviationOutput =
     itkDynamicCastInDebugMode<MeasurementVectorRealDecoratedType *>(this->ProcessObject::GetOutput(0));
@@ -146,8 +141,8 @@ StandardDeviationPerComponentSampleFilter<TSample>::GenerateData()
   using TotalAbsoluteFrequencyType = typename TSample::TotalAbsoluteFrequencyType;
   TotalAbsoluteFrequencyType totalFrequency{};
 
-  typename TSample::ConstIterator iter = input->Begin();
-  typename TSample::ConstIterator end = input->End();
+  typename TSample::ConstIterator       iter = input->Begin();
+  const typename TSample::ConstIterator end = input->End();
 
   MeasurementVectorType diff;
   MeasurementVectorType measurements;
@@ -164,7 +159,7 @@ StandardDeviationPerComponentSampleFilter<TSample>::GenerateData()
 
     for (unsigned int i = 0; i < measurementVectorSize; ++i)
     {
-      double value = measurements[i];
+      const double value = measurements[i];
       sum[i] += frequency * value;
       sumOfSquares[i] += frequency * value * value;
     }

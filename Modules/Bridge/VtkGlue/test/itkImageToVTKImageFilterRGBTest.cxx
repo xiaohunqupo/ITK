@@ -20,17 +20,16 @@
 
 #include "itkImageFileReader.h"
 #include "itkRGBPixel.h"
+#include "itkTestingMacros.h"
 
 int
 itkImageToVTKImageFilterRGBTest(int argc, char * argv[])
 {
   if (argc != 2)
   {
-    std::cerr << "Usage: ";
-    std::cerr << argv[0];
-    std::cerr << " <InputFileName>";
-    std::cerr << std::endl;
-
+    std::cerr << "Missing parameters." << std::endl;
+    std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
+    std::cerr << " InputFileName" << std::endl;
     return EXIT_FAILURE;
   }
   const char * inputFileName = argv[1];
@@ -58,5 +57,7 @@ itkImageToVTKImageFilterRGBTest(int argc, char * argv[])
 
   connector->Update();
 
+
+  std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;
 }

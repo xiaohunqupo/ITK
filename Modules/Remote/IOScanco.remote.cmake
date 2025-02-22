@@ -41,9 +41,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(IOScanco
+itk_fetch_module(
+  IOScanco
   "An ITK module to read and write Scanco microCT .isq files."
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/KitwareMedical/ITKIOScanco.git
-  GIT_TAG bc0d40a034d24ddc7098af3beacd858e43af2123
-)
+  GIT_REPOSITORY https://github.com/KitwareMedical/ITKIOScanco.git
+  GIT_TAG 10b80f69048e79ab3069e89635822a6851099278
+  )

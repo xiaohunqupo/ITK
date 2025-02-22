@@ -59,8 +59,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DifferenceOfGaussiansGradientImageFilter, ImageToImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DifferenceOfGaussiansGradientImageFilter);
 
   /** Image size type alias. */
   using SizeType = Size<Self::NDimensions>;
@@ -78,11 +78,7 @@ public:
   itkGetConstMacro(Width, unsigned int);
   itkSetMacro(Width, unsigned int);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(DataTypeHasNumericTraitsCheck, (Concept::HasNumericTraits<TDataType>));
-  // End concept checking
-#endif
 
 protected:
   DifferenceOfGaussiansGradientImageFilter();

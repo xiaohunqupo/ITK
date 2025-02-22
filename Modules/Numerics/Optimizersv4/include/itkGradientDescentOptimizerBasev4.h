@@ -49,8 +49,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GradientDescentOptimizerBasev4Template, ObjectToObjectOptimizerBaseTemplate);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GradientDescentOptimizerBasev4Template);
 
 #if !defined(ITK_LEGACY_REMOVE)
   /**Exposes enums values for backwards compatibility*/
@@ -118,7 +118,7 @@ public:
   StopOptimization();
 
   /** Get the reason for termination */
-  const StopConditionReturnStringType
+  StopConditionReturnStringType
   GetStopConditionDescription() const override;
 
   /** Modify the gradient in place, to advance the optimization.

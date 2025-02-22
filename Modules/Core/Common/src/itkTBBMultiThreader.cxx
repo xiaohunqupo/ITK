@@ -35,7 +35,7 @@ get_default_num_threads()
 #if __TBB_MIC_OFFLOAD
 #  pragma offload target(mic) out(default_num_threads)
 #endif // __TBB_MIC_OFFLOAD
-  static const size_t default_num_threads =
+  const static size_t default_num_threads =
     tbb::global_control::active_value(tbb::global_control::max_allowed_parallelism);
   return static_cast<int>(default_num_threads);
 }
@@ -47,14 +47,10 @@ namespace itk
 TBBMultiThreader::TBBMultiThreader()
 {
   ThreadIdType defaultThreads = std::max(1u, GetGlobalDefaultNumberOfThreads());
-#if defined(ITKV4_COMPATIBILITY)
-  m_NumberOfWorkUnits = defaultThreads;
-#else
   if (defaultThreads > 1) // one work unit for only one thread
   {
     m_NumberOfWorkUnits = 16 * defaultThreads;
   }
-#endif
 }
 
 TBBMultiThreader::~TBBMultiThreader() = default;
@@ -62,7 +58,7 @@ TBBMultiThreader::~TBBMultiThreader() = default;
 void
 TBBMultiThreader::SetSingleMethod(ThreadFunctionType f, void * data)
 {
-  m_SingleMethod = f;
+  m_SingleMethod = std::move(f);
   m_SingleData = data;
 }
 
@@ -71,7 +67,7 @@ TBBMultiThreader::SingleMethodExecute()
 {
   if (!m_SingleMethod)
   {
-    itkExceptionMacro(<< "No single method set!");
+    itkExceptionMacro("No single method set!");
   }
 
   // Construct TBB static context with only m_MaximumNumberOfThreads threads
@@ -182,7 +178,7 @@ struct TBBImageRegionSplitter : public itk::ImageIORegion
   {
     // The following if statement is primarily used to ensure use of
     // is_splittable_in_proportion to avoid unused variable warning.
-    if (TBBImageRegionSplitter::is_splittable_in_proportion == true)
+    if (TBBImageRegionSplitter::is_splittable_in_proportion)
     {
       *this = region; // most things will be the same
       for (int d = static_cast<int>(this->GetImageDimension()) - 1; d >= 0;

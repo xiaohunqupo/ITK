@@ -42,9 +42,10 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Thomas Janvier <thomas.p.janvier@gmail.com>
-itk_fetch_module(Thickness3D
+itk_fetch_module(
+  Thickness3D
   "Tools for 3D thickness measurement"
   MODULE_COMPLIANCE_LEVEL 2
-  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKThickness3D.git
-  GIT_TAG cc8c9602cb7a7538bfd9f55515d9ab4cf0b04cdd
-)
+  GIT_REPOSITORY https://github.com/InsightSoftwareConsortium/ITKThickness3D.git
+  GIT_TAG 866e25fefea4318240a90632acf3a12719d0416f
+  )

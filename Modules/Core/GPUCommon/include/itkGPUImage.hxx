@@ -107,7 +107,8 @@ GPUImage<TPixel, VImageDimension>::GetPixel(const IndexType & index)
 }
 
 template <typename TPixel, unsigned int VImageDimension>
-TPixel & GPUImage<TPixel, VImageDimension>::operator[](const IndexType & index)
+TPixel &
+GPUImage<TPixel, VImageDimension>::operator[](const IndexType & index)
 {
   /* Original version - very conservative
   m_DataManager->SetGPUBufferDirty();
@@ -118,7 +119,8 @@ TPixel & GPUImage<TPixel, VImageDimension>::operator[](const IndexType & index)
 }
 
 template <typename TPixel, unsigned int VImageDimension>
-const TPixel & GPUImage<TPixel, VImageDimension>::operator[](const IndexType & index) const
+const TPixel &
+GPUImage<TPixel, VImageDimension>::operator[](const IndexType & index) const
 {
   m_DataManager->UpdateCPUBuffer();
   return Superclass::operator[](index);
@@ -197,7 +199,7 @@ template <typename TPixel, unsigned int VImageDimension>
 void
 GPUImage<TPixel, VImageDimension>::Graft(const DataObject * data)
 {
-  const Self * ptr = dynamic_cast<const Self *>(data);
+  const auto * ptr = dynamic_cast<const Self *>(data);
   if (ptr)
   {
     this->Graft(ptr);
@@ -205,8 +207,8 @@ GPUImage<TPixel, VImageDimension>::Graft(const DataObject * data)
   else
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::GPUImage::Graft() cannot cast " << typeid(data).name() << " to "
-                      << typeid(const Self *).name());
+    itkExceptionMacro("itk::GPUImage::Graft() cannot cast " << typeid(data).name() << " to "
+                                                            << typeid(const Self *).name());
   }
 }
 

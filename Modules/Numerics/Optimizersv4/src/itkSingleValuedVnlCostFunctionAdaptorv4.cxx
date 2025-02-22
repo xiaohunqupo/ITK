@@ -24,7 +24,7 @@ SingleValuedVnlCostFunctionAdaptorv4::SingleValuedVnlCostFunctionAdaptorv4(unsig
 {
   m_ScalesInitialized = false;
   m_Reporter = Object::New();
-  m_CachedValue = NumericTraits<MeasureType>::ZeroValue();
+  m_CachedValue = MeasureType{};
   m_CachedDerivative.Fill(0);
 }
 
@@ -40,7 +40,7 @@ SingleValuedVnlCostFunctionAdaptorv4::f(const InternalParametersType & inparamet
 {
   if (!m_ObjectMetric)
   {
-    itkGenericExceptionMacro(<< "Attempt to use a SingleValuedVnlCostFunctionAdaptorv4 without any Metric plugge d in");
+    itkGenericExceptionMacro("Attempt to use a SingleValuedVnlCostFunctionAdaptorv4 without any Metric plugge d in");
   }
 
   // Use scales if they are provided

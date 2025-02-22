@@ -61,9 +61,9 @@ public:
   /** Default constructor. Needed since we provide a cast constructor. */
   ImageScanlineIterator() = default;
 
-  /** Constructor establishes an iterator to walk a particular image and a
-   * particular region of that image. */
-  ImageScanlineIterator(ImageType * ptr, const RegionType & region);
+  /** Constructor establishes an iterator to walk a particular image and a particular region of that image. Initializes
+   * the iterator at the begin of the region. */
+  ImageScanlineIterator(TImage * ptr, const RegionType & region);
 
   /** Constructor that can be used to cast from an ImageIterator to an
    * ImageScanlineIterator. Many routines return an ImageIterator but for a
@@ -96,6 +96,11 @@ protected:
   Self &
   operator=(const ImageScanlineConstIterator<TImage> & it);
 };
+
+// Deduction guide for class template argument deduction (CTAD).
+template <typename TImage>
+ImageScanlineIterator(SmartPointer<TImage>, const typename TImage::RegionType &) -> ImageScanlineIterator<TImage>;
+
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION

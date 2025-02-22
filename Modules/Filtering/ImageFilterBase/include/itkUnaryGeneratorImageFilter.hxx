@@ -56,7 +56,8 @@ UnaryGeneratorImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation(
   this->CallCopyInputRegionToOutputRegion(outputLargestPossibleRegion, inputPtr->GetLargestPossibleRegion());
   outputPtr->SetLargestPossibleRegion(outputLargestPossibleRegion);
 
-  ImageToImageFilterDetail::ImageInformationCopier<Superclass::OutputImageDimension, Superclass::InputImageDimension>
+  const ImageToImageFilterDetail::ImageInformationCopier<Superclass::OutputImageDimension,
+                                                         Superclass::InputImageDimension>
     informationCopier;
   informationCopier(outputPtr, inputPtr);
 }
@@ -93,8 +94,8 @@ UnaryGeneratorImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateDat
   this->CallCopyOutputRegionToInputRegion(inputRegionForThread, outputRegionForThread);
 
   // Define the iterators
-  ImageScanlineConstIterator<TInputImage> inputIt(inputPtr, inputRegionForThread);
-  ImageScanlineIterator<TOutputImage>     outputIt(outputPtr, outputRegionForThread);
+  ImageScanlineConstIterator inputIt(inputPtr, inputRegionForThread);
+  ImageScanlineIterator      outputIt(outputPtr, outputRegionForThread);
 
   while (!inputIt.IsAtEnd())
   {

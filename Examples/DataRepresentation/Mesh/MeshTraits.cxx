@@ -52,7 +52,7 @@
 //  and edit its content. Only the first approach is illustrated here. The
 //  second is discouraged unless you are familiar with Generic Programming,
 //  feel comfortable with C++ templates, and have access to an abundant supply
-//  of (Columbian) coffee.
+//  of (Colombian) coffee.
 //
 //  The first step in customizing the mesh is to include the header file of
 //  the Mesh and its static traits.
@@ -83,7 +83,7 @@ main(int, char *[])
   //  \item[PixelType.] The value type associated with every point.
   //  \item[PointDimension.] The dimension of the space in which the mesh is
   //  embedded. \item[MaxTopologicalDimension.] The highest dimension of the
-  //  mesh cells. \item[CoordRepType.] The type used to represent spacial
+  //  mesh cells. \item[CoordinateType.] The type used to represent spacial
   //  coordinates. \item[InterpolationWeightType.]  The type used to represent
   //  interpolation weights. \item[CellPixelType.] The value type associated
   //  with every cell. \end{description}
@@ -189,7 +189,7 @@ main(int, char *[])
 
   // Software Guide : BeginCodeSnippet
   CellType::CellAutoPointer line;
-  const unsigned int        numberOfCells = numberOfPoints - 1;
+  constexpr unsigned int    numberOfCells = numberOfPoints - 1;
   for (unsigned int cellId = 0; cellId < numberOfCells; ++cellId)
   {
     line.TakeOwnership(new LineType);
@@ -278,8 +278,8 @@ main(int, char *[])
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  CellDataIterator cellDataIterator = mesh->GetCellData()->Begin();
-  CellDataIterator end = mesh->GetCellData()->End();
+  CellDataIterator       cellDataIterator = mesh->GetCellData()->Begin();
+  const CellDataIterator end = mesh->GetCellData()->End();
   // Software Guide : EndCodeSnippet
 
 
@@ -299,7 +299,7 @@ main(int, char *[])
   // Software Guide : BeginCodeSnippet
   while (cellDataIterator != end)
   {
-    CellDataType cellValue = cellDataIterator.Value();
+    const CellDataType cellValue = cellDataIterator.Value();
     std::cout << cellValue << std::endl;
     ++cellDataIterator;
   }

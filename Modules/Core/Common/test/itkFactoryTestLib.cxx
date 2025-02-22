@@ -37,8 +37,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(TestImportImageContainer);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TestImportImageContainer, ImportImageContainer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TestImportImageContainer);
 
   using typename Superclass::ElementIdentifier;
   using typename Superclass::Element;
@@ -137,8 +137,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImportImageContainerFactory, itk::ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImportImageContainerFactory);
 
   /** Register one factory of this type  */
   static void

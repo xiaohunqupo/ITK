@@ -27,7 +27,9 @@
 #include "itkDisplacementFieldTransform.h"
 #include "itkIOTestHelper.h"
 #include "itkMINCTransformAdapter.h"
+#include "itkMINCTransformIO.h"
 #include "itkMath.h"
+#include "itkTestingMacros.h"
 
 
 static constexpr double tolerance = 1e-5;
@@ -81,8 +83,12 @@ compare_linear(const char * linear_transform)
   affine->Scale(1.2);
 
   itk::TransformFileWriter::Pointer writer;
+  itk::MINCTransformIO::Pointer     mincIO = itk::MINCTransformIO::New();
+  // MINC standard is always LPS
+  mincIO->SetRAStoLPS(false);
 
   writer = itk::TransformFileWriter::New();
+  writer->SetTransformIO(mincIO);
   writer->AddTransform(affine);
   writer->SetFileName(linear_transform);
 
@@ -111,7 +117,7 @@ compare_linear(const char * linear_transform)
 
       if ((v1 - v2).GetSquaredNorm() > tolerance)
       {
-        std::cout << "Original Pixel (" << v1 << ") doesn't match read-in Pixel (" << v2 << " ) "
+        std::cout << "Original Coordinate (" << v1 << ") doesn't match read-in Coordinate (" << v2 << " ) "
                   << " in " << linear_transform << " at " << pnt << std::endl;
         return EXIT_FAILURE;
       }
@@ -155,8 +161,7 @@ compare_nonlinear_double(const char * nonlinear_transform)
   field->SetOrigin(origin);
   field->Allocate();
 
-  DisplacementFieldType::PixelType zeroDisplacement;
-  zeroDisplacement.Fill(0.0);
+  DisplacementFieldType::PixelType zeroDisplacement{};
   field->FillBuffer(zeroDisplacement);
 
   vnl_random                                               randgen(12345678);
@@ -179,8 +184,12 @@ compare_nonlinear_double(const char * nonlinear_transform)
   disp->SetDisplacementField(field);
 
   itk::TransformFileWriter::Pointer nlwriter;
+  itk::MINCTransformIO::Pointer     mincIO = itk::MINCTransformIO::New();
+  // MINC standard is always LPS
+  mincIO->SetRAStoLPS(false);
 
   nlwriter = itk::TransformFileWriter::New();
+  nlwriter->SetTransformIO(mincIO);
   nlwriter->AddTransform(disp);
   nlwriter->SetFileName(nonlinear_transform);
 
@@ -230,6 +239,73 @@ itkMINCTransformAdapterTest(int argc, char * argv[])
   {
     itksys::SystemTools::ChangeDirectory(argv[1]);
   }
+
+
+  constexpr unsigned int InputDimension = 3;
+  constexpr unsigned int OutputDimension = 3;
+
+  using ParametersValueType = double;
+
+  using TransformAdapterType = itk::MINCTransformAdapter<ParametersValueType, InputDimension, OutputDimension>;
+
+  TransformAdapterType::Pointer xfm = TransformAdapterType::New();
+
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(xfm, MINCTransformAdapter, Transform);
+
+  // Test exceptions
+  TransformAdapterType::InputVectorType vector{};
+  TransformAdapterType::InputPointType  point{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->TransformVector(vector, point));
+
+  TransformAdapterType::InputVnlVectorType vnlVector{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->TransformVector(vnlVector, point));
+
+  TransformAdapterType::InputVectorPixelType vectorPixel{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->TransformVector(vectorPixel, point));
+
+  TransformAdapterType::InputCovariantVectorType covariantVector{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->TransformCovariantVector(covariantVector, point));
+
+  ITK_TRY_EXPECT_EXCEPTION(xfm->TransformCovariantVector(vectorPixel, point));
+
+  TransformAdapterType::FixedParametersType fixedParams{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->SetFixedParameters(fixedParams));
+
+  TransformAdapterType::JacobianType jacobian{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->ComputeJacobianWithRespectToParameters(point, jacobian));
+
+  ITK_TRY_EXPECT_EXCEPTION(xfm->GetNumberOfParameters());
+
+  TransformAdapterType::ParametersType params{};
+  ITK_TRY_EXPECT_EXCEPTION(xfm->SetParameters(params));
+
+  ITK_TRY_EXPECT_EXCEPTION(xfm->GetParameters());
+
+  constexpr unsigned int InputDimensionExcp1 = 1;
+  constexpr unsigned int OutputDimensionExcp1 = 1;
+
+  using TransformAdapterTypeExcp11 =
+    itk::MINCTransformAdapter<ParametersValueType, InputDimensionExcp1, OutputDimensionExcp1>;
+
+  ITK_TRY_EXPECT_EXCEPTION(TransformAdapterTypeExcp11::New());
+
+  constexpr unsigned int InputDimensionExcp2 = 2;
+  constexpr unsigned int OutputDimensionExcp2 = 2;
+
+  using TransformAdapterTypeExcp22 =
+    itk::MINCTransformAdapter<ParametersValueType, InputDimensionExcp2, OutputDimensionExcp2>;
+
+  ITK_TRY_EXPECT_EXCEPTION(TransformAdapterTypeExcp22::New());
+
+  constexpr unsigned int InputDimensionExcp4 = 4;
+  constexpr unsigned int OutputDimensionExcp4 = 4;
+
+  using TransformAdapterTypeExcp44 =
+    itk::MINCTransformAdapter<ParametersValueType, InputDimensionExcp4, OutputDimensionExcp4>;
+
+  ITK_TRY_EXPECT_EXCEPTION(TransformAdapterTypeExcp44::New());
+
+
   itk::TransformFactory<itk::DisplacementFieldTransform<double, 3>>::RegisterTransform();
   itk::ObjectFactoryBase::RegisterFactory(itk::MINCTransformIOFactory::New());
 

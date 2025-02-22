@@ -36,7 +36,7 @@ namespace itk
  * \par OVERVIEW
  * This class extends the functionality of SegmentationLevelSetImageFilter
  * with an additional statistical shape influence term in the level set evolution as
- * developed in [1].
+ * developed in \cite leventon2000.
  *
  * \par TEMPLATE PARAMETERS
  * There are two required and one optional template parameter for these
@@ -63,10 +63,6 @@ namespace itk
  * \sa ShapeSignedDistanceFunction
  * \sa ShapePriorSegmentationLevelSetFunction
  *
- * \par REFERENCES
- * \par
- * [1] Leventon, M.E. et al. "Statistical Shape Influence in Geodesic Active Contours", CVPR 2000.
- *
  * \ingroup ITKLevelSets
  */
 template <typename TInputImage, typename TFeatureImage, typename TOutputPixelType = float>
@@ -85,8 +81,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapePriorSegmentationLevelSetImageFilter, SegmentationLevelSetImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ShapePriorSegmentationLevelSetImageFilter);
 
   /** Inherited type alias from the superclass. */
   using typename Superclass::ValueType;

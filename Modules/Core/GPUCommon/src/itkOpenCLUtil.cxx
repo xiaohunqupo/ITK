@@ -54,9 +54,7 @@ OpenCLGetAvailableDevices(cl_platform_id platform, cl_device_type devType, cl_ui
   cl_uint        totalNumDevices;
 
   // get total # of devices
-  cl_int errid;
-
-  errid = clGetDeviceIDs(platform, devType, 0, nullptr, &totalNumDevices);
+  cl_int errid = clGetDeviceIDs(platform, devType, 0, nullptr, &totalNumDevices);
   OpenCLCheckError(errid, __FILE__, __LINE__, ITK_LOCATION);
 
   auto * totalDevices = (cl_device_id *)malloc(totalNumDevices * sizeof(cl_device_id));
@@ -336,7 +334,7 @@ OpenCLCheckError(cl_int error, const char * filename, int lineno, const char * l
       "CL_INVALID_GLOBAL_WORK_SIZE",
     };
     // print error message
-    const int          errorCount = sizeof(errorString) / sizeof(errorString[0]);
+    constexpr int      errorCount = std::size(errorString);
     const int          index = -error;
     std::ostringstream errorMsg;
 
@@ -443,8 +441,7 @@ GetValidTypename(const std::type_info & intype, const std::vector<std::string> &
 {
   std::string                              typestr = GetTypename(intype);
   bool                                     isValid = false;
-  std::vector<std::string>::const_iterator validPos;
-  validPos = std::find(validtypes.begin(), validtypes.end(), typestr);
+  std::vector<std::string>::const_iterator validPos = std::find(validtypes.begin(), validtypes.end(), typestr);
   if (validPos != validtypes.end())
   {
     isValid = true;

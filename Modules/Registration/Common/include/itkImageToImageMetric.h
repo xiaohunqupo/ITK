@@ -65,8 +65,8 @@ public:
   /** Type used for representing point components  */
   using CoordinateRepresentationType = typename Superclass::ParametersValueType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ImageToImageMetric, SingleValuedCostFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ImageToImageMetric);
 
   /**  Type of the moving Image. */
   using MovingImageType = TMovingImage;
@@ -172,12 +172,28 @@ public:
   itkGetConstReferenceMacro(FixedImageRegion, FixedImageRegionType);
 
   /** Set/Get the moving image mask. */
-  itkSetObjectMacro(MovingImageMask, MovingImageMaskType);
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual void
+  SetMovingImageMask(MovingImageMaskType * const arg)
+  {
+    const auto * const constArg = arg;
+    // Call the overload defined by itkSetConstObjectMacro, or an override.
+    this->SetMovingImageMask(constArg);
+  }
+#endif
   itkSetConstObjectMacro(MovingImageMask, MovingImageMaskType);
   itkGetConstObjectMacro(MovingImageMask, MovingImageMaskType);
 
   /** Set/Get the fixed image mask. */
-  itkSetObjectMacro(FixedImageMask, FixedImageMaskType);
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  virtual void
+  SetFixedImageMask(FixedImageMaskType * const arg)
+  {
+    const auto * const constArg = arg;
+    // Call the overload defined by itkSetConstObjectMacro, or an override.
+    this->SetFixedImageMask(constArg);
+  }
+#endif
   itkSetConstObjectMacro(FixedImageMask, FixedImageMaskType);
   itkGetConstObjectMacro(FixedImageMask, FixedImageMaskType);
 
@@ -193,7 +209,7 @@ public:
 
   /** Set/Get number of work units to use for computations. */
   void
-  SetNumberOfWorkUnits(ThreadIdType numberOfThreads);
+  SetNumberOfWorkUnits(ThreadIdType numberOfWorkUnits);
   itkGetConstReferenceMacro(NumberOfWorkUnits, ThreadIdType);
 
   /** Set/Get gradient computation. */
@@ -357,7 +373,7 @@ protected:
 
     ~FixedImageSamplePoint() = default;
 
-    inline friend std::ostream &
+    friend inline std::ostream &
     operator<<(std::ostream & os, const FixedImageSamplePoint & val)
     {
       os << "point: " << static_cast<typename NumericTraits<FixedImagePointType>::PrintType>(val.point) << std::endl;
@@ -443,8 +459,12 @@ protected:
    * only inspecting the parameters within the support region
    * of a mapped point.  */
 
-  /** Boolean to indicate if the transform is BSpline deformable. */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  /** Boolean to indicate if the transform is BSpline deformable.
+  \deprecated `m_TransformIsBSpline` is intended to be removed, in the future. Please use `m_BSplineTransform`
+  instead. For example, `if (m_TransformIsBSpline)` may be rewritten as `if (m_BSplineTransform)`. */
   bool m_TransformIsBSpline{ false };
+#endif
 
   /** The number of BSpline transform weights is the number of
    * of parameter in the support region (per dimension ). */
@@ -521,8 +541,13 @@ protected:
                                 ImageDerivativesType & movingImageGradient,
                                 ThreadIdType           threadId) const;
 
-  /** Boolean to indicate if the interpolator BSpline. */
+#ifndef ITK_FUTURE_LEGACY_REMOVE
+  /** Boolean to indicate if the interpolator BSpline.
+  \deprecated `m_InterpolatorIsBSpline` is intended to be removed, in the future. Please use `m_BSplineInterpolator`
+  instead. For example, `if (m_InterpolatorIsBSpline)` may be rewritten as `if (m_BSplineInterpolator)`. */
   bool m_InterpolatorIsBSpline{ false };
+#endif
+
   /** Pointer to BSplineInterpolator. */
   typename BSplineInterpolatorType::Pointer m_BSplineInterpolator{};
 

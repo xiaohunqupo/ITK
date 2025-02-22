@@ -55,8 +55,8 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  std::string visibleHumanPath = argv[1];
-  std::string outputImageFile = argv[2];
+  const std::string visibleHumanPath = argv[1];
+  const std::string outputImageFile = argv[2];
 
   using RGBPixelType = itk::RGBPixel<unsigned char>;
   using PixelType = unsigned char;
@@ -64,7 +64,7 @@ main(int argc, char * argv[])
   using RGB3DImageType = itk::Image<RGBPixelType, 3>;
   using RGB2DImageType = itk::Image<RGBPixelType, 2>;
 
-  // genderate the names of the decompressed Visible Male images
+  // generate the names of the decompressed Visible Male images
   using NameGeneratorType = itk::NumericSeriesFileNames;
   auto nameGenerator = NameGeneratorType::New();
   nameGenerator->SetSeriesFormat(visibleHumanPath + "a_vm%04d.raw");
@@ -121,7 +121,7 @@ main(int argc, char * argv[])
   composeRGB->SetInput3(breader->GetOutput());
 
   // this filter is needed if square pixels are needed
-  //   const int xyShrinkFactor = 3;
+  //   constexpr int xyShrinkFactor = 3;
   //   using ShrinkImageFilterType = itk::ShrinkImageFilter<  RGB3DImageType,
   //   RGB3DImageType >; auto shrinker =
   //   ShrinkImageFilterType::New(); shrinker->SetInput(
@@ -162,7 +162,7 @@ main(int argc, char * argv[])
   writer->SetNumberOfStreamDivisions(200);
   writer->SetInput(extract->GetOutput());
 
-  itk::SimpleFilterWatcher watcher1(writer, "stream writing");
+  const itk::SimpleFilterWatcher watcher1(writer, "stream writing");
 
 
   try

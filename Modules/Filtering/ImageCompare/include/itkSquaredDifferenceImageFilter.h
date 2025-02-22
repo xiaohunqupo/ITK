@@ -57,8 +57,6 @@ template <typename TInput1, typename TInput2, typename TOutput>
 class SquaredDifference2
 {
 public:
-  SquaredDifference2() = default;
-  ~SquaredDifference2() = default;
   bool
   operator==(const SquaredDifference2 &) const
   {
@@ -100,16 +98,12 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(SquaredDifferenceImageFilter, BinaryGeneratorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(SquaredDifferenceImageFilter);
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(Input1ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage1::PixelType, double>));
   itkConceptMacro(Input2ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage2::PixelType, double>));
   itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
-  // End concept checking
-#endif
 
 protected:
   SquaredDifferenceImageFilter()

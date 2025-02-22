@@ -57,9 +57,8 @@ template <class TInputImage, class TOutputImage>
 void
 BinShrinkImageFilter<TInputImage, TOutputImage>::SetShrinkFactors(unsigned int factor)
 {
-  unsigned int j;
-
-  for (j = 0; j < ImageDimension; ++j)
+  unsigned int j = 0;
+  for (; j < ImageDimension; ++j)
   {
     if (factor != m_ShrinkFactors[j])
     {
@@ -98,7 +97,7 @@ void
 BinShrinkImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   const OutputImageRegionType & outputRegionForThread)
 {
-  itkDebugMacro(<< "BinShrinkImageFilter executing on region:" << outputRegionForThread);
+  itkDebugMacro("BinShrinkImageFilter executing on region:" << outputRegionForThread);
 
   const InputImageType * inputPtr = this->GetInput();
   OutputImageType *      outputPtr = this->GetOutput();
@@ -107,16 +106,12 @@ BinShrinkImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   using OutputPixelType = typename OutputImageType::PixelType;
   using AccumulatePixelType = typename NumericTraits<InputPixelType>::RealType;
 
-  using InputConstIteratorType = ImageScanlineConstIterator<InputImageType>;
-  using OutputIteratorType = ImageScanlineIterator<OutputImageType>;
-
-  InputConstIteratorType inputIterator(inputPtr, inputPtr->GetRequestedRegion());
-  OutputIteratorType     outputIterator(outputPtr, outputRegionForThread);
+  ImageScanlineConstIterator inputIterator(inputPtr, inputPtr->GetRequestedRegion());
 
   // Set up shaped neighbor hood by defining the offsets
-  OutputOffsetType negativeOffset, positiveOffset, iOffset;
-
+  OutputOffsetType negativeOffset;
   negativeOffset[0] = 0;
+  OutputOffsetType positiveOffset;
   positiveOffset[0] = 0;
   for (unsigned int i = 1; i < TInputImage::ImageDimension; ++i)
   {
@@ -125,7 +120,7 @@ BinShrinkImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   }
 
   std::vector<OutputOffsetType> offsets;
-  iOffset = negativeOffset;
+  OutputOffsetType              iOffset = negativeOffset;
   while (iOffset[TInputImage::ImageDimension - 1] <= positiveOffset[TInputImage::ImageDimension - 1])
   {
     offsets.push_back(iOffset);
@@ -157,12 +152,13 @@ BinShrinkImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
 
   TotalProgressReporter progress(this, outputPtr->GetRequestedRegion().GetNumberOfPixels());
 
-  while (!outputIterator.IsAtEnd())
+  for (ImageScanlineIterator outputIterator(outputPtr, outputRegionForThread); !outputIterator.IsAtEnd();
+       outputIterator.NextLine())
   {
     const OutputIndexType outputIndex = outputIterator.GetIndex();
 
-    typename std::vector<OutputOffsetType>::const_iterator offset = offsets.begin();
-    const InputIndexType                                   startInputIndex = outputIndex * factorSize;
+    auto                 offset = offsets.begin();
+    const InputIndexType startInputIndex = outputIndex * factorSize;
 
     inputIterator.SetIndex(startInputIndex + *offset);
     for (size_t i = 0; i < ln; ++i)
@@ -207,7 +203,6 @@ BinShrinkImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
       ++outputIterator;
     }
 
-    outputIterator.NextLine();
     progress.Completed(outputRegionForThread.GetSize()[0]);
   }
 }
@@ -234,7 +229,6 @@ BinShrinkImageFilter<TInputImage, TOutputImage>::GenerateInputRequestedRegion()
 
   typename TInputImage::IndexType inputIndex0;
   typename TInputImage::SizeType  inputSize;
-
   for (unsigned int i = 0; i < TInputImage::ImageDimension; ++i)
   {
     inputIndex0[i] = outputRequestedRegionStartIndex[i] * m_ShrinkFactors[i];

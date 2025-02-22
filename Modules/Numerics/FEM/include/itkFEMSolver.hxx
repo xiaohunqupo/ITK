@@ -104,13 +104,8 @@ template <unsigned int VDimension>
 auto
 Solver<VDimension>::GetTimeStep() const -> Float
 {
-  return NumericTraits<Float>::ZeroValue();
+  return Float{};
 }
-
-template <unsigned int VDimension>
-void
-Solver<VDimension>::SetTimeStep(Float itkNotUsed(dt))
-{}
 
 template <unsigned int VDimension>
 auto
@@ -146,7 +141,7 @@ Solver<VDimension>::GetOutput(unsigned int idx) -> FEMObjectType *
 
   if (out == nullptr)
   {
-    itkWarningMacro(<< "dynamic_cast to output type failed");
+    itkWarningMacro("dynamic_cast to output type failed");
   }
   return out;
 }
@@ -519,11 +514,6 @@ Solver<VDimension>::AssembleF(int dim)
 
 template <unsigned int VDimension>
 void
-Solver<VDimension>::DecomposeK()
-{}
-
-template <unsigned int VDimension>
-void
 Solver<VDimension>::RunSolver()
 {
 
@@ -547,7 +537,7 @@ Solver<VDimension>::RunSolver()
     throw FEMExceptionSolution(__FILE__, __LINE__, "FEMObject::Solve()", "Master force vector was not initialized!");
   }
   timer.Stop();
-  itkDebugMacro(<< "Assemble Matrix took " << timer.GetMean() << " seconds.\n");
+  itkDebugMacro("Assemble Matrix took " << timer.GetMean() << " seconds.\n");
 
   itk::TimeProbe timer1;
   timer1.Start();
@@ -559,7 +549,7 @@ Solver<VDimension>::RunSolver()
   this->GetOutput()->DeepCopy(this->GetInput());
   this->UpdateDisplacements();
   timer1.Stop();
-  itkDebugMacro(<< "FE Solution took " << timer1.GetMean() << " seconds.\n");
+  itkDebugMacro("FE Solution took " << timer1.GetMean() << " seconds.\n");
 }
 
 template <unsigned int VDimension>
@@ -625,7 +615,7 @@ Solver<VDimension>::ApplyBC(int dim, unsigned int matrix)
     // Apply boundary conditions in form of MFC loads.
     //
     // We add the multi freedom constraints contribution to the master
-    // stiffness matrix using the lagrange multipliers. Basically we only
+    // stiffness matrix using the Lagrange multipliers. Basically we only
     // change the last couple of rows and columns in K.
     if (LoadBCMFC::Pointer c = dynamic_cast<LoadBCMFC *>(l0.GetPointer()))
     {
@@ -724,15 +714,13 @@ Solver<VDimension>::InitializeInterpolationGrid(const InterpolationGridSizeType 
   // Set the interpolation grid (image) size, origin and spacing
   // from the given vectors, so that physical point of v1 is (0,0,0) and
   // physical point v2 is (size[0],size[1],size[2]).
-  InterpolationGridSizeType image_size;
-  image_size.Fill(1);
+  constexpr auto image_size = InterpolationGridSizeType::Filled(1);
   for (unsigned int i = 0; i < FEMDimension; ++i)
   {
     image_size[i] = size[i];
   }
 
-  InterpolationGridPointType image_origin;
-  image_origin.Fill(0.0);
+  InterpolationGridPointType image_origin{};
   for (unsigned int i = 0; i < FEMDimension; ++i)
   {
     image_origin[i] = bb1[i];
@@ -871,7 +859,7 @@ Solver<VDimension>::FillInterpolationGrid()
         iter.Set(e);
       }
     } // next point in region
-  }   // next element
+  } // next element
 }
 
 template <unsigned int VDimension>

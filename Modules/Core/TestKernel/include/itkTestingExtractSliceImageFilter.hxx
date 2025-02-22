@@ -53,7 +53,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::CallCopyOutputRegionToInputR
   InputImageRegionType &        destRegion,
   const OutputImageRegionType & srcRegion)
 {
-  ExtractSliceImageFilterRegionCopierType extractImageRegionCopier;
+  const ExtractSliceImageFilterRegionCopierType extractImageRegionCopier;
 
   extractImageRegionCopier(destRegion, srcRegion, m_ExtractionRegion);
 }
@@ -67,12 +67,10 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::SetExtractionRegion(InputIma
                 "InputImageDimension must be greater than OutputImageDimension");
   m_ExtractionRegion = extractRegion;
 
-  unsigned int        nonzeroSizeCount = 0;
-  InputImageSizeType  inputSize = extractRegion.GetSize();
-  OutputImageSizeType outputSize;
-  outputSize.Fill(0);
-  OutputImageIndexType outputIndex;
-  outputIndex.Fill(0);
+  unsigned int         nonzeroSizeCount = 0;
+  InputImageSizeType   inputSize = extractRegion.GetSize();
+  OutputImageSizeType  outputSize{};
+  OutputImageIndexType outputIndex{};
 
   /**
    * check to see if the number of non-zero entries in the extraction region
@@ -124,14 +122,12 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
   outputPtr->SetLargestPossibleRegion(m_OutputImageRegion);
 
   // Set the output spacing and origin
-  const ImageBase<InputImageDimension> * phyData;
-
-  phyData = dynamic_cast<const ImageBase<InputImageDimension> *>(this->GetInput());
+  const auto * phyData = dynamic_cast<const ImageBase<InputImageDimension> *>(this->GetInput());
 
   if (phyData == nullptr)
   {
     // pointer could not be cast back down
-    itkExceptionMacro(<< "itk::ExtractSliceImageFilter::GenerateOutputInformation "
+    itkExceptionMacro("itk::ExtractSliceImageFilter::GenerateOutputInformation "
                       << "cannot cast input to " << typeid(ImageBase<InputImageDimension> *).name());
   }
   // Copy what we can from the image from spacing and origin of the input
@@ -144,8 +140,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
 
   typename OutputImageType::SpacingType   outputSpacing;
   typename OutputImageType::DirectionType outputDirection;
-  typename OutputImageType::PointType     outputOrigin;
-  outputOrigin.Fill(0.0);
+  typename OutputImageType::PointType     outputOrigin{};
 
   if (static_cast<unsigned int>(OutputImageDimension) > static_cast<unsigned int>(InputImageDimension))
   {
@@ -210,7 +205,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
     {
       if (vnl_determinant(outputDirection.GetVnlMatrix()) == 0.0)
       {
-        itkExceptionMacro(<< "Invalid submatrix extracted for collapsed direction.");
+        itkExceptionMacro("Invalid submatrix extracted for collapsed direction.");
       }
     }
     break;
@@ -246,7 +241,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   const OutputImageRegionType & outputRegionForThread)
 {
 
-  itkDebugMacro(<< "Actually executing");
+  itkDebugMacro("Actually executing");
 
   // Get the input and output pointers
   const TInputImage * inputPtr = this->GetInput();

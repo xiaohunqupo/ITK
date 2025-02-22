@@ -21,7 +21,6 @@
 
 #include "itkMath.h"
 #include "itkProgressReporter.h"
-#include "itkMath.h"
 
 namespace itk
 {
@@ -32,13 +31,13 @@ HuangThresholdCalculator<THistogram, TOutput>::GenerateData()
 {
   const HistogramType * histogram = this->GetInput();
 
-  TotalAbsoluteFrequencyType total = histogram->GetTotalFrequency();
-  if (total == NumericTraits<TotalAbsoluteFrequencyType>::ZeroValue())
+  const TotalAbsoluteFrequencyType total = histogram->GetTotalFrequency();
+  if (total == TotalAbsoluteFrequencyType{})
   {
-    itkExceptionMacro(<< "Histogram is empty");
+    itkExceptionMacro("Histogram is empty");
   }
   m_Size = histogram->GetSize(0);
-  ProgressReporter progress(this, 0, m_Size);
+  const ProgressReporter progress(this, 0, m_Size);
   if (m_Size == 1)
   {
     this->GetOutput()->Set(static_cast<OutputType>(histogram->GetMeasurement(0, 0)));
@@ -53,7 +52,7 @@ HuangThresholdCalculator<THistogram, TOutput>::GenerateData()
   }
   if (m_FirstBin == m_Size)
   {
-    itkWarningMacro(<< "No data in histogram");
+    itkWarningMacro("No data in histogram");
     return;
   }
   m_LastBin = m_Size - 1;
@@ -80,7 +79,7 @@ HuangThresholdCalculator<THistogram, TOutput>::GenerateData()
 
   for (size_t i = 1; i < Smu.size(); ++i)
   {
-    double mu = 1. / (1. + static_cast<double>(i) / C);
+    const double mu = 1. / (1. + static_cast<double>(i) / C);
     Smu[i] = -mu * std::log(mu) - (1. - mu) * std::log(1. - mu);
   }
 
@@ -125,7 +124,7 @@ HuangThresholdCalculator<THistogram, TOutput>::GenerateData()
       mu = Math::Round<MeasurementType>((W[m_LastBin] - W[threshold]) / (S[m_LastBin] - S[threshold]));
       v[0] = mu;
 
-      bool status = histogram->GetIndex(v, muFullIdx);
+      const bool status = histogram->GetIndex(v, muFullIdx);
       if (!status)
       {
         itkExceptionMacro("Failed looking up histogram");

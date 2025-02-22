@@ -29,8 +29,8 @@ void
 VnlInverseFFTImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   // Get pointers to the input and output.
-  typename InputImageType::ConstPointer inputPtr = this->GetInput();
-  typename OutputImageType::Pointer     outputPtr = this->GetOutput();
+  const typename InputImageType::ConstPointer inputPtr = this->GetInput();
+  const typename OutputImageType::Pointer     outputPtr = this->GetOutput();
 
   if (!inputPtr || !outputPtr)
   {
@@ -39,7 +39,7 @@ VnlInverseFFTImageFilter<TInputImage, TOutputImage>::GenerateData()
 
   // We don't have a nice progress to report, but at least this simple line
   // reports the beginning and the end of the process.
-  ProgressReporter progress(this, 0, 1);
+  const ProgressReporter progress(this, 0, 1);
 
   const OutputSizeType outputSize = outputPtr->GetLargestPossibleRegion().GetSize();
 
@@ -54,7 +54,8 @@ VnlInverseFFTImageFilter<TInputImage, TOutputImage>::GenerateData()
   {
     if (!VnlFFTCommon::IsDimensionSizeLegal(outputSize[i]))
     {
-      itkExceptionMacro(<< "Cannot compute FFT of image with size " << outputSize
+      itkExceptionMacro("Cannot compute FFT of image with size "
+                        << outputSize
                         << ". VnlInverseFFTImageFilter operates only on images whose size in each dimension has only a "
                            "combination of 2,3, and 5 as prime factors.");
     }

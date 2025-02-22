@@ -45,18 +45,7 @@ class ITK_FORWARD_EXPORT LBFGSBOptimizerHelper;
  *
  * See also the documentation in Numerics/lbfgsb.c
  *
- * References:
- *
- * [1] R. H. Byrd, P. Lu and J. Nocedal.
- * A Limited Memory Algorithm for Bound Constrained Optimization, (1995),
- * SIAM Journal on Scientific and Statistical Computing ,
- * 16, 5, pp. 1190-1208.
- *
- * [2] C. Zhu, R. H. Byrd and J. Nocedal.
- * L-BFGS-B: Algorithm 778: L-BFGS-B, FORTRAN routines for large scale
- * bound constrained optimization (1997),
- * ACM Transactions on Mathematical Software,
- * Vol 23, Num. 4, pp. 550 - 560.
+ * For algorithmic details see \cite byrd1995 and \cite zhu1997.
  *
  * \ingroup Numerics Optimizers
  * \ingroup ITKOptimizers
@@ -75,8 +64,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(LBFGSBOptimizer, SingleValuedNonLinearVnlOptimizer);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LBFGSBOptimizer);
 
   /**  BoundValue type.
    *  Use for defining the lower and upper bounds on the variables.
@@ -176,7 +165,7 @@ public:
   void
   SetScales(const ScalesType &)
   {
-    itkExceptionMacro(<< "This optimizer does not support scales.");
+    itkExceptionMacro("This optimizer does not support scales.");
   }
 
   /** Get the current iteration number. */
@@ -191,7 +180,7 @@ public:
   itkGetConstReferenceMacro(InfinityNormOfProjectedGradient, double);
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /** Returns false unconditionally because LBFGSBOptimizer does not support using scales. */

@@ -58,8 +58,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(TransformFileWriterTemplate, LightProcessObject);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(TransformFileWriterTemplate);
 
   /** Set the filename  */
   itkSetStringMacro(FileName);
@@ -67,18 +67,23 @@ public:
   /** Get the filename */
   itkGetStringMacro(FileName);
 
-  /** Set/Get the write mode (append/overwrite) for the Filter */
+#if !defined(ITK_FUTURE_LEGACY_REMOVE)
+  /** Set/Get the write mode (append/overwrite) for the Filter.
+   * Deprecated. */
   void
   SetAppendOff();
 
   void
   SetAppendOn();
 
-  void
-  SetAppendMode(bool mode);
-
   bool
   GetAppendMode();
+#endif
+
+  /** Set/Get the write mode (append/overwrite) for the filter. */
+  itkSetMacro(AppendMode, bool);
+  itkGetConstMacro(AppendMode, bool);
+  itkBooleanMacro(AppendMode);
 
   /** Set/Get a boolean to use the compression or not. */
   itkSetMacro(UseCompression, bool);
@@ -132,10 +137,10 @@ ITK_GCC_PRAGMA_DIAG(ignored "-Wattributes")
 /** Declare specializations */
 template <>
 void ITKIOTransformBase_TEMPLATE_EXPORT
-     TransformFileWriterTemplate<double>::PushBackTransformList(const Object * transObj);
+TransformFileWriterTemplate<double>::PushBackTransformList(const Object * transObj);
 template <>
 void ITKIOTransformBase_TEMPLATE_EXPORT
-     TransformFileWriterTemplate<float>::PushBackTransformList(const Object * transObj);
+TransformFileWriterTemplate<float>::PushBackTransformList(const Object * transObj);
 
 ITK_GCC_PRAGMA_DIAG_POP()
 

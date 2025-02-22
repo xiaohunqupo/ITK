@@ -60,8 +60,8 @@ namespace itk
  * both the mutual information and its derivatives with respect to the
  * transform parameters.
  *
- * The calculations are based on the method of Mattes et al [1,2]
- * where the probability density distribution are estimated using
+ * The calculations are based on the method of Mattes et al
+ * \cite mattes2001, \cite mattes2003 where the probability density distribution are estimated using
  * Parzen histograms. Since the fixed image PDF does not contribute
  * to the derivatives, it does not need to be smooth. Hence,
  * a zero order (box car) BSpline kernel is used
@@ -83,28 +83,15 @@ namespace itk
  * values are estimated at discrete position or bins.
  * The number of bins used can be set via SetNumberOfHistogramBins().
  * To handle data with arbitrary magnitude and dynamic range,
- * the image intensity is scale such that any contribution to the
+ * the image intensity is scaled such that any contribution to the
  * histogram will fall into a valid bin.
  *
- * One the PDF's have been constructed, the mutual information
- * is obtained by doubling summing over the discrete PDF values.
+ * Once the PDF's have been constructed, the mutual information
+ * is obtained by double summing over the discrete PDF values.
  *
  *
  * Notes:
  * 1. This class returns the negative mutual information value.
- *
- * References:
- * [1] "Nonrigid multimodality image registration"
- *      D. Mattes, D. R. Haynor, H. Vesselle, T. Lewellen and W. Eubank
- *      Medical Imaging 2001: Image Processing, 2001, pp. 1609-1620.
- * [2] "PET-CT Image Registration in the Chest Using Free-form Deformations"
- *      D. Mattes, D. R. Haynor, H. Vesselle, T. Lewellen and W. Eubank
- *      IEEE Transactions in Medical Imaging. Vol.22, No.1,
-        January 2003. pp.120-128.
- * [3] "Optimization of Mutual Information for MultiResolution Image
- *      Registration"
- *      P. Thevenaz and M. Unser
- *      IEEE Transactions in Image Processing, 9(12) December 2000.
  *
  * \ingroup RegistrationMetrics
  * \ingroup ITKRegistrationCommon
@@ -129,8 +116,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MattesMutualInformationImageToImageMetric, ImageToImageMetric);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MattesMutualInformationImageToImageMetric);
 
   /** Types inherited from Superclass. */
   using typename Superclass::TransformType;

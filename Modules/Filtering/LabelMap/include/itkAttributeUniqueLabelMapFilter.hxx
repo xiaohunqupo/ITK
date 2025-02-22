@@ -86,7 +86,7 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
   IndexType         prevIdx = prev.line.GetIndex();
   pq.pop();
 
-  AttributeAccessorType accessor;
+  const AttributeAccessorType accessor;
 
   while (!pq.empty())
   {
@@ -111,6 +111,8 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
       }
     }
 
+    assert(newMainLine || (idx[0] >= prevIdx[0]));
+
     if (newMainLine)
     {
       // just push the line
@@ -118,10 +120,10 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
     }
     else
     {
-      OffsetValueType prevLength = prev.line.GetLength();
-      OffsetValueType length = l.line.GetLength();
+      OffsetValueType       prevLength = prev.line.GetLength();
+      const OffsetValueType length = l.line.GetLength();
 
-      if (prevIdx[0] + prevLength >= idx[0])
+      if (prevIdx[0] + prevLength > idx[0])
       {
         // the lines are overlapping. We need to choose which line to keep.
         // the label, the only "attribute" to be guaranteed to be unique, is
@@ -171,7 +173,7 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
             // add it to the priority queue
             IndexType newIdx = idx;
             newIdx[0] = idx[0] + length;
-            OffsetValueType newLength = prevIdx[0] + prevLength - newIdx[0];
+            const OffsetValueType newLength = prevIdx[0] + prevLength - newIdx[0];
             pq.push(LineOfLabelObject(LineType(newIdx, newLength), prev.labelObject));
           }
           // truncate the previous line to let some place for the current one
@@ -193,7 +195,7 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
           // keep the previous one. If the previous line fully overlap the
           // current one,
           // the current one is fully discarded.
-          if (prevIdx[0] + prevLength > idx[0] + length)
+          if (prevIdx[0] + prevLength >= idx[0] + length)
           {
             // discarding the current line - just do nothing
           }
@@ -201,10 +203,16 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
           {
             IndexType newIdx = idx;
             newIdx[0] = prevIdx[0] + prevLength;
-            OffsetValueType newLength = idx[0] + length - newIdx[0];
-            l.line.SetIndex(newIdx);
-            l.line.SetLength(newLength);
-            lines.push_back(l);
+            const OffsetValueType newLength = idx[0] + length - newIdx[0];
+
+            if (newLength > 0)
+            {
+              l.line.SetIndex(newIdx);
+              l.line.SetLength(newLength);
+              // The front of this line is trimmed, it may occur after a line in the queue
+              // so the queue is used for the proper ordering.
+              pq.push(l);
+            }
           }
         }
       }
@@ -236,8 +244,8 @@ AttributeUniqueLabelMapFilter<TImage, TAttributeAccessor>::GenerateData()
   typename ImageType::Iterator it(this->GetLabelMap());
   while (it.IsAtEnd())
   {
-    typename LabelObjectType::LabelType label = it.GetLabel();
-    LabelObjectType *                   labelObject = it.GetLabelObject();
+    const typename LabelObjectType::LabelType label = it.GetLabel();
+    LabelObjectType *                         labelObject = it.GetLabelObject();
 
     if (labelObject->Empty())
     {

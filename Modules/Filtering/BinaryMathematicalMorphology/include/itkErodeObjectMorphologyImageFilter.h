@@ -59,8 +59,8 @@ public:
   /** Standard New method */
   itkNewMacro(Self);
 
-  /** Runtime information support */
-  itkTypeMacro(ErodeObjectMorphologyImageFilter, ObjectMorphologyImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ErodeObjectMorphologyImageFilter);
 
   /** Declaration of Pixel Type */
   using typename Superclass::PixelType;
@@ -101,11 +101,7 @@ public:
   /** Type of the pixels in the Kernel. */
   using KernelPixelType = typename TKernel::PixelType;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(KernelGreaterThanComparableCheck, (Concept::GreaterThanComparable<KernelPixelType>));
-  // End concept checking
-#endif
 
 protected:
   ErodeObjectMorphologyImageFilter();

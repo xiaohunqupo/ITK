@@ -34,7 +34,7 @@ public:
 
   itkNewMacro(Self);
 
-  itkTypeMacro(OptimizerParameterScalesEstimatorTest, OptimizerParameterScalesEstimator);
+  itkOverrideGetNameOfClassMacro(OptimizerParameterScalesEstimatorTest);
 
   /** Estimate parameter scales */
   void
@@ -47,7 +47,7 @@ public:
   double
   EstimateStepScale(const ParametersType & step) override
   {
-    double norm = step.two_norm();
+    const double norm = step.two_norm();
     return norm;
   }
 

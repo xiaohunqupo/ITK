@@ -79,14 +79,14 @@ itkTwoLevelSetWhitakerImage2DTest(int argc, char * argv[])
   auto reader = ReaderType::New();
   reader->SetFileName(argv[1]);
   reader->Update();
-  InputImageType::Pointer input = reader->GetOutput();
+  const InputImageType::Pointer input = reader->GetOutput();
 
   // Create a binary initialization
   auto binary = InputImageType::New();
   binary->SetRegions(input->GetLargestPossibleRegion());
   binary->CopyInformation(input);
   binary->Allocate();
-  binary->FillBuffer(itk::NumericTraits<InputPixelType>::ZeroValue());
+  binary->FillBuffer(InputPixelType{});
 
   InputImageType::RegionType region;
   InputImageType::IndexType  index;
@@ -112,14 +112,14 @@ itkTwoLevelSetWhitakerImage2DTest(int argc, char * argv[])
   adaptor0->Initialize();
   std::cout << "Finished converting to sparse format" << std::endl;
 
-  SparseLevelSetType::Pointer level_set0 = adaptor0->GetModifiableLevelSet();
+  const SparseLevelSetType::Pointer level_set0 = adaptor0->GetModifiableLevelSet();
 
   auto adaptor1 = BinaryToSparseAdaptorType::New();
   adaptor1->SetInputImage(binary);
   adaptor1->Initialize();
   std::cout << "Finished converting to sparse format" << std::endl;
 
-  SparseLevelSetType::Pointer level_set1 = adaptor1->GetModifiableLevelSet();
+  const SparseLevelSetType::Pointer level_set1 = adaptor1->GetModifiableLevelSet();
 
   // Create a list image specifying both level set ids
   IdListType list_ids;

@@ -88,8 +88,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(Histogram, Sample);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(Histogram);
 
   /** standard New() method support */
   itkNewMacro(Self);
@@ -156,13 +156,10 @@ public:
   const IndexType &
   GetIndex(InstanceIdentifier id) const;
 
-  /** Is set to false if the bins at edges of the histogram extend to
-   *   +/- infinity. */
+  /** Set/Get whether the bins at the edges of the histogram extend to +/- infinity. */
   itkGetConstMacro(ClipBinsAtEnds, bool);
-
-  /** Set to false to have the bins at edges of the histogram extend to
-   *   +/- infinity. */
   itkSetMacro(ClipBinsAtEnds, bool);
+  itkBooleanMacro(ClipBinsAtEnds);
 
   /** Returns true if the given index is out of bound meaning one of index
    * is not between [0, last index] */
@@ -471,7 +468,7 @@ public:
   Iterator
   Begin()
   {
-    Iterator iter(0, this);
+    const Iterator iter(0, this);
 
     return iter;
   }
@@ -485,7 +482,7 @@ public:
   ConstIterator
   Begin() const
   {
-    ConstIterator iter(0, this);
+    const ConstIterator iter(0, this);
 
     return iter;
   }

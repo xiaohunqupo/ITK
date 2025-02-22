@@ -77,8 +77,8 @@ public:
   /** Standard New method. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(AnchorOpenCloseImageFilter, KernelImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(AnchorOpenCloseImageFilter);
 
 protected:
   AnchorOpenCloseImageFilter();

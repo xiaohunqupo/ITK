@@ -48,8 +48,8 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::PrintSelf(std::ostream & os, 
 
   itkPrintSelfObjectMacro(ImageIO);
 
-  os << indent << "UserSpecifiedImageIO: " << (m_UserSpecifiedImageIO ? "On" : "Off") << std::endl;
-  os << indent << "UseStreaming: " << (m_UseStreaming ? "On" : "Off") << std::endl;
+  itkPrintSelfBooleanMacro(UserSpecifiedImageIO);
+  itkPrintSelfBooleanMacro(UseStreaming);
 
   os << indent << "ExceptionMessage: " << m_ExceptionMessage << std::endl;
   os << indent << "ActualIORegion: " << m_ActualIORegion << std::endl;
@@ -72,9 +72,9 @@ template <typename TOutputImage, typename ConvertPixelTraits>
 void
 ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateOutputInformation()
 {
-  typename TOutputImage::Pointer output = this->GetOutput();
+  const typename TOutputImage::Pointer output = this->GetOutput();
 
-  itkDebugMacro(<< "Reading file for GenerateOutputInformation()" << this->GetFileName());
+  itkDebugMacro("Reading file for GenerateOutputInformation()" << this->GetFileName());
 
   // Check to see if we can read the file given the name or prefix
   //
@@ -113,7 +113,7 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateOutputInformation()
     }
     else
     {
-      std::list<LightObject::Pointer> allobjects = ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
+      const std::list<LightObject::Pointer> allobjects = ObjectFactoryBase::CreateAllInstance("itkImageIOBase");
       if (!allobjects.empty())
       {
         msg << "  Tried to create one of the following:" << std::endl;
@@ -291,15 +291,15 @@ template <typename TOutputImage, typename ConvertPixelTraits>
 void
 ImageFileReader<TOutputImage, ConvertPixelTraits>::EnlargeOutputRequestedRegion(DataObject * output)
 {
-  itkDebugMacro(<< "Starting EnlargeOutputRequestedRegion() ");
-  typename TOutputImage::Pointer    out = dynamic_cast<TOutputImage *>(output);
-  typename TOutputImage::RegionType largestRegion = out->GetLargestPossibleRegion();
-  ImageRegionType                   streamableRegion;
+  itkDebugMacro("Starting EnlargeOutputRequestedRegion() ");
+  const typename TOutputImage::Pointer    out = dynamic_cast<TOutputImage *>(output);
+  const typename TOutputImage::RegionType largestRegion = out->GetLargestPossibleRegion();
+  ImageRegionType                         streamableRegion;
 
   // The following code converts the ImageRegion (templated over dimension)
   // into an ImageIORegion (not templated over dimension).
-  ImageRegionType imageRequestedRegion = out->GetRequestedRegion();
-  ImageIORegion   ioRequestedRegion(TOutputImage::ImageDimension);
+  const ImageRegionType imageRequestedRegion = out->GetRequestedRegion();
+  ImageIORegion         ioRequestedRegion(TOutputImage::ImageDimension);
 
   using ImageIOAdaptor = ImageIORegionAdaptor<TOutputImage::ImageDimension>;
 
@@ -341,8 +341,8 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::EnlargeOutputRequestedRegion(
     throw e;
   }
 
-  itkDebugMacro(<< "RequestedRegion is set to:" << streamableRegion
-                << " while the m_ActualIORegion is: " << m_ActualIORegion);
+  itkDebugMacro("RequestedRegion is set to:" << streamableRegion
+                                             << " while the m_ActualIORegion is: " << m_ActualIORegion);
 
   out->SetRequestedRegion(streamableRegion);
 }
@@ -353,9 +353,9 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateData()
 {
   this->UpdateProgress(0.0f);
 
-  typename TOutputImage::Pointer output = this->GetOutput();
+  const typename TOutputImage::Pointer output = this->GetOutput();
 
-  itkDebugMacro(<< "ImageFileReader::GenerateData() \n"
+  itkDebugMacro("ImageFileReader::GenerateData() \n"
                 << "Allocating the buffer with the EnlargedRequestedRegion \n"
                 << output->GetRequestedRegion() << '\n');
 
@@ -381,22 +381,22 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateData()
   // Tell the ImageIO to read the file
   m_ImageIO->SetFileName(this->GetFileName().c_str());
 
-  itkDebugMacro(<< "Setting imageIO IORegion to: " << m_ActualIORegion);
+  itkDebugMacro("Setting imageIO IORegion to: " << m_ActualIORegion);
   m_ImageIO->SetIORegion(m_ActualIORegion);
 
   // the size of the buffer is computed based on the actual number of
   // pixels to be read and the actual size of the pixels to be read
   // (as opposed to the sizes of the output)
-  size_t sizeOfActualIORegion =
+  const size_t sizeOfActualIORegion =
     m_ActualIORegion.GetNumberOfPixels() * (m_ImageIO->GetComponentSize() * m_ImageIO->GetNumberOfComponents());
 
-  IOComponentEnum ioType = ImageIOBase::MapPixelType<typename ConvertPixelTraits::ComponentType>::CType;
+  const IOComponentEnum ioType = ImageIOBase::MapPixelType<typename ConvertPixelTraits::ComponentType>::CType;
   if (m_ImageIO->GetComponentType() != ioType ||
       (m_ImageIO->GetNumberOfComponents() != ConvertPixelTraits::GetNumberOfComponents()))
   {
     // the pixel types don't match so a type conversion needs to be
     // performed
-    itkDebugMacro(<< "Buffer conversion required from: "
+    itkDebugMacro("Buffer conversion required from: "
                   << m_ImageIO->GetComponentTypeAsString(m_ImageIO->GetComponentType())
                   << " to: " << m_ImageIO->GetComponentTypeAsString(ioType) << " ConvertPixelTraits::NumComponents "
                   << ConvertPixelTraits::GetNumberOfComponents() << " m_ImageIO->NumComponents "
@@ -416,7 +416,7 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateData()
     // requested to not match, the dimensions of the two regions may
     // be different, therefore we buffer and copy the pixels
 
-    itkDebugMacro(<< "Buffer required because file dimension is greater then image dimension");
+    itkDebugMacro("Buffer required because file dimension is greater then image dimension");
 
     OutputImagePixelType * outputBuffer = output->GetPixelContainer()->GetBufferPointer();
 
@@ -431,7 +431,7 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::GenerateData()
   }
   else
   {
-    itkDebugMacro(<< "No buffer conversion required.");
+    itkDebugMacro("No buffer conversion required.");
 
     OutputImagePixelType * outputBuffer = output->GetPixelContainer()->GetBufferPointer();
     m_ImageIO->Read(outputBuffer);
@@ -446,7 +446,7 @@ ImageFileReader<TOutputImage, ConvertPixelTraits>::DoConvertBuffer(const void * 
 {
   // get the pointer to the destination buffer
   OutputImagePixelType * outputData = this->GetOutput()->GetPixelContainer()->GetBufferPointer();
-  bool                   isVectorImage(strcmp(this->GetOutput()->GetNameOfClass(), "VectorImage") == 0);
+  const bool             isVectorImage(strcmp(this->GetOutput()->GetNameOfClass(), "VectorImage") == 0);
   // TODO:
   // Pass down the PixelType (RGB, VECTOR, etc.) so that any vector to
   // scalar conversion be type specific. i.e. RGB to scalar would use

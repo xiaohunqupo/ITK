@@ -91,8 +91,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(CorrelationImageToImageMetricv4, ImageToImageMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(CorrelationImageToImageMetricv4);
 
   /** Superclass types */
   using typename Superclass::MeasureType;

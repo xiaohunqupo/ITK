@@ -31,19 +31,15 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   using EllipseType = itk::EllipseSpatialObject<2>;
 
   // Image Definition
-  ImageType::RegionType region;
-  ImageType::SizeType   size;
-  size.Fill(50);
-  ImageType::SpacingType spacing;
-  spacing.Fill(1);
+  auto size = ImageType::SizeType::Filled(50);
+  auto spacing = itk::MakeFilled<ImageType::SpacingType>(1);
 
   // Circle definition
   auto ellipse = EllipseType::New();
   ellipse->SetRadiusInObjectSpace(10);
   ellipse->Update();
 
-  EllipseType::VectorType offset;
-  offset.Fill(25);
+  auto offset = itk::MakeFilled<EllipseType::VectorType>(25);
   ellipse->GetModifiableObjectToParentTransform()->SetOffset(offset);
   ellipse->Update();
 
@@ -57,7 +53,7 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   filter->SetInsideValue(255);
   filter->Update();
 
-  ImageType::Pointer image = filter->GetOutput();
+  const ImageType::Pointer image = filter->GetOutput();
 
   offset.Fill(25);
   ellipse->GetModifiableObjectToParentTransform()->SetOffset(offset);
@@ -72,7 +68,7 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   calculator->SetImage(image);
   calculator->SetSpatialObject(ellipse);
 
-  unsigned int sampleDirection = CalculatorType::SampleDimension - 1;
+  constexpr unsigned int sampleDirection = CalculatorType::SampleDimension - 1;
   calculator->SetSampleDirection(sampleDirection);
   ITK_TEST_SET_GET_VALUE(sampleDirection, calculator->GetSampleDirection());
 
@@ -83,8 +79,7 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   std::cout << "Sample covariance = " << calculator->GetCovarianceMatrix();
 
   if (calculator->GetMean() != itk::MakeFilled<CalculatorType::VectorType>(255) ||
-      itk::Math::NotAlmostEquals(calculator->GetCovarianceMatrix()[0][0],
-                                 itk::NumericTraits<CalculatorType::MatrixType::ValueType>::ZeroValue()))
+      itk::Math::NotAlmostEquals(calculator->GetCovarianceMatrix()[0][0], CalculatorType::MatrixType::ValueType{}))
   {
     std::cout << "[FAILED]" << std::endl;
     return EXIT_FAILURE;
@@ -144,9 +139,8 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   size3D[0] = 50;
   size3D[1] = 50;
   size3D[2] = 3;
-  IndexType start;
-  start.Fill(0);
-  RegionType region3D;
+  constexpr IndexType start{};
+  RegionType          region3D;
   region3D.SetIndex(start);
   region3D.SetSize(size3D);
   image3D->SetRegions(region3D);
@@ -186,8 +180,7 @@ itkSpatialObjectToImageStatisticsCalculatorTest(int, char *[])
   radii[2] = 0;
   ellipse3D->SetRadiusInObjectSpace(radii);
 
-  Ellipse3DType::VectorType offset3D;
-  offset3D.Fill(25);
+  auto offset3D = itk::MakeFilled<Ellipse3DType::VectorType>(25);
   offset3D[2] = 0; // first slice
   ellipse3D->GetModifiableObjectToParentTransform()->SetOffset(offset3D);
   ellipse3D->Update();

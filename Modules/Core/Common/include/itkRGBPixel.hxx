@@ -103,7 +103,8 @@ RGBPixel<T>::operator/=(const ComponentType & r)
 }
 
 template <typename T>
-RGBPixel<T> RGBPixel<T>::operator*(const ComponentType & r) const
+RGBPixel<T>
+RGBPixel<T>::operator*(const ComponentType & r) const
 {
   Self result;
 
@@ -131,14 +132,7 @@ template <typename T>
 bool
 RGBPixel<T>::operator==(const Self & r) const
 {
-  for (unsigned int i = 0; i < 3; ++i)
-  {
-    if (Math::NotExactlyEquals((*this)[i], r[i]))
-    {
-      return false;
-    }
-  }
-  return true;
+  return this->BaseArray::operator==(r);
 }
 
 template <typename T>

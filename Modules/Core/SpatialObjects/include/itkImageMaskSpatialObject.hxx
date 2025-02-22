@@ -18,10 +18,9 @@
 #ifndef itkImageMaskSpatialObject_hxx
 #define itkImageMaskSpatialObject_hxx
 
+#include "itkIntTypes.h" // For uintmax_t.
 #include "itkMath.h"
 #include "itkImageRegionRange.h"
-
-#include <cstdint> // For uintmax_t.
 
 namespace itk
 {
@@ -40,8 +39,12 @@ ImageMaskSpatialObject<TDimension, TPixel>::IsInsideInObjectSpace(const PointTyp
 
   const IndexType index = image->TransformPhysicalPointToIndex(point);
 
-  return image->GetBufferedRegion().IsInside(index) &&
-         Math::NotExactlyEquals(image->GetPixel(index), NumericTraits<PixelType>::ZeroValue());
+  const bool is_inside = Superclass::GetBufferedRegion().IsInside(index);
+
+  const auto background_zero = PixelType{};
+
+  return is_inside && ((m_UseMaskValue == true && Math::ExactlyEquals(image->GetPixel(index), this->m_MaskValue)) ||
+                       (m_UseMaskValue == false && Math::NotExactlyEquals(image->GetPixel(index), background_zero)));
 }
 
 
@@ -119,11 +122,14 @@ ImageMaskSpatialObject<TDimension, TPixel>::InternalClone() const
   // this to new transform.
   typename LightObject::Pointer loPtr = Superclass::InternalClone();
 
-  typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
+  const typename Self::Pointer rval = dynamic_cast<Self *>(loPtr.GetPointer());
   if (rval.IsNull())
   {
-    itkExceptionMacro(<< "downcast to type " << this->GetNameOfClass() << " failed.");
+    itkExceptionMacro("downcast to type " << this->GetNameOfClass() << " failed.");
   }
+
+  rval->SetMaskValue(this->GetMaskValue());
+  rval->SetUseMaskValue(this->GetUseMaskValue());
 
   return loPtr;
 }
@@ -133,6 +139,8 @@ auto
 ImageMaskSpatialObject<TDimension, TPixel>::ComputeMyBoundingBoxInIndexSpace() const -> RegionType
 {
   const ImagePointer imagePointer = this->GetImage();
+  const bool         useMaskValue = this->GetUseMaskValue();
+  const PixelType    maskValue = this->GetMaskValue();
 
   if (imagePointer == nullptr)
   {
@@ -141,12 +149,12 @@ ImageMaskSpatialObject<TDimension, TPixel>::ComputeMyBoundingBoxInIndexSpace() c
 
   const ImageType & image = *imagePointer;
 
-  const auto HasForegroundPixels = [&image](const RegionType & region) {
+  const auto HasForegroundPixels = [&image, useMaskValue, maskValue](const RegionType & region) {
     for (const PixelType pixelValue : ImageRegionRange{ image, region })
     {
-      constexpr auto zeroValue = NumericTraits<PixelType>::ZeroValue();
+      constexpr auto zeroValue = PixelType{};
 
-      if (pixelValue != zeroValue)
+      if (pixelValue != zeroValue && (useMaskValue == false || pixelValue == maskValue))
       {
         return true;
       }
@@ -164,7 +172,7 @@ ImageMaskSpatialObject<TDimension, TPixel>::ComputeMyBoundingBoxInIndexSpace() c
     return RegionType{ minIndex, regionSize };
   };
 
-  const RegionType requestedRegion = image.GetRequestedRegion();
+  const RegionType requestedRegion = Superclass::GetRequestedRegion();
 
   if (requestedRegion.GetNumberOfPixels() == 0)
   {

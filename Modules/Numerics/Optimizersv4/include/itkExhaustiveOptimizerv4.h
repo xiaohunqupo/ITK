@@ -36,7 +36,7 @@ namespace itk
  * is. An example is given below, where it is desired to plot the metric
  * space with respect to translations along x, y and z in a 3D registration
  * application:
- *     Here it is assumed that the transform is Euler3DTransform.
+ *     Here it is assumed that the transform is TranslationTransform.
  *
    \code
     OptimizerType::StepsType steps( m_Transform->GetNumberOfParameters() );
@@ -69,9 +69,14 @@ namespace itk
  * of [0.5 1 4] along with a step length of 2 will cause the optimizer
  * to search the metric space on a grid with x,y,z spacing of [1 2 8].
  *
- * Physical dimensions of the grid are influenced by both the scales and
- * the number of steps along each dimension, a side of the region is
- * stepLength*(2*numberOfSteps[d]+1)*scaling[d].
+ * The number of samples for each dimension of the parameter grid are
+ * influenced by both the scales and the number of steps along each
+ * dimension:
+ *
+ * parameter_samples[d] = stepLength*(2*numberOfSteps[d]+1)*scaling[d]
+ *
+ * start_parameter[d] = - stepLength * scaling[d] * numberOfSteps[d]
+ *   end_parameter[d] = + stepLength * scaling[d] * numberOfSteps[d]
  *
  * \ingroup ITKOptimizersv4
  */
@@ -91,8 +96,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ExhaustiveOptimizerv4, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(ExhaustiveOptimizerv4);
 
   /** Steps type */
   using StepsType = Array<SizeValueType>;
@@ -133,7 +138,7 @@ public:
   itkGetConstReferenceMacro(CurrentIndex, ParametersType);
 
   /** Get the reason for termination */
-  const std::string
+  std::string
   GetStopConditionDescription() const override;
 
   /**  Set the position to initialize the optimization. */

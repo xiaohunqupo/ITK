@@ -51,8 +51,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiStartOptimizerv4Template, Superclass);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MultiStartOptimizerv4Template);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -127,7 +127,7 @@ public:
   ResumeOptimization();
 
   /** Get the reason for termination */
-  const StopConditionReturnStringType
+  StopConditionReturnStringType
   GetStopConditionDescription() const override;
 
   /** Get the list of parameters over which to search.  */

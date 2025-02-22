@@ -24,6 +24,13 @@
 
 namespace itk
 {
+
+// BTX
+using LibHandle = itksys::DynamicLoader::LibraryHandle;
+// Cannot use this as this is a void (*)() but ITK old API used to be void*
+using SymbolPointer = itksys::DynamicLoader::SymbolPointer;
+// ETX
+
 /** \class DynamicLoader
  * \brief Portable loading of dynamic libraries or dll's.
  *
@@ -33,12 +40,6 @@ namespace itk
  * \ingroup OSSystemObjects
  * \ingroup ITKCommon
  */
-
-// BTX
-using LibHandle = itksys::DynamicLoader::LibraryHandle;
-// Cannot use this as this is a void (*)() but ITK old API used to be void*
-using SymbolPointer = itksys::DynamicLoader::SymbolPointer;
-// ETX
 
 class ITKCommon_EXPORT DynamicLoader : public Object
 {
@@ -54,8 +55,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(DynamicLoader, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DynamicLoader);
 
   /** Load a dynamic library into the current process.
    * The returned LibHandle can be used to access the symbols in the

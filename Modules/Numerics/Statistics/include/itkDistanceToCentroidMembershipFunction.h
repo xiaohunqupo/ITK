@@ -53,8 +53,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  /** Standard macros */
-  itkTypeMacro(DistanceToCentroidMembershipFunction, MembershipFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(DistanceToCentroidMembershipFunction);
   itkNewMacro(Self);
 
   /** SmartPointer class for superclass */

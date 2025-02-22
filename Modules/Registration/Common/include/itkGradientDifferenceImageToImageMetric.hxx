@@ -62,7 +62,7 @@ GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::Initialize()
 
   if (!this->GetComputeGradient())
   {
-    itkExceptionMacro(<< "Gradients must be calculated");
+    itkExceptionMacro("Gradients must be calculated");
   }
 
   // Initialise the base class
@@ -287,10 +287,10 @@ GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::ComputeVariance
 }
 
 template <typename TFixedImage, typename TMovingImage>
-typename GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::ComputeMeasure(
   const TransformParametersType & parameters,
-  const double *                  subtractionFactor) const
+  const double *                  subtractionFactor) const -> MeasureType
 {
   unsigned int iDimension;
 
@@ -300,7 +300,7 @@ GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::ComputeMeasure(
 
   for (iDimension = 0; iDimension < FixedImageDimension; ++iDimension)
   {
-    if (Math::AlmostEquals(m_Variance[iDimension], NumericTraits<MovedGradientPixelType>::ZeroValue()))
+    if (Math::AlmostEquals(m_Variance[iDimension], MovedGradientPixelType{}))
     {
       continue;
     }
@@ -347,9 +347,9 @@ GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::ComputeMeasure(
 }
 
 template <typename TFixedImage, typename TMovingImage>
-typename GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::MeasureType
+auto
 GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::GetValue(
-  const TransformParametersType & parameters) const
+  const TransformParametersType & parameters) const -> MeasureType
 {
   unsigned int iFilter; // Index of Sobel filters for
                         // each dimension
@@ -395,9 +395,7 @@ GradientDifferenceImageToImageMetric<TFixedImage, TMovingImage>::GetDerivative(
   const TransformParametersType & parameters,
   DerivativeType &                derivative) const
 {
-  TransformParametersType testPoint;
-
-  testPoint = parameters;
+  TransformParametersType testPoint = parameters;
 
   const unsigned int numberOfParameters = this->GetNumberOfParameters();
   derivative = DerivativeType(numberOfParameters);

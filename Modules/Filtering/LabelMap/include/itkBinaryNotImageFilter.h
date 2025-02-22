@@ -42,7 +42,7 @@ namespace itk
  * \author Gaetan Lehmann. Biologie du Developpement et de la Reproduction, INRA de Jouy-en-Josas, France.
  *
  * This implementation was taken from the Insight Journal paper:
- * https://www.insight-journal.org/browse/publication/176
+ * https://doi.org/10.54294/q6auw4
  *
  * \ingroup IntensityImageFilters  MultiThreaded
  * \ingroup ITKLabelMap
@@ -58,8 +58,6 @@ template <typename TPixel>
 class BinaryNot
 {
 public:
-  BinaryNot() = default;
-  ~BinaryNot() = default;
   bool
   operator==(const BinaryNot &) const
   {
@@ -71,7 +69,7 @@ public:
   inline TPixel
   operator()(const TPixel & A) const
   {
-    bool a = (A == m_ForegroundValue);
+    const bool a = (A == m_ForegroundValue);
     if (!a)
     {
       return m_ForegroundValue;
@@ -100,8 +98,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(BinaryNotImageFilter, UnaryFunctorImageFilter);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BinaryNotImageFilter);
 
   using PixelType = typename TImage::PixelType;
 

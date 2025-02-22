@@ -29,7 +29,7 @@ namespace itk
 template <typename TInputImage, typename TOutputImage, typename TKernel>
 MorphologyImageFilter<TInputImage, TOutputImage, TKernel>::MorphologyImageFilter()
 {
-  m_DefaultBoundaryCondition.SetConstant(NumericTraits<PixelType>::ZeroValue());
+  m_DefaultBoundaryCondition.SetConstant(PixelType{});
   m_BoundaryCondition = &m_DefaultBoundaryCondition;
   this->DynamicMultiThreadingOn();
   this->ThreaderUpdateProgressOff();
@@ -44,8 +44,8 @@ MorphologyImageFilter<TInputImage, TOutputImage, TKernel>::DynamicThreadedGenera
   NeighborhoodIteratorType b_iter;
 
   // Find the boundary "faces"
-  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>                        fC;
-  typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType faceList =
+  NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>                              fC;
+  const typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>::FaceListType faceList =
     fC(this->GetInput(), outputRegionForThread, this->GetKernel().GetRadius());
 
   TotalProgressReporter progress(this, this->GetOutput()->GetRequestedRegion().GetNumberOfPixels());

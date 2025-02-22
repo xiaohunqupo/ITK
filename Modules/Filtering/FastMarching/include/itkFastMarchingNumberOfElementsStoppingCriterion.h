@@ -31,7 +31,7 @@ namespace itk
  *
  * \note For itk::Image, one element is one pixel. So the number of elements is directly
  * linked to the physical size of the object, i.e.
- * \f$ PhysicalSize = TargetNumberOfElements \cdot \prod_{i=1}{dim} Spacing_{i} \f$
+ * \f$ PhysicalSize = TargetNumberOfElements \cdot \prod_{i=1}^{dim} Spacing_{i} \f$
  *
  * \note For itk::QuadEdgeMesh, one element is one vertex.
  *
@@ -52,8 +52,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingNumberOfElementsStoppingCriterion, FastMarchingStoppingCriterionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FastMarchingNumberOfElementsStoppingCriterion);
 
   using typename Superclass::OutputPixelType;
   using typename Superclass::NodeType;
@@ -77,8 +77,8 @@ public:
 protected:
   FastMarchingNumberOfElementsStoppingCriterion()
     : Superclass()
-    , m_CurrentNumberOfElements(NumericTraits<IdentifierType>::ZeroValue())
-    , m_TargetNumberOfElements(NumericTraits<IdentifierType>::ZeroValue())
+    , m_CurrentNumberOfElements(IdentifierType{})
+    , m_TargetNumberOfElements(IdentifierType{})
   {}
 
   ~FastMarchingNumberOfElementsStoppingCriterion() override = default;
@@ -95,7 +95,7 @@ protected:
   void
   Reset() override
   {
-    this->m_CurrentNumberOfElements = NumericTraits<IdentifierType>::ZeroValue();
+    this->m_CurrentNumberOfElements = IdentifierType{};
   }
 };
 

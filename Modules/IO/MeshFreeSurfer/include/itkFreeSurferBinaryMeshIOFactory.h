@@ -49,8 +49,8 @@ public:
   /** Method for class instantiation. */
   itkFactorylessNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FreeSurferBinaryMeshIOFactory, ObjectFactoryBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FreeSurferBinaryMeshIOFactory);
 
   /** Register one factory of this type  */
   static void

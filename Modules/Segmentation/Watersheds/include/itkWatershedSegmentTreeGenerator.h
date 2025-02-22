@@ -88,7 +88,7 @@ public:
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  itkTypeMacro(SegmentTreeGenerator, ProcessObject);
+  itkOverrideGetNameOfClassMacro(SegmentTreeGenerator);
 
   /** Convenient type definitions */
   using ScalarType = TScalar;
@@ -219,7 +219,8 @@ protected:
 
   /** Methods required by the itk pipeline */
   void
-  GenerateOutputRequestedRegion(DataObject * output) override;
+  GenerateOutputRequestedRegion(DataObject * itkNotUsed(output)) override
+  {}
 
   void
   GenerateInputRequestedRegion() override;

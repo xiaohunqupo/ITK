@@ -58,8 +58,8 @@ public:
   /** Method for creation through object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information */
-  itkTypeMacro(LevelSetDenseImage, DiscreteLevelSetImage);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LevelSetDenseImage);
 
   static constexpr unsigned int Dimension = Superclass::Dimension;
 

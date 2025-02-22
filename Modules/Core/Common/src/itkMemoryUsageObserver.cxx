@@ -169,8 +169,8 @@ struct SYSTEM_PROCESSES
   ULONG pad4;
   ULONG pad5;
 #    else
-  ULONG  ProcessId;
-  ULONG  InheritedFromProcessId;
+  ULONG ProcessId;
+  ULONG InheritedFromProcessId;
 #    endif
   ULONG       HandleCount;
   ULONG       Reserved2[2];
@@ -211,13 +211,12 @@ WindowsMemoryUsageObserver::GetMemoryUsage()
 
   if (!m_hNTLib)
   {
-    itkGenericExceptionMacro(<< "Can't find ntdll.dll. "
-                             << "You should probably disable SUPPORT_TOOLHELP32");
+    itkGenericExceptionMacro("Can't find ntdll.dll. You should probably disable SUPPORT_TOOLHELP32");
   }
   // the ntdll.dll library could not have been opened (file not found?)
   if (!ZwQuerySystemInformation)
   {
-    itkGenericExceptionMacro(<< "The file ntdll.dll is not supported. "
+    itkGenericExceptionMacro("The file ntdll.dll is not supported. "
                              << "You should probably disable SUPPORT_TOOLHELP32");
   }
 
@@ -316,10 +315,10 @@ MacOSXMemoryUsageObserver::GetMemoryUsage()
   //
   // this method comes from
   // https://stackoverflow.com/questions/5839626/how-is-top-able-to-see-memory-usage
-  task_t                 targetTask = mach_task_self();
+  const task_t           targetTask = mach_task_self();
   struct task_basic_info ti;
   mach_msg_type_number_t count = TASK_BASIC_INFO_64_COUNT;
-  kern_return_t          kr = task_info(targetTask, TASK_BASIC_INFO_64, (task_info_t)&ti, &count);
+  const kern_return_t    kr = task_info(targetTask, TASK_BASIC_INFO_64, (task_info_t)&ti, &count);
   if (kr != KERN_SUCCESS)
   {
     return 0;
@@ -365,7 +364,7 @@ SunSolarisMemoryUsageObserver::GetMemoryUsage()
 
   if ((fp = popen(command.str().c_str(), "r")) == nullptr)
   {
-    itkGenericExceptionMacro(<< "Error using pmap. Can execute pmap command");
+    itkGenericExceptionMacro("Error using pmap. Can execute pmap command");
   }
   char remaining[256];
   int  pmappid = -1;
@@ -373,7 +372,7 @@ SunSolarisMemoryUsageObserver::GetMemoryUsage()
   // the first word shall be the process ID
   if (pmappid != pid)
   {
-    itkGenericExceptionMacro(<< "Error using pmap. 1st line output shall be PID: name");
+    itkGenericExceptionMacro("Error using pmap. 1st line output shall be PID: name");
   }
   bool        heapNotFound = true;
   char        address[64], perms[32];
@@ -404,13 +403,13 @@ SunSolarisMemoryUsageObserver::GetMemoryUsage()
     {
       if (ferror(fp))
       {
-        itkGenericExceptionMacro(<< "Error using pmap. Corrupted pmap output");
+        itkGenericExceptionMacro("Error using pmap. Corrupted pmap output");
       }
     }
   }
   if (pclose(fp) == -1)
   {
-    itkGenericExceptionMacro(<< "Error using pmap. Can't close pmap output file.");
+    itkGenericExceptionMacro("Error using pmap. Can't close pmap output file.");
   }
   return mem;
 }
@@ -429,7 +428,7 @@ SysResourceMemoryUsageObserver::GetMemoryUsage()
   // Maybe use getrusage() ??
   rusage resourceInfo;
 
-  const int who = RUSAGE_SELF;
+  constexpr int who = RUSAGE_SELF;
   if (getrusage(who, &resourceInfo) == 0)
   {
     return static_cast<MemoryUsageObserverBase::MemoryLoadType>(resourceInfo.ru_ixrss);

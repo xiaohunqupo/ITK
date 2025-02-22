@@ -41,7 +41,8 @@ namespace itk
  * This class is templated over the FixedImage type and the MovingImage
  * type.
  *
- * The calculations are based on the method of Mattes et al [1,2]
+ * The calculations are based on the method of Mattes et al
+ * \cite mattes2001, \cite mattes2003,
  * where the probability density distribution are estimated using
  * Parzen histograms. Since the fixed image PDF does not contribute
  * to the derivatives, it does not need to be smooth. Hence,
@@ -55,11 +56,11 @@ namespace itk
  * values are estimated at discrete position or bins.
  * The number of bins used can be set via SetNumberOfHistogramBins().
  * To handle data with arbitrary magnitude and dynamic range,
- * the image intensity is scale such that any contribution to the
+ * the image intensity is scaled such that any contribution to the
  * histogram will fall into a valid bin.
  *
- * One the PDF's have been constructed, the mutual information
- * is obtained by doubling summing over the discrete PDF values.
+ * Once the PDF's have been constructed, the mutual information
+ * is obtained by double summing over the discrete PDF values.
  *
  * \warning Local-support transforms are not yet supported. If used,
  * an exception is thrown during Initialize().
@@ -77,19 +78,6 @@ namespace itk
  *  for portions of the algorithm implementation.
  *
  * See ImageToImageMetricv4 for details of common metric operation and options.
- *
- * References:
- * [1] "Nonrigid multimodality image registration"
- *      D. Mattes, D. R. Haynor, H. Vesselle, T. Lewellen and W. Eubank
- *      Medical Imaging 2001: Image Processing, 2001, pp. 1609-1620.
- * [2] "PET-CT Image Registration in the Chest Using Free-form Deformations"
- *      D. Mattes, D. R. Haynor, H. Vesselle, T. Lewellen and W. Eubank
- *      IEEE Transactions in Medical Imaging. Vol.22, No.1,
-        January 2003. pp.120-128.
- * [3] "Optimization of Mutual Information for MultiResolution Image
- *      Registration"
- *      P. Thevenaz and M. Unser
- *      IEEE Transactions in Image Processing, 9(12) December 2000.
  *
  * \sa itkImageToImageMetricv4
  * \ingroup ITKMetricsv4
@@ -116,8 +104,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(MattesMutualInformationImageToImageMetricv4, ImageToImageMetricv4);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(MattesMutualInformationImageToImageMetricv4);
 
   /** Superclass types */
   using typename Superclass::MeasureType;
@@ -279,9 +267,9 @@ protected:
    *
    * Thread safety note:
    * A separate object is used locally per each thread. Only the members
-   * m_ParentJointPDFDerivativesLockPtr and m_ParentJointPDFDerivatives
+   * m_ParentJointPDFDerivativesMutexPtr and m_ParentJointPDFDerivatives
    * are shared between threads and access to m_ParentJointPDFDerivatives
-   * is controlled with the m_ParentJointPDFDerivativesLockPtr mutex lock.
+   * is controlled with the m_ParentJointPDFDerivativesMutexPtr mutex lock.
    * \ingroup ITKMetricsv4
    */
   class DerivativeBufferManager
@@ -294,7 +282,7 @@ protected:
     void
     Initialize(size_t                                    maxBufferLength,
                const size_t                              cachedNumberOfLocalParameters,
-               std::mutex *                              parentDerivativeLockPtr,
+               std::mutex *                              parentDerivativeMutexPtr,
                typename JointPDFDerivativesType::Pointer parentJointPDFDerivatives);
 
     void
@@ -345,7 +333,7 @@ protected:
   private:
     // How many AccumulatorElements used
     size_t m_CurrentFillSize{ 0 };
-    // Continguous chunk of memory for efficiency
+    // Contiguous chunk of memory for efficiency
     std::vector<PDFValueType> m_MemoryBlock;
     // The (number of lines in the buffer) * (cells per line)
     size_t                       m_MemoryBlockSize;
@@ -354,7 +342,7 @@ protected:
     size_t                       m_CachedNumberOfLocalParameters;
     size_t                       m_MaxBufferSize;
     // Pointer handle to parent version
-    std::mutex * m_ParentJointPDFDerivativesLockPtr;
+    std::mutex * m_ParentJointPDFDerivativesMutexPtr;
     // Smart pointer handle to parent version
     typename JointPDFDerivativesType::Pointer m_ParentJointPDFDerivatives;
   };

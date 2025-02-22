@@ -22,6 +22,7 @@
 #include "itkNumericTraits.h"
 #include "itkSimpleDataObjectDecorator.h"
 #include "itkHistogram.h"
+#include "itkPrintHelper.h"
 #include <mutex>
 #include <unordered_map>
 #include <vector>
@@ -73,8 +74,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Runtime information support. */
-  itkTypeMacro(LabelStatisticsImageFilter, ImageSink);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(LabelStatisticsImageFilter);
 
   /** Image related type alias. */
   using InputImagePointer = typename TInputImage::Pointer;
@@ -121,18 +122,18 @@ public:
     LabelStatistics()
     {
       // initialized to the default values
-      m_Count = NumericTraits<IdentifierType>::ZeroValue();
-      m_Sum = NumericTraits<RealType>::ZeroValue();
-      m_SumOfSquares = NumericTraits<RealType>::ZeroValue();
+      m_Count = IdentifierType{};
+      m_Sum = RealType{};
+      m_SumOfSquares = RealType{};
 
       // Set such that the first pixel encountered can be compared
       m_Minimum = NumericTraits<RealType>::max();
       m_Maximum = NumericTraits<RealType>::NonpositiveMin();
 
       // Default these to zero
-      m_Mean = NumericTraits<RealType>::ZeroValue();
-      m_Sigma = NumericTraits<RealType>::ZeroValue();
-      m_Variance = NumericTraits<RealType>::ZeroValue();
+      m_Mean = RealType{};
+      m_Sigma = RealType{};
+      m_Variance = RealType{};
 
       const unsigned int imageDimension = Self::ImageDimension;
       m_BoundingBox.resize(imageDimension * 2);
@@ -148,18 +149,18 @@ public:
     LabelStatistics(int size, RealType lowerBound, RealType upperBound)
     {
       // initialized to the default values
-      m_Count = NumericTraits<IdentifierType>::ZeroValue();
-      m_Sum = NumericTraits<RealType>::ZeroValue();
-      m_SumOfSquares = NumericTraits<RealType>::ZeroValue();
+      m_Count = IdentifierType{};
+      m_Sum = RealType{};
+      m_SumOfSquares = RealType{};
 
       // Set such that the first pixel encountered can be compared
       m_Minimum = NumericTraits<RealType>::max();
       m_Maximum = NumericTraits<RealType>::NonpositiveMin();
 
       // Default these to zero
-      m_Mean = NumericTraits<RealType>::ZeroValue();
-      m_Sigma = NumericTraits<RealType>::ZeroValue();
-      m_Variance = NumericTraits<RealType>::ZeroValue();
+      m_Mean = RealType{};
+      m_Sigma = RealType{};
+      m_Variance = RealType{};
 
       const unsigned int imageDimension = Self::ImageDimension;
       m_BoundingBox.resize(imageDimension * 2);
@@ -219,6 +220,39 @@ public:
         m_Histogram = l.m_Histogram;
       }
       return *this;
+    }
+
+    friend std::ostream &
+    operator<<(std::ostream & os, const LabelStatistics & labelStatistics)
+    {
+      using namespace print_helper;
+
+      os << "Count: " << static_cast<typename NumericTraits<IdentifierType>::PrintType>(labelStatistics.m_Count)
+         << std::endl;
+      os << "Minimum: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Minimum)
+         << std::endl;
+      os << "Maximum: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Maximum)
+         << std::endl;
+      os << "Mean: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Mean) << std::endl;
+      os << "Sum: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Sum) << std::endl;
+      os << "SumOfSquares: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_SumOfSquares)
+         << std::endl;
+      os << "Sigma: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Sigma) << std::endl;
+      os << "Variance: " << static_cast<typename NumericTraits<RealType>::PrintType>(labelStatistics.m_Variance)
+         << std::endl;
+      os << "BoundingBox: " << labelStatistics.m_BoundingBox << std::endl;
+
+      os << "Histogram: ";
+      if (labelStatistics.m_Histogram)
+      {
+        labelStatistics.m_Histogram->Print(os);
+      }
+      else
+      {
+        os << "nullptr" << std::endl;
+      }
+
+      return os;
     }
 
     IdentifierType                  m_Count;
@@ -343,12 +377,7 @@ public:
     return Superclass::GetNumberOfStreamDivisions();
   }
 
-
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Begin concept checking
   itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<PixelType>));
-  // End concept checking
-#endif
 
 protected:
   LabelStatisticsImageFilter();

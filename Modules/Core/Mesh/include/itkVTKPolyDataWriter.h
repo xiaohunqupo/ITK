@@ -57,8 +57,8 @@ public:
   /** Method for creation through the object factory */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(VTKPolyDataWriter, Object);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(VTKPolyDataWriter);
 
   /** Write the Input mesh to the Output file.
    * Use either Update() or Write(). */

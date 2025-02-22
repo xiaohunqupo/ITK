@@ -88,8 +88,8 @@ public:
   using typename Superclass::ParametersValueType;
   using typename Superclass::ParametersType;
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaussianImageSource, ParametricImageSource);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianImageSource);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

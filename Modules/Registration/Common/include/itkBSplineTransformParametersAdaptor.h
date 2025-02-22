@@ -75,8 +75,8 @@ public:
   /** New macro for creation of through a Smart Pointer. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(BSplineTransformParametersAdaptor, TransformParametersAdaptor);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(BSplineTransformParametersAdaptor);
 
   /** Typedefs associated with the transform */
   using TransformType = TTransform;

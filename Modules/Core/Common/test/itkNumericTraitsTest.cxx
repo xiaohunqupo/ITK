@@ -17,15 +17,17 @@
  *=========================================================================*/
 
 #if !defined(ITK_LEGACY_REMOVE)
+#  ifdef _MSC_VER
 // Suppress MSVC warnings from VS2022, saying: "warning C4996: 'std::complex<T>::complex': warning STL4037: The effect
 // of instantiating the template std::complex for any type other than float, double, or long double is unspecified."
-#  define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+#    define _SILENCE_NONFLOATING_COMPLEX_DEPRECATION_WARNING
+#  endif
 #endif
 
 #include <iostream>
 #include <cstddef>
 
-// Better name demanging for gcc
+// Better name demangling for gcc
 #if defined(__GNUC__) && !defined(__EMSCRIPTEN__)
 #  define GCC_USEDEMANGLE
 #endif
@@ -89,7 +91,7 @@ CheckVariableLengthArrayTraits(const T & t)
 {
   std::string name;
 #ifdef GCC_USEDEMANGLE
-  char const * mangledName = typeid(t).name();
+  const char * mangledName = typeid(t).name();
   int          status;
   char *       unmangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, &status);
   name = unmangled;
@@ -135,7 +137,7 @@ CheckFixedArrayTraits(const T & t)
 
   std::string name;
 #ifdef GCC_USEDEMANGLE
-  char const * mangledName = typeid(t).name();
+  const char * mangledName = typeid(t).name();
   int          status;
   char *       unmangled = abi::__cxa_demangle(mangledName, nullptr, nullptr, &status);
   name = unmangled;
@@ -887,6 +889,10 @@ itkNumericTraitsTest(int, char *[])
   rgbaPixelSize = itk::NumericTraits<RGBAPixelType>::GetLength(rgbaPixel) - 1;
   ITK_TRY_EXPECT_EXCEPTION(itk::NumericTraits<RGBAPixelType>::SetLength(rgbaPixel, rgbaPixelSize));
 
+  const auto constRgbaPixel = RGBAPixelType();
+  rgbaPixelSize = itk::NumericTraits<RGBAPixelType>::GetLength(constRgbaPixel);
+  ITK_TEST_EXPECT_EQUAL(rgbaPixelSize, 4);
+
   // itk::SymmetricSecondRankTensor<char, 1>()
   CheckFixedArrayTraits(itk::SymmetricSecondRankTensor<char, 1>());
   CheckFixedArrayTraits(itk::SymmetricSecondRankTensor<signed char, 1>());
@@ -1298,6 +1304,15 @@ itkNumericTraitsTest(int, char *[])
 
   // CompileTime Checks IsComplex traits does not return
   CheckIsComplexTraits();
+
+  itkConceptMacro(NumericTraitsCheckLong, (itk::Concept::HasNumericTraits<long>));
+  itkConceptMacro(NumericTraitsCheckComplexFloat, (itk::Concept::HasNumericTraits<std::complex<float>>));
+  itkConceptMacro(NumericTraitsCheckVectorFloat3, (itk::Concept::HasNumericTraits<itk::Vector<float, 3>>));
+  itkConceptMacro(NumericTraitsCheckStdVectorFloat, (itk::Concept::HasNumericTraits<std::vector<float>>));
+  itkConceptMacro(NumericTraitsCheckVariableLengthVector,
+                  (itk::Concept::HasNumericTraits<itk::VariableLengthVector<double>>));
+  itkConceptMacro(NumericTraitsCheckRGBPixel, (itk::Concept::HasNumericTraits<itk::RGBPixel<unsigned char>>));
+  itkConceptMacro(NumericTraitsCheckRGBAPixel, (itk::Concept::HasNumericTraits<itk::RGBAPixel<unsigned char>>));
 
   return (testPassedStatus) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -20,7 +20,7 @@
 namespace itk
 {
 bool ITKCommon_EXPORT
-     ci_equal(char a, char b)
+ci_equal(char a, char b)
 {
   return tolower(static_cast<int>(a)) == tolower(static_cast<int>(b));
 }
@@ -54,29 +54,34 @@ ITKCommon_EXPORT std::istream &
 
     // Get name
     std::istringstream stream(headerline);
-    std::string        address, perms, offset, device;
-    int                inode = -1;
+
+    int inode = -1;
     // the header is defined with the following expression: "address permissions
     // offset device inode [name]"
+    std::string address;
+
     stream >> address;
     if (!stream.good())
     {
-      itkGenericExceptionMacro(<< "bad address: " << address);
+      itkGenericExceptionMacro("bad address: " << address);
     }
+    std::string perms;
     stream >> perms;
     if (!stream.good())
     {
-      itkGenericExceptionMacro(<< "bad perms: " << perms);
+      itkGenericExceptionMacro("bad perms: " << perms);
     }
+    std::string offset;
     stream >> offset;
     if (!stream.good())
     {
-      itkGenericExceptionMacro(<< "bad offset: " << offset);
+      itkGenericExceptionMacro("bad offset: " << offset);
     }
+    std::string device;
     stream >> device;
     if (!stream.good())
     {
-      itkGenericExceptionMacro(<< "bad device: " << device);
+      itkGenericExceptionMacro("bad device: " << device);
     }
     stream >> inode;
     // name can be empty
@@ -102,7 +107,7 @@ ITKCommon_EXPORT std::istream &
       std::getline(in, token);
       if (token != " kB" || !in.good())
       {
-        itkGenericExceptionMacro(<< "bad size: " << record.m_Tokens[token]);
+        itkGenericExceptionMacro("bad size: " << record.m_Tokens[token]);
       }
       lastPos = in.tellg();
     }
@@ -111,7 +116,7 @@ ITKCommon_EXPORT std::istream &
   {
     record.Reset();
     // propagate the exception
-    itkGenericExceptionMacro(<< "The smaps header is corrupted" << excp);
+    itkGenericExceptionMacro("The smaps header is corrupted" << excp);
   }
   return in;
 }
@@ -133,7 +138,7 @@ ITKCommon_EXPORT std::istream &
 
     if (!in.good())
     {
-      itkGenericExceptionMacro(<< "Bad record name: " << record.m_RecordName);
+      itkGenericExceptionMacro("Bad record name: " << record.m_RecordName);
     }
 
     std::string bracket;
@@ -145,28 +150,28 @@ ITKCommon_EXPORT std::istream &
 
     if (!in.good() || bracket.find("[", 0) == std::string::npos)
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad left bracket: " << bracket);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad left bracket: " << bracket);
     }
 
     in >> record.m_Tokens["Size"];
 
     if (!in.good())
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad size: " << record.m_Tokens["Size"]);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad size: " << record.m_Tokens["Size"]);
     }
 
     in >> bracket;
 
     if (!in.good())
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad right bracket: " << bracket);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad right bracket: " << bracket);
     }
   }
   catch (const ExceptionObject & excp)
   {
     record.Reset();
     // propagate the exception
-    itkGenericExceptionMacro(<< "The smaps header is corrupted" << excp);
+    itkGenericExceptionMacro("The smaps header is corrupted" << excp);
   }
   return in;
 }
@@ -209,7 +214,7 @@ ITKCommon_EXPORT std::istream &
 
       if (!in.good())
       {
-        itkGenericExceptionMacro(<< "Bad record name: " << record.m_RecordName);
+        itkGenericExceptionMacro("Bad record name: " << record.m_RecordName);
       }
 
       // skip Submap entries
@@ -232,7 +237,7 @@ ITKCommon_EXPORT std::istream &
 
         if (!in.good())
         {
-          itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad address: " << address);
+          itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad address: " << address);
         }
         // If address is "[" then recordName was the address and there is name
         // for
@@ -262,7 +267,7 @@ ITKCommon_EXPORT std::istream &
     }
     if (!in.good() || bracket.find("[", 0) == std::string::npos)
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad left bracket: " << bracket);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad left bracket: " << bracket);
     }
     if (bracket.length() > 1)
     { // bracket contains the size, ie "[1024K]"
@@ -275,19 +280,19 @@ ITKCommon_EXPORT std::istream &
     }
     if (!in.good())
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad size: " << record.m_Tokens["Size"]);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad size: " << record.m_Tokens["Size"]);
     }
     in.getline(line, 256);
     if (!in.good())
     {
-      itkGenericExceptionMacro(<< "For record: " << record.m_RecordName << ", bad end of line: " << line);
+      itkGenericExceptionMacro("For record: " << record.m_RecordName << ", bad end of line: " << line);
     }
   }
   catch (const ExceptionObject & excp)
   {
     record.Reset();
     // propagate the exception
-    itkGenericExceptionMacro(<< "The smaps header is corrupted" << excp);
+    itkGenericExceptionMacro("The smaps header is corrupted" << excp);
   }
   return in;
 }
@@ -343,10 +348,7 @@ struct MapRecordConditionalPlusor
 /**              ---             MapData               ---              **/
 
 /** MadData destructor */
-MapData::~MapData()
-{
-  this->Reset();
-}
+MapData::~MapData() { this->Reset(); }
 
 MapData::MemoryLoadType
 MapData::GetTotalMemoryUsage()
@@ -410,7 +412,7 @@ operator>>(std::istream & smapsStream, SmapsData_2_6 & data)
     // in case of error, erase the records.
     data.Reset();
     // propagate the exception
-    itkGenericExceptionMacro(<< "The Smaps stream contains errors, can't read the memory records." << excp);
+    itkGenericExceptionMacro("The Smaps stream contains errors, can't read the memory records." << excp);
   }
   delete record;
   return smapsStream;
@@ -487,7 +489,7 @@ operator>>(std::istream & stream, VMMapData_10_2 & data)
       }
       if (stream.fail())
       {
-        itkGenericExceptionMacro(<< "Can't find the \"Writable regions\" section, can't read the memory records.");
+        itkGenericExceptionMacro("Can't find the \"Writable regions\" section, can't read the memory records.");
       }
       data.m_UsingSummary = false;
     }
@@ -529,7 +531,7 @@ operator>>(std::istream & stream, VMMapData_10_2 & data)
     // in case of error, erase the records.
     data.Reset();
     // propagate the exception
-    itkGenericExceptionMacro(<< "The VMMap stream contains errors, can't read the memory records." << excp);
+    itkGenericExceptionMacro("The VMMap stream contains errors, can't read the memory records." << excp);
   }
   // last record failed, it hasn't be added into data, delete it.
   delete record;

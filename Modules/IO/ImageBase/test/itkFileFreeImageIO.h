@@ -45,8 +45,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(FileFreeImageIO, ImageIOBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(FileFreeImageIO);
 
   /** Determine the file type. Returns true if this ImageIO can read the
    * file specified. */

@@ -56,8 +56,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(OtsuThresholdCalculator, HistogramThresholdCalculator);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(OtsuThresholdCalculator);
 
   /** Type definition for the input image. */
   using HistogramType = THistogram;
@@ -90,11 +90,7 @@ protected:
 
 private:
   typename OtsuMultipleThresholdsCalculator<THistogram>::Pointer m_OtsuMultipleThresholdsCalculator{};
-#if defined(ITKV4_COMPATIBILITY)
-  bool m_ReturnBinMidpoint{ true };
-#else
-  bool m_ReturnBinMidpoint{ false };
-#endif
+  bool                                                           m_ReturnBinMidpoint{ false };
 };
 
 } // end namespace itk

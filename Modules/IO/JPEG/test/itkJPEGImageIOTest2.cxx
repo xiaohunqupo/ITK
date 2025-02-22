@@ -52,8 +52,7 @@ itkJPEGImageIOTest2(int argc, char * argv[])
   region.SetIndex(start);
 
   image->SetRegions(region);
-  image->Allocate(true); // initialize buffer
-                         // to zero
+  image->AllocateInitialized();
 
   ImageType::SpacingType spacing;
 
@@ -82,7 +81,7 @@ itkJPEGImageIOTest2(int argc, char * argv[])
 
   ImageType::SpacingType readSpacing = readImage->GetSpacing();
 
-  const double tolerance = 1e-1;
+  constexpr double tolerance = 1e-1;
 
   if (itk::Math::abs(readSpacing[0] - spacing[0]) > tolerance)
   {

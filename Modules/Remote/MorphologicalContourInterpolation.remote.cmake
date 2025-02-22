@@ -42,11 +42,12 @@
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
 # Contact: Dženan Zukić <dzenan.zukic@kitware.com>
-itk_fetch_module(MorphologicalContourInterpolation
-"nD morphological contour interpolation
+itk_fetch_module(
+  MorphologicalContourInterpolation
+  "nD morphological contour interpolation
 
 Insight Journal article:
-https://www.insight-journal.org/browse/publication/977
+https://doi.org/10.54294/achtrg
 
 An ITK-based implementation of morphological contour interpolation based off the paper:
 Albu AB, Beugeling T, Laurendeau D.
@@ -56,6 +57,6 @@ IEEE Trans Biomed Eng. 2008 Aug;55(8):2022-38. doi: 10.1109/TBME.2008.921158.
 This work is supported by NIH grant R01 EB014346
 'Continued development and maintenance of the ITK-SNAP 3D image segmentation software'."
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/KitwareMedical/ITKMorphologicalContourInterpolation.git
-  GIT_TAG dbe1d9e53a2b9ed595cdda530cb7e863c1b95c20
+  GIT_REPOSITORY https://github.com/KitwareMedical/ITKMorphologicalContourInterpolation.git
+  GIT_TAG a0af585005fe2722ab5876f3a522eaa3122aad4e
   )

@@ -60,8 +60,8 @@ RegularStepGradientDescentBaseOptimizer::StartOptimization()
   // validity check for the value of GradientMagnitudeTolerance
   if (m_GradientMagnitudeTolerance < 0.0)
   {
-    itkExceptionMacro(<< "Gradient magnitude tolerance must be"
-                         "greater or equal 0.0. Current value is "
+    itkExceptionMacro("Gradient magnitude tolerance must be"
+                      "greater or equal 0.0. Current value is "
                       << m_GradientMagnitudeTolerance);
   }
 
@@ -152,19 +152,20 @@ RegularStepGradientDescentBaseOptimizer::AdvanceOneStep()
 
   if (m_RelaxationFactor < 0.0)
   {
-    itkExceptionMacro(<< "Relaxation factor must be positive. Current value is " << m_RelaxationFactor);
+    itkExceptionMacro("Relaxation factor must be positive. Current value is " << m_RelaxationFactor);
   }
 
   if (m_RelaxationFactor >= 1.0)
   {
-    itkExceptionMacro(<< "Relaxation factor must less than 1.0. Current value is " << m_RelaxationFactor);
+    itkExceptionMacro("Relaxation factor must less than 1.0. Current value is " << m_RelaxationFactor);
   }
 
   // Make sure the scales have been set properly
   if (scales.size() != spaceDimension)
   {
-    itkExceptionMacro(<< "The size of Scales is " << scales.size()
-                      << ", but the NumberOfParameters for the CostFunction is " << spaceDimension << '.');
+    itkExceptionMacro("The size of Scales is "
+                      << scales.size() << ", but the NumberOfParameters for the CostFunction is " << spaceDimension
+                      << '.');
   }
 
   for (unsigned int i = 0; i < spaceDimension; ++i)
@@ -236,7 +237,7 @@ RegularStepGradientDescentBaseOptimizer::AdvanceOneStep()
   this->InvokeEvent(IterationEvent());
 }
 
-const std::string
+std::string
 RegularStepGradientDescentBaseOptimizer::GetStopConditionDescription() const
 {
   return m_StopConditionDescription.str();
@@ -254,15 +255,6 @@ RegularStepGradientDescentBaseOptimizer::PrintSelf(std::ostream & os, Indent ind
   os << indent << "CurrentIteration: " << m_CurrentIteration << std::endl;
   os << indent << "Value: " << m_Value << std::endl;
   os << indent << "Maximize: " << m_Maximize << std::endl;
-  if (m_CostFunction)
-  {
-    os << indent << "CostFunction: " << &m_CostFunction << std::endl;
-  }
-  else
-  {
-    os << indent << "CostFunction: "
-       << "(None)" << std::endl;
-  }
   os << indent << "CurrentStepLength: " << m_CurrentStepLength << std::endl;
   os << indent << "StopCondition: " << m_StopCondition << std::endl;
   os << indent << "Gradient: " << m_Gradient << std::endl;

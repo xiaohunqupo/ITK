@@ -34,7 +34,7 @@ LinearSystemWrapperVNL::InitializeMatrix(unsigned int matrixIndex)
     m_Matrices = new MatrixHolder(m_NumberOfMatrices);
     if (m_Matrices == nullptr)
     {
-      itkGenericExceptionMacro(<< "LinearSystemWrapperVNL::InitializeMatrix(): m_Matrices allocation failed.");
+      itkGenericExceptionMacro("LinearSystemWrapperVNL::InitializeMatrix(): m_Matrices allocation failed.");
     }
   }
 
@@ -44,8 +44,8 @@ LinearSystemWrapperVNL::InitializeMatrix(unsigned int matrixIndex)
   (*m_Matrices)[matrixIndex] = new MatrixRepresentation(this->GetSystemOrder(), this->GetSystemOrder());
   if ((*m_Matrices)[matrixIndex] == nullptr)
   {
-    itkGenericExceptionMacro(<< "LinearSystemWrapperVNL::InitializeMatrix(): allocation of (*m_Matrices)["
-                             << matrixIndex << "] failed.");
+    itkGenericExceptionMacro("LinearSystemWrapperVNL::InitializeMatrix(): allocation of (*m_Matrices)[" << matrixIndex
+                                                                                                        << "] failed.");
   }
 }
 
@@ -83,7 +83,7 @@ LinearSystemWrapperVNL::InitializeVector(unsigned int vectorIndex)
     m_Vectors = new std::vector<vnl_vector<Float> *>(m_NumberOfVectors);
     if (m_Vectors == nullptr)
     {
-      itkGenericExceptionMacro(<< "InitializeVector(): m_Vectors memory allocation failed.");
+      itkGenericExceptionMacro("InitializeVector(): m_Vectors memory allocation failed.");
     }
   }
 
@@ -93,7 +93,7 @@ LinearSystemWrapperVNL::InitializeVector(unsigned int vectorIndex)
   (*m_Vectors)[vectorIndex] = new vnl_vector<Float>(this->GetSystemOrder());
   if ((*m_Vectors)[vectorIndex] == nullptr)
   {
-    itkGenericExceptionMacro(<< "InitializeVector(): allocation of (*m_Vectors)[" << vectorIndex << "] failed.");
+    itkGenericExceptionMacro("InitializeVector(): allocation of (*m_Vectors)[" << vectorIndex << "] failed.");
   }
   (*m_Vectors)[vectorIndex]->fill(0.0);
 }
@@ -132,7 +132,7 @@ LinearSystemWrapperVNL::InitializeSolution(unsigned int solutionIndex)
     m_Solutions = new std::vector<vnl_vector<Float> *>(m_NumberOfSolutions);
     if (m_Solutions == nullptr)
     {
-      itkGenericExceptionMacro(<< "InitializeSolution(): m_Solutions memory allocation failed.");
+      itkGenericExceptionMacro("InitializeSolution(): m_Solutions memory allocation failed.");
     }
   }
 
@@ -142,7 +142,7 @@ LinearSystemWrapperVNL::InitializeSolution(unsigned int solutionIndex)
   (*m_Solutions)[solutionIndex] = new vnl_vector<Float>(this->GetSystemOrder());
   if ((*m_Solutions)[solutionIndex] == nullptr)
   {
-    itkGenericExceptionMacro(<< "InitializeSolution(): allocation of (*m_olutions)[" << solutionIndex << "] failed.");
+    itkGenericExceptionMacro("InitializeSolution(): allocation of (*m_olutions)[" << solutionIndex << "] failed.");
   }
   (*m_Solutions)[solutionIndex]->fill(0.0);
 }
@@ -224,8 +224,7 @@ LinearSystemWrapperVNL::Solve()
 void
 LinearSystemWrapperVNL::SwapMatrices(unsigned int MatrixIndex1, unsigned int MatrixIndex2)
 {
-  vnl_sparse_matrix<Float> * tmp;
-  tmp = (*m_Matrices)[MatrixIndex1];
+  vnl_sparse_matrix<Float> * tmp = (*m_Matrices)[MatrixIndex1];
   (*m_Matrices)[MatrixIndex1] = (*m_Matrices)[MatrixIndex2];
   (*m_Matrices)[MatrixIndex2] = tmp;
 }
@@ -233,8 +232,7 @@ LinearSystemWrapperVNL::SwapMatrices(unsigned int MatrixIndex1, unsigned int Mat
 void
 LinearSystemWrapperVNL::SwapVectors(unsigned int VectorIndex1, unsigned int VectorIndex2)
 {
-  vnl_vector<Float> * tmp;
-  tmp = (*m_Vectors)[VectorIndex1];
+  vnl_vector<Float> * tmp = (*m_Vectors)[VectorIndex1];
   (*m_Vectors)[VectorIndex1] = (*m_Vectors)[VectorIndex2];
   (*m_Vectors)[VectorIndex2] = tmp;
 }
@@ -242,8 +240,7 @@ LinearSystemWrapperVNL::SwapVectors(unsigned int VectorIndex1, unsigned int Vect
 void
 LinearSystemWrapperVNL::SwapSolutions(unsigned int SolutionIndex1, unsigned int SolutionIndex2)
 {
-  vnl_vector<Float> * tmp;
-  tmp = (*m_Solutions)[SolutionIndex1];
+  vnl_vector<Float> * tmp = (*m_Solutions)[SolutionIndex1];
   (*m_Solutions)[SolutionIndex1] = (*m_Solutions)[SolutionIndex2];
   (*m_Solutions)[SolutionIndex2] = tmp;
 }
@@ -297,16 +294,15 @@ LinearSystemWrapperVNL::ScaleMatrix(Float scale, unsigned int matrixIndex)
 
 LinearSystemWrapperVNL::~LinearSystemWrapperVNL()
 {
-  unsigned int i;
-  for (i = 0; i < m_NumberOfMatrices; ++i)
+  for (unsigned int i = 0; i < m_NumberOfMatrices; ++i)
   {
     this->DestroyMatrix(i);
   }
-  for (i = 0; i < m_NumberOfVectors; ++i)
+  for (unsigned int i = 0; i < m_NumberOfVectors; ++i)
   {
     this->DestroyVector(i);
   }
-  for (i = 0; i < m_NumberOfSolutions; ++i)
+  for (unsigned int i = 0; i < m_NumberOfSolutions; ++i)
   {
     this->DestroySolution(i);
   }

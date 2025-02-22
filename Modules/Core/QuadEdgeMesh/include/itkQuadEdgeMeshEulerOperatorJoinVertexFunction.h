@@ -67,8 +67,8 @@ public:
   using Superclass = QuadEdgeMeshFunctionBase<TMesh, TQEType *>;
 
   itkNewMacro(Self);
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(QuadEdgeMeshEulerOperatorJoinVertexFunction, QuadEdgeMeshFunctionBase);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(QuadEdgeMeshEulerOperatorJoinVertexFunction);
 
   /** Type of QuadEdge with which to apply slicing. */
   using QEType = TQEType;

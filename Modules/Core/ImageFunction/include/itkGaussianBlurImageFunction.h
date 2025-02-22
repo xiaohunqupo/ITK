@@ -54,8 +54,8 @@ public:
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(GaussianBlurImageFunction, ImageFunction);
+  /** \see LightObject::GetNameOfClass() */
+  itkOverrideGetNameOfClassMacro(GaussianBlurImageFunction);
 
   /** InputImageType type alias support */
   using InputImageType = TInputImage;
@@ -197,7 +197,7 @@ private:
   unsigned int m_FilterDimensionality{};
 
   /** Flag to indicate whether to use image spacing */
-  bool m_UseImageSpacing{};
+  bool m_UseImageSpacing{ true };
 
   /** Neighborhood Image Function */
   GaussianFunctionPointer m_GaussianFunction{};

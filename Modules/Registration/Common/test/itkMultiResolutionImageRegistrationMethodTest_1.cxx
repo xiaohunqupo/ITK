@@ -118,14 +118,12 @@ itkMultiResolutionImageRegistrationMethodTest_1(int, char *[])
   auto fixedImage = FixedImageType::New();
   auto movingImage = MovingImageType::New();
 
-  double displacement[dimension] = { 7, 3, 2 };
-  double scale[dimension] = { 0.80, 1.0, 1.0 };
+  constexpr double displacement[dimension] = { 7, 3, 2 };
+  constexpr double scale[dimension] = { 0.80, 1.0, 1.0 };
 
-  FixedImageType::SizeType   size = { { 100, 100, 40 } };
-  FixedImageType::IndexType  index = { { 0, 0, 0 } };
-  FixedImageType::RegionType region;
-  region.SetSize(size);
-  region.SetIndex(index);
+  FixedImageType::SizeType            size = { { 100, 100, 40 } };
+  constexpr FixedImageType::IndexType index = { { 0, 0, 0 } };
+  const FixedImageType::RegionType    region{ index, size };
 
   fixedImage->SetRegions(region);
   fixedImage->Allocate();
@@ -251,7 +249,7 @@ itkMultiResolutionImageRegistrationMethodTest_1(int, char *[])
      ******************************************************************/
     SimpleMultiResolutionImageRegistrationUI2<RegistrationType> simpleUI(registration);
 
-    unsigned short numberOfLevels = 3;
+    constexpr unsigned short numberOfLevels = 3;
 
     itk::Array<unsigned int> niter(numberOfLevels);
     itk::Array<double>       rates(numberOfLevels);
@@ -331,7 +329,7 @@ itkMultiResolutionImageRegistrationMethodTest_1(int, char *[])
     /*************************************************
      * Check for parzen window exception
      **************************************************/
-    double oldValue = metric->GetMovingImageStandardDeviation();
+    const double oldValue = metric->GetMovingImageStandardDeviation();
     metric->SetMovingImageStandardDeviation(0.005);
 
     try
@@ -475,7 +473,7 @@ itkMultiResolutionImageRegistrationMethodTest_1(int, char *[])
      ******************************************************************/
     SimpleMultiResolutionImageRegistrationUI2<RegistrationType> simpleUI(registration);
 
-    unsigned short numberOfLevels = 3;
+    constexpr unsigned short numberOfLevels = 3;
 
     itk::Array<unsigned int> niter(numberOfLevels);
     itk::Array<double>       rates(numberOfLevels);
@@ -573,7 +571,7 @@ F(itk::Vector<double, 3> & v)
   x -= 8;
   y += 3;
   z += 0;
-  double r = std::sqrt(x * x + y * y + z * z);
+  const double r = std::sqrt(x * x + y * y + z * z);
   if (r > 35)
   {
     value = 2 * (itk::Math::abs(x) + 0.8 * itk::Math::abs(y) + 0.5 * itk::Math::abs(z));

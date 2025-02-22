@@ -27,10 +27,9 @@ namespace itk
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 MeanSquareRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::MeanSquareRegistrationFunction()
 {
-  RadiusType   r;
-  unsigned int j;
+  RadiusType r;
 
-  for (j = 0; j < ImageDimension; ++j)
+  for (unsigned int j = 0; j < ImageDimension; ++j)
   {
     r[j] = 0;
   }
@@ -75,7 +74,7 @@ MeanSquareRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::I
 {
   if (!this->GetMovingImage() || !this->GetFixedImage() || !m_MovingImageInterpolator)
   {
-    itkExceptionMacro(<< "MovingImage, FixedImage and/or Interpolator not set");
+    itkExceptionMacro("MovingImage, FixedImage and/or Interpolator not set");
   }
 
   // cache fixed image information
@@ -91,11 +90,11 @@ MeanSquareRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::I
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
-typename MeanSquareRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::PixelType
+auto
 MeanSquareRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>::ComputeUpdate(
   const NeighborhoodType & it,
   void *                   itkNotUsed(globalData),
-  const FloatOffsetType &  itkNotUsed(offset))
+  const FloatOffsetType &  itkNotUsed(offset)) -> PixelType
 {
   // Get fixed image related information
   // Note: no need to check the index is within

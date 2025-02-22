@@ -71,12 +71,12 @@ ImageSeriesWriter<TInputImage, TOutputImage>::Write()
 {
   const InputImageType * inputImage = this->GetInput();
 
-  itkDebugMacro(<< "Writing an image file");
+  itkDebugMacro("Writing an image file");
 
   // Make sure input is available
   if (inputImage == nullptr)
   {
-    itkExceptionMacro(<< "No input to writer!");
+    itkExceptionMacro("No input to writer!");
   }
 
   // Make sure the data is up-to-date.
@@ -120,13 +120,13 @@ ImageSeriesWriter<TInputImage, TOutputImage>::GenerateNumericFileNames()
 
   if (!inputImage)
   {
-    itkExceptionMacro(<< "Input image is nullptr");
+    itkExceptionMacro("Input image is nullptr");
   }
 
   m_FileNames.clear();
 
   // We need two regions. One for the input, one for the output.
-  ImageRegion<TInputImage::ImageDimension> inRegion = inputImage->GetRequestedRegion();
+  const ImageRegion<TInputImage::ImageDimension> inRegion = inputImage->GetRequestedRegion();
 
   SizeValueType fileNumber = this->m_StartIndex;
   char          fileName[IOCommon::ITK_MAXPATHLEN + 1];
@@ -140,8 +140,11 @@ ImageSeriesWriter<TInputImage, TOutputImage>::GenerateNumericFileNames()
 
   for (unsigned int slice = 0; slice < numberOfFiles; ++slice)
   {
+    ITK_GCC_PRAGMA_PUSH
+    ITK_GCC_SUPPRESS_Wformat_nonliteral
     snprintf(fileName, IOCommon::ITK_MAXPATHLEN + 1, m_SeriesFormat.c_str(), fileNumber);
-    m_FileNames.push_back(fileName);
+    ITK_GCC_PRAGMA_POP
+    m_FileNames.emplace_back(fileName);
     fileNumber += this->m_IncrementIndex;
   }
 }
@@ -151,7 +154,7 @@ template <typename TInputImage, typename TOutputImage>
 void
 ImageSeriesWriter<TInputImage, TOutputImage>::GenerateData()
 {
-  itkDebugMacro(<< "Writing a series of files");
+  itkDebugMacro("Writing a series of files");
   if (m_FileNames.empty())
   {
     // this method will be deprecated. It is here only to maintain the old API
@@ -171,7 +174,7 @@ ImageSeriesWriter<TInputImage, TOutputImage>::WriteFiles()
 
   if (!inputImage)
   {
-    itkExceptionMacro(<< "Input image is nullptr");
+    itkExceptionMacro("Input image is nullptr");
   }
 
   // We need two regions. One for the input, one for the output.
@@ -222,12 +225,9 @@ ImageSeriesWriter<TInputImage, TOutputImage>::WriteFiles()
   outputImage->SetSpacing(spacing);
   outputImage->SetDirection(direction);
 
-  Index<TInputImage::ImageDimension> inIndex;
-  Size<TInputImage::ImageDimension>  inSize;
 
-  SizeValueType pixelsPerFile = outputImage->GetRequestedRegion().GetNumberOfPixels();
-
-  inSize.Fill(1);
+  const SizeValueType pixelsPerFile = outputImage->GetRequestedRegion().GetNumberOfPixels();
+  auto                inSize = MakeFilled<Size<TInputImage::ImageDimension>>(1);
   for (unsigned int ns = 0; ns < TOutputImage::ImageDimension; ++ns)
   {
     inSize[ns] = outRegion.GetSize()[ns];
@@ -241,11 +241,11 @@ ImageSeriesWriter<TInputImage, TOutputImage>::WriteFiles()
 
   if (m_FileNames.size() != expectedNumberOfFiles)
   {
-    itkExceptionMacro(<< "The number of filenames passed is " << m_FileNames.size() << " but " << expectedNumberOfFiles
-                      << " were expected ");
+    itkExceptionMacro("The number of filenames passed is " << m_FileNames.size() << " but " << expectedNumberOfFiles
+                                                           << " were expected ");
   }
 
-  itkDebugMacro(<< "Number of files to write = " << m_FileNames.size());
+  itkDebugMacro("Number of files to write = " << m_FileNames.size());
 
   ProgressReporter progress(this, 0, expectedNumberOfFiles, expectedNumberOfFiles);
 
@@ -256,7 +256,7 @@ ImageSeriesWriter<TInputImage, TOutputImage>::WriteFiles()
   for (unsigned int slice = 0; slice < m_FileNames.size(); ++slice)
   {
     // Select a "slice" of the image.
-    inIndex = inputImage->ComputeIndex(offset);
+    const Index<TInputImage::ImageDimension> inIndex = inputImage->ComputeIndex(offset);
     inRegion.SetIndex(inIndex);
     inRegion.SetSize(inSize);
 
@@ -288,7 +288,7 @@ ImageSeriesWriter<TInputImage, TOutputImage>::WriteFiles()
       }
       else
       {
-        itkExceptionMacro(<< "Attempted to use a MetaDataDictionaryArray without specifying an ImageIO!");
+        itkExceptionMacro("Attempted to use a MetaDataDictionaryArray without specifying an ImageIO!");
       }
     }
     else
@@ -354,19 +354,16 @@ ImageSeriesWriter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Inden
 
   itkPrintSelfObjectMacro(ImageIO);
 
+  itkPrintSelfBooleanMacro(UserSpecifiedImageIO);
+  for (unsigned int i = 0; i < m_FileNames.size(); ++i)
+  {
+    os << indent << "FileNames[" << i << "]: " << m_FileNames[i] << std::endl;
+  }
+  os << indent << "SeriesFormat: " << m_SeriesFormat << std::endl;
   os << indent << "StartIndex: " << m_StartIndex << std::endl;
   os << indent << "IncrementIndex: " << m_IncrementIndex << std::endl;
-  os << indent << "SeriesFormat: " << m_SeriesFormat << std::endl;
+  itkPrintSelfBooleanMacro(UseCompression);
   os << indent << "MetaDataDictionaryArray: " << m_MetaDataDictionaryArray << std::endl;
-
-  if (m_UseCompression)
-  {
-    os << indent << "Compression: On\n";
-  }
-  else
-  {
-    os << indent << "Compression: Off\n";
-  }
 }
 } // end namespace itk
 

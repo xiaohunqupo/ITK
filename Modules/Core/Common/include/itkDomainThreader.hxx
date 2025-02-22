@@ -71,7 +71,7 @@ template <typename TDomainPartitioner, typename TAssociate>
 void
 DomainThreader<TDomainPartitioner, TAssociate>::DetermineNumberOfWorkUnitsUsed()
 {
-  ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
+  const ThreadIdType numberOfWorkUnits = this->GetNumberOfWorkUnits();
 
   // Attempt a single dummy partition, just to get the number of subdomains actually created
   DomainType subdomain;
@@ -95,11 +95,7 @@ DomainThreader<TDomainPartitioner, TAssociate>::StartThreadingSequence()
   ThreadStruct str;
   str.domainThreader = this;
 
-  MultiThreaderBase * multiThreader = this->GetMultiThreader();
-  multiThreader->SetSingleMethod(this->ThreaderCallback, &str);
-
-  // multithread the execution
-  multiThreader->SingleMethodExecute();
+  this->GetMultiThreader()->SetSingleMethodAndExecute(this->ThreaderCallback, &str);
 }
 
 template <typename TDomainPartitioner, typename TAssociate>

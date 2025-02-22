@@ -37,9 +37,10 @@
 #-- ### Please document here any justification for the criteria above
 #       Code style enforced by clang-format on 2020-02-19, and clang-tidy modernizations completed
 
-itk_fetch_module(RTK
+itk_fetch_module(
+  RTK
   "Reconstruction Toolkit (RTK) https://www.openrtk.org/"
   MODULE_COMPLIANCE_LEVEL 3
-  GIT_REPOSITORY ${git_protocol}://github.com/RTKConsortium/RTK.git
-  GIT_TAG 1f1f9f59f0a7ec8b54ee50297f946ac8c648bfef
-)
+  GIT_REPOSITORY https://github.com/RTKConsortium/RTK.git
+  GIT_TAG 870737fca5274f9247e7d79fd09b61233dc2d369
+  )
